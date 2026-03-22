@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { Doctor } from './src/domain/entities/doctor.entity';
 import { Patient } from './src/domain/entities/patient.entity';
@@ -26,15 +27,16 @@ async function seed() {
 
     // Crear Doctor
     const doctor = doctorRepo.create({
-      id: 1,
       name: 'Dr. Gregory House',
       specialty: 'Diagnóstico',
+      startTime: '08:00',
+      endTime: '12:00',
+      appointmentDuration: 30,
     });
     await doctorRepo.save(doctor);
 
     // Crear Paciente
     const patient = patientRepo.create({
-      id: 1,
       document: '12345678',
       firstName: 'John',
       lastName: 'Doe',

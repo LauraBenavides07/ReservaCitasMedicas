@@ -1,11 +1,13 @@
 # Especificación de Requisitos - Sistema de Gestión de Citas Médicas
 
-## Objetivo
-Desarrollar un sistema web para la gestión de citas médicas enfocado en agendadores y profesionales de la salud, con especial atención a la usabilidad para adultos mayores (texto grande, alto contraste, navegación sencilla). El sistema debe permitir listar citas por médico y fecha, crear citas manualmente a partir de solicitudes por WhatsApp, y automatizar la recepción de citas vía WhatsApp así como el envío de recordatorios a los pacientes.
+## Prioridades de Implementación
+1. **Requisitos 1 y 2** (funcionalidades base para agendadores)
+2. **Requisitos 3 y 4** (autogestión del paciente y configuración del sistema)
+3. **Requisitos adicionales** (bot de WhatsApp y recordatorios)
 
 ---
 
-## Requisito 1: Listar citas por médico y fecha
+## Requisito 1: Listar citas por médico y fecha (Prioridad 1)
 
 **Actor:** Agendador de citas
 
@@ -27,14 +29,14 @@ El agendador necesita consultar las citas programadas para un médico o terapist
 - Cada fila incluye acciones como ver detalle o cancelar la cita (con confirmación previa).
 
 **Consideraciones de UX para adultos mayores:**
-- El tamaño mínimo de texto en toda la interfaz será de 18px.
-- Los selectores y botones tendrán un área de clic mínima de 48x48 píxeles.
-- Los colores de la tabla y los botones deben cumplir con contraste WCAG AAA (7:1 para texto normal).
-- Los campos de búsqueda estarán claramente etiquetados y no dependerán únicamente de placeholders.
+- Tamaño mínimo de texto: 18px.
+- Área de clic mínima: 48x48 píxeles.
+- Contraste WCAG AAA (7:1 para texto normal).
+- Campos claramente etiquetados, sin depender de placeholders.
 
 ---
 
-## Requisito 2: Crear cita desde contacto por WhatsApp (manual)
+## Requisito 2: Crear cita desde contacto por WhatsApp (Prioridad 1)
 
 **Actor:** Agendador de citas
 
@@ -81,79 +83,147 @@ El sistema calculará automáticamente los bloques disponibles en función de es
 
 ---
 
-## Requisito adicional: Automatización de citas vía WhatsApp (Bot)
+## Requisito 3: Autogestión de citas por parte del paciente vía web (Prioridad 2)
+
+**Actor:** Paciente
+
+**Descripción:**  
+El paciente debe poder agendar, consultar y cancelar sus citas a través de una interfaz web, sin necesidad de usar WhatsApp. Para ello, debe registrarse en el sistema y autenticarse. El sistema mostrará las franjas horarias disponibles según la configuración de cada médico/terapista.
+
+**Criterios de aceptación:**
+
+### 3.1 Registro y autenticación
+- El paciente puede crear una cuenta proporcionando:
+  - Número de documento de identidad (obligatorio, único)
+  - Nombres y apellidos
+  - Celular
+  - Género
+  - Fecha de nacimiento (opcional)
+  - Correo electrónico (opcional, usado para recuperación)
+  - Contraseña (mínimo 8 caracteres, segura)
+- Se valida que el documento no esté registrado previamente.
+- Opcional: verificación de celular mediante código SMS/WhatsApp para confirmar identidad.
+- El paciente inicia sesión con documento o correo y contraseña.
+- La interfaz de autenticación mantiene los estándares de accesibilidad (texto grande, botones amplios).
+
+### 3.2 Agendar cita autónoma
+- Una vez autenticado, el paciente puede seleccionar “Agendar nueva cita”.
+- Se muestra un flujo simplificado:
+  1. Seleccionar médico/terapista de una lista.
+  2. Seleccionar una fecha dentro de la ventana de tiempo configurada por el administrador (ver Requisito 4).
+  3. El sistema muestra los horarios disponibles para ese médico/terapista en la fecha seleccionada, calculados según la configuración de jornada, intervalos y citas existentes.
+  4. El paciente selecciona una hora y confirma.
+- El sistema valida que el horario continúe disponible al momento de la confirmación (control de concurrencia).
+- Una vez agendada, se muestra un resumen de la cita y se envía una confirmación por correo electrónico o WhatsApp (según preferencia del paciente).
+
+### 3.3 Consulta y cancelación de citas
+- El paciente puede ver en su panel las citas futuras y pasadas.
+- Cada cita futura tiene la opción de cancelación. Al cancelar, se solicita confirmación y se libera el horario.
+- Se registra la cancelación con motivo opcional.
+- El paciente no puede cancelar citas dentro de un tiempo límite antes de la cita (ej. menos de 2 horas), debiendo contactar al centro por otros medios.
+
+**Seguridad:**
+- Las sesiones deben expirar por inactividad.
+- La información personal del paciente debe estar protegida.
+
+---
+
+## Requisito 4: Configuración de parámetros del sistema (Prioridad 2)
+
+**Actor:** Administrador del sistema
+
+**Descripción:**  
+El administrador debe poder configurar los parámetros que determinan la disponibilidad de los médicos y terapistas, permitiendo que el agendamiento autónomo (Requisito 3) y el manual (Requisito 2) funcionen correctamente según las reglas de negocio de Piedrazul.
+
+**Criterios de aceptación:**
+
+### 4.1 Ventana de tiempo para agendamiento
+- El administrador define una “ventana de agendamiento” expresada en semanas (ej. 4 semanas).
+- Los pacientes no pueden agendar citas más allá de la fecha límite = fecha actual + ventana de semanas.
+- Los agendadores (Requisitos 1 y 2) pueden agendar sin restricción de ventana (o con una ventana mayor configurable).
+
+### 4.2 Configuración por médico/terapista
+- Para cada profesional, el administrador puede configurar:
+  - **Días de atención**: selección de días de la semana (lunes a domingo).
+  - **Franja horaria por día**: hora de inicio y hora de fin (ej. 08:00 – 12:00, 14:00 – 18:00). Pueden definirse múltiples bloques por día (mañana/tarde).
+  - **Intervalo entre citas**: duración en minutos (ej. 30 min). Define la separación entre slots.
+  - **Descansos**: bloques de tiempo dentro de la jornada donde no se agendan citas (ej. almuerzo de 12:00 a 14:00).
+- La configuración puede aplicarse a días específicos o ser recurrente semanal.
+- Opcionalmente, se pueden definir excepciones (días no laborables, horarios especiales) con prioridad sobre la configuración regular.
+
+### 4.3 Visualización y validación
+- El administrador puede ver una vista previa de los horarios disponibles para cada profesional tras aplicar la configuración.
+- El sistema debe validar que no haya conflictos (ej. fin de jornada antes de inicio, duración negativa, intervalos inconsistentes).
+- Todos los cambios deben registrarse en un log de auditoría.
+
+---
+
+## Requisitos adicionales (Posteriores a implementación de 1-4)
+
+### Adicional A: Automatización de citas vía WhatsApp (Bot)
 
 **Actor:** Paciente (a través de WhatsApp)
 
 **Descripción:**  
-Para facilitar la tarea de los agendadores y reducir la carga manual, se implementará un bot de WhatsApp que permita a los pacientes solicitar, confirmar o cancelar citas de forma automatizada. El bot interactúa mediante un flujo conversacional sencillo, diseñado para ser usado también por adultos mayores.
+Un bot de WhatsApp permitirá a los pacientes agendar, consultar y cancelar citas mediante conversación guiada, reduciendo la carga manual de los agendadores.
 
 **Criterios de aceptación:**
-- El bot está asociado a un número de WhatsApp corporativo.
-- El paciente inicia la conversación y el bot presenta un menú con opciones principales: “Agendar cita”, “Consultar mis citas”, “Cancelar cita”, “Ayuda”.
-- Flujo para agendar cita:
-  1. Solicitar identificación del paciente (documento de identidad o número de celular).
-  2. Verificar existencia del paciente en el sistema; si no existe, solicitar los datos básicos (nombres, apellidos, celular, género).
-  3. Mostrar lista de médicos/terapistas disponibles.
-  4. Preguntar por la fecha deseada.
-  5. Mostrar los horarios disponibles para ese médico en esa fecha, según los intervalos configurados.
-  6. Confirmar los datos de la cita y crear el registro en el sistema.
-  7. Enviar mensaje de confirmación con los detalles.
-- El bot debe manejar entradas inválidas de forma amigable y ofrecer la opción de reiniciar el flujo o hablar con un agente humano.
-- Toda la comunicación debe quedar registrada en el sistema para trazabilidad.
-- El bot debe cumplir con políticas de privacidad y manejo de datos personales.
+- El bot está integrado con la API oficial de WhatsApp Business.
+- Flujo conversacional con menú de opciones: agendar, consultar, cancelar, ayuda.
+- Para agendar: identifica al paciente (documento o celular), verifica/registra datos básicos, selecciona médico, fecha y hora dentro de la ventana de agendamiento, y confirma.
+- El bot respeta la configuración de disponibilidad (días, franjas, intervalos, ventana) y valida horarios ocupados.
+- Maneja errores y ofrece opción de transferencia a agente humano.
 
----
-
-## Requisito adicional: Servicio de recordatorios (WhatsApp / SMS)
+### Adicional B: Servicio de recordatorios (WhatsApp / SMS)
 
 **Actor:** Sistema (tarea programada)
 
 **Descripción:**  
-Para reducir el ausentismo, el sistema enviará automáticamente recordatorios de citas a los pacientes a través de WhatsApp (prioritario) o SMS (como alternativa). Los recordatorios se enviarán con la antelación configurable (ej. 24 horas antes de la cita).
+El sistema envía recordatorios automáticos a los pacientes antes de sus citas para reducir ausentismo.
 
 **Criterios de aceptación:**
-- El sistema ejecuta diariamente una tarea que recorre las citas programadas para el día siguiente.
-- Para cada cita, se determina el medio de contacto preferido del paciente (WhatsApp si está disponible, SMS en caso contrario).
-- Se envía un mensaje personalizado que incluye:
-  - Nombre del paciente
-  - Fecha y hora de la cita
-  - Nombre del médico/terapista
-  - Dirección o enlace a la ubicación (si aplica)
-  - Instrucciones para confirmar o cancelar la cita (opcional)
-- El mensaje debe ser claro, con tipografía legible y un tono amigable.
-- Se debe registrar el envío (fecha, medio, estado) para auditoría.
-- En caso de fallo en el envío (WhatsApp no disponible), se intenta por SMS. Si ambos fallan, se registra el error para revisión manual.
-- El horario de envío debe respetar las franjas horarias permitidas (por ejemplo, no antes de las 8:00 a.m. ni después de las 8:00 p.m.).
+- Tarea diaria que envía recordatorios a citas del día siguiente (antelación configurable).
+- Prioriza WhatsApp; si falla, usa SMS.
+- Mensaje incluye: paciente, fecha, hora, médico, dirección.
+- Registro de envíos para auditoría.
+- No envía en horarios restringidos (ej. antes de 8:00 o después de 20:00).
 
 ---
 
-## Consideraciones de usabilidad para adultos mayores
+## Consideraciones transversales de accesibilidad para adultos mayores
 
-- **Tipografía:** Texto base mínimo 18px, con posibilidad de aumentar aún más mediante configuración del navegador.
-- **Contraste:** Cumplimiento de WCAG 2.1 nivel AAA en todos los elementos interactivos y de texto.
-- **Navegación:** Estructura simple, con menos de 3 niveles de profundidad. Botones grandes con iconos y texto.
-- **Formularios:** Un solo campo por línea, etiquetas visibles permanentemente, mensajes de error claros y con sugerencias de solución.
-- **Ayuda:** Acceso visible a una sección de ayuda con instrucciones en lenguaje sencillo y números de contacto de soporte.
-- **Feedback:** Todas las acciones deben tener una respuesta visual inmediata (spinners, mensajes de éxito/error) y confirmación para acciones críticas (cancelar cita).
+- **Tipografía:** Texto base mínimo 18px; posibilidad de aumentar mediante configuración del navegador.
+- **Contraste:** Cumplir WCAG 2.1 nivel AAA en toda la interfaz.
+- **Navegación:** Estructura simple, menos de 3 niveles de profundidad. Botones grandes con iconos y texto.
+- **Formularios:** Un solo campo por línea, etiquetas visibles permanentemente, mensajes de error claros.
+- **Ayuda:** Acceso visible a ayuda en lenguaje sencillo y número de contacto.
+- **Feedback:** Indicadores visuales inmediatos para acciones (carga, éxito, error) y confirmación para acciones críticas.
 
 ---
 
 ## Consideraciones técnicas generales (sin código)
 
-- **Arquitectura:** Aplicación web responsiva que funcione correctamente en dispositivos móviles y de escritorio.
-- **Rendimiento:** Cumplir con Core Web Vitals (LCP < 2.5s, FID < 100ms, CLS < 0.1).
-- **Seguridad:** Autenticación y autorización para agendadores y médicos. Protección de datos personales según normativa aplicable (Ley de Protección de Datos).
-- **Integración con WhatsApp:** Se utilizará la API oficial de WhatsApp Business (Cloud API) o un proveedor autorizado para garantizar la estabilidad y cumplimiento de políticas.
-- **Escalabilidad:** La solución debe permitir añadir nuevos médicos/terapistas y modificar intervalos de tiempo sin intervención de desarrollo.
+- **Arquitectura:** Aplicación web responsiva, funcional en móviles y escritorio.
+- **Rendimiento:** Cumplir con Core Web Vitals: LCP < 2.5s, FID < 100ms, CLS < 0.1.
+- **Seguridad:** Autenticación y autorización. Protección de datos personales según normativa.
+- **Integración WhatsApp:** Usar API oficial de WhatsApp Business (Cloud API).
+- **Escalabilidad:** Permitir agregar profesionales y modificar parámetros sin desarrollo.
 
 ---
 
-## Criterios de aceptación generales
+## Criterios de aceptación generales por fase
 
-- [ ] Todos los requisitos funcionales documentados han sido implementados y probados.
-- [ ] La interfaz cumple con los estándares de accesibilidad para adultos mayores (pruebas con usuarios reales).
-- [ ] El bot de WhatsApp puede agendar citas completas con un mínimo de intervención humana.
-- [ ] Los recordatorios se envían correctamente según la programación establecida.
-- [ ] El sistema maneja correctamente los conflictos de horarios y previene dobles reservas.
-- [ ] Se cuenta con documentación de usuario y guías de uso para agendadores y médicos.
+### Fase 1 (Requisitos 1 y 2)
+- [ ] El agendador puede listar citas por médico y fecha.
+- [ ] El agendador puede crear citas manualmente desde formulario, respetando intervalos y evitando duplicados.
+- [ ] La interfaz cumple con los estándares de accesibilidad para adultos mayores.
+
+### Fase 2 (Requisitos 3 y 4)
+- [ ] El paciente puede registrarse, autenticarse y agendar citas por web con horarios disponibles según configuración.
+- [ ] El administrador puede configurar ventana de agendamiento, días, franjas e intervalos por profesional.
+- [ ] Se mantiene la accesibilidad en todas las nuevas pantallas.
+
+### Fase 3 (Requisitos adicionales)
+- [ ] El bot de WhatsApp permite agendar citas completas.
+- [ ] El sistema envía recordatorios automáticos de citas.
+- [ ] Se registran interacciones y envíos para trazabilidad.
