@@ -1,0 +1,16 @@
+# Node modules
+node_modules/
+dist/
+*.sqlite
+.temp/
+
+# Angular
+.angular/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
