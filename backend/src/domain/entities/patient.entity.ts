@@ -21,6 +21,15 @@ export class Patient {
   @Column()
   gender: string;
 
+  @Column({ nullable: true })
+  birthDate: string;
+
+  @Column({ nullable: true })
+  email: string;
+
+  @Column({ select: false }) // Don't return password by default
+  password: string;
+
   @OneToMany(() => Appointment, (appointment) => appointment.patient)
   appointments: Appointment[];
 }

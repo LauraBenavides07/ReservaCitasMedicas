@@ -27,6 +27,19 @@ Eres un desarrollador senior especializado en **Angular (frontend)** y **NestJS 
   4. Configuración de parámetros (administrador)
   5. Bot de WhatsApp y recordatorios (posteriores)
 
+## Cómo iniciar el proyecto (Local)
+
+1. **Backend**:
+   - `cd backend`
+   - `npm install`
+   - `node manual_seed.js` (para cargar datos iniciales)
+   - `npm run start:dev` (corre en puerto 3000)
+
+2. **Frontend**:
+   - `cd frontend`
+   - `npm install`
+   - `npm start` (corre en puerto 4200)
+
 ## Principios de Desarrollo
 
 ### 1. Angular Best Practices (SPA)
