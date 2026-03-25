@@ -1,0 +1,156 @@
+<div class="appointment-form-wrapper">
+
+    <!-- Formulario principal -->
+    <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="two-column-layout">
+
+        <!-- COLUMNA IZQUIERDA: DATOS DEL PACIENTE -->
+        <div class="column-left">
+
+            <div class="card data-card">
+                <h3 class="card-title">1. Datos del Paciente</h3>
+
+                <div class="form-grid">
+
+                    <!-- Documento -->
+                    <div class="form-field full-width">
+                        <label>DOCUMENTO *</label>
+
+                        <div class="input-with-button">
+                            <input type="text" formControlName="patientDocument" placeholder="Nro. documento"
+                                [class.input-error]="f['patientDocument'].touched && f['patientDocument'].errors">
+
+                            <!-- Botón (aún sin lógica) -->
+                            <button type="button" class="btn-buscar">Buscar</button>
+                        </div>
+                    </div>
+
+                    <!-- Nombre y apellido -->
+                    <div class="form-field full-width">
+                        <label>NOMBRES Y APELLIDOS *</label>
+
+                        <div class="split-inputs">
+                            <input type="text" formControlName="firstName" placeholder="Nombres">
+                            <input type="text" formControlName="lastName" placeholder="Apellidos">
+                        </div>
+                    </div>
+
+                    <!-- Celular y género -->
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>CELULAR *</label>
+                            <input type="tel" formControlName="phone">
+                        </div>
+
+                        <div class="form-field">
+                            <label>GÉNERO *</label>
+                            <select formControlName="gender">
+                                <option value="">Seleccionar</option>
+                                <option value="Hombre">Hombre</option>
+                                <option value="Mujer">Mujer</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Fecha y correo -->
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>FECHA DE NACIMIENTO</label>
+                            <input type="date" formControlName="birthDate">
+                        </div>
+
+                        <div class="form-field">
+                            <label>CORREO</label>
+                            <input type="email" formControlName="email">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Mensajes -->
+            <div *ngIf="successMessage()" class="alert alert-success mt-1rem">
+                {{ successMessage() }}
+            </div>
+
+            <div *ngIf="errorMessage()" class="alert alert-error mt-1rem">
+                {{ errorMessage() }}
+            </div>
+
+        </div>
+
+        <!-- COLUMNA DERECHA -->
+        <div class="column-right">
+
+            <div class="card doctor-card-container">
+                <h3 class="card-title">2. Médico</h3>
+
+                <!-- Campo oculto del formulario -->
+                <input type="hidden" formControlName="doctorId">
+
+                <!-- Lista de doctores -->
+                <div class="doctors-grid">
+
+                    <div class="doctor-box" *ngFor="let doctor of doctors()"
+                        [class.selected]="f['doctorId'].value === doctor.id" (click)="selectDoctor(doctor.id)">
+
+                        <!-- Avatar -->
+                        <div class="doctor-avatar" [ngStyle]="{'background-color': getDoctorColor(doctor.id)}">
+                            {{ doctor.name.substring(0,2).toUpperCase() }}
+                        </div>
+
+                        <!-- Info -->
+                        <div class="doctor-info">
+                            <h4>Dr(a). {{ doctor.name }}</h4>
+                            <p class="specialty">{{ doctor.specialty }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de agendamiento -->
+                <div class="selection-footer" *ngIf="f['doctorId'].value">
+
+                    <h3 class="card-title mt-1.5rem">3. Agendamiento</h3>
+
+                    <div class="form-row">
+
+                        <div class="form-field">
+                            <label>FECHA DE LA CITA *</label>
+                            <input type="date" formControlName="date" (change)="onDateChange()" [min]="today">
+                        </div>
+
+                        <div class="form-field">
+                            <label>HORA *</label>
+                            <select formControlName="time">
+                                <option value="">Selecciona horario...</option>
+
+                                <!-- Horarios disponibles -->
+                                <option *ngFor="let slot of availableSlots()" [value]="slot">
+                                    {{ slot }}
+                                </option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- Mensaje si no hay horarios -->
+                    <div *ngIf="availableSlots().length === 0 && f['date'].value" class="info-message">
+                        No hay horarios disponibles en esta fecha.
+                    </div>
+
+                </div>
+
+                <!-- Botón submit -->
+                <div class="form-actions mt-1.5rem">
+                    <button type="submit" class="btn-primary full-width"
+                        [disabled]="appointmentForm.invalid || isSubmitting()">
+
+                        {{ isSubmitting() ? 'Guardando...' : 'Confirmar Cita' }}
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </form>
+</div>

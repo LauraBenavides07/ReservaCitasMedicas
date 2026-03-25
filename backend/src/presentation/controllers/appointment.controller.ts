@@ -8,6 +8,14 @@ export class AppointmentController {
   constructor(private readonly appointmentService: AppointmentService) {}
 
   /**
+   * REQUISITO 8: Estadisticas Globales
+   */
+  @Get('stats')
+  async getDashboardStats() {
+    return this.appointmentService.getDashboardStats();
+  }
+
+  /**
    * REQUISITO 1: Listar citas (Agendador)
    */
   @Get()

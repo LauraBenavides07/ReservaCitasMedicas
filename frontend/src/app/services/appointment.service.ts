@@ -66,4 +66,8 @@ export class AppointmentService {
   rescheduleAppointment(id: number, date: string, time: string): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${id}/reschedule`, { date, time });
   }
+
+  getDashboardStats(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/stats`);
+  }
 }

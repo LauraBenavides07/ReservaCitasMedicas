@@ -52,7 +52,7 @@ export class AppointmentService {
     // Regla de Negocio: Ventana de tiempo
     const config = await this.configService.getConfig();
     const minAdvanceHours = config?.minAdvanceHours ?? 2;
-    const maxFutureDays = config?.maxFutureDays ?? 30;
+    const appointmentWindowWeeks = config?.appointmentWindowWeeks ?? 4;
     
     const now = new Date();
     const appointmentDate = new Date(`${createDto.date}T${createDto.time}`);
@@ -63,9 +63,9 @@ export class AppointmentService {
     }
 
     const horizonDate = new Date();
-    horizonDate.setDate(now.getDate() + maxFutureDays);
+    horizonDate.setDate(now.getDate() + appointmentWindowWeeks * 7);
     if (appointmentDate > horizonDate) {
-      throw new BadRequestException(`No se puede agendar con más de ${maxFutureDays} días de antelación.`);
+      throw new BadRequestException(`No se puede agendar con más de ${appointmentWindowWeeks} semanas de antelación.`);
     }
 
     // Verificar si existe el paciente, si no, crearlo
@@ -123,13 +123,25 @@ export class AppointmentService {
     const bookedSlots: string[] = appointments.map((a) => a.time);
     const slots: string[] = [];
 
+    const dateObj = new Date(`${date}T00:00:00`);
+    let dayOfWeek = dateObj.getDay();
+    if (dayOfWeek === 0) dayOfWeek = 7; // Convertir 0 (Domingo) a 7
+    
+    // Regla de Negocio: Días laborables del médico
+    const workingDaysArray = doctor.workingDays ? doctor.workingDays.split(',').map(Number) : [1,2,3,4,5];
+    if (!workingDaysArray.includes(dayOfWeek)) {
+       return []; // El médico no trabaja este día
+    }
+
     let current = this.timeToMinutes(doctor.startTime);
     const end = this.timeToMinutes(doctor.endTime);
+    const breakStartMin = doctor.breakStart ? this.timeToMinutes(doctor.breakStart) : null;
+    const breakEndMin = doctor.breakEnd ? this.timeToMinutes(doctor.breakEnd) : null;
 
     // Regla de Negocio: Ventana de tiempo
     const config = await this.configService.getConfig();
     const minAdvanceHours = config?.minAdvanceHours ?? 2;
-    const maxFutureDays = config?.maxFutureDays ?? 30;
+    const appointmentWindowWeeks = config?.appointmentWindowWeeks ?? 4;
 
     while (current + doctor.appointmentDuration <= end) {
       const timeStr = this.minutesToTime(current);
@@ -138,9 +150,11 @@ export class AppointmentService {
       const slotDate = new Date(`${date}T${timeStr}`);
       const diffHours = (slotDate.getTime() - now.getTime()) / (1000 * 60 * 60);
       const horizonDate = new Date();
-      horizonDate.setDate(now.getDate() + maxFutureDays);
+      horizonDate.setDate(now.getDate() + appointmentWindowWeeks * 7);
 
-      if (!bookedSlots.includes(timeStr) && diffHours >= minAdvanceHours && slotDate <= horizonDate) {
+      const isDuringBreak = breakStartMin !== null && breakEndMin !== null && current >= breakStartMin && current < breakEndMin;
+
+      if (!bookedSlots.includes(timeStr) && diffHours >= minAdvanceHours && slotDate <= horizonDate && !isDuringBreak) {
         slots.push(timeStr);
       }
       current += doctor.appointmentDuration;
@@ -238,5 +252,44 @@ export class AppointmentService {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  }
+
+  /**
+   * Requisito Adicional Fase 8: Estadísticas del sistema
+   */
+  async getDashboardStats() {
+    const allAppointments = await this.appointmentRepository.find({ relations: ['doctor'] });
+    const allDoctors = await this.doctorRepository.find();
+    
+    let total = allAppointments.length;
+    let scheduled = 0;
+    let completed = 0;
+    let cancelled = 0;
+
+    const doctorCounts: Record<number, { name: string, count: number }> = {};
+    allDoctors.forEach(d => {
+      doctorCounts[d.id] = { name: `Dr(a). ${d.name}`, count: 0 };
+    });
+
+    allAppointments.forEach(app => {
+      if (app.status === 'agendada') scheduled++;
+      else if (app.status === 'completada') completed++;
+      else if (app.status === 'cancelada') cancelled++;
+      
+      if (app.doctor && doctorCounts[app.doctor.id]) {
+         doctorCounts[app.doctor.id].count++;
+      }
+    });
+
+    const doctorStats = Object.values(doctorCounts).map(d => ({
+      name: d.name,
+      count: d.count,
+      percentage: total > 0 ? Math.round((d.count / total) * 100) : 0
+    })).sort((a,b) => b.count - a.count);
+
+    return {
+      stats: { total, scheduled: scheduled, completed: completed, cancelled: cancelled },
+      doctorStats
+    };
   }
 }

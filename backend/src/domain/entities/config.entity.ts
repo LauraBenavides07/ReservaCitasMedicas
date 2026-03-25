@@ -8,6 +8,6 @@ export class Config {
   @Column({ default: 2 })
   minAdvanceHours: number;
 
-  @Column({ default: 30 })
-  maxFutureDays: number;
+  @Column({ default: 4 })
+  appointmentWindowWeeks: number;
 }

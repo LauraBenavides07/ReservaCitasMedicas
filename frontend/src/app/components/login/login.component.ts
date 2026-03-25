@@ -1,114 +1,100 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  template: `
-    <div class="login-container">
-      <h2 class="text-primary">Ingreso de Usuarios</h2>
-      <p>Acceda a su cuenta para gestionar citas y configuraciones.</p>
-
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-grid">
-        <div class="form-field">
-          <label for="login">Documento o Correo *</label>
-          <input id="login" type="text" formControlName="login" placeholder="Ej: 12345678" />
-        </div>
-
-        <div class="form-field">
-          <label for="password">Contraseña *</label>
-          <input id="password" type="password" formControlName="password" placeholder="********" />
-        </div>
-
-        <button type="submit" class="btn-primary" [disabled]="loginForm.invalid || isLoading()">
-          {{ isLoading() ? 'Cargando...' : 'Ingresar' }}
-        </button>
-
-        <div *ngIf="error()" class="alert-error">
-          {{ error() }}
-        </div>
-      </form>
-    </div>
-  `,
-  styles: `
-    .login-container {
-      background: var(--text-light);
-      padding: 2.5rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      max-width: 450px;
-      margin: 2rem auto;
-    }
-
-    .form-grid { display: grid; gap: 1.5rem; }
-    .form-field { display: flex; flex-direction: column; gap: 0.5rem; }
-    label { font-weight: bold; font-size: 1.1rem; }
-    input { 
-      border: 2px solid var(--secondary-color); 
-      border-radius: 8px; 
-      padding: 0.8rem; 
-      font-size: 1.1rem;
-      min-height: 48px;
-    }
-    input:focus { border-color: var(--primary-color); outline: none; }
-
-    .btn-primary {
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      padding: 1rem;
-      border-radius: 8px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      cursor: pointer;
-      min-height: 48px;
-    }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .alert-error {
-      background: #ffebee;
-      color: #c62828;
-      padding: 1rem;
-      border-radius: 8px;
-      font-weight: bold;
-      text-align: center;
-    }
-  `
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  loginForm: FormGroup;
+
+  // Evento para navegar entre vistas (login / register / landing)
+  @Output() navigate = new EventEmitter<any>();
+
+  // Signals (estado reactivo moderno en Angular)
   isLoading = signal(false);
   error = signal('');
 
-  constructor(private fb: FormBuilder, private auth: AuthService) {
+  // Formulario reactivo
+  loginForm: FormGroup;
+
+  // Inyección de dependencias
+  private fb = inject(FormBuilder);
+  private auth = inject(AuthService);
+  private router = inject(Router);
+
+  constructor() {
+    // Definición del formulario con validaciones
     this.loginForm = this.fb.group({
-      login: ['', Validators.required],
-      password: ['', Validators.required]
+      login: ['', [Validators.required]],
+      password: ['', [Validators.required]]
     });
   }
 
+  // Getter para acceder fácil a los controles del formulario
+  get f() {
+    return this.loginForm.controls;
+  }
+
+  // Método que se ejecuta al enviar el formulario
   onSubmit(): void {
-    if (this.loginForm.invalid) return;
+
+    // Si el formulario es inválido, marca todos los campos como tocados
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
+    // Activa estado de carga y limpia errores
     this.isLoading.set(true);
     this.error.set('');
 
+    // Llamado al servicio de login
     this.auth.login(this.loginForm.value).subscribe({
-      next: () => {
-        // Redirigir o cambiar de vista
+      next: (response) => {
         this.isLoading.set(false);
+
+        // Redirige según el rol del usuario
+        this.redirectByRole(response.user.role);
       },
       error: (err) => {
         console.error('Login error:', err);
+
+        // Desactiva loading
+        this.isLoading.set(false);
+
+        // Manejo de errores
         if (err.status === 0) {
-          this.error.set('No se pudo conectar con el servidor. Verifique si el backend está corriendo.');
+          this.error.set('No se pudo conectar con el servidor. Verifique si el backend esta corriendo.');
         } else {
           this.error.set(err.error?.message || 'Error al ingresar: ' + err.statusText);
         }
-        this.isLoading.set(false);
       }
     });
+  }
+
+  // Redirige según el rol del usuario
+  private redirectByRole(role: string): void {
+
+    // Normaliza el texto (minúsculas y sin espacios)
+    const normalizedRole = role.toLowerCase().trim();
+
+    if (normalizedRole === 'admin') {
+      this.router.navigate(['/admin/config']);
+
+    } else if (normalizedRole === 'staff' || normalizedRole === 'scheduler') {
+      this.router.navigate(['/appointments/list']);
+
+    } else if (normalizedRole === 'patient') {
+      this.router.navigate(['/appointments/list']);
+
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 }

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 export interface GlobalConfig {
   id: number;
   minAdvanceHours: number;
-  maxFutureDays: number;
+  appointmentWindowWeeks: number;
 }
 
 @Injectable({

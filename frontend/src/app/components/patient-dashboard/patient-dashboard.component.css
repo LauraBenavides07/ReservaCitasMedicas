@@ -1,0 +1,213 @@
+/* ============================================
+   PATIENT DASHBOARD - PREMIUM REDESIGN
+   Contenedor principal del dashboard
+   ============================================ */
+:host {
+    display: block;
+}
+
+.dashboard-container {
+    padding-top: 1rem;
+}
+
+/* Área del encabezado */
+.header-area {
+    margin-bottom: 2rem;
+}
+
+/* Título principal */
+.page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #1e3a6a;
+    font-family: 'Playfair Display', 'Georgia', serif;
+}
+
+/* ============================================
+   CARD CONTAINER
+   ============================================ */
+.card-container {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+/* Header de la tarjeta */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Título de la tarjeta */
+.card-title {
+    margin: 0;
+    font-size: 1.15rem;
+    color: #1e3a6a;
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-weight: 600;
+}
+
+/* ============================================
+   TABLE STYLES
+   ============================================ */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Encabezados */
+.styled-table th {
+    text-align: left;
+    padding: 1rem 1.5rem;
+    background: #f8fafc;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Celdas */
+.styled-table td {
+    padding: 1.25rem 1.5rem;
+    color: #0f172a;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* Hover fila */
+.styled-table tr:hover {
+    background: #fcfcfd;
+}
+
+/* Fila cancelada */
+.styled-table tr.cancelled td {
+    opacity: 0.6;
+}
+
+/* Celda de acciones */
+.actions-cell {
+    text-align: right;
+    min-width: 120px;
+}
+
+/* ============================================
+   BADGES
+   ============================================ */
+.status-badge {
+    display: inline-block;
+    padding: 0.35rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Estados */
+.badge-agendada {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-completada {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+.badge-cancelada {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Botón pequeño */
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+/* Botón principal */
+.btn-primary {
+    background: #1a3972;
+    color: #fff;
+}
+
+/* Hover */
+.btn-primary:hover:not(:disabled) {
+    background: #0d2c5b;
+}
+
+/* Botón cancelar */
+.btn-cancel-red {
+    background: #c2410c;
+    color: #ffffff;
+}
+
+/* Hover cancelar */
+.btn-cancel-red:hover {
+    background: #9a3412;
+}
+
+/* ============================================
+   LOADING & EMPTY STATE
+   ============================================ */
+
+/* Contenedor loading */
+.loading-state {
+    display: flex;
+    justify-content: center;
+    padding: 3rem;
+}
+
+/* Spinner */
+.spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #1a3972;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+}
+
+/* Animación */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Estado vacío */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #64748b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    .styled-table th,
+    .styled-table td {
+        padding: 1rem 0.75rem;
+    }
+}

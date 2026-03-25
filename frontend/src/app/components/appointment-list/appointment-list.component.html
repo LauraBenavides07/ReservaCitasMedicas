@@ -1,0 +1,102 @@
+<div class="search-container">
+
+    <!-- Barra de búsqueda -->
+    <div class="search-bar">
+
+        <!-- Selector de médico -->
+        <div class="search-field">
+            <label>MÉDICO / TERAPISTA</label>
+            <!-- ngModel enlaza el valor seleccionado -->
+            <select [(ngModel)]="selectedDoctorId">
+                <option [ngValue]="null" disabled>Seleccionar...</option>
+
+                <!-- Itera sobre la lista de doctores -->
+                <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
+                    Dr(a). {{ doctor.name }} - {{ doctor.specialty }}
+                </option>
+            </select>
+        </div>
+
+        <!-- Selector de fecha -->
+        <div class="search-field" style="max-width: 250px;">
+            <label>FECHA</label>
+            <input type="date" [(ngModel)]="selectedDate">
+        </div>
+
+        <!-- Botón buscar -->
+        <button class="btn-search" (click)="onSearch()" [disabled]="!selectedDoctorId || !selectedDate || loading">
+
+            <!-- Icono -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+
+            <!-- Texto dinámico -->
+            {{ loading ? 'Buscando' : 'Buscar' }}
+        </button>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="loading" class="empty-state">
+        <p>Cargando citas...</p>
+    </div>
+
+    <!-- Estado inicial -->
+    <div class="empty-state" *ngIf="!hasSearched && !loading">
+        <div class="empty-icon">
+            <svg width="64" height="64"></svg>
+        </div>
+        <p>Selecciona médico y fecha.</p>
+    </div>
+
+    <!-- Sin resultados -->
+    <div class="empty-state" *ngIf="hasSearched && !loading && appointments.length === 0">
+        <p>No hay citas programadas para este médico en la fecha seleccionada.</p>
+    </div>
+
+    <!-- Resultados -->
+    <div class="results-card" *ngIf="hasSearched && !loading && appointments.length > 0">
+
+        <!-- Encabezado -->
+        <div class="results-header">
+            <h3>Citas Programadas ({{ total }})</h3>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-container">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Paciente</th>
+                        <th>Documento</th>
+                        <th>Teléfono</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <!-- Itera sobre citas -->
+                    <tr *ngFor="let appt of appointments" class="appointment-row">
+                        <td><strong>{{ appt?.time }}</strong></td>
+
+                        <!-- Manejo de valores nulos -->
+                        <td>{{ appt?.patient?.firstName || 'Sin' }} {{ appt?.patient?.lastName || 'Paciente' }}</td>
+                        <td>{{ appt?.patient?.document || 'N/A' }}</td>
+                        <td>{{ appt?.patient?.phone || 'N/A' }}</td>
+
+                        <!-- Estado dinámico -->
+                        <td>
+                            <span class="badge" [class]="getStatusClass(appt?.status)">
+                                {{ appt?.status || 'desconocido' }}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>

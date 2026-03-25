@@ -1,0 +1,132 @@
+<!-- Barra de navegación principal con efecto de scroll -->
+<nav class="navbar" [class.scrolled]="isScrolled()">
+
+  <!-- Logo que redirige al inicio -->
+  <a href="#" class="logo">
+    <img src="img/logo.png" alt="Piedrazul Logo" class="logo-img">
+    <div class="logo-text">
+      <span class="brand">Piedrazul</span>
+      <span class="sub-brand">CENTRO MÉDICO</span>
+    </div>
+  </a>
+
+  <!-- Enlaces de navegación para versión escritorio -->
+  <div class="nav-links">
+    <a href="#servicios" (click)="scrollTo('servicios', $event)">Servicios</a>
+    <a href="#medicos" (click)="scrollTo('medicos', $event)">Médicos</a>
+  </div>
+
+  <!-- Botones de acción para versión escritorio -->
+  <div class="nav-actions">
+    <button class="btn-outline-light" (click)="navigate.emit('login')">
+      Iniciar sesión
+    </button>
+    <button class="btn-primary-light btn-nav" (click)="navigate.emit('login')">
+      Registrate
+    </button>
+  </div>
+
+  <!-- Botón para abrir/cerrar menú en dispositivos móviles -->
+  <button class="mobile-menu-btn" (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen()" aria-label="Toggle menu"
+    aria-controls="mobile-menu">
+    <!-- Icono de hamburguesa cuando el menú está cerrado -->
+    <svg *ngIf="!isMenuOpen()" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24"
+      stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    <!-- Icono de cerrar cuando el menú está abierto -->
+    <svg *ngIf="isMenuOpen()" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24"
+      stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+</nav>
+
+<div class="landing-page">
+  <!-- Capa de fondo semi-transparente para el menú móvil -->
+  <div class="mobile-menu-overlay" [class.active]="isMenuOpen()" (click)="toggleMenu()" aria-hidden="true"></div>
+
+  <!-- Panel del menú móvil con navegación -->
+  <div id="mobile-menu" class="mobile-menu" [class.active]="isMenuOpen()" role="dialog" aria-modal="true"
+    aria-label="Menu de navegacion">
+    <div class="mobile-menu-content">
+      <nav class="mobile-nav-links">
+        <a href="#servicios" (click)="scrollTo('servicios', $event); toggleMenu()">Servicios</a>
+        <a href="#medicos" (click)="scrollTo('medicos', $event); toggleMenu()">Medicos</a>
+      </nav>
+      <div class="mobile-nav-actions">
+        <button class="btn-outline-light" (click)="navigate.emit('login'); toggleMenu()">
+          Iniciar sesión
+        </button>
+        <button class="btn-primary-light" (click)="navigate.emit('login'); toggleMenu()">
+          Registrate
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección principal Hero -->
+  <main class="hero-section">
+    <!-- Columna izquierda: contenido textual -->
+    <div class="hero-content">
+      <div class="badge">
+        <span class="dot"></span> RED DE SERVICIOS MÉDICOS
+      </div>
+
+      <h1 class="hero-title">
+        Salud y bienestar
+      </h1>
+
+      <p class="hero-description" style="margin-bottom: 1rem;">
+        La red de servicios medicos de Piedrazul de Popayan es una organizacion
+        sin animo de lucro que brinda atencion en salud a la comunidad en general,
+        enfocandose en tratamientos de medicina alternativa.
+      </p>
+
+      <p class="hero-location">
+        <span>📍 Kilometro 5 via al Huila</span>
+        <span class="divider">|</span>
+        <span>🕐 Lunes a viernes, 7:00 a.m. - 1:00 p.m.</span>
+      </p>
+
+      <!-- Sección de servicios con chips decorativos -->
+      <div id="servicios" class="hero-services">
+        <div class="services-list">
+          <span class="service-chip">🧠 Terapia Neural</span>
+          <span class="service-chip">🦴 Quiropractica</span>
+          <span class="service-chip">💪 Fisioterapia</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna derecha: tarjeta con lista de especialistas -->
+    <div class="hero-visual">
+      <div class="glass-card" id="medicos">
+        <h3 class="card-title">Nuestros especialistas</h3>
+
+        <!-- Lista de médicos, muestra estado de carga mientras se obtienen datos -->
+        <div class="doctors-list" *ngIf="doctors().length > 0; else noDoctors">
+          <div class="doctor-item" *ngFor="let doc of doctors()">
+            <!-- Avatar con iniciales del médico y color dinámico -->
+            <div class="avatar" [ngClass]="'avatar-' + (doc.id % 4)">
+              {{ getInitials(doc.name) }}
+            </div>
+            <div class="doc-info">
+              <span class="doc-name">{{ doc.name }}</span>
+              <span class="doc-specialty">{{ doc.specialty || 'Especialidad General' }}</span>
+            </div>
+            <div class="doc-status">
+              <span class="status-badge">Disponible</span>
+            </div>
+          </div>
+        </div>
+        <!-- Template para estado de carga -->
+        <ng-template #noDoctors>
+          <div class="doctor-item loading-state">
+            Cargando especialistas...
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </main>
+</div>

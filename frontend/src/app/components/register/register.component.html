@@ -1,0 +1,98 @@
+<!-- Modal de registro de usuario -->
+<div class="auth-overlay">
+    <div class="auth-card">
+        <!-- Encabezado del modal con logo y título -->
+        <div class="auth-header">
+            <!-- Botón para cerrar el modal -->
+            <button class="btn-close" (click)="navigate.emit('landing')" aria-label="Cerrar">×</button>
+            <div class="header-content">
+                <img src="img/logo.png" alt="Piedrazul Logo" class="logo-img">
+                <h1 class="auth-title">Bienvenido a Piedrazul</h1>
+                <p class="auth-subtitle">Centro Médico Especializado</p>
+            </div>
+            <!-- Elementos decorativos de fondo -->
+            <div class="header-decorator circle-1"></div>
+            <div class="header-decorator circle-2"></div>
+        </div>
+
+        <!-- Pestañas de navegación entre login y registro -->
+        <div class="auth-tabs">
+            <button class="tab-btn" (click)="navigate.emit('login')">Iniciar sesión</button>
+            <button class="tab-btn active" (click)="$event.preventDefault()">Crear cuenta</button>
+        </div>
+
+        <!-- Cuerpo del modal con el formulario de registro -->
+        <div class="auth-body">
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                <!-- Fila de nombres y apellidos (2 columnas) -->
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-field">
+                        <label>NOMBRES *</label>
+                        <input type="text" formControlName="firstName" placeholder="Tu nombre"
+                            [class.input-error]="f['firstName'].invalid && f['firstName'].touched">
+                    </div>
+                    <div class="form-field">
+                        <label>APELLIDOS *</label>
+                        <input type="text" formControlName="lastName" placeholder="Tus apellidos"
+                            [class.input-error]="f['lastName'].invalid && f['lastName'].touched">
+                    </div>
+                </div>
+
+                <!-- Fila de documento y teléfono (2 columnas) -->
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-field">
+                        <label>DOCUMENTO *</label>
+                        <input type="text" formControlName="document" placeholder="Número de identidad"
+                            [class.input-error]="f['document'].invalid && f['document'].touched">
+                    </div>
+                    <div class="form-field">
+                        <label>TELÉFONO *</label>
+                        <input type="tel" formControlName="phone" placeholder="Celular"
+                            [class.input-error]="f['phone'].invalid && f['phone'].touched">
+                    </div>
+                </div>
+
+                <!-- Fila de correo y género (2 columnas) -->
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-field">
+                        <label>CORREO ELECTRÓNICO *</label>
+                        <input type="email" formControlName="email" placeholder="correo@ejemplo.com"
+                            [class.input-error]="f['email'].invalid && f['email'].touched">
+                    </div>
+                    <div class="form-field">
+                        <label>GÉNERO *</label>
+                        <select formControlName="gender"
+                            [class.input-error]="f['gender'].invalid && f['gender'].touched">
+                            <option value="">Seleccione</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                            <option value="O">Otro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Campo de contraseña -->
+                <div class="form-field">
+                    <label>CONTRASEÑA *</label>
+                    <input type="password" formControlName="password" placeholder="Mínimo 8 caracteres"
+                        [class.input-error]="f['password'].invalid && f['password'].touched">
+                </div>
+
+                <!-- Mensaje de error del registro -->
+                <div *ngIf="error()" class="alert alert-error">
+                    {{ error() }}
+                </div>
+
+                <!-- Mensaje de éxito del registro -->
+                <div *ngIf="successMessage()" class="alert alert-success">
+                    {{ successMessage() }}
+                </div>
+
+                <!-- Botón de envío del formulario -->
+                <button type="submit" class="btn btn-primary btn-full" [disabled]="isLoading()">
+                    {{ isLoading() ? 'Creando cuenta...' : 'Crear cuenta gratuita' }}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -9,6 +9,9 @@ export interface Doctor {
   startTime: string;
   endTime: string;
   appointmentDuration: number;
+  workingDays: string;
+  breakStart?: string;
+  breakEnd?: string;
 }
 
 @Injectable({

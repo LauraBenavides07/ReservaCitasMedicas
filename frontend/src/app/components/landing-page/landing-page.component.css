@@ -1,0 +1,778 @@
+/* ============================================
+   VARIABLES - PALETA PIEDRAZUL
+   ============================================ */
+:host {
+  --primary: #1a3972;
+  --primary-dark: #0d2c5b;
+  --primary-light: #113669;
+  --accent: #9bbfd7;
+  --secondary: #547ea8;
+  --bg-light: #e0eeef;
+  --white: #ffffff;
+  --text-light: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   BASE
+   ============================================ */
+:host {
+  display: block;
+  min-height: 100vh;
+  /* Fondo degradado radial que va del azul claro al azul oscuro */
+  background: radial-gradient(circle at top right, var(--primary-light) 0%, var(--primary-dark) 60%, #051024 100%);
+  color: var(--text-light);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Reset de estilos para todos los elementos */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Contenedor principal de la página de aterrizaje */
+.landing-page {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 5%;
+  display: block;
+  flex-direction: column;
+}
+
+/* ============================================
+   NAVBAR
+   ============================================ */
+/* Barra de navegación fija en la parte superior */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1.25rem 5%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(8, 26, 56, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--glass-border);
+  transition: all 0.3s ease;
+}
+
+/* Estilo del navbar cuando se ha hecho scroll */
+.navbar.scrolled {
+  padding: 0.75rem 5%;
+  background: rgba(8, 26, 56, 0.98);
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Imagen del logo */
+.logo-img {
+  width: 50px;
+  height: auto;
+  display: block;
+}
+
+/* Contenedor del texto del logo */
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Nombre de la marca */
+.brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: white;
+}
+
+/* Subtítulo de la marca */
+.sub-brand {
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-top: 0.2rem;
+  text-transform: uppercase;
+}
+
+/* Enlaces de navegación para escritorio */
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  margin-left: auto;
+}
+
+/* Estilo de cada enlace */
+.nav-links a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  position: relative;
+  padding: 0.5rem 0;
+}
+
+/* Línea decorativa que aparece al hacer hover */
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+/* Efecto hover para enlaces */
+.nav-links a:hover {
+  color: var(--text-light);
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* Contenedor de acciones de navegación para escritorio */
+.nav-actions {
+  display: flex;
+  gap: 1rem;
+  margin-left: 1rem;
+}
+
+/* ============================================
+   BOTONES
+   ============================================ */
+/* Estilo base para botones de navegación */
+.btn-nav {
+  min-height: 44px;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Botón con borde transparente */
+.btn-outline-light {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--text-light);
+  padding: 0.6rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 44px;
+}
+
+/* Efecto hover para botón outline */
+.btn-outline-light:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--text-light);
+  transform: translateY(-2px);
+}
+
+/* Botón primario con fondo blanco */
+.btn-primary-light {
+  background: var(--white);
+  color: var(--primary-dark);
+  border: 1px solid var(--white);
+  padding: 0.6rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 44px;
+}
+
+/* Efecto hover para botón primario */
+.btn-primary-light:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+/* Botón del menú móvil */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+}
+
+/* Estado focus para accesibilidad */
+.mobile-menu-btn:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   MOBILE MENU
+   ============================================ */
+/* Capa de fondo semi-transparente del menú móvil */
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Estado activo del overlay */
+.mobile-menu-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Panel lateral del menú móvil */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 280px;
+  max-width: 85vw;
+  height: 100vh;
+  background: rgba(8, 26, 56, 0.98);
+  backdrop-filter: blur(10px);
+  z-index: 999;
+  padding: 6rem 2rem 2rem;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Estado activo del menú móvil (visible) */
+.mobile-menu.active {
+  transform: translateX(0);
+}
+
+/* Contenido interno del menú móvil */
+.mobile-menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Enlaces de navegación en móvil */
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mobile-nav-links a {
+  color: var(--text-light);
+  text-decoration: none;
+  font-size: 1.25rem;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  transition: color 0.2s;
+}
+
+.mobile-nav-links a:hover {
+  color: var(--accent);
+}
+
+/* Botones de acción en móvil */
+.mobile-nav-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mobile-nav-actions .btn-outline-light,
+.mobile-nav-actions .btn-primary-light {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+/* Sección principal hero con grid de dos columnas */
+.hero-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  flex: 1;
+  padding: 3rem 0;
+}
+
+/* Contenido textual del hero */
+.hero-content {
+  max-width: 600px;
+}
+
+/* Insignia decorativa */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--glass-bg);
+  padding: 1rem;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border: 1px solid var(--glass-border);
+  margin-bottom: 1rem;
+  color: var(--accent);
+}
+
+/* Punto animado en la insignia */
+.badge .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+/* Animación de pulso para el punto */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Título principal */
+.hero-title {
+  font-size: 4rem;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+/* Descripción del hero */
+.hero-description {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1rem;
+}
+
+/* Información de ubicación y horario */
+.hero-location {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  margin-bottom: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Separador en la información de ubicación */
+.hero-location .divider {
+  opacity: 0.3;
+}
+
+/* Sección de servicios */
+.hero-services {
+  margin-top: 1rem;
+}
+
+/* Lista de servicios */
+.services-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+/* Chip individual de servicio */
+.service-chip {
+  background: rgba(155, 191, 215, 0.1);
+  border: 1px solid rgba(155, 191, 215, 0.3);
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--bg-light);
+  transition: all 0.2s;
+}
+
+.service-chip:hover {
+  background: rgba(155, 191, 215, 0.2);
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   GLASS CARD
+   ============================================ */
+/* Contenedor de la tarjeta con efecto vidrio */
+.hero-visual {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Tarjeta con efecto vidrio esmerilado */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 450px;
+  transition: transform 0.3s;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Título de la tarjeta */
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-light);
+}
+
+/* Lista de médicos */
+.doctors-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* Item individual de médico */
+.doctor-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.doctor-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+/* Avatar del médico */
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+/* Colores de avatar según índice */
+.avatar-0 {
+  background: #3b82f6;
+}
+
+.avatar-1 {
+  background: #8b5cf6;
+}
+
+.avatar-2 {
+  background: #10b981;
+}
+
+.avatar-3 {
+  background: #ef4444;
+}
+
+/* Información del médico */
+.doc-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Nombre del médico */
+.doc-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Especialidad del médico */
+.doc-specialty {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Contenedor del estado */
+.doc-status {
+  flex-shrink: 0;
+}
+
+/* Insignia de estado del médico */
+.status-badge {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Estado de carga */
+.loading-state {
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  padding: 2rem;
+}
+
+/* ============================================
+   RESPONSIVE - TABLET
+   ============================================ */
+@media (max-width: 1024px) {
+  .hero-section {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: 3rem;
+  }
+
+  .hero-content {
+    margin: 0 auto;
+  }
+
+  .hero-location {
+    justify-content: center;
+  }
+
+  .hero-services {
+    display: flex;
+    justify-content: center;
+  }
+
+  .services-list {
+    justify-content: center;
+  }
+
+  .hero-visual {
+    justify-content: center;
+  }
+
+  .glass-card {
+    margin: 0 auto;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE
+   ============================================ */
+@media (max-width: 768px) {
+  .landing-page {
+    padding: 0 1.5rem;
+  }
+
+  .navbar {
+    padding: 1rem 0;
+  }
+
+  .logo-img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .brand {
+    font-size: 1.25rem;
+  }
+
+  .sub-brand {
+    font-size: 0.55rem;
+  }
+
+  /* Ocultar enlaces de escritorio en móvil */
+  .nav-links {
+    display: none;
+  }
+
+  .nav-actions {
+    display: none;
+  }
+
+  /* Mostrar botón de menú móvil */
+  .mobile-menu-btn {
+    display: block;
+  }
+
+  .mobile-menu-overlay {
+    display: block;
+  }
+
+  .mobile-menu {
+    display: block;
+  }
+
+  .hero-title {
+    font-size: 2.25rem;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+  }
+
+  .hero-location {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .hero-location .divider {
+    display: none;
+  }
+
+  .services-list {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .service-chip {
+    justify-content: center;
+  }
+
+  .glass-card {
+    padding: 1.5rem;
+  }
+
+  .doctor-item {
+    padding: 0.75rem;
+  }
+
+  .doc-name {
+    font-size: 0.9rem;
+  }
+
+  .doc-specialty {
+    font-size: 0.8rem;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE PEQUEÑO
+   ============================================ */
+@media (max-width: 480px) {
+  .landing-page {
+    padding: 0 1rem;
+  }
+
+  .hero-title {
+    font-size: 1.875rem;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .logo-img {
+    width: 45px;
+    height: 45px;
+  }
+
+  .brand {
+    font-size: 1.1rem;
+  }
+
+  .mobile-menu {
+    width: 100%;
+    max-width: 100vw;
+    padding: 5rem 1.5rem 1.5rem;
+  }
+
+  .mobile-nav-links a {
+    font-size: 1.1rem;
+  }
+
+  .glass-card {
+    border-radius: 16px;
+  }
+}
+
+/* ============================================
+   ACCESIBILIDAD
+   ============================================ */
+/* Reduce animaciones para usuarios que prefieren movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Estilos de focus para accesibilidad por teclado */
+.btn-nav:focus-visible,
+.nav-links a:focus-visible,
+.mobile-menu-btn:focus-visible,
+.mobile-nav-links a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

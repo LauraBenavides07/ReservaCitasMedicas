@@ -1,0 +1,51 @@
+<div class="auth-overlay">
+  <div class="auth-card">
+    <div class="auth-header">
+      <button class="btn-close" (click)="navigate.emit('landing')" aria-label="Cerrar">×</button>
+      <div class="header-content">
+        <img src="img/logo.png" alt="Piedrazul Logo" class="logo-img">
+        <h1 class="auth-title">Bienvenido a Piedrazul</h1>
+        <p class="auth-subtitle">Centro Médico Especializado</p>
+      </div>
+      <!-- Background decorators -->
+      <div class="header-decorator circle-1"></div>
+      <div class="header-decorator circle-2"></div>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="tab-btn active" (click)="$event.preventDefault()">Iniciar sesión</button>
+      <button class="tab-btn" (click)="navigate.emit('register')">Crear cuenta</button>
+    </div>
+
+    <div class="auth-body">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-field">
+          <label>CORREO ELECTRÓNICO</label>
+          <input type="email" formControlName="login" placeholder="correo@ejemplo.com"
+            [class.input-error]="f['login'].invalid && f['login'].touched">
+          <div *ngIf="f['login'].invalid && f['login'].touched" class="error-message">
+            El correo es requerido.
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label>CONTRASEÑA</label>
+          <input type="password" formControlName="password" placeholder="••••••••"
+            [class.input-error]="f['password'].invalid && f['password'].touched">
+          <div *ngIf="f['password'].invalid && f['password'].touched" class="error-message">
+            La contraseña es requerida.
+          </div>
+        </div>
+
+        <div *ngIf="error()" class="alert alert-error">
+          {{ error() }}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" [disabled]="isLoading()">
+          {{ isLoading() ? 'Ingresando...' : 'Ingresar' }}
+        </button>
+      </form>
+
+    </div>
+  </div>
+</div>

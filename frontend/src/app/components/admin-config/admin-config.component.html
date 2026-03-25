@@ -1,0 +1,252 @@
+<!-- Contenedor principal de la configuración administrativa -->
+<div class="admin-config-container">
+    <!-- Encabezado con título de la página -->
+    <div class="header-area">
+        <h2 class="page-title">Configuración</h2>
+    </div>
+
+    <!-- Pestañas de navegación -->
+    <nav class="tabs">
+        <!-- Pestaña Horarios -->
+        <button [class.active]="activeTab() === 'horarios'" (click)="activeTab.set('horarios')" class="tab-btn">
+            <span class="icon">⚙️</span> Horarios
+        </button>
+        <!-- Pestaña Estadísticas -->
+        <button [class.active]="activeTab() === 'estadisticas'" (click)="activeTab.set('estadisticas')" class="tab-btn">
+            <span class="icon">📊</span> Estadísticas
+        </button>
+    </nav>
+
+    <!-- PESTAÑA HORARIOS -->
+    <!-- Sección visible solo cuando la pestaña activa es 'horarios' -->
+    <section *ngIf="activeTab() === 'horarios'" class="tab-content">
+        <!-- Barra de acciones con botones para configuraciones globales y añadir médico -->
+        <div class="actions-bar">
+            <button class="btn btn-secondary" (click)="showGlobalConfig.set(true)">⚙️ Globales</button>
+            <button class="btn btn-primary" (click)="openDoctorForm()">+ Añadir Médico</button>
+        </div>
+
+        <!-- Lista de tarjetas de médicos -->
+        <div class="doctor-cards-list">
+            <!-- Tarjeta individual por cada médico en la lista -->
+            <div class="doctor-card" *ngFor="let doctor of doctors()">
+                <!-- Información principal: avatar y detalles -->
+                <div class="doc-main-info">
+                    <!-- Avatar con color dinámico según el ID del médico -->
+                    <div class="doc-avatar" [ngStyle]="{'background-color': getDoctorColor(doctor.id)}">
+                        {{ doctor.name.substring(0,2).toUpperCase() }}
+                    </div>
+                    <!-- Nombre y especialidad -->
+                    <div class="doc-details">
+                        <h4 class="doc-name">{{ doctor.name }}</h4>
+                        <p class="doc-specialty">{{ doctor.specialty }}</p>
+                    </div>
+                </div>
+
+                <!-- Información intermedia: horario y ventana de citas -->
+                <div class="doc-middle-info">
+                    <div class="info-block">
+                        <span class="label">Horario:</span>
+                        <span class="value">{{ doctor.startTime }}–{{ doctor.endTime }}</span>
+                    </div>
+                    <div class="info-block">
+                        <span class="label">Ventana:</span>
+                        <span class="value">{{ configForm.value.appointmentWindowWeeks || 4 }} sem</span>
+                    </div>
+                </div>
+
+                <!-- Información derecha: duración de cita y días laborales -->
+                <div class="doc-right-info">
+                    <div class="info-block">
+                        <span class="label">Intervalo:</span>
+                        <span class="value">{{ doctor.appointmentDuration }} min</span>
+                    </div>
+                    <div class="info-block">
+                        <span class="label">Días:</span>
+                        <span class="value">{{ formatDays(doctor.workingDays) }}</span>
+                    </div>
+                </div>
+
+                <!-- Acción: botón para editar el médico -->
+                <div class="doc-actions">
+                    <button class="btn-edit-dark" (click)="openDoctorForm(doctor)">✏️ Editar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PESTAÑA ESTADÍSTICAS -->
+    <!-- Sección visible solo cuando la pestaña activa es 'estadisticas' -->
+    <section *ngIf="activeTab() === 'estadisticas'" class="tab-content">
+        <!-- Grid de tarjetas con estadísticas generales -->
+        <div class="stats-grid">
+            <!-- Tarjeta total de citas -->
+            <div class="stat-card">
+                <div class="stat-icon icon-total">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </div>
+                <div class="stat-value">{{ stats.total }}</div>
+                <div class="stat-label">TOTAL</div>
+            </div>
+            <!-- Tarjeta de citas agendadas -->
+            <div class="stat-card">
+                <div class="stat-icon icon-scheduled">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                        <polyline points="9 11 12 14 22 4"></polyline>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                </div>
+                <div class="stat-value">{{ stats.scheduled }}</div>
+                <div class="stat-label">AGENDADAS</div>
+            </div>
+            <!-- Tarjeta de citas completadas -->
+            <div class="stat-card">
+                <div class="stat-icon icon-completed">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+                <div class="stat-value">{{ stats.completed }}</div>
+                <div class="stat-label">COMPLETADAS</div>
+            </div>
+            <!-- Tarjeta de citas canceladas -->
+            <div class="stat-card">
+                <div class="stat-icon icon-cancelled">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </div>
+                <div class="stat-value">{{ stats.cancelled }}</div>
+                <div class="stat-label">CANCELADAS</div>
+            </div>
+        </div>
+
+        <!-- Tabla de citas por médico -->
+        <div class="card table-card">
+            <h3 class="card-title">Citas por médico</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>MÉDICO</th>
+                        <th>CITAS</th>
+                        <th>PROPORCIÓN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Fila por cada médico con sus estadísticas -->
+                    <tr *ngFor="let ds of doctorStats">
+                        <td>{{ ds.name }}</td>
+                        <td>{{ ds.count }}</td>
+                        <!-- Barra de progreso que representa el porcentaje -->
+                        <td class="proportion-cell">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" [style.width.%]="ds.percentage"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Modal Médico -->
+    <!-- Modal que se muestra al añadir o editar un médico -->
+    <div *ngIf="showDoctorForm()" class="modal-overlay">
+        <div class="modal">
+            <h3 class="modal-title">
+                {{ selectedDoctor() ? 'Editar Médico' : 'Añadir Médico' }}
+            </h3>
+            <form [formGroup]="doctorForm" (ngSubmit)="saveDoctor()" class="form-grid">
+                <!-- Campo: nombre completo -->
+                <div class="form-field">
+                    <label for="doctor-name">Nombre Completo</label>
+                    <input id="doctor-name" formControlName="name" placeholder="Dr. Juan Perez" />
+                </div>
+                <!-- Campo: especialidad -->
+                <div class="form-field">
+                    <label for="doctor-specialty">Especialidad</label>
+                    <input id="doctor-specialty" formControlName="specialty" placeholder="Fisioterapia" />
+                </div>
+
+                <!-- Fila con hora inicio y hora fin -->
+                <div class="form-row" style="display:flex; gap:1rem;">
+                    <div class="form-field" style="flex:1;">
+                        <label for="doctor-startTime">Hora Inicio</label>
+                        <input id="doctor-startTime" type="time" formControlName="startTime" />
+                    </div>
+                    <div class="form-field" style="flex:1;">
+                        <label for="doctor-endTime">Hora Fin</label>
+                        <input id="doctor-endTime" type="time" formControlName="endTime" />
+                    </div>
+                </div>
+
+                <!-- Campo: duración de la cita -->
+                <div class="form-field">
+                    <label for="doctor-duration">Duración Cita (min)</label>
+                    <input id="doctor-duration" type="number" formControlName="appointmentDuration" />
+                </div>
+                <!-- Campo: días laborables -->
+                <div class="form-field">
+                    <label for="doctor-workingDays">Días (1,2... lun-vie)</label>
+                    <input id="doctor-workingDays" formControlName="workingDays" placeholder="1,2,3,4,5" />
+                </div>
+
+                <!-- Fila con inicio y fin de descanso -->
+                <div class="form-row" style="display:flex; gap:1rem;">
+                    <div class="form-field" style="flex:1;">
+                        <label for="doctor-breakStart">Inicio Descanso</label>
+                        <input id="doctor-breakStart" type="time" formControlName="breakStart" />
+                    </div>
+                    <div class="form-field" style="flex:1;">
+                        <label for="doctor-breakEnd">Fin Descanso</label>
+                        <input id="doctor-breakEnd" type="time" formControlName="breakEnd" />
+                    </div>
+                </div>
+
+                <!-- Botones de acción del modal -->
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary" [disabled]="doctorForm.invalid">Guardar</button>
+                    <button type="button" *ngIf="selectedDoctor()" (click)="deleteDoctor(selectedDoctor()!.id)"
+                        class="btn btn-delete">Eliminar</button>
+                    <button type="button" (click)="showDoctorForm.set(false)" class="btn btn-cancel">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Configuración Global -->
+    <!-- Modal para configurar reglas globales de agendamiento -->
+    <div *ngIf="showGlobalConfig()" class="modal-overlay">
+        <div class="modal w-500">
+            <h3 class="modal-title">Reglas de Agendamiento Global</h3>
+            <p style="margin-bottom: 2rem; color: #64748b;">
+                Antelación mínima y límite de visualización en el calendario para todos los médicos.
+            </p>
+
+            <form [formGroup]="configForm" (ngSubmit)="saveConfig()" class="form-grid">
+                <!-- Campo: antelación mínima en horas -->
+                <div class="form-field">
+                    <label for="config-minAdvance">Antelación Mínima (Horas)</label>
+                    <input id="config-minAdvance" type="number" formControlName="minAdvanceHours" />
+                </div>
+                <!-- Campo: ventana máxima en semanas -->
+                <div class="form-field">
+                    <label for="config-window">Ventana Máxima (Semanas)</label>
+                    <input id="config-window" type="number" formControlName="appointmentWindowWeeks" />
+                </div>
+                <!-- Botones de acción del modal -->
+                <div class="modal-actions" style="margin-top: 1.5rem;">
+                    <button type="submit" class="btn btn-primary" [disabled]="configForm.invalid">Actualizar</button>
+                    <button type="button" (click)="showGlobalConfig.set(false)" class="btn btn-cancel">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

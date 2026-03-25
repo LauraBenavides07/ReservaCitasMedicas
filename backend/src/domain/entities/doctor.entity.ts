@@ -21,6 +21,15 @@ export class Doctor {
   @Column({ default: 30 })
   appointmentDuration: number; // minutes
 
+  @Column({ default: '1,2,3,4,5' })
+  workingDays: string; // 1=Mon, 2=Tue, ..., 7=Sun
+
+  @Column({ nullable: true })
+  breakStart: string; // HH:mm
+
+  @Column({ nullable: true })
+  breakEnd: string; // HH:mm
+
   @OneToMany(() => Appointment, (appointment) => appointment.doctor)
   appointments: Appointment[];
 }

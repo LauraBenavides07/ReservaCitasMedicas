@@ -16,7 +16,7 @@ export class ConfigService implements OnModuleInit {
     if (count === 0) {
       await this.configRepository.save({
         minAdvanceHours: 2,
-        maxFutureDays: 30,
+        appointmentWindowWeeks: 4,
       });
     }
   }
