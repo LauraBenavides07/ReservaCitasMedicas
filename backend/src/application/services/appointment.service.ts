@@ -292,4 +292,13 @@ export class AppointmentService {
       doctorStats
     };
   }
+    /**
+   * Listar TODAS las citas (sin filtrar)
+   */
+  async findAll() {
+    return this.appointmentRepository.find({
+      relations: ['doctor', 'patient'],
+      order: { date: 'DESC', time: 'ASC' }
+    });
+  }
 }

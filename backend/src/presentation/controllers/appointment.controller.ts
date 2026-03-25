@@ -68,4 +68,11 @@ export class AppointmentController {
   ) {
     return this.appointmentService.getAvailableSlots(doctorId, date);
   }
+  /**
+   * Listar TODAS las citas (sin filtrar por médico)
+  */
+    @Get('all')
+    async findAllAppointments() {
+      return this.appointmentService.findAll();
+    }
 }

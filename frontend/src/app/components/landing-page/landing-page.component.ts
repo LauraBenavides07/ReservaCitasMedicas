@@ -3,6 +3,7 @@ import { Component, EventEmitter, Output, OnInit, signal, HostListener } from '@
 import { CommonModule } from '@angular/common';
 import { DoctorService, Doctor } from '../../services/doctor.service';
 
+
 @Component({
   selector: 'app-landing-page',
   standalone: true,
@@ -13,6 +14,10 @@ import { DoctorService, Doctor } from '../../services/doctor.service';
 export class LandingPageComponent implements OnInit {
   // Evento de salida para navegación hacia el componente padre
   @Output() navigate = new EventEmitter<'login'>();
+ 
+  // Variables
+  currentSlide = 0;
+  totalSlides = 3;
 
   // Señales para estado reactivo
   doctors = signal<Doctor[]>([]);
@@ -103,4 +108,17 @@ export class LandingPageComponent implements OnInit {
   ngOnDestroy(): void {
     document.body.style.overflow = '';
   }
+  
+  // Metodos carrusel 
+    nextSlide(): void {
+      this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    }
+
+    prevSlide(): void {
+      this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    }
+
+    goToSlide(index: number): void {
+      this.currentSlide = index;
+    }
 }

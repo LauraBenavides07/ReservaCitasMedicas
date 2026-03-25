@@ -66,7 +66,7 @@
   </div>
 
   <!-- Sección principal Hero -->
-  <main class="hero-section">
+  <main class="hero-section" id="inicio">
     <!-- Columna izquierda: contenido textual -->
     <div class="hero-content">
       <div class="badge">
@@ -89,6 +89,7 @@
         <span>🕐 Lunes a viernes, 7:00 a.m. - 1:00 p.m.</span>
       </p>
 
+
       <!-- Sección de servicios con chips decorativos -->
       <div id="servicios" class="hero-services">
         <div class="services-list">
@@ -98,35 +99,100 @@
         </div>
       </div>
     </div>
-
-    <!-- Columna derecha: tarjeta con lista de especialistas -->
-    <div class="hero-visual">
-      <div class="glass-card" id="medicos">
-        <h3 class="card-title">Nuestros especialistas</h3>
-
-        <!-- Lista de médicos, muestra estado de carga mientras se obtienen datos -->
-        <div class="doctors-list" *ngIf="doctors().length > 0; else noDoctors">
-          <div class="doctor-item" *ngFor="let doc of doctors()">
-            <!-- Avatar con iniciales del médico y color dinámico -->
-            <div class="avatar" [ngClass]="'avatar-' + (doc.id % 4)">
-              {{ getInitials(doc.name) }}
+    <!-- Columna derecha: Carrusel de imágenes -->
+      <div class="hero-visual">
+        <div class="carousel-container">
+          <div class="carousel-track" [style.transform]="'translateX(-' + currentSlide * 100 + '%)'">
+            
+            <!-- Slide 1 -->
+            <div class="carousel-slide">
+              <div class="carousel-card">
+                <img src="img/agendacita.png" alt="Agendar cita" class="carousel-img">
+                <div class="carousel-overlay"></div>
+                <div class="carousel-caption">
+                  <h3>Agenda tu cita fácilmente</h3>
+                  <p>Programa tus consultas desde cualquier lugar</p>
+                </div>
+              </div>
             </div>
-            <div class="doc-info">
-              <span class="doc-name">{{ doc.name }}</span>
-              <span class="doc-specialty">{{ doc.specialty || 'Especialidad General' }}</span>
+            
+            <!-- Slide 2 -->
+            <div class="carousel-slide">
+              <div class="carousel-card">
+                <img src="img/piedrazul.png" alt="Piedrazul Logo" class="carousel-img">
+                <div class="carousel-overlay"></div>
+                <div class="carousel-caption">
+                  <h3>Especialistas capacitados</h3>
+                  <p>Atención personalizada para tu bienestar</p>
+                </div>
+              </div>
             </div>
-            <div class="doc-status">
-              <span class="status-badge">Disponible</span>
+            
+            <!-- Slide 3 -->
+            <div class="carousel-slide">
+              <div class="carousel-card">
+                <img src="img/terapianeutral.png" alt="Medicina alternativa" class="carousel-img">
+                <div class="carousel-overlay"></div>
+                <div class="carousel-caption">
+                  <h3>Medicina alternativa</h3>
+                  <p>Terapia neural, quiropráctica y fisioterapia</p>
+                </div>
+              </div>
             </div>
+            
+          </div>
+          
+          <!-- Botones de navegación del carrusel -->
+          <button class="carousel-btn prev" (click)="prevSlide()" aria-label="Imagen anterior">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <button class="carousel-btn next" (click)="nextSlide()" aria-label="Imagen siguiente">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        
+          <!-- Indicadores del carrusel -->
+          <div class="carousel-dots">
+            <button class="dot-indicator" [class.active]="currentSlide === 0" (click)="goToSlide(0)" aria-label="Ir a slide 1"></button>
+            <button class="dot-indicator" [class.active]="currentSlide === 1" (click)="goToSlide(1)" aria-label="Ir a slide 2"></button>
+            <button class="dot-indicator" [class.active]="currentSlide === 2" (click)="goToSlide(2)" aria-label="Ir a slide 3"></button>
           </div>
         </div>
-        <!-- Template para estado de carga -->
-        <ng-template #noDoctors>
-          <div class="doctor-item loading-state">
-            Cargando especialistas...
+      </div>
+  </main>
+  <!-- SECCIÓN DE ESPECIALISTAS (2 columnas, debajo del carrusel) -->
+  <section class="specialists-section" id="medicos">
+    <div class="section-header">
+      <span class="section-badge">Nuestro equipo</span>
+      <h2 class="section-title">Especialistas comprometidos</h2>
+      <p class="section-subtitle">Profesionales altamente capacitados para tu bienestar</p>
+    </div>
+
+    <div class="specialists-grid">
+      <div class="specialist-card" *ngFor="let doc of doctors()">
+        <div class="specialist-avatar" [ngClass]="'avatar-bg-' + (doc.id % 4)">
+          <span class="avatar-initials">{{ getInitials(doc.name) }}</span>
+        </div>
+        <div class="specialist-info">
+          <h3 class="specialist-name">{{ doc.name }}</h3>
+          <p class="specialist-specialty">{{ doc.specialty || 'Especialista' }}</p>
+          <div class="specialist-status">
+            <span class="status-dot"></span>
+            <span>Disponible</span>
           </div>
-        </ng-template>
+        </div>
+        <button class="specialist-btn" (click)="navigate.emit('login')">
+          Agendar cita
+        </button>
+      </div>
+      
+      <div *ngIf="doctors().length === 0" class="loading-specialists">
+        <div class="loading-spinner"></div>
+        <p>Cargando especialistas...</p>
       </div>
     </div>
-  </main>
+  </section>
 </div>

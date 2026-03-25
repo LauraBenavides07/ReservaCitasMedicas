@@ -207,6 +207,60 @@
     background-color: #fee2e2;
     color: #991b1b;
 }
+/* ============================================
+   BOTONES DE VISTA (TODOS LOS MEDICOS)
+   ============================================ */
+.view-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-view {
+  background: transparent;
+  border: 2px solid #1e3a6a;
+  color: #1e3a6a;
+  padding: 0.75rem 1.8rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Estado activo (botón seleccionado) */
+.btn-view.active {
+  background: #1e3a6a;
+  color: white;
+  box-shadow: 0 4px 12px rgba(30, 58, 106, 0.3);
+}
+
+/* Hover en botón inactivo */
+.btn-view:hover:not(.active) {
+  background: rgba(30, 58, 106, 0.08);
+  transform: translateY(-1px);
+  border-color: #1e3a6a;
+}
+
+/* Hover en botón activo */
+.btn-view.active:hover {
+  background: #152e4d;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(30, 58, 106, 0.4);
+}
+
+/* Estado deshabilitado */
+.btn-view:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
 
 /* ============================================
    RESPONSIVE
@@ -227,4 +281,6 @@
     .btn-search {
         justify-content: center;
     }
+
+
 }

@@ -12,6 +12,7 @@
   --text-light: #ffffff;
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
+  
 }
 
 /* ============================================
@@ -20,13 +21,11 @@
 :host {
   display: block;
   min-height: 100vh;
-  /* Fondo degradado radial que va del azul claro al azul oscuro */
-  background: radial-gradient(circle at top right, var(--primary-light) 0%, var(--primary-dark) 60%, #051024 100%);
-  color: var(--text-light);
+  background: linear-gradient(135deg, #f0f4fa 0%, #e8eef5 100%);
+  color: var(--text-dark);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
 }
-
 /* Reset de estilos para todos los elementos */
 * {
   margin: 0;
@@ -59,17 +58,19 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(8, 26, 56, 0.95);
+  background: #1e3a5f;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--glass-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
 }
 
 /* Estilo del navbar cuando se ha hecho scroll */
 .navbar.scrolled {
   padding: 0.75rem 5%;
-  background: rgba(8, 26, 56, 0.98);
+  background: #1a3352;
+  box-shadow: var(--shadow-md);
 }
 
 /* Logo */
@@ -107,11 +108,10 @@
 .sub-brand {
   font-size: 0.65rem;
   letter-spacing: 2px;
-  color: var(--accent);
+  color: rgba(255, 255, 255, 0.8);
   margin-top: 0.2rem;
   text-transform: uppercase;
 }
-
 /* Enlaces de navegación para escritorio */
 .nav-links {
   display: flex;
@@ -121,7 +121,7 @@
 
 /* Estilo de cada enlace */
 .nav-links a {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
@@ -138,13 +138,13 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: var(--accent);
+  background: white;
   transition: width 0.3s ease;
 }
 
 /* Efecto hover para enlaces */
 .nav-links a:hover {
-  color: var(--text-light);
+  color: white;
 }
 
 .nav-links a:hover::after {
@@ -156,6 +156,140 @@
   display: flex;
   gap: 1rem;
   margin-left: 1rem;
+}
+/* ============================================
+  CARRUSEL
+ ============================================ */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  max-width: 650px;
+  height: 450px;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: var(--shadow-lg);
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  height: 100%;
+}
+
+.carousel-slide {
+  min-width: 100%;
+  height: 100%;
+}
+
+.carousel-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.carousel-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.carousel-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(44, 110, 158, 0.4) 0%, rgba(30, 90, 133, 0.2) 100%);
+}
+
+.carousel-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+  color: white;
+  text-align: center;
+}
+
+.carousel-caption h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: white;
+}
+
+.carousel-caption p {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  color: white;
+}
+
+/* Botones del carrusel */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.carousel-btn:hover {
+  background: #2c6e9e;
+  color: white;
+}
+
+.carousel-btn.prev {
+  left: 1rem;
+}
+
+.carousel-btn.next {
+  right: 1rem;
+}
+
+/* Indicadores */
+.carousel-dots {
+  position: absolute;
+  bottom: 1rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.dot-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  padding: 0;
+  min-width: 10px;
+  min-height: 10px;
+}
+
+.dot-indicator.active {
+  background: white;
+  width: 24px;
+  border-radius: 12px;
 }
 
 /* ============================================
@@ -179,10 +313,10 @@
 /* Botón con borde transparente */
 .btn-outline-light {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: var(--text-light);
+  border: 2px solid white;
+  color: white;
   padding: 0.6rem 1.5rem;
-  border-radius: 30px;
+  border-radius: 40px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -191,31 +325,32 @@
 
 /* Efecto hover para botón outline */
 .btn-outline-light:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--text-light);
+  background: white;
+  border-color: white;
+  color: #1e3a5f;
   transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Botón primario con fondo blanco */
 .btn-primary-light {
-  background: var(--white);
-  color: var(--primary-dark);
-  border: 1px solid var(--white);
+  background: white;
+  color: #1e3a5f;
+  border: none;
   padding: 0.6rem 1.5rem;
-  border-radius: 30px;
+  border-radius: 40px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
   min-height: 44px;
+  box-shadow: var(--shadow-sm);
 }
 
 /* Efecto hover para botón primario */
 .btn-primary-light:hover {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--primary-dark);
+  background: rgba(255, 255, 255, 0.95);
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 /* Botón del menú móvil */
@@ -345,22 +480,22 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--glass-bg);
-  padding: 1rem;
-  border-radius: 30px;
+  background: rgba(44, 125, 160, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 40px;
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 1px;
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(44, 125, 160, 0.2);
   margin-bottom: 1rem;
-  color: var(--accent);
+  color: var(--primary);
 }
 
 /* Punto animado en la insignia */
 .badge .dot {
-  width: 6px;
-  height: 6px;
-  background: var(--accent);
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
   border-radius: 50%;
   animation: pulse 2s infinite;
 }
@@ -380,26 +515,26 @@
 
 /* Título principal */
 .hero-title {
-  font-size: 4rem;
-  line-height: 1.1;
+  font-size: 3.5rem;
+  line-height: 1.2;
   margin-bottom: 1rem;
   font-weight: 800;
-  letter-spacing: -1px;
+  color: var(--primary-dark);
 }
 
 /* Descripción del hero */
 .hero-description {
   font-size: 1.1rem;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  color: var(--text-muted);
   margin-bottom: 1rem;
 }
 
 /* Información de ubicación y horario */
 .hero-location {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-muted);
   font-weight: 500;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -425,162 +560,189 @@
 
 /* Chip individual de servicio */
 .service-chip {
-  background: rgba(155, 191, 215, 0.1);
-  border: 1px solid rgba(155, 191, 215, 0.3);
-  padding: 0.6rem 1.2rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
+  background: white;
+  border: 2px solid #1e3a5f;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  font-size: 0.95rem;
   font-weight: 600;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--bg-light);
-  transition: all 0.2s;
+  color: #1e3a5f;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .service-chip:hover {
-  background: rgba(155, 191, 215, 0.2);
+  background: var(--primary);
+  color: white;
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
-
 /* ============================================
-   GLASS CARD
+   SECCIÓN DE ESPECIALISTAS 
    ============================================ */
-/* Contenedor de la tarjeta con efecto vidrio */
-.hero-visual {
-  display: flex;
-  justify-content: flex-end;
+.specialists-section {
+  padding: 4rem 0;
+  margin-top: 2rem;
+  border-top: 1px solid rgba(44, 125, 160, 0.1);
 }
 
-/* Tarjeta con efecto vidrio esmerilado */
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  padding: 2.5rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  width: 100%;
-  max-width: 450px;
-  transition: transform 0.3s;
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
 }
 
-.glass-card:hover {
-  transform: translateY(-5px);
-}
-
-/* Título de la tarjeta */
-.card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  color: var(--text-light);
-}
-
-/* Lista de médicos */
-.doctors-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-/* Item individual de médico */
-.doctor-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 1rem;
-  border-radius: 12px;
-  transition: all 0.2s;
-}
-
-.doctor-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateX(5px);
-}
-
-/* Avatar del médico */
-.avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--text-light);
-  flex-shrink: 0;
-}
-
-/* Colores de avatar según índice */
-.avatar-0 {
-  background: #3b82f6;
-}
-
-.avatar-1 {
-  background: #8b5cf6;
-}
-
-.avatar-2 {
-  background: #10b981;
-}
-
-.avatar-3 {
-  background: #ef4444;
-}
-
-/* Información del médico */
-.doc-info {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-}
-
-/* Nombre del médico */
-.doc-name {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--text-light);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Especialidad del médico */
-.doc-specialty {
+.section-badge {
+  display: inline-block;
+  background: rgba(44, 125, 160, 0.1);
+  color: var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: 40px;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+  margin-bottom: 1rem;
 }
 
-/* Contenedor del estado */
-.doc-status {
+.section-title {
+  font-size: 2rem;
+  color: var(--primary-dark);
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+/* Grid de 2 columnas */
+.specialists-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Tarjeta de especialista - CLARA */
+.specialist-card {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--primary-dark);
+}
+
+.specialist-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.specialist-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
-/* Insignia de estado del médico */
-.status-badge {
-  background: rgba(16, 185, 129, 0.2);
-  color: #34d399;
-  border: 1px solid rgba(52, 211, 153, 0.3);
-  padding: 0.3rem 0.6rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
+.avatar-initials {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
+}
+
+.avatar-bg-0 { background: linear-gradient(135deg, #2c7da0, #61a5c2); }
+.avatar-bg-1 { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+.avatar-bg-2 { background: linear-gradient(135deg, #10b981, #34d399); }
+.avatar-bg-3 { background: linear-gradient(135deg, #ef4444, #f87171); }
+
+.specialist-info {
+  flex: 1;
+}
+
+.specialist-name {
+  font-size: 1rem;
   font-weight: 600;
+  color: var(--primary-dark);
+  margin-bottom: 0.25rem;
 }
 
-/* Estado de carga */
-.loading-state {
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.5);
-  font-style: italic;
-  padding: 2rem;
+.specialist-specialty {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
 }
 
+.specialist-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #10b981;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulse-green 1.5s infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+.specialist-btn {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+  min-height: 36px;
+}
+
+.specialist-btn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.loading-specialists {
+  grid-column: span 2;
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-muted);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(44, 125, 160, 0.2);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 /* ============================================
    RESPONSIVE - TABLET
    ============================================ */
@@ -710,6 +872,32 @@
   .doc-specialty {
     font-size: 0.8rem;
   }
+   .specialists-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .loading-specialists {
+    grid-column: span 1;
+  }
+  
+  .specialist-card {
+    padding: 1rem;
+  }
+  
+  .specialist-avatar {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .avatar-initials {
+    font-size: 1rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+
 }
 
 /* ============================================

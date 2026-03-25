@@ -70,4 +70,8 @@ export class AppointmentService {
   getDashboardStats(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/stats`);
   }
+
+  getAllAppointments(): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(`${this.apiUrl}/all`);
+  }
 }

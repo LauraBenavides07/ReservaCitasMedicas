@@ -15,6 +15,9 @@ import { DoctorService, Doctor } from '../../services/doctor.service';
   styleUrls: ['./appointment-list.component.css']
 })
 export class AppointmentListComponent implements OnInit {
+  
+  //modo de vista
+  viewMode: 'all' | 'filter' = 'all';
 
   // Lista de citas
   appointments: Appointment[] = [];
@@ -70,11 +73,6 @@ export class AppointmentListComponent implements OnInit {
     });
   }
 
-  // Se ejecuta al hacer clic en buscar
-  onSearch(): void {
-    this.hasSearched = true;
-    this.loadAppointments();
-  }
 
   // Carga citas según doctor y fecha
   loadAppointments(): void {
@@ -113,4 +111,48 @@ export class AppointmentListComponent implements OnInit {
     // Convierte a minúsculas para coincidir con CSS
     return `badge-${status.toLowerCase()}`;
   }
+
+    // Cargar TODAS las citas
+  loadAllAppointments(): void {
+  this.loading = true;
+  this.viewMode = 'all';  // Cambia a modo 'all'
+  this.hasSearched = true;
+  
+  this.appointmentService.getAllAppointments()
+    .pipe(finalize(() => {
+      this.loading = false;
+      this.cdr.detectChanges();
+    }))
+    .subscribe({
+      next: (data) => {
+        this.appointments = data;
+        this.total = data.length;
+      },
+      error: (err) => console.error('Error loading all appointments:', err)
+    });
+}
+
+// Buscar por medico y fecha
+onSearch(): void {
+  if (!this.selectedDoctorId || !this.selectedDate) return;
+  
+  this.loading = true;
+  this.viewMode = 'filter'; 
+  this.hasSearched = true;
+
+  this.appointmentService
+    .getAppointments(Number(this.selectedDoctorId), this.selectedDate)
+    .pipe(finalize(() => {
+      this.loading = false;
+      this.cdr.detectChanges();
+    }))
+    .subscribe({
+      next: (res: AppointmentResponse) => {
+        this.appointments = res.appointments || [];
+        this.total = res.total || 0;
+      },
+      error: (err) => console.error('Error loading appointments:', err)
+    });
+  }
+
 }

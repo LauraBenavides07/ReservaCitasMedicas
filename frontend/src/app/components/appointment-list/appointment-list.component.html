@@ -1,5 +1,13 @@
 <div class="search-container">
-
+    <!-- Botones de vista -->
+    <div class="view-buttons">
+    <button class="btn-view" [class.active]="viewMode === 'all'" (click)="loadAllAppointments()">
+         Ver todas las citas
+    </button>
+    <button class="btn-view" [class.active]="viewMode === 'filter'" (click)="onSearch()" [disabled]="!selectedDoctorId || !selectedDate">
+        Filtrar por médico y fecha
+    </button>
+    </div>
     <!-- Barra de búsqueda -->
     <div class="search-bar">
 
