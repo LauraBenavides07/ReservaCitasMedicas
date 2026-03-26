@@ -301,4 +301,11 @@ export class AppointmentService {
       order: { date: 'DESC', time: 'ASC' }
     });
   }
+
+  /**
+   * Buscar cita por ID
+   */
+  async findById(id: number) {
+    return this.appointmentRepository.findOneBy({ id });
+  }
 }
