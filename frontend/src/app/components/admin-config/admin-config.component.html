@@ -1,9 +1,5 @@
 <!-- Contenedor principal de la configuración administrativa -->
 <div class="admin-config-container">
-    <!-- Encabezado con título de la página -->
-    <div class="header-area">
-        <h2 class="page-title">Configuración</h2>
-    </div>
 
     <!-- Pestañas de navegación -->
     <nav class="tabs">
@@ -38,7 +34,7 @@
                     </div>
                     <!-- Nombre y especialidad -->
                     <div class="doc-details">
-                        <h4 class="doc-name">{{ doctor.name }}</h4>
+                        <h4 class="doc-name">Dr(a). {{ doctor.name }}</h4>
                         <p class="doc-specialty">{{ doctor.specialty }}</p>
                     </div>
                 </div>
@@ -167,7 +163,7 @@
                 <!-- Campo: nombre completo -->
                 <div class="form-field">
                     <label for="doctor-name">Nombre Completo</label>
-                    <input id="doctor-name" formControlName="name" placeholder="Dr. Juan Perez" />
+                    <input id="doctor-name" formControlName="name" placeholder="Juan Perez" />
                 </div>
                 <!-- Campo: especialidad -->
                 <div class="form-field">
