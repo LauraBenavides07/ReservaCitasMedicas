@@ -78,4 +78,17 @@ export class AuthService {
 
     throw new UnauthorizedException('Credenciales inválidas.');
   }
+
+  async getPatientByDocument(document: string) {
+    const patient = await this.patientRepository.findOne({
+      where: { document },
+      select: ['id', 'firstName', 'lastName', 'document', 'phone', 'gender', 'birthDate', 'email'],
+    });
+
+    if (!patient) {
+      throw new UnauthorizedException('Paciente no encontrado.');
+    }
+
+    return patient;
+  }
 }

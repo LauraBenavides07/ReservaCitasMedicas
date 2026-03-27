@@ -124,7 +124,8 @@ export class AppointmentService {
     const bookedSlots: string[] = appointments.map((a) => a.time);
     const slots: string[] = [];
 
-    const dateObj = new Date(`${date}T00:00:00`);
+    const [year, month, day] = date.split('-').map(Number);
+    const dateObj = new Date(year, month - 1, day);
     let dayOfWeek = dateObj.getDay();
     if (dayOfWeek === 0) dayOfWeek = 7; // Convertir 0 (Domingo) a 7
 
