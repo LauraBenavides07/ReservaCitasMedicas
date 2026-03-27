@@ -10,6 +10,8 @@ export interface User {
   document?: string;
   phone?: string;
   gender?: string;
+  email?: string;
+  birthDate?: string;
 }
 
 export interface AuthResponse {
@@ -69,5 +71,9 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem('access_token');
+  }
+
+  getPatientByDocument(document: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/patient/${document}`);
   }
 }

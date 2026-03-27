@@ -134,7 +134,12 @@ export class AdminConfigComponent implements OnInit {
   // Elimina un médico por su ID
   deleteDoctor(id: string): void {
     if (confirm('¿Está seguro de eliminar este médico?')) {
-      this.doctorService.deleteDoctor(id).subscribe(() => this.loadDoctors());
+      this.doctorService.deleteDoctor(id).subscribe({
+        next: () => this.loadDoctors(),
+        error: (err) => {
+          alert(err.error?.message || 'Error al eliminar el médico.');
+        }
+      });
     }
   }
 

@@ -19,6 +19,7 @@ export class LoginComponent {
   // Signals (estado reactivo moderno en Angular)
   isLoading = signal(false);
   error = signal('');
+  showPassword = signal(false);
 
   // Formulario reactivo
   loginForm: FormGroup;
@@ -39,6 +40,11 @@ export class LoginComponent {
   // Getter para acceder fácil a los controles del formulario
   get f() {
     return this.loginForm.controls;
+  }
+
+  // Alterna la visibilidad de la contraseña
+  togglePasswordVisibility(): void {
+    this.showPassword.update(v => !v);
   }
 
   // Método que se ejecuta al enviar el formulario

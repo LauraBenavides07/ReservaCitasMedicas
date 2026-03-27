@@ -7,7 +7,10 @@
 
 .auth-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(8, 26, 56, 0.6) !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -21,8 +24,15 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .auth-card {
@@ -30,7 +40,8 @@
   border-radius: 24px;
   width: 100%;
   max-width: 480px;
-  overflow: hidden; /* So that header respects border radius */
+  overflow: hidden;
+  /* So that header respects border radius */
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
@@ -38,7 +49,8 @@
    CARD HEADER
    ============================================ */
 .auth-header {
-  background: #1e3a6a; /* Dark blue header background */
+  background: #1e3a6a;
+  /* Dark blue header background */
   position: relative;
   padding: 2.5rem 2rem 1.5rem 2rem;
   color: #ffffff;
@@ -82,7 +94,7 @@
 
 .auth-title {
   font-size: 2rem;
-  font-family: 'Georgia', serif; /* Matching the serif font requested */
+  font-family: 'Georgia', serif;
   font-weight: 400;
   margin: 0 0 0.5rem 0;
   color: #ffffff;
@@ -243,6 +255,36 @@ form {
 
 .btn-full {
   width: 100%;
+}
+
+/* Contenedor del checkbox */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* Estilos del checkbox */
+.checkbox-container input[type="checkbox"] {
+  min-width: 20px;
+  min-height: 20px;
+  width: auto;
+  margin: 0 10px 0 0;
+  cursor: pointer;
+}
+
+/* Estilos de la etiqueta del checkbox */
+.checkbox-container label {
+  margin-bottom: 0;
+  cursor: pointer;
+  text-transform: none;
+  font-weight: normal;
+  color: #666;
+}
+
+/* Opcional: Estilo hover para el checkbox */
+.checkbox-container:hover {
+  opacity: 0.8;
 }
 
 /* ============================================

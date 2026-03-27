@@ -1,0 +1,30 @@
+[33mÔØ»[39m Building...
+[32mÔ£ö[39m Building...
+Application bundle generation failed. [2.345 seconds] - 2026-03-27T02:53:28.965Z
+
+X [ERROR] TS2345: Argument of type '"register"' is not assignable to parameter of type '"login"'. [plugin angular-compiler]
+
+    src/app/components/landing-page/landing-page.component.html:24:69:
+      24 Ôöé ...s="btn-primary-light btn-nav" (click)="navigate.emit('register')">
+         ÔòÁ                                                         ~~~~~~~~~~
+
+  Error occurs in the template of component LandingPageComponent.
+
+    src/app/components/landing-page/landing-page.component.ts:11:15:
+      11 Ôöé   templateUrl: './landing-page.component.html',
+         ÔòÁ                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2345: Argument of type '"register"' is not assignable to parameter of type '"login"'. [plugin angular-compiler]
+
+    src/app/components/landing-page/landing-page.component.html:61:65:
+      61 Ôöé ...-primary-light" (click)="navigate.emit('register'); toggleMenu()">
+         ÔòÁ                                           ~~~~~~~~~~
+
+  Error occurs in the template of component LandingPageComponent.
+
+    src/app/components/landing-page/landing-page.component.ts:11:15:
+      11 Ôöé   templateUrl: './landing-page.component.html',
+         ÔòÁ                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+

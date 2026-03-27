@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Doctor } from './domain/entities/doctor.entity';
@@ -35,6 +36,7 @@ import { AuthModule } from './auth.module';
     }),
     TypeOrmModule.forFeature([Doctor, Patient, Appointment, Config, User]),
     AuthModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppointmentController, DoctorController, ConfigController],
   providers: [AppointmentService, DoctorService, AppConfigService],

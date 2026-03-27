@@ -5,6 +5,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Appointment } from '../../domain/entities/appointment.entity';
@@ -23,7 +24,7 @@ export class AppointmentService {
     @InjectRepository(Doctor)
     private doctorRepository: Repository<Doctor>,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   /**
    * Requisito 1: Listar citas por médico y fecha
@@ -69,8 +70,7 @@ export class AppointmentService {
     const now = new Date();
     const appointmentDate = new Date(`${createDto.date}T${createDto.time}`);
 
-    const diffHours =
-      (appointmentDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const diffHours = (appointmentDate.getTime() - now.getTime()) / (1000 * 60 * 60);
     if (diffHours < minAdvanceHours) {
       throw new BadRequestException(
         `Debe agendar con al menos ${minAdvanceHours} horas de antelación.`,
@@ -146,7 +146,8 @@ export class AppointmentService {
     );
     const slots: string[] = [];
 
-    const dateObj = new Date(`${date}T00:00:00`);
+    const [year, month, day] = date.split('-').map(Number);
+    const dateObj = new Date(year, month - 1, day);
     let dayOfWeek = dateObj.getDay();
     if (dayOfWeek === 0) dayOfWeek = 7; // Convertir 0 (Domingo) a 7
 
@@ -347,6 +348,7 @@ export class AppointmentService {
       doctorStats,
     };
   }
+
   /**
    * Listar TODAS las citas (sin filtrar)
    */
@@ -373,5 +375,35 @@ export class AppointmentService {
       throw new NotFoundException('Paciente no encontrado.');
     }
     return patient;
+  }
+
+  /**
+   * Tarea programada: marca como completadas las citas que ya pasaron
+   */
+  @Cron(CronExpression.EVERY_MINUTE)
+  async autoCompletePastAppointments() {
+    const now = new Date();
+
+    // Convertir la fecha actual local a formato YYYY-MM-DD
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
+
+    // Convertir la hora actual local a formato HH:mm
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const timeStr = `${hours}:${minutes}`;
+
+    await this.appointmentRepository
+      .createQueryBuilder()
+      .update(Appointment)
+      .set({ status: 'completada' })
+      .where('status = :status', { status: 'agendada' })
+      .andWhere('(appointmentDate < :date OR (appointmentDate = :date AND appointmentTime < :time))', {
+        date: dateStr,
+        time: timeStr
+      })
+      .execute();
   }
 }
