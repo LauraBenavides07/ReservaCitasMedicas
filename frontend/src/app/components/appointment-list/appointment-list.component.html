@@ -76,7 +76,9 @@
             <table class="styled-table">
                 <thead>
                     <tr>
+                        <th>Fecha</th>
                         <th>Hora</th>
+                        <th>Médico</th>
                         <th>Paciente</th>
                         <th>Documento</th>
                         <th>Teléfono</th>
@@ -87,7 +89,9 @@
                 <tbody>
                     <!-- Itera sobre citas -->
                     <tr *ngFor="let appt of appointments" class="appointment-row">
+                        <td><strong>{{ formatDate(appt?.appointmentDate) }}</strong></td>
                         <td><strong>{{ (appt?.time || appt?.appointmentTime) | slice:0:5 }}</strong></td>
+                        <td>Dr(a). {{ appt?.doctor?.name || 'N/A' }}</td>
 
                         <!-- Manejo de valores nulos -->
                         <td>{{ appt?.patient?.firstName || 'Sin' }} {{ appt?.patient?.lastName || 'Paciente' }}</td>

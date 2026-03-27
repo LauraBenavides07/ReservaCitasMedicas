@@ -112,6 +112,20 @@ export class AppointmentListComponent implements OnInit {
     return `badge-${status.toLowerCase()}`;
   }
 
+  // Formatea fecha (ej: 5 de mar)
+  formatDate(dateStr: string | undefined): string {
+    if (!dateStr) return 'N/A';
+
+    try {
+      // Evita problemas de zona horaria
+      const d = new Date(dateStr + 'T12:00:00');
+      const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+      return `${d.getDate()} de ${months[d.getMonth()]}`;
+    } catch {
+      return dateStr;
+    }
+  }
+
     // Cargar TODAS las citas
   loadAllAppointments(): void {
   this.loading = true;
