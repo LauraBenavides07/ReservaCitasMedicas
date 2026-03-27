@@ -31,7 +31,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: ReservaCitasMedicas/backend/package-lock.json
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Install Dependencies
         run: npm ci
@@ -69,7 +69,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: ReservaCitasMedicas/frontend/package-lock.json
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Install Dependencies
         run: npm ci
