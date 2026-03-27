@@ -92,8 +92,8 @@ export class PatientAppointmentFormComponent implements OnInit {
     const dayNames = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'];
     const monthNames = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
-    // Genera fechas para los próximos 28 días
-    for (let i = 1; i <= 28; i++) {
+    // Genera fechas para los próximos 28 días (incluyendo hoy)
+    for (let i = 0; i <= 28; i++) {
       const d = new Date();
       d.setDate(today.getDate() + i);
 

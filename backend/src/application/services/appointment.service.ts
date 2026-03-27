@@ -275,11 +275,26 @@ export class AppointmentService {
       throw new ConflictException('El nuevo horario elegido ya está ocupado.');
     }
 
+    // Regla de Negocio: Ventana de tiempo (igual que al crear)
+    const config = await this.configService.getConfig();
+    const minAdvanceHours = config?.minAdvanceHours ?? 2;
+    const appointmentWindowWeeks = config?.appointmentWindowWeeks ?? 4;
+
     const now = new Date();
     const newAppDate = new Date(`${date}T${time}`);
-    if (newAppDate < now) {
+
+    const diffHours = (newAppDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    if (diffHours < minAdvanceHours) {
       throw new BadRequestException(
-        'No se puede reagendar a una fecha pasada.',
+        `Debe reagendar con al menos ${minAdvanceHours} horas de antelación.`,
+      );
+    }
+
+    const horizonDate = new Date();
+    horizonDate.setDate(now.getDate() + appointmentWindowWeeks * 7);
+    if (newAppDate > horizonDate) {
+      throw new BadRequestException(
+        `No se puede reagendar con más de ${appointmentWindowWeeks} semanas de antelación.`,
       );
     }
 
