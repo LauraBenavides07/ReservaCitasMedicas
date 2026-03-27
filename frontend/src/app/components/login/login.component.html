@@ -20,7 +20,7 @@
     <div class="auth-body">
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="form-field">
-          <label>CORREO ELECTRÓNICO</label>
+          <label>CORREO ELECTRÓNICO *</label>
           <input type="email" formControlName="login" placeholder="correo@ejemplo.com"
             [class.input-error]="f['login'].invalid && f['login'].touched">
           <div *ngIf="f['login'].invalid && f['login'].touched" class="error-message">
@@ -29,11 +29,17 @@
         </div>
 
         <div class="form-field">
-          <label>CONTRASEÑA</label>
-          <input type="password" formControlName="password" placeholder="••••••••"
+          <label>CONTRASEÑA *</label>
+          <input [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="••••••••"
             [class.input-error]="f['password'].invalid && f['password'].touched">
+
           <div *ngIf="f['password'].invalid && f['password'].touched" class="error-message">
             La contraseña es requerida.
+          </div>
+
+          <div class="checkbox-container">
+            <input type="checkbox" id="showPassword" (change)="togglePasswordVisibility()">
+            <label for="showPassword">Mostrar contraseña</label>
           </div>
         </div>
 
