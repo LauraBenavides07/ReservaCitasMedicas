@@ -28,6 +28,7 @@ describe('AppointmentController', () => {
 
     const result = await controller.getPatientByDocument('123');
     expect(result).toEqual(mockPatient);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(service.findPatientByDocument).toHaveBeenCalledWith('123');
   });
 });

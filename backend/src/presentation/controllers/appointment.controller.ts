@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Query, ParseUUIDPipe, UseGuards, Req, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  ParseUUIDPipe,
+  UseGuards,
+  Req,
+  Patch,
+  Param,
+} from '@nestjs/common';
+import { Request } from 'express';
 import { AppointmentService } from '../../application/services/appointment.service';
 import { CreateAppointmentDto } from '../dto/create-appointment.dto';
 import { JwtAuthGuard } from '../../infrastructure/auth/jwt-auth.guard';
@@ -31,7 +43,7 @@ export class AppointmentController {
    */
   @UseGuards(JwtAuthGuard)
   @Get('my-appointments')
-  async getPatientAppointments(@Req() req) {
+  async getPatientAppointments(@Req() req: Request & { user: { id: string } }) {
     return this.appointmentService.findAllByPatient(req.user.id);
   }
 
@@ -48,14 +60,26 @@ export class AppointmentController {
    */
   @UseGuards(JwtAuthGuard)
   @Patch(':id/cancel')
-  async cancelPatientAppointment(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
+  async cancelPatientAppointment(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: Request & { user: { id: string } },
+  ) {
     return this.appointmentService.cancelAppointment(id, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id/reschedule')
-  async reschedulePatientAppointment(@Param('id', ParseUUIDPipe) id: string, @Req() req, @Body() body: { date: string, time: string }) {
-    return this.appointmentService.reschedule(id, req.user.id, body.date, body.time);
+  async reschedulePatientAppointment(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: Request & { user: { id: string } },
+    @Body() body: { date: string; time: string },
+  ) {
+    return this.appointmentService.reschedule(
+      id,
+      req.user.id,
+      body.date,
+      body.time,
+    );
   }
 
   /**
@@ -70,11 +94,11 @@ export class AppointmentController {
   }
   /**
    * Listar TODAS las citas (sin filtrar por médico)
-  */
-    @Get('all')
-    async findAllAppointments() {
-      return this.appointmentService.findAll();
-    }
+   */
+  @Get('all')
+  async findAllAppointments() {
+    return this.appointmentService.findAll();
+  }
 
   /**
    * Buscar paciente por documento

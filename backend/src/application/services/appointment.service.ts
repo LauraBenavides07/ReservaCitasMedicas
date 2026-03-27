@@ -1,4 +1,10 @@
-import { Injectable, ConflictException, BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Appointment } from '../../domain/entities/appointment.entity';
@@ -23,16 +29,18 @@ export class AppointmentService {
    * Requisito 1: Listar citas por médico y fecha
    */
   async findAllByDoctorAndDate(doctorId: string, date: string) {
-    const [appointments, total] = await this.appointmentRepository.findAndCount({
-      where: {
-        doctor: { id: doctorId },
-        appointmentDate: date,
+    const [appointments, total] = await this.appointmentRepository.findAndCount(
+      {
+        where: {
+          doctor: { id: doctorId },
+          appointmentDate: date,
+        },
+        relations: ['patient', 'doctor'],
+        order: {
+          appointmentTime: 'ASC',
+        },
       },
-      relations: ['patient', 'doctor'],
-      order: {
-        appointmentTime: 'ASC',
-      },
-    });
+    );
 
     return {
       appointments,
@@ -44,32 +52,43 @@ export class AppointmentService {
    * Requisito 2: Crear cita manual
    */
   async create(createDto: CreateAppointmentDto) {
-    const doctor = await this.doctorRepository.findOneBy({ id: createDto.doctorId });
+    const doctor = await this.doctorRepository.findOneBy({
+      id: createDto.doctorId,
+    });
     if (!doctor) {
-      throw new NotFoundException(`Doctor with ID ${createDto.doctorId} not found`);
+      throw new NotFoundException(
+        `Doctor with ID ${createDto.doctorId} not found`,
+      );
     }
 
     // Regla de Negocio: Ventana de tiempo
     const config = await this.configService.getConfig();
     const minAdvanceHours = config?.minAdvanceHours ?? 2;
     const appointmentWindowWeeks = config?.appointmentWindowWeeks ?? 4;
-    
+
     const now = new Date();
     const appointmentDate = new Date(`${createDto.date}T${createDto.time}`);
-    
-    const diffHours = (appointmentDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+    const diffHours =
+      (appointmentDate.getTime() - now.getTime()) / (1000 * 60 * 60);
     if (diffHours < minAdvanceHours) {
-      throw new BadRequestException(`Debe agendar con al menos ${minAdvanceHours} horas de antelación.`);
+      throw new BadRequestException(
+        `Debe agendar con al menos ${minAdvanceHours} horas de antelación.`,
+      );
     }
 
     const horizonDate = new Date();
     horizonDate.setDate(now.getDate() + appointmentWindowWeeks * 7);
     if (appointmentDate > horizonDate) {
-      throw new BadRequestException(`No se puede agendar con más de ${appointmentWindowWeeks} semanas de antelación.`);
+      throw new BadRequestException(
+        `No se puede agendar con más de ${appointmentWindowWeeks} semanas de antelación.`,
+      );
     }
 
     // Verificar si existe el paciente, si no, crearlo
-    let patient = await this.patientRepository.findOneBy({ document: createDto.patientDocument });
+    let patient = await this.patientRepository.findOneBy({
+      document: createDto.patientDocument,
+    });
     if (!patient) {
       patient = this.patientRepository.create({
         document: createDto.patientDocument,
@@ -89,7 +108,9 @@ export class AppointmentService {
     });
 
     if (existing) {
-      throw new ConflictException('El horario ya está ocupado para este médico.');
+      throw new ConflictException(
+        'El horario ya está ocupado para este médico.',
+      );
     }
 
     const appointment = this.appointmentRepository.create({
@@ -120,23 +141,31 @@ export class AppointmentService {
       },
     });
 
-    const bookedSlots: string[] = appointments.map((a) => a.appointmentTime.toString().slice(0, 5));
+    const bookedSlots: string[] = appointments.map((a) =>
+      a.appointmentTime.toString().slice(0, 5),
+    );
     const slots: string[] = [];
 
     const dateObj = new Date(`${date}T00:00:00`);
     let dayOfWeek = dateObj.getDay();
     if (dayOfWeek === 0) dayOfWeek = 7; // Convertir 0 (Domingo) a 7
-    
+
     // Regla de Negocio: Días laborables del médico
-    const workingDaysArray = doctor.activeDays ? doctor.activeDays.split(',').map(Number) : [1,2,3,4,5];
+    const workingDaysArray = doctor.activeDays
+      ? doctor.activeDays.split(',').map(Number)
+      : [1, 2, 3, 4, 5];
     if (!workingDaysArray.includes(dayOfWeek)) {
-       return []; // El médico no trabaja este día
+      return []; // El médico no trabaja este día
     }
 
     let current = this.timeToMinutes(doctor.scheduleStart);
     const end = this.timeToMinutes(doctor.scheduleEnd);
-    const breakStartMin = doctor.lunchStart ? this.timeToMinutes(doctor.lunchStart) : null;
-    const breakEndMin = doctor.lunchEnd ? this.timeToMinutes(doctor.lunchEnd) : null;
+    const breakStartMin = doctor.lunchStart
+      ? this.timeToMinutes(doctor.lunchStart)
+      : null;
+    const breakEndMin = doctor.lunchEnd
+      ? this.timeToMinutes(doctor.lunchEnd)
+      : null;
 
     // Regla de Negocio: Ventana de tiempo
     const config = await this.configService.getConfig();
@@ -145,16 +174,25 @@ export class AppointmentService {
 
     while (current + doctor.slotDuration <= end) {
       const timeStr = this.minutesToTime(current);
-      
+
       const now = new Date();
       const slotDate = new Date(`${date}T${timeStr}`);
       const diffHours = (slotDate.getTime() - now.getTime()) / (1000 * 60 * 60);
       const horizonDate = new Date();
       horizonDate.setDate(now.getDate() + appointmentWindowWeeks * 7);
 
-      const isDuringBreak = breakStartMin !== null && breakEndMin !== null && current >= breakStartMin && current < breakEndMin;
+      const isDuringBreak =
+        breakStartMin !== null &&
+        breakEndMin !== null &&
+        current >= breakStartMin &&
+        current < breakEndMin;
 
-      if (!bookedSlots.includes(timeStr) && diffHours >= minAdvanceHours && slotDate <= horizonDate && !isDuringBreak) {
+      if (
+        !bookedSlots.includes(timeStr) &&
+        diffHours >= minAdvanceHours &&
+        slotDate <= horizonDate &&
+        !isDuringBreak
+      ) {
         slots.push(timeStr);
       }
       current += doctor.slotDuration;
@@ -188,12 +226,16 @@ export class AppointmentService {
     }
 
     if (appointment.patient.id !== patientId) {
-      throw new UnauthorizedException('No tienes permiso para cancelar esta cita.');
+      throw new UnauthorizedException(
+        'No tienes permiso para cancelar esta cita.',
+      );
     }
 
     const now = new Date();
-    const appDate = new Date(`${appointment.appointmentDate}T${appointment.appointmentTime}`);
-    
+    const appDate = new Date(
+      `${appointment.appointmentDate}T${appointment.appointmentTime}`,
+    );
+
     if (appDate < now) {
       throw new BadRequestException('No se puede cancelar una cita pasada.');
     }
@@ -216,7 +258,9 @@ export class AppointmentService {
     }
 
     if (appointment.patient.id !== patientId) {
-      throw new UnauthorizedException('No tienes permiso para modificar esta cita.');
+      throw new UnauthorizedException(
+        'No tienes permiso para modificar esta cita.',
+      );
     }
 
     // Verificar disponibilidad del NUEVO horario
@@ -233,13 +277,15 @@ export class AppointmentService {
     const now = new Date();
     const newAppDate = new Date(`${date}T${time}`);
     if (newAppDate < now) {
-      throw new BadRequestException('No se puede reagendar a una fecha pasada.');
+      throw new BadRequestException(
+        'No se puede reagendar a una fecha pasada.',
+      );
     }
 
     appointment.appointmentDate = date;
     appointment.appointmentTime = time;
     appointment.status = 'agendada'; // Asegurar que pase de cancelada a agendada si fuera el caso
-    
+
     return this.appointmentRepository.save(appointment);
   }
 
@@ -258,47 +304,56 @@ export class AppointmentService {
    * Requisito Adicional Fase 8: Estadísticas del sistema
    */
   async getDashboardStats() {
-    const allAppointments = await this.appointmentRepository.find({ relations: ['doctor'] });
+    const allAppointments = await this.appointmentRepository.find({
+      relations: ['doctor'],
+    });
     const allDoctors = await this.doctorRepository.find();
-    
-    let total = allAppointments.length;
+
+    const total = allAppointments.length;
     let scheduled = 0;
     let completed = 0;
     let cancelled = 0;
 
-    const doctorCounts: Record<string, { name: string, count: number }> = {};
-    allDoctors.forEach(d => {
+    const doctorCounts: Record<string, { name: string; count: number }> = {};
+    allDoctors.forEach((d) => {
       doctorCounts[d.id] = { name: `Dr(a). ${d.name}`, count: 0 };
     });
 
-    allAppointments.forEach(app => {
+    allAppointments.forEach((app) => {
       if (app.status === 'agendada') scheduled++;
       else if (app.status === 'completada') completed++;
       else if (app.status === 'cancelada') cancelled++;
-      
+
       if (app.doctor && doctorCounts[app.doctor.id]) {
-         doctorCounts[app.doctor.id].count++;
+        doctorCounts[app.doctor.id].count++;
       }
     });
 
-    const doctorStats = Object.values(doctorCounts).map(d => ({
-      name: d.name,
-      count: d.count,
-      percentage: total > 0 ? Math.round((d.count / total) * 100) : 0
-    })).sort((a,b) => b.count - a.count);
+    const doctorStats = Object.values(doctorCounts)
+      .map((d) => ({
+        name: d.name,
+        count: d.count,
+        percentage: total > 0 ? Math.round((d.count / total) * 100) : 0,
+      }))
+      .sort((a, b) => b.count - a.count);
 
     return {
-      stats: { total, scheduled: scheduled, completed: completed, cancelled: cancelled },
-      doctorStats
+      stats: {
+        total,
+        scheduled: scheduled,
+        completed: completed,
+        cancelled: cancelled,
+      },
+      doctorStats,
     };
   }
-    /**
+  /**
    * Listar TODAS las citas (sin filtrar)
    */
   async findAll() {
     return this.appointmentRepository.find({
       relations: ['doctor', 'patient'],
-      order: { appointmentDate: 'DESC', appointmentTime: 'ASC' }
+      order: { appointmentDate: 'DESC', appointmentTime: 'ASC' },
     });
   }
 

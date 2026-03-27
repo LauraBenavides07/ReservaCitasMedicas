@@ -1,0 +1,6 @@
+﻿
+D:\universidad\Software III\piedrazul\ReservaCitasMedicas\backend\src\application\services\config.service.ts
+  47:11  error  Unsafe assignment of an `any` value  @typescript-eslint/no-unsafe-assignment
+
+Ô£û 1 problem (1 error, 0 warnings)
+

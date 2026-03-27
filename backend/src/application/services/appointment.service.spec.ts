@@ -5,10 +5,11 @@ import { Appointment } from '../../domain/entities/appointment.entity';
 import { Patient } from '../../domain/entities/patient.entity';
 import { Doctor } from '../../domain/entities/doctor.entity';
 import { ConfigService } from './config.service';
+import { CreateAppointmentDto } from '../../presentation/dto/create-appointment.dto';
 
 describe('AppointmentService', () => {
   let service: AppointmentService;
-  
+
   const mockAppointmentRepository = {
     findAndCount: jest.fn(),
     create: jest.fn(),
@@ -29,15 +30,23 @@ describe('AppointmentService', () => {
   };
 
   const mockConfigService = {
-    getConfig: jest.fn().mockResolvedValue({ minAdvanceHours: 2, appointmentWindowWeeks: 4 }),
+    getConfig: jest
+      .fn()
+      .mockResolvedValue({ minAdvanceHours: 2, appointmentWindowWeeks: 4 }),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AppointmentService,
-        { provide: getRepositoryToken(Appointment), useValue: mockAppointmentRepository },
-        { provide: getRepositoryToken(Patient), useValue: mockPatientRepository },
+        {
+          provide: getRepositoryToken(Appointment),
+          useValue: mockAppointmentRepository,
+        },
+        {
+          provide: getRepositoryToken(Patient),
+          useValue: mockPatientRepository,
+        },
         { provide: getRepositoryToken(Doctor), useValue: mockDoctorRepository },
         { provide: ConfigService, useValue: mockConfigService },
       ],
@@ -52,8 +61,14 @@ describe('AppointmentService', () => {
 
   // 1. Crear cita correctamente
   it('debería crear una cita correctamente', async () => {
-    mockDoctorRepository.findOneBy.mockResolvedValue({ id: '2', name: 'Test Doc' });
-    mockPatientRepository.findOneBy.mockResolvedValue({ id: '1', document: '123' });
+    mockDoctorRepository.findOneBy.mockResolvedValue({
+      id: '2',
+      name: 'Test Doc',
+    });
+    mockPatientRepository.findOneBy.mockResolvedValue({
+      id: '1',
+      document: '123',
+    });
     mockAppointmentRepository.findOneBy.mockResolvedValue(null);
     mockAppointmentRepository.create.mockReturnValue({
       id: '1',
@@ -76,7 +91,7 @@ describe('AppointmentService', () => {
       patientDocument: '123',
     };
 
-    const result = await service.create(dto as any);
+    const result = await service.create(dto as unknown as CreateAppointmentDto);
 
     expect(result).toBeDefined();
     expect(result.patient.id).toBe('1');
@@ -85,14 +100,16 @@ describe('AppointmentService', () => {
   // 2. Error al crear cita sin doctor
   it('debería fallar si falta doctorId', async () => {
     mockDoctorRepository.findOneBy.mockResolvedValue(null);
-    
+
     const dto: any = {
       patientId: '1',
       date: '2026-03-30',
       // missing doctorId
     };
 
-    await expect(service.create(dto)).rejects.toThrow();
+    await expect(
+      service.create(dto as unknown as CreateAppointmentDto),
+    ).rejects.toThrow();
   });
 
   // 3. Obtener lista de citas
@@ -135,7 +152,7 @@ describe('AppointmentService', () => {
       id: 'p1',
       document: '12345678',
       firstName: 'Juan',
-      lastName: 'Perez'
+      lastName: 'Perez',
     });
 
     const result = await service.findPatientByDocument('12345678');

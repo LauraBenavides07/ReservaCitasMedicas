@@ -1,0 +1,60 @@
+﻿
+D:\universidad\Software III\piedrazul\ReservaCitasMedicas\backend\src\application\services\appointment.service.spec.ts
+   93:41  warning  Unsafe argument of type `any` assigned to a parameter of type `CreateAppointmentDto`  @typescript-eslint/no-unsafe-argument
+  109:33  warning  Unsafe argument of type `any` assigned to a parameter of type `CreateAppointmentDto`  @typescript-eslint/no-unsafe-argument
+
+D:\universidad\Software III\piedrazul\ReservaCitasMedicas\backend\src\application\services\appointment.service.ts
+   65:11  error  Unsafe assignment of an `any` value                             @typescript-eslint/no-unsafe-assignment
+   66:11  error  Unsafe assignment of an `any` value                             @typescript-eslint/no-unsafe-assignment
+   66:37  error  Unsafe member access .minAdvanceHours on an `any` value         @typescript-eslint/no-unsafe-member-access
+   67:11  error  Unsafe assignment of an `any` value                             @typescript-eslint/no-unsafe-assignment
+   67:44  error  Unsafe member access .appointmentWindowWeeks on an `any` value  @typescript-eslint/no-unsafe-member-access
+  171:11  error  Unsafe assignment of an `any` value                             @typescript-eslint/no-unsafe-assignment
+  172:11  error  Unsafe assignment of an `any` value                             @typescript-eslint/no-unsafe-assignment
+  172:37  error  Unsafe member access .minAdvanceHours on an `any` value         @typescript-eslint/no-unsafe-member-access
+  173:11  error  Unsafe assignment of an `any` value                             @typescript-eslint/no-unsafe-assignment
+  173:44  error  Unsafe member access .appointmentWindowWeeks on an `any` value  @typescript-eslint/no-unsafe-member-access
+
+D:\universidad\Software III\piedrazul\ReservaCitasMedicas\backend\src\application\services\auth.service.spec.ts
+  60:40  warning  Unsafe argument of type `any` assigned to a parameter of type `LoginDto`  @typescript-eslint/no-unsafe-argument
+  79:40  warning  Unsafe argument of type `any` assigned to a parameter of type `LoginDto`  @typescript-eslint/no-unsafe-argument
+  93:21  warning  Unsafe argument of type `any` assigned to a parameter of type `LoginDto`  @typescript-eslint/no-unsafe-argument
+
+D:\universidad\Software III\piedrazul\ReservaCitasMedicas\backend\src\application\services\config.service.ts
+  32:5   error  Unsafe return of a value of type `any`           @typescript-eslint/no-unsafe-return
+  42:11  error  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
+  45:5   error  Unsafe return of a value of type `Promise<any>`  @typescript-eslint/no-unsafe-return
+
+D:\universidad\Software III\piedrazul\ReservaCitasMedicas\backend\src\infrastructure\auth\jwt.strategy.ts
+  15:3   error  Async method 'validate' has no 'await' expression  @typescript-eslint/require-await
+  16:14  error  Unsafe assignment of an `any` value                @typescript-eslint/no-unsafe-assignment
+  16:26  error  Unsafe member access .sub on an `any` value        @typescript-eslint/no-unsafe-member-access
+  16:31  error  Unsafe assignment of an `any` value                @typescript-eslint/no-unsafe-assignment
+  16:49  error  Unsafe member access .document on an `any` value   @typescript-eslint/no-unsafe-member-access
+
+D:\universidad\Software III\piedrazul\ReservaCitasMedicas\backend\src\main.ts
+  22:1  warning  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+
+D:\universidad\Software III\piedrazul\ReservaCitasMedicas\backend\src\presentation\controllers\appointment.controller.spec.ts
+  31:12  error  A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+If a function does not access `this`, it can be annotated with `this: void`  @typescript-eslint/unbound-method
+
+D:\universidad\Software III\piedrazul\ReservaCitasMedicas\backend\src\presentation\controllers\appointment.controller.ts
+  46:53  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+  46:57  error    Unsafe member access .user on an `any` value                            @typescript-eslint/no-unsafe-member-access
+  66:58  warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+  66:62  error    Unsafe member access .user on an `any` value                            @typescript-eslint/no-unsafe-member-access
+  78:7   warning  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+  78:11  error    Unsafe member access .user on an `any` value                            @typescript-eslint/no-unsafe-member-access
+
+D:\universidad\Software III\piedrazul\ReservaCitasMedicas\backend\src\presentation\controllers\config.controller.ts
+  10:5  error  Unsafe return of a value of type `Promise<any>`  @typescript-eslint/no-unsafe-return
+  15:5  error  Unsafe return of a value of type `Promise<any>`  @typescript-eslint/no-unsafe-return
+
+D:\universidad\Software III\piedrazul\ReservaCitasMedicas\backend\src\presentation\controllers\doctor.controller.ts
+  29:38  warning  Unsafe argument of type `any` assigned to a parameter of type `Partial<Doctor>`  @typescript-eslint/no-unsafe-argument
+  37:42  warning  Unsafe argument of type `any` assigned to a parameter of type `Partial<Doctor>`  @typescript-eslint/no-unsafe-argument
+
+Ô£û 35 problems (24 errors, 11 warnings)
+

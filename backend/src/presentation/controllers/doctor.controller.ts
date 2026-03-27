@@ -1,4 +1,14 @@
-import { Controller, Get, Param, Post, Body, Patch, Delete, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  Patch,
+  Delete,
+  ParseUUIDPipe,
+} from '@nestjs/common';
+import { Doctor } from '../../domain/entities/doctor.entity';
 import { DoctorService } from '../../application/services/doctor.service';
 
 @Controller('doctors')
@@ -16,12 +26,15 @@ export class DoctorController {
   }
 
   @Post()
-  async createDoctor(@Body() data: any) {
+  async createDoctor(@Body() data: Partial<Doctor>) {
     return this.doctorService.create(data);
   }
 
   @Patch(':id')
-  async updateDoctor(@Param('id', ParseUUIDPipe) id: string, @Body() data: any) {
+  async updateDoctor(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() data: Partial<Doctor>,
+  ) {
     return this.doctorService.update(id, data);
   }
 
