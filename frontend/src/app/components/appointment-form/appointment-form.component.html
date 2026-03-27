@@ -19,10 +19,8 @@
                             <input type="text" formControlName="patientDocument" placeholder="Nro. documento"
                                 [class.input-error]="f['patientDocument'].touched && f['patientDocument'].errors">
 
-                            <!-- Botón de búsqueda -->
-                            <button type="button" class="btn-buscar" (click)="searchPatient()" [disabled]="!f['patientDocument'].value || isSearchingPatient()">
-                                {{ isSearchingPatient() ? 'Buscando...' : 'Buscar' }}
-                            </button>
+                            <!-- Botón con lógica de búsqueda -->
+                            <button type="button" class="btn-buscar" (click)="searchPatient()">Buscar</button>
                         </div>
                     </div>
 
@@ -47,21 +45,16 @@
                             <label>GÉNERO *</label>
                             <select formControlName="gender">
                                 <option value="">Seleccionar</option>
-                                <option value="Hombre">Hombre</option>
-                                <option value="Mujer">Mujer</option>
-                                <option value="Otro">Otro</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Femenino</option>
+                                <option value="O">Otro</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Fecha y correo -->
+                    <!-- Correo -->
                     <div class="form-row">
-                        <div class="form-field">
-                            <label>FECHA DE NACIMIENTO</label>
-                            <input type="date" formControlName="birthDate">
-                        </div>
-
-                        <div class="form-field">
+                        <div class="form-field full-width">
                             <label>CORREO</label>
                             <input type="email" formControlName="email">
                         </div>

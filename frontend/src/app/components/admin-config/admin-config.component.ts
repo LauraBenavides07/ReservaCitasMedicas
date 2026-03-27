@@ -20,6 +20,15 @@ export class AdminConfigComponent implements OnInit {
   showGlobalConfig = signal(false);
   selectedDoctor = signal<Doctor | null>(null);
 
+  // Lista de especialidades predefinidas
+  specialties = [
+    'Medicina General',
+    'Fisioterapia',
+    'Quiropraxia',
+    'Psicología',
+    'Nutrición',
+  ];
+
   // Formularios reactivos
   doctorForm: FormGroup;
   configForm: FormGroup;
@@ -38,12 +47,12 @@ export class AdminConfigComponent implements OnInit {
     this.doctorForm = this.fb.group({
       name: ['', Validators.required],
       specialty: ['', Validators.required],
-      startTime: ['08:00', Validators.required],
-      endTime: ['18:00', Validators.required],
-      appointmentDuration: [30, [Validators.required, Validators.min(10)]],
-      workingDays: ['1,2,3,4,5', Validators.required],
-      breakStart: [null],
-      breakEnd: [null]
+      scheduleStart: ['08:00', Validators.required],
+      scheduleEnd: ['18:00', Validators.required],
+      slotDuration: [30, [Validators.required, Validators.min(10)]],
+      activeDays: ['1,2,3,4,5', Validators.required],
+      lunchStart: [null],
+      lunchEnd: [null]
     });
 
     // Inicialización del formulario de configuración global
@@ -91,12 +100,12 @@ export class AdminConfigComponent implements OnInit {
       this.selectedDoctor.set(null);
       // Resetea formulario con valores por defecto
       this.doctorForm.reset({
-        startTime: '08:00',
-        endTime: '18:00',
-        appointmentDuration: 30,
-        workingDays: '1,2,3,4,5',
-        breakStart: null,
-        breakEnd: null
+        scheduleStart: '08:00',
+        scheduleEnd: '18:00',
+        slotDuration: 30,
+        activeDays: '1,2,3,4,5',
+        lunchStart: null,
+        lunchEnd: null
       });
     }
     this.showDoctorForm.set(true);
@@ -123,7 +132,7 @@ export class AdminConfigComponent implements OnInit {
   }
 
   // Elimina un médico por su ID
-  deleteDoctor(id: number): void {
+  deleteDoctor(id: string): void {
     if (confirm('¿Está seguro de eliminar este médico?')) {
       this.doctorService.deleteDoctor(id).subscribe({
         next: () => this.loadDoctors(),
@@ -146,9 +155,10 @@ export class AdminConfigComponent implements OnInit {
   // ============================================
 
   // Devuelve un color basado en el ID del médico para el avatar
-  getDoctorColor(id: number): string {
+  getDoctorColor(id: string | number): string {
     const colors = ['#e11d48', '#2563eb', '#7c3aed', '#10b981', '#f59e0b', '#06b6d4'];
-    return colors[id % colors.length];  // Selecciona color según módulo del ID
+    const num = typeof id === 'string' ? id.charCodeAt(id.length - 1) : id;
+    return colors[num % colors.length];  // Selecciona color según módulo del ID
   }
 
   // Formatea los días laborales para mostrar nombres legibles

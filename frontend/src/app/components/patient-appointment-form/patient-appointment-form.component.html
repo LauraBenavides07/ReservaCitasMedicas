@@ -60,10 +60,10 @@
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <polyline points="12 6 12 12 16 14"></polyline>
                                 </svg>
-                                {{ doctor.startTime }}–{{ doctor.endTime }} · {{ doctor.appointmentDuration }}min
+                                {{ doctor.scheduleStart | slice:0:5 }}–{{ doctor.scheduleEnd | slice:0:5 }} · {{ doctor.slotDuration }}min
                             </p>
                             <!-- Días laborables -->
-                            <p class="schedule-days">{{ formatDays(doctor.workingDays) }}</p>
+                            <p class="schedule-days">{{ formatDays(doctor.activeDays) }}</p>
                         </div>
                     </div>
                 </div>

@@ -17,7 +17,7 @@ export class DoctorService {
     return this.doctorRepository.find();
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const doctor = await this.doctorRepository.findOneBy({ id });
     if (!doctor) {
       throw new NotFoundException(`Doctor with ID ${id} not found`);
@@ -30,13 +30,13 @@ export class DoctorService {
     return this.doctorRepository.save(doctor);
   }
 
-  async update(id: number, data: Partial<Doctor>) {
+  async update(id: string, data: Partial<Doctor>) {
     await this.findOne(id);
     await this.doctorRepository.update(id, data);
     return this.findOne(id);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const doctor = await this.findOne(id);
     
     // Verificar si el doctor tiene citas agendadas

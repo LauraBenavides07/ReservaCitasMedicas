@@ -43,7 +43,7 @@
                 <div class="doc-middle-info">
                     <div class="info-block">
                         <span class="label">Horario:</span>
-                        <span class="value">{{ doctor.startTime }}–{{ doctor.endTime }}</span>
+                        <span class="value">{{ doctor.scheduleStart | slice:0:5 }}–{{ doctor.scheduleEnd | slice:0:5 }}</span>
                     </div>
                     <div class="info-block">
                         <span class="label">Ventana:</span>
@@ -55,11 +55,11 @@
                 <div class="doc-right-info">
                     <div class="info-block">
                         <span class="label">Intervalo:</span>
-                        <span class="value">{{ doctor.appointmentDuration }} min</span>
+                        <span class="value">{{ doctor.slotDuration }} min</span>
                     </div>
                     <div class="info-block">
                         <span class="label">Días:</span>
-                        <span class="value">{{ formatDays(doctor.workingDays) }}</span>
+                        <span class="value">{{ formatDays(doctor.activeDays) }}</span>
                     </div>
                 </div>
 
@@ -168,41 +168,44 @@
                 <!-- Campo: especialidad -->
                 <div class="form-field">
                     <label for="doctor-specialty">Especialidad</label>
-                    <input id="doctor-specialty" formControlName="specialty" placeholder="Fisioterapia" />
+                    <select id="doctor-specialty" formControlName="specialty">
+                        <option value="">Seleccione una especialidad</option>
+                        <option *ngFor="let s of specialties" [value]="s">{{ s }}</option>
+                    </select>
                 </div>
 
                 <!-- Fila con hora inicio y hora fin -->
                 <div class="form-row" style="display:flex; gap:1rem;">
                     <div class="form-field" style="flex:1;">
                         <label for="doctor-startTime">Hora Inicio</label>
-                        <input id="doctor-startTime" type="time" formControlName="startTime" />
+                        <input id="doctor-startTime" type="time" formControlName="scheduleStart" />
                     </div>
                     <div class="form-field" style="flex:1;">
                         <label for="doctor-endTime">Hora Fin</label>
-                        <input id="doctor-endTime" type="time" formControlName="endTime" />
+                        <input id="doctor-endTime" type="time" formControlName="scheduleEnd" />
                     </div>
                 </div>
 
                 <!-- Campo: duración de la cita -->
                 <div class="form-field">
                     <label for="doctor-duration">Duración Cita (min)</label>
-                    <input id="doctor-duration" type="number" formControlName="appointmentDuration" />
+                    <input id="doctor-duration" type="number" formControlName="slotDuration" />
                 </div>
                 <!-- Campo: días laborables -->
                 <div class="form-field">
                     <label for="doctor-workingDays">Días (1,2... lun-vie)</label>
-                    <input id="doctor-workingDays" formControlName="workingDays" placeholder="1,2,3,4,5" />
+                    <input id="doctor-workingDays" formControlName="activeDays" placeholder="1,2,3,4,5" />
                 </div>
 
                 <!-- Fila con inicio y fin de descanso -->
                 <div class="form-row" style="display:flex; gap:1rem;">
                     <div class="form-field" style="flex:1;">
                         <label for="doctor-breakStart">Inicio Descanso</label>
-                        <input id="doctor-breakStart" type="time" formControlName="breakStart" />
+                        <input id="doctor-breakStart" type="time" formControlName="lunchStart" />
                     </div>
                     <div class="form-field" style="flex:1;">
                         <label for="doctor-breakEnd">Fin Descanso</label>
-                        <input id="doctor-breakEnd" type="time" formControlName="breakEnd" />
+                        <input id="doctor-breakEnd" type="time" formControlName="lunchEnd" />
                     </div>
                 </div>
 

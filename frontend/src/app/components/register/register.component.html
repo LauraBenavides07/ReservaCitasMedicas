@@ -27,40 +27,57 @@
                 <!-- Fila de nombres y apellidos (2 columnas) -->
                 <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="form-field">
-                        <label>NOMBRES *</label>
-                        <input type="text" formControlName="firstName" placeholder="Tu nombre"
+                        <label>NOMBRES (*)</label>
+                        <input type="text" formControlName="firstName" placeholder="ejemplo Juan"
                             [class.input-error]="f['firstName'].invalid && f['firstName'].touched">
+                        <div *ngIf="f['firstName'].invalid && f['firstName'].touched" class="error-message">
+                            Por favor escriba sus nombres.
+                        </div>
                     </div>
                     <div class="form-field">
-                        <label>APELLIDOS *</label>
-                        <input type="text" formControlName="lastName" placeholder="Tus apellidos"
+                        <label>APELLIDOS (*)</label>
+                        <input type="text" formControlName="lastName" placeholder="ejemplo Perez"
                             [class.input-error]="f['lastName'].invalid && f['lastName'].touched">
+                        <div *ngIf="f['lastName'].invalid && f['lastName'].touched" class="error-message">
+                            Por favor escriba sus apellidos.
+                        </div>
                     </div>
                 </div>
 
                 <!-- Fila de documento y teléfono (2 columnas) -->
                 <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="form-field">
-                        <label>DOCUMENTO *</label>
-                        <input type="text" formControlName="document" placeholder="Número de identidad"
+                        <label>DOCUMENTO (*)</label>
+                        <input type="text" formControlName="document" placeholder="Número de cédula"
                             [class.input-error]="f['document'].invalid && f['document'].touched">
+                        <div *ngIf="f['document'].invalid && f['document'].touched" class="error-message">
+                            <span *ngIf="f['document'].errors?.['required']">El documento es obligatorio.</span>
+                            <span *ngIf="f['document'].errors?.['pattern']">El documento debe contener solo números.</span>
+                        </div>
                     </div>
                     <div class="form-field">
-                        <label>TELÉFONO *</label>
-                        <input type="tel" formControlName="phone" placeholder="Celular"
+                        <label>TELÉFONO (*)</label>
+                        <input type="tel" formControlName="phone" placeholder="Número de celular"
                             [class.input-error]="f['phone'].invalid && f['phone'].touched">
+                        <div *ngIf="f['phone'].invalid && f['phone'].touched" class="error-message">
+                            <span *ngIf="f['phone'].errors?.['required']">El teléfono es obligatorio.</span>
+                            <span *ngIf="f['phone'].errors?.['pattern']">El teléfono debe contener solo números.</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Fila de correo y género (2 columnas) -->
                 <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="form-field">
-                        <label>CORREO ELECTRÓNICO *</label>
+                        <label>CORREO ELECTRÓNICO (Opcional)</label>
                         <input type="email" formControlName="email" placeholder="correo@ejemplo.com"
                             [class.input-error]="f['email'].invalid && f['email'].touched">
+                        <div *ngIf="f['email'].invalid && f['email'].touched" class="error-message">
+                            Por favor ingrese un correo válido.
+                        </div>
                     </div>
                     <div class="form-field">
-                        <label>GÉNERO *</label>
+                        <label>GÉNERO (*)</label>
                         <select formControlName="gender"
                             [class.input-error]="f['gender'].invalid && f['gender'].touched">
                             <option value="">Seleccione</option>
@@ -68,25 +85,17 @@
                             <option value="F">Femenino</option>
                             <option value="O">Otro</option>
                         </select>
+                        <div *ngIf="f['gender'].invalid && f['gender'].touched" class="error-message">
+                            Por favor seleccione su género.
+                        </div>
                     </div>
                 </div>
 
                 <!-- Campo de contraseña -->
                 <div class="form-field">
-                    <label>CONTRASEÑA *</label>
-                    <div class="password-container">
-                        <input [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="Mínimo 8 caracteres"
-                            [class.input-error]="f['password'].invalid && f['password'].touched">
-                        <button type="button" class="toggle-password-btn" (click)="togglePassword()" aria-label="Mostrar u ocultar contraseña">
-                            <svg *ngIf="!showPassword()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            <svg *ngIf="showPassword()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                            </svg>
-                        </button>
-                    </div>
+                    <label>CONTRASEÑA (*)</label>
+                    <input type="password" formControlName="password" placeholder="Mínimo 8 caracteres"
+                        [class.input-error]="f['password'].invalid && f['password'].touched">
                     <div *ngIf="f['password'].invalid && f['password'].touched" class="error-message">
                         <span *ngIf="f['password'].errors?.['required']">La contraseña es obligatoria.</span>
                         <span *ngIf="f['password'].errors?.['minlength']">La contraseña debe tener al menos 8 caracteres.</span>
@@ -105,7 +114,7 @@
 
                 <!-- Botón de envío del formulario -->
                 <button type="submit" class="btn btn-primary btn-full" [disabled]="isLoading()">
-                    {{ isLoading() ? 'Creando cuenta...' : 'Crear cuenta gratuita' }}
+                    {{ isLoading() ? 'Creando cuenta...' : 'Crear cuenta' }}
                 </button>
             </form>
         </div>

@@ -3,6 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Config } from '../../domain/entities/config.entity';
 
+export class GlobalConfig {
+  minAdvanceHours: number;
+  appointmentWindowWeeks: number;
+}
+
 @Injectable()
 export class ConfigService implements OnModuleInit {
   constructor(
@@ -10,23 +15,39 @@ export class ConfigService implements OnModuleInit {
     private configRepository: Repository<Config>,
   ) {}
 
-  async onModuleInit() {
-    // Asegurar que exista al menos una configuración
-    const count = await this.configRepository.count();
-    if (count === 0) {
+  async onModuleInit(): Promise<void> {
+    const existing = await this.configRepository.findOne({
+      where: { key: 'appointment_rules' },
+    });
+    if (!existing) {
       await this.configRepository.save({
-        minAdvanceHours: 2,
-        appointmentWindowWeeks: 4,
+        key: 'appointment_rules',
+        value: {
+          minAdvanceHours: 2,
+          appointmentWindowWeeks: 4,
+        },
       });
     }
   }
 
-  async getConfig() {
-    return this.configRepository.findOne({ where: { id: 1 } });
+  async getConfig(): Promise<GlobalConfig | undefined> {
+    const config = await this.configRepository.findOne({
+      where: { key: 'appointment_rules' },
+    });
+    return config?.value as GlobalConfig | undefined;
   }
 
-  async updateConfig(data: Partial<Config>) {
-    await this.configRepository.update(1, data);
+  async updateConfig(data: GlobalConfig): Promise<GlobalConfig | undefined> {
+    const existing = await this.configRepository.findOne({
+      where: { key: 'appointment_rules' },
+    });
+    if (existing) {
+      await this.configRepository.update(
+        { key: 'appointment_rules' },
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        { value: data as any },
+      );
+    }
     return this.getConfig();
   }
 }

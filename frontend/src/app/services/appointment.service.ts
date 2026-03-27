@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Doctor } from './doctor.service';
 
 export interface Patient {
   firstName: string;
@@ -10,11 +11,14 @@ export interface Patient {
 }
 
 export interface Appointment {
-  id: number;
+  id: string;
   time: string;
   date: string;
+  appointmentTime?: string;
+  appointmentDate?: string;
   status: string;
   patient: Patient;
+  doctor?: Doctor;
 }
 
 export interface AppointmentResponse {
@@ -30,7 +34,7 @@ export interface CreateAppointmentDto {
   gender: string;
   birthDate?: string;
   email?: string;
-  doctorId: number;
+  doctorId: string;
   date: string;
   time: string;
 }
@@ -43,11 +47,11 @@ export class AppointmentService {
 
   constructor(private http: HttpClient) {}
 
-  getAppointments(doctorId: number, date: string): Observable<AppointmentResponse> {
+  getAppointments(doctorId: string, date: string): Observable<AppointmentResponse> {
     return this.http.get<AppointmentResponse>(`${this.apiUrl}?doctorId=${doctorId}&date=${date}`);
   }
 
-  getAvailableSlots(doctorId: number, date: string): Observable<string[]> {
+  getAvailableSlots(doctorId: string, date: string): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/available-slots?doctorId=${doctorId}&date=${date}`);
   }
 
@@ -59,11 +63,11 @@ export class AppointmentService {
     return this.http.get<any[]>(`${this.apiUrl}/my-appointments`);
   }
 
-  cancelAppointment(id: number): Observable<any> {
+  cancelAppointment(id: string): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${id}/cancel`, {});
   }
 
-  rescheduleAppointment(id: number, date: string, time: string): Observable<any> {
+  rescheduleAppointment(id: string, date: string, time: string): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${id}/reschedule`, { date, time });
   }
 
@@ -73,5 +77,9 @@ export class AppointmentService {
 
   getAllAppointments(): Observable<Appointment[]> {
     return this.http.get<Appointment[]>(`${this.apiUrl}/all`);
+  }
+
+  getPatientByDocument(document: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/patient-by-document/${document}`);
   }
 }

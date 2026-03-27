@@ -14,7 +14,7 @@ import { DoctorService, Doctor } from '../../services/doctor.service';
 export class LandingPageComponent implements OnInit {
   // Evento de salida para navegación hacia el componente padre
   @Output() navigate = new EventEmitter<'login' | 'register'>();
-
+ 
   // Variables
   currentSlide = 0;
   totalSlides = 3;
@@ -77,6 +77,12 @@ export class LandingPageComponent implements OnInit {
     return name.slice(0, 2).toUpperCase();
   }
 
+  // Genera clase de color para el avatar del medico usando UUID fallback
+  getDoctorColorClass(id: string | number): number {
+    const num = typeof id === 'string' ? id.charCodeAt(id.length - 1) : id;
+    return num % 4;
+  }
+
   // Detecta el scroll para aplicar efecto de navbar
   @HostListener('window:scroll', [])
   onWindowScroll(): void {
@@ -108,17 +114,17 @@ export class LandingPageComponent implements OnInit {
   ngOnDestroy(): void {
     document.body.style.overflow = '';
   }
-
+  
   // Metodos carrusel 
-  nextSlide(): void {
-    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
-  }
+    nextSlide(): void {
+      this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    }
 
-  prevSlide(): void {
-    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
-  }
+    prevSlide(): void {
+      this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    }
 
-  goToSlide(index: number): void {
-    this.currentSlide = index;
-  }
+    goToSlide(index: number): void {
+      this.currentSlide = index;
+    }
 }

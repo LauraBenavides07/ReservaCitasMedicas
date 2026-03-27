@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -19,7 +23,9 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    const existing = await this.patientRepository.findOneBy({ document: dto.document });
+    const existing = await this.patientRepository.findOneBy({
+      document: dto.document,
+    });
     if (existing) {
       throw new ConflictException('El documento ya está registrado.');
     }
@@ -36,12 +42,19 @@ export class AuthService {
 
   async login(dto: LoginDto) {
     // 1. Intentar buscar en la tabla de Usuarios Internos (Admin, Staff)
-    let internalUser = await this.userRepository.findOne({
+    const internalUser = await this.userRepository.findOne({
       where: { email: dto.login },
     });
 
-    if (internalUser && (await bcrypt.compare(dto.password, internalUser.password))) {
-      const payload = { sub: internalUser.id, email: internalUser.email, role: internalUser.role };
+    if (
+      internalUser &&
+      (await bcrypt.compare(dto.password, internalUser.password))
+    ) {
+      const payload = {
+        sub: internalUser.id,
+        email: internalUser.email,
+        role: internalUser.role,
+      };
       return {
         access_token: this.jwtService.sign(payload),
         user: {
@@ -57,11 +70,27 @@ export class AuthService {
     // 2. Si no es usuario interno, intentar buscar en Pacientes
     const patient = await this.patientRepository.findOne({
       where: [{ document: dto.login }, { email: dto.login }],
-      select: ['id', 'firstName', 'lastName', 'password', 'document', 'phone', 'gender'],
+      select: [
+        'id',
+        'firstName',
+        'lastName',
+        'password',
+        'document',
+        'phone',
+        'gender',
+      ],
     });
 
-    if (patient && (await bcrypt.compare(dto.password, patient.password))) {
-      const payload = { sub: patient.id, document: patient.document, role: 'patient' };
+    if (
+      patient &&
+      patient.password &&
+      (await bcrypt.compare(dto.password, patient.password))
+    ) {
+      const payload = {
+        sub: patient.id,
+        document: patient.document,
+        role: 'patient',
+      };
       return {
         access_token: this.jwtService.sign(payload),
         user: {

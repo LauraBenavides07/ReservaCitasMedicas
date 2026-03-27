@@ -5,12 +5,13 @@ import { User } from '../../domain/entities/user.entity';
 import { Patient } from '../../domain/entities/patient.entity';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { LoginDto } from '../../presentation/dto/login.dto';
 
 jest.mock('bcrypt');
 
 describe('AuthService', () => {
   let service: AuthService;
-  
+
   const mockUserRepository = {
     findOne: jest.fn(),
   };
@@ -29,7 +30,10 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         { provide: getRepositoryToken(User), useValue: mockUserRepository },
-        { provide: getRepositoryToken(Patient), useValue: mockPatientRepository },
+        {
+          provide: getRepositoryToken(Patient),
+          useValue: mockPatientRepository,
+        },
         { provide: JwtService, useValue: mockJwtService },
       ],
     }).compile();
@@ -48,13 +52,16 @@ describe('AuthService', () => {
       email: 'test@mail.com',
       password: '123456',
     };
-    
+
     // Configurar repuestas de mocks para simular que el usuario existe y la contraseña coincide
     mockUserRepository.findOne.mockResolvedValue(mockUser);
     (bcrypt.compare as jest.Mock).mockResolvedValue(true);
     mockJwtService.sign.mockReturnValue('fake-token');
 
-    const result = await service.login({ login: 'test@mail.com', password: '123456' } as any);
+    const result = await service.login({
+      login: 'test@mail.com',
+      password: '123456',
+    } as unknown as LoginDto);
 
     expect(result).toBeDefined();
     expect(result.user.email).toBe('test@mail.com');
@@ -70,7 +77,10 @@ describe('AuthService', () => {
     (bcrypt.compare as jest.Mock).mockResolvedValue(true);
     mockJwtService.sign.mockReturnValue('fake-token');
 
-    const result = await service.login({ login: 'test@mail.com', password: '123456' } as any);
+    const result = await service.login({
+      login: 'test@mail.com',
+      password: '123456',
+    } as unknown as LoginDto);
 
     expect(result.access_token).toBe('fake-token');
   });
@@ -81,7 +91,10 @@ describe('AuthService', () => {
     mockPatientRepository.findOne.mockResolvedValue(null);
 
     await expect(
-      service.login({ login: 'fake@mail.com', password: '123456' } as any),
+      service.login({
+        login: 'fake@mail.com',
+        password: '123456',
+      } as unknown as LoginDto),
     ).rejects.toThrow();
   });
 });

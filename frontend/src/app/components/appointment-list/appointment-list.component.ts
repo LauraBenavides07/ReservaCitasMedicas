@@ -29,10 +29,10 @@ export class AppointmentListComponent implements OnInit {
   total: number = 0;
 
   // Doctor seleccionado
-  selectedDoctorId: number | null = null;
+  selectedDoctorId: string | null = null;
 
-  // Fecha seleccionada (por defecto hoy)
-  selectedDate: string = new Date().toISOString().split('T')[0];
+  // Fecha seleccionada (por defecto hoy, formato local)
+  selectedDate: string = new Date().toLocaleDateString('en-CA');
 
   // Estado de carga
   loading: boolean = false;
@@ -59,7 +59,7 @@ export class AppointmentListComponent implements OnInit {
 
         // Selecciona el primer doctor automáticamente
         if (docs.length > 0) {
-          this.selectedDoctorId = Number(docs[0].id);
+          this.selectedDoctorId = docs[0].id;
         } else {
           this.selectedDoctorId = null;
         }
@@ -84,7 +84,7 @@ export class AppointmentListComponent implements OnInit {
     this.cdr.detectChanges();
 
     this.appointmentService
-      .getAppointments(Number(this.selectedDoctorId), this.selectedDate)
+      .getAppointments(this.selectedDoctorId, this.selectedDate)
       .pipe(
         // Se ejecuta siempre al finalizar (éxito o error)
         finalize(() => {
@@ -141,7 +141,7 @@ onSearch(): void {
   this.hasSearched = true;
 
   this.appointmentService
-    .getAppointments(Number(this.selectedDoctorId), this.selectedDate)
+    .getAppointments(this.selectedDoctorId, this.selectedDate)
     .pipe(finalize(() => {
       this.loading = false;
       this.cdr.detectChanges();

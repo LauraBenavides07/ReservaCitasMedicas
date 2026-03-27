@@ -1,0 +1,81 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - 'release/**'
+  pull_request:
+    branches:
+      - main
+      - 'release/**'
+
+jobs:
+  backend-ci:
+    name: Backend CI
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Linter
+        run: npm run lint
+
+      - name: Run Build
+        run: npm run build
+
+      - name: Run Unit Tests
+        run: npm run test
+
+      # Opcional: Ejecutar pruebas e2e
+      # - name: Run E2E Tests
+      #   run: npm run test:e2e
+
+  frontend-ci:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Build
+        run: npm run build
+
+      - name: Run Unit Tests
+        run: npm run test -- --watch=false

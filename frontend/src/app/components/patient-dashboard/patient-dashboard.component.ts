@@ -23,15 +23,15 @@ export class PatientDashboardComponent implements OnInit {
   isLoading = signal(true);
 
   // Variables para reagendamiento
-  reschedulingId = signal<number | null>(null);
+  reschedulingId = signal<string | null>(null);
   newDate: string = '';
   newTime: string = '';
 
   // Horarios disponibles
   availableSlots = signal<string[]>([]);
 
-  // Fecha actual
-  today = new Date().toISOString().split('T')[0];
+  // Fecha actual (Local para evitar desfase UTC en horas nocturnas)
+  today = new Date().toLocaleDateString('en-CA'); // 'en-CA' produce el formato YYYY-MM-DD local
 
   // Servicios
   auth = inject(AuthService);
@@ -56,7 +56,7 @@ export class PatientDashboardComponent implements OnInit {
   }
 
   // Cancelar cita
-  cancel(id: number): void {
+  cancel(id: string): void {
 
     // Confirmación del usuario
     if (confirm('¿Está seguro de que desea cancelar esta cita?')) {
@@ -71,13 +71,13 @@ export class PatientDashboardComponent implements OnInit {
   // Iniciar reagendamiento
   startReschedule(app: any): void {
     this.reschedulingId.set(app.id);
-    this.newDate = app.date;
+    this.newDate = app.appointmentDate;
     this.newTime = '';
     this.onDateChange(app.doctor?.id);
   }
 
   // Cambio de fecha
-  onDateChange(doctorId: number): void {
+  onDateChange(doctorId: string): void {
     if (this.newDate && doctorId) {
 
       this.appointmentService.getAvailableSlots(doctorId, this.newDate).subscribe({
@@ -88,7 +88,7 @@ export class PatientDashboardComponent implements OnInit {
   }
 
   // Confirmar reagendamiento
-  confirmReschedule(id: number): void {
+  confirmReschedule(id: string): void {
 
     this.appointmentService
       .rescheduleAppointment(id, this.newDate, this.newTime)

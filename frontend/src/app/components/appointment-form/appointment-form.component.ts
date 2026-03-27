@@ -31,18 +31,11 @@ export class AppointmentFormComponent implements OnInit {
   doctors = signal<Doctor[]>([]);
   availableSlots = signal<string[]>([]);
   isSubmitting = signal(false);
-  isSearchingPatient = signal(false);
   successMessage = signal('');
   errorMessage = signal('');
 
-  // Fecha actual respetando zona horaria local
-  today = (() => {
-    const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
-  })();
+  // Fecha actual
+  today = new Date().toLocaleDateString('en-CA');
 
   ngOnInit(): void {
     this.initForm();
@@ -59,7 +52,6 @@ export class AppointmentFormComponent implements OnInit {
       lastName: [this.isPatientView ? user?.lastName : '', [Validators.required]],
       phone: [this.isPatientView ? user?.phone : '', [Validators.required]],
       gender: [this.isPatientView ? user?.gender : '', [Validators.required]],
-      birthDate: [null],
       email: [null, [Validators.email]],
       doctorId: ['', [Validators.required]],
       date: [this.today, [Validators.required]],
@@ -89,6 +81,31 @@ export class AppointmentFormComponent implements OnInit {
     });
   }
 
+  // Busca paciente por documento
+  searchPatient(): void {
+    const document = this.f['patientDocument'].value;
+    if (!document) return;
+
+    this.errorMessage.set('');
+    this.appointmentService.getPatientByDocument(document).subscribe({
+      next: (patient) => {
+        this.appointmentForm.patchValue({
+          firstName: patient.firstName,
+          lastName: patient.lastName,
+          phone: patient.phone,
+          gender: patient.gender,
+          email: patient.email
+        });
+        this.successMessage.set('Paciente encontrado.');
+        setTimeout(() => this.successMessage.set(''), 3000);
+      },
+      error: () => {
+        this.errorMessage.set('Paciente no encontrado. Ingrese los datos manualmente.');
+        // Opcional: limpiar campos si se desea un comportamiento mas estricto
+      }
+    });
+  }
+
   // Cambio de doctor
   onDoctorChange(): void {
     this.f['time'].setValue('');
@@ -96,15 +113,16 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   // Seleccionar doctor
-  selectDoctor(id: number): void {
+  selectDoctor(id: string): void {
     this.f['doctorId'].setValue(id);
     this.onDoctorChange();
   }
 
   // Genera color del avatar
-  getDoctorColor(id: number): string {
+  getDoctorColor(id: string | number): string {
     const colors = ['#ef4444', '#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#06b6d4'];
-    return colors[id % colors.length];
+    const num = typeof id === 'string' ? id.charCodeAt(id.length - 1) : id;
+    return colors[num % colors.length];
   }
 
   // Cambio de fecha
@@ -119,7 +137,7 @@ export class AppointmentFormComponent implements OnInit {
     const date = this.f['date'].value;
 
     if (doctorId && date) {
-      this.appointmentService.getAvailableSlots(Number(doctorId), date).subscribe({
+      this.appointmentService.getAvailableSlots(doctorId, date).subscribe({
         next: (slots) => this.availableSlots.set(slots),
         error: () => {
           this.availableSlots.set([]);
@@ -129,49 +147,6 @@ export class AppointmentFormComponent implements OnInit {
     } else {
       this.availableSlots.set([]);
     }
-  }
-
-  // Buscar paciente por documento
-  searchPatient(): void {
-    const document = this.f['patientDocument'].value;
-    if (!document) return;
-
-    this.isSearchingPatient.set(true);
-    this.errorMessage.set('');
-    this.successMessage.set('');
-
-    this.auth.getPatientByDocument(document).pipe(
-      catchError(err => {
-        this.errorMessage.set('Paciente no encontrado.');
-        
-        // Limpiar los campos si no se encuentra
-        this.appointmentForm.patchValue({
-          firstName: '',
-          lastName: '',
-          phone: '',
-          gender: '',
-          email: '',
-          birthDate: null,
-        });
-        
-        this.isSearchingPatient.set(false);
-        return of(null);
-      })
-    ).subscribe(patient => {
-      this.isSearchingPatient.set(false);
-      if (patient) {
-        this.appointmentForm.patchValue({
-          firstName: patient.firstName,
-          lastName: patient.lastName,
-          phone: patient.phone,
-          gender: patient.gender,
-          email: patient.email || '',
-          birthDate: patient.birthDate ? patient.birthDate.split('T')[0] : null,
-        });
-        this.successMessage.set('Datos del paciente cargados exitosamente.');
-        setTimeout(() => this.successMessage.set(''), 3000);
-      }
-    });
   }
 
   // Envío del formulario
@@ -192,13 +167,12 @@ export class AppointmentFormComponent implements OnInit {
       lastName: formValue.lastName,
       phone: formValue.phone,
       gender: formValue.gender,
-      doctorId: Number(formValue.doctorId),
+      doctorId: formValue.doctorId,
       date: formValue.date,
       time: formValue.time
     };
 
     // Campos opcionales
-    if (formValue.birthDate) dto.birthDate = formValue.birthDate;
     if (formValue.email) dto.email = formValue.email;
 
     // Llamada al servicio

@@ -178,7 +178,7 @@
 
     <div class="specialists-grid">
       <div class="specialist-card" *ngFor="let doc of doctors()">
-        <div class="specialist-avatar" [ngClass]="'avatar-bg-' + (doc.id % 4)">
+        <div class="specialist-avatar" [ngClass]="'avatar-bg-' + getDoctorColorClass(doc.id)">
           <span class="avatar-initials">{{ getInitials(doc.name) }}</span>
         </div>
         <div class="specialist-info">
