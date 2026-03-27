@@ -13,7 +13,7 @@ import { DoctorService, Doctor } from '../../services/doctor.service';
 })
 export class LandingPageComponent implements OnInit {
   // Evento de salida para navegación hacia el componente padre
-  @Output() navigate = new EventEmitter<'login'>();
+  @Output() navigate = new EventEmitter<'login' | 'register'>();
  
   // Variables
   currentSlide = 0;
@@ -75,6 +75,12 @@ export class LandingPageComponent implements OnInit {
     }
     // Si solo tiene un nombre, toma las primeras dos letras
     return name.slice(0, 2).toUpperCase();
+  }
+
+  // Genera clase de color para el avatar del medico usando UUID fallback
+  getDoctorColorClass(id: string | number): number {
+    const num = typeof id === 'string' ? id.charCodeAt(id.length - 1) : id;
+    return num % 4;
   }
 
   // Detecta el scroll para aplicar efecto de navbar

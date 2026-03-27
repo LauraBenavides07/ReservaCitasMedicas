@@ -46,9 +46,17 @@
             <tbody>
                 <!-- Iteración de citas -->
                 <tr *ngFor="let app of appointments()" [class.cancelled]="app.status === 'cancelada'">
-
-                    <td><strong>{{ formatDate(app.date) }}</strong></td>
-                    <td><strong>{{ app.time }}</strong></td>
+                    <!-- Mostrar Info o Inputs de Reagendar -->
+                    <td *ngIf="reschedulingId() !== app.id"><strong>{{ formatDate(app.appointmentDate) }}</strong></td>
+                    <td *ngIf="reschedulingId() !== app.id"><strong>{{ app.appointmentTime | slice:0:5 }}</strong></td>
+                    
+                    <td colspan="2" *ngIf="reschedulingId() === app.id">
+                        <input type="date" [(ngModel)]="newDate" (change)="onDateChange(app.doctor?.id)" [min]="today" style="max-width: 130px; margin-right: 5px;">
+                        <select [(ngModel)]="newTime" style="max-width: 100px;">
+                            <option value="">Hora</option>
+                            <option *ngFor="let slot of availableSlots()" [value]="slot">{{ slot }}</option>
+                        </select>
+                    </td>
 
                     <td>Dr(a). {{ app.doctor?.name }}</td>
 
@@ -61,13 +69,27 @@
 
                     <!-- Acciones -->
                     <td class="actions-cell">
+                        <ng-container *ngIf="reschedulingId() !== app.id">
+                            <button *ngIf="app.status === 'agendada'" class="btn btn-primary btn-sm" style="margin-right: 5px;"
+                                (click)="startReschedule(app)">
+                                Reagendar
+                            </button>
+                            <button *ngIf="app.status === 'agendada'" class="btn btn-cancel-red btn-sm"
+                                (click)="cancel(app.id)">
+                                Cancelar
+                            </button>
+                        </ng-container>
 
-                        <!-- Solo si está agendada -->
-                        <button *ngIf="app.status === 'agendada'" class="btn btn-cancel-red btn-sm"
-                            (click)="cancel(app.id)">
-                            Cancelar
-                        </button>
-
+                        <ng-container *ngIf="reschedulingId() === app.id">
+                            <button class="btn btn-primary btn-sm" style="margin-right: 5px;"
+                                (click)="confirmReschedule(app.id)" [disabled]="!newDate || !newTime">
+                                Confirmar
+                            </button>
+                            <button class="btn btn-cancel-red btn-sm"
+                                (click)="reschedulingId.set(null)">
+                                Atrás
+                            </button>
+                        </ng-container>
                     </td>
                 </tr>
             </tbody>

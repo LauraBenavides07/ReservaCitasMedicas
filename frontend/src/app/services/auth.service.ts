@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
 export interface User {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   role: 'admin' | 'staff' | 'doctor' | 'patient';

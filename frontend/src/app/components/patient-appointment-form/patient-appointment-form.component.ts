@@ -55,9 +55,10 @@ export class PatientAppointmentFormComponent implements OnInit {
   // ============================================
 
   // Devuelve un color basado en el ID del médico para el avatar
-  getDoctorColor(id: number): string {
+  getDoctorColor(id: string | number): string {
     const colors = ['#2563eb', '#7c3aed', '#10b981', '#e11d48', '#f59e0b', '#06b6d4'];
-    return colors[id % colors.length];  // Selecciona color según módulo del ID
+    const num = typeof id === 'string' ? id.charCodeAt(id.length - 1) : id;
+    return colors[num % colors.length];  // Selecciona color según módulo del ID
   }
 
   // Formatea los días laborales para mostrar nombres abreviados
@@ -85,7 +86,7 @@ export class PatientAppointmentFormComponent implements OnInit {
     const dates: UIDate[] = [];
     const today = new Date();
     // Array de días laborales, por defecto Lunes a Viernes si no está configurado
-    const workingDaysArray = doc.workingDays ? doc.workingDays.split(',').map(Number) : [1, 2, 3, 4, 5];
+    const workingDaysArray = doc.activeDays ? doc.activeDays.split(',').map(Number) : [1, 2, 3, 4, 5];
 
     // Arrays para nombres de días y meses en español
     const dayNames = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'];
@@ -103,7 +104,7 @@ export class PatientAppointmentFormComponent implements OnInit {
       // Incluye solo si el día está en los días laborales del médico
       if (workingDaysArray.includes(dayOfWeek)) {
         dates.push({
-          fullDate: d.toISOString().split('T')[0],  // Formato YYYY-MM-DD
+          fullDate: d.toLocaleDateString('en-CA'),  // Formato YYYY-MM-DD local
           dayName: dayNames[d.getDay()],
           dayNum: d.getDate(),
           monthName: monthNames[d.getMonth()]

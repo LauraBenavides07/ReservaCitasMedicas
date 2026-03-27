@@ -60,7 +60,7 @@ export class AuthService {
       select: ['id', 'firstName', 'lastName', 'password', 'document', 'phone', 'gender'],
     });
 
-    if (patient && (await bcrypt.compare(dto.password, patient.password))) {
+    if (patient && patient.password && (await bcrypt.compare(dto.password, patient.password))) {
       const payload = { sub: patient.id, document: patient.document, role: 'patient' };
       return {
         access_token: this.jwtService.sign(payload),

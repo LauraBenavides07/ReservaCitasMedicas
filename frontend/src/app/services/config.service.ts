@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface GlobalConfig {
-  id: number;
+  id: string;
   minAdvanceHours: number;
   appointmentWindowWeeks: number;
 }

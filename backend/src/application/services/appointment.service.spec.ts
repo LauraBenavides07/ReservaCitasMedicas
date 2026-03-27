@@ -25,6 +25,7 @@ describe('AppointmentService', () => {
 
   const mockDoctorRepository = {
     findOneBy: jest.fn(),
+    find: jest.fn(),
   };
 
   const mockConfigService = {
@@ -51,25 +52,25 @@ describe('AppointmentService', () => {
 
   // 1. Crear cita correctamente
   it('debería crear una cita correctamente', async () => {
-    mockDoctorRepository.findOneBy.mockResolvedValue({ id: 2, name: 'Test Doc' });
-    mockPatientRepository.findOneBy.mockResolvedValue({ id: 1, document: '123' });
+    mockDoctorRepository.findOneBy.mockResolvedValue({ id: '2', name: 'Test Doc' });
+    mockPatientRepository.findOneBy.mockResolvedValue({ id: '1', document: '123' });
     mockAppointmentRepository.findOneBy.mockResolvedValue(null);
     mockAppointmentRepository.create.mockReturnValue({
-      id: 1,
-      patient: { id: 1 },
-      doctor: { id: 2 },
-      date: '2026-03-30',
+      id: '1',
+      patient: { id: '1' },
+      doctor: { id: '2' },
+      appointmentDate: '2026-03-30',
     });
     mockAppointmentRepository.save.mockResolvedValue({
-      id: 1,
-      patientId: 1,
-      doctorId: 2,
-      date: '2026-03-30',
+      id: '1',
+      patient: { id: '1' },
+      doctor: { id: '2' },
+      appointmentDate: '2026-03-30',
     });
 
     const dto = {
-      patientId: 1,
-      doctorId: 2,
+      patientId: '1',
+      doctorId: '2',
       date: '2026-03-30',
       time: '10:00',
       patientDocument: '123',
@@ -78,7 +79,7 @@ describe('AppointmentService', () => {
     const result = await service.create(dto as any);
 
     expect(result).toBeDefined();
-    expect(result.patientId).toBe(1);
+    expect(result.patient.id).toBe('1');
   });
 
   // 2. Error al crear cita sin doctor
@@ -86,7 +87,7 @@ describe('AppointmentService', () => {
     mockDoctorRepository.findOneBy.mockResolvedValue(null);
     
     const dto: any = {
-      patientId: 1,
+      patientId: '1',
       date: '2026-03-30',
       // missing doctorId
     };
@@ -97,8 +98,8 @@ describe('AppointmentService', () => {
   // 3. Obtener lista de citas
   it('debería retornar una lista de citas', async () => {
     mockAppointmentRepository.find.mockResolvedValue([
-      { id: 1, patientId: 1 },
-      { id: 2, patientId: 2 },
+      { id: '1', patient: { id: '1' } },
+      { id: '2', patient: { id: '2' } },
     ]);
 
     const result = await service.findAll();
@@ -118,13 +119,36 @@ describe('AppointmentService', () => {
   // 5. Buscar cita por ID (existe)
   it('debería encontrar una cita por id', async () => {
     mockAppointmentRepository.findOneBy.mockResolvedValue({
-      id: 1,
-      patientId: 1,
+      id: '1',
+      patient: { id: '1' },
     });
 
-    const result = await service.findById(1);
+    const result = await service.findById('1');
 
     expect(result).toBeDefined();
-    expect(result.id).toBe(1);
+    expect(result!.id).toBe('1');
+  });
+
+  // 6. Buscar paciente por documento (existe)
+  it('debería encontrar un paciente por documento', async () => {
+    mockPatientRepository.findOneBy.mockResolvedValue({
+      id: 'p1',
+      document: '12345678',
+      firstName: 'Juan',
+      lastName: 'Perez'
+    });
+
+    const result = await service.findPatientByDocument('12345678');
+
+    expect(result).toBeDefined();
+    expect(result.document).toBe('12345678');
+    expect(result.firstName).toBe('Juan');
+  });
+
+  // 7. Buscar paciente por documento (no existe)
+  it('debería lanzar NotFoundException si el paciente no existe', async () => {
+    mockPatientRepository.findOneBy.mockResolvedValue(null);
+
+    await expect(service.findPatientByDocument('00000000')).rejects.toThrow();
   });
 });

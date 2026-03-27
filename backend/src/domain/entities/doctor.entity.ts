@@ -1,34 +1,40 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Appointment } from './appointment.entity';
 
 @Entity('doctors')
 export class Doctor {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column()
+  @Column({ length: 100 })
   name: string;
 
-  @Column()
+  @Column({ length: 100, nullable: true })
   specialty: string;
 
-  @Column({ default: '08:00' })
-  startTime: string; // HH:mm
+  @Column({ name: 'schedule_start', type: 'time', default: '08:00' })
+  scheduleStart: string;
 
-  @Column({ default: '18:00' })
-  endTime: string; // HH:mm
+  @Column({ name: 'schedule_end', type: 'time', default: '18:00' })
+  scheduleEnd: string;
 
-  @Column({ default: 30 })
-  appointmentDuration: number; // minutes
+  @Column({ name: 'slot_duration', default: 30 })
+  slotDuration: number;
 
-  @Column({ default: '1,2,3,4,5' })
-  workingDays: string; // 1=Mon, 2=Tue, ..., 7=Sun
+  @Column({ name: 'lunch_start', type: 'time', nullable: true })
+  lunchStart: string;
 
-  @Column({ nullable: true })
-  breakStart: string; // HH:mm
+  @Column({ name: 'lunch_end', type: 'time', nullable: true })
+  lunchEnd: string;
 
-  @Column({ nullable: true })
-  breakEnd: string; // HH:mm
+  @Column({ name: 'active_days', length: 50, default: '1,2,3,4,5' })
+  activeDays: string;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
   @OneToMany(() => Appointment, (appointment) => appointment.doctor)
   appointments: Appointment[];

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -8,21 +8,27 @@ export enum UserRole {
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 100 })
   email: string;
 
   @Column()
   password: string;
 
-  @Column()
+  @Column({ name: 'first_name', length: 100 })
   firstName: string;
 
-  @Column()
+  @Column({ name: 'last_name', length: 100 })
   lastName: string;
 
-  @Column({ default: UserRole.STAFF })
+  @Column({ default: UserRole.STAFF, length: 20 })
   role: string;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }

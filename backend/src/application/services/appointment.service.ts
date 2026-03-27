@@ -22,15 +22,15 @@ export class AppointmentService {
   /**
    * Requisito 1: Listar citas por médico y fecha
    */
-  async findAllByDoctorAndDate(doctorId: number, date: string) {
+  async findAllByDoctorAndDate(doctorId: string, date: string) {
     const [appointments, total] = await this.appointmentRepository.findAndCount({
       where: {
         doctor: { id: doctorId },
-        date: date,
+        appointmentDate: date,
       },
       relations: ['patient', 'doctor'],
       order: {
-        time: 'ASC',
+        appointmentTime: 'ASC',
       },
     });
 
@@ -84,8 +84,8 @@ export class AppointmentService {
     // Verificar disponibilidad
     const existing = await this.appointmentRepository.findOneBy({
       doctor: { id: doctor.id },
-      date: createDto.date,
-      time: createDto.time,
+      appointmentDate: createDto.date,
+      appointmentTime: createDto.time,
     });
 
     if (existing) {
@@ -93,8 +93,8 @@ export class AppointmentService {
     }
 
     const appointment = this.appointmentRepository.create({
-      date: createDto.date,
-      time: createDto.time,
+      appointmentDate: createDto.date,
+      appointmentTime: createDto.time,
       doctor: doctor,
       patient: patient,
       status: 'agendada',
@@ -106,7 +106,7 @@ export class AppointmentService {
   /**
    * Calcular horarios disponibles
    */
-  async getAvailableSlots(doctorId: number, date: string) {
+  async getAvailableSlots(doctorId: string, date: string) {
     const doctor = await this.doctorRepository.findOneBy({ id: doctorId });
     if (!doctor) {
       throw new NotFoundException(`Doctor with ID ${doctorId} not found`);
@@ -116,11 +116,11 @@ export class AppointmentService {
     const appointments = await this.appointmentRepository.find({
       where: {
         doctor: { id: doctorId },
-        date: date,
+        appointmentDate: date,
       },
     });
 
-    const bookedSlots: string[] = appointments.map((a) => a.time);
+    const bookedSlots: string[] = appointments.map((a) => a.appointmentTime.toString().slice(0, 5));
     const slots: string[] = [];
 
     const dateObj = new Date(`${date}T00:00:00`);
@@ -128,22 +128,22 @@ export class AppointmentService {
     if (dayOfWeek === 0) dayOfWeek = 7; // Convertir 0 (Domingo) a 7
     
     // Regla de Negocio: Días laborables del médico
-    const workingDaysArray = doctor.workingDays ? doctor.workingDays.split(',').map(Number) : [1,2,3,4,5];
+    const workingDaysArray = doctor.activeDays ? doctor.activeDays.split(',').map(Number) : [1,2,3,4,5];
     if (!workingDaysArray.includes(dayOfWeek)) {
        return []; // El médico no trabaja este día
     }
 
-    let current = this.timeToMinutes(doctor.startTime);
-    const end = this.timeToMinutes(doctor.endTime);
-    const breakStartMin = doctor.breakStart ? this.timeToMinutes(doctor.breakStart) : null;
-    const breakEndMin = doctor.breakEnd ? this.timeToMinutes(doctor.breakEnd) : null;
+    let current = this.timeToMinutes(doctor.scheduleStart);
+    const end = this.timeToMinutes(doctor.scheduleEnd);
+    const breakStartMin = doctor.lunchStart ? this.timeToMinutes(doctor.lunchStart) : null;
+    const breakEndMin = doctor.lunchEnd ? this.timeToMinutes(doctor.lunchEnd) : null;
 
     // Regla de Negocio: Ventana de tiempo
     const config = await this.configService.getConfig();
     const minAdvanceHours = config?.minAdvanceHours ?? 2;
     const appointmentWindowWeeks = config?.appointmentWindowWeeks ?? 4;
 
-    while (current + doctor.appointmentDuration <= end) {
+    while (current + doctor.slotDuration <= end) {
       const timeStr = this.minutesToTime(current);
       
       const now = new Date();
@@ -157,7 +157,7 @@ export class AppointmentService {
       if (!bookedSlots.includes(timeStr) && diffHours >= minAdvanceHours && slotDate <= horizonDate && !isDuringBreak) {
         slots.push(timeStr);
       }
-      current += doctor.appointmentDuration;
+      current += doctor.slotDuration;
     }
 
     return slots;
@@ -166,18 +166,18 @@ export class AppointmentService {
   /**
    * Requisito 3: Listar mis citas (Paciente)
    */
-  async findAllByPatient(patientId: number) {
+  async findAllByPatient(patientId: string) {
     return this.appointmentRepository.find({
       where: { patient: { id: patientId } },
       relations: ['doctor'],
-      order: { date: 'DESC', time: 'ASC' },
+      order: { appointmentDate: 'DESC', appointmentTime: 'ASC' },
     });
   }
 
   /**
    * Requisito 3: Cancelar cita (Paciente)
    */
-  async cancelAppointment(appointmentId: number, patientId: number) {
+  async cancelAppointment(appointmentId: string, patientId: string) {
     const appointment = await this.appointmentRepository.findOne({
       where: { id: appointmentId },
       relations: ['patient'],
@@ -192,7 +192,7 @@ export class AppointmentService {
     }
 
     const now = new Date();
-    const appDate = new Date(`${appointment.date}T${appointment.time}`);
+    const appDate = new Date(`${appointment.appointmentDate}T${appointment.appointmentTime}`);
     
     if (appDate < now) {
       throw new BadRequestException('No se puede cancelar una cita pasada.');
@@ -205,7 +205,7 @@ export class AppointmentService {
   /**
    * Requisito 3: Reagendar cita (Paciente)
    */
-  async reschedule(id: number, patientId: number, date: string, time: string) {
+  async reschedule(id: string, patientId: string, date: string, time: string) {
     const appointment = await this.appointmentRepository.findOne({
       where: { id },
       relations: ['patient', 'doctor'],
@@ -222,8 +222,8 @@ export class AppointmentService {
     // Verificar disponibilidad del NUEVO horario
     const existing = await this.appointmentRepository.findOneBy({
       doctor: { id: appointment.doctor.id },
-      date: date,
-      time: time,
+      appointmentDate: date,
+      appointmentTime: time,
     });
 
     if (existing && existing.id !== id) {
@@ -236,8 +236,8 @@ export class AppointmentService {
       throw new BadRequestException('No se puede reagendar a una fecha pasada.');
     }
 
-    appointment.date = date;
-    appointment.time = time;
+    appointment.appointmentDate = date;
+    appointment.appointmentTime = time;
     appointment.status = 'agendada'; // Asegurar que pase de cancelada a agendada si fuera el caso
     
     return this.appointmentRepository.save(appointment);
@@ -266,7 +266,7 @@ export class AppointmentService {
     let completed = 0;
     let cancelled = 0;
 
-    const doctorCounts: Record<number, { name: string, count: number }> = {};
+    const doctorCounts: Record<string, { name: string, count: number }> = {};
     allDoctors.forEach(d => {
       doctorCounts[d.id] = { name: `Dr(a). ${d.name}`, count: 0 };
     });
@@ -298,14 +298,25 @@ export class AppointmentService {
   async findAll() {
     return this.appointmentRepository.find({
       relations: ['doctor', 'patient'],
-      order: { date: 'DESC', time: 'ASC' }
+      order: { appointmentDate: 'DESC', appointmentTime: 'ASC' }
     });
   }
 
   /**
    * Buscar cita por ID
    */
-  async findById(id: number) {
+  async findById(id: string) {
     return this.appointmentRepository.findOneBy({ id });
+  }
+
+  /**
+   * Buscar paciente por documento
+   */
+  async findPatientByDocument(document: string) {
+    const patient = await this.patientRepository.findOneBy({ document });
+    if (!patient) {
+      throw new NotFoundException('Paciente no encontrado.');
+    }
+    return patient;
   }
 }

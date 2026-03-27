@@ -1,13 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn } from 'typeorm';
 
 @Entity('configs')
 export class Config {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column({ default: 2 })
-  minAdvanceHours: number;
+  @Column({ length: 100, unique: true })
+  key: string;
 
-  @Column({ default: 4 })
-  appointmentWindowWeeks: number;
+  @Column({ type: 'jsonb' })
+  value: any;
+
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }

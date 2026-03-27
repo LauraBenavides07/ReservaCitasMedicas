@@ -3,15 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Doctor {
-  id: number;
+  id: string;
   name: string;
   specialty: string;
-  startTime: string;
-  endTime: string;
-  appointmentDuration: number;
-  workingDays: string;
-  breakStart?: string;
-  breakEnd?: string;
+  scheduleStart: string;
+  scheduleEnd: string;
+  slotDuration: number;
+  activeDays: string;
+  lunchStart?: string;
+  lunchEnd?: string;
 }
 
 @Injectable({
@@ -30,11 +30,11 @@ export class DoctorService {
     return this.http.post<Doctor>(this.apiUrl, data);
   }
 
-  updateDoctor(id: number, data: Partial<Doctor>): Observable<Doctor> {
+  updateDoctor(id: string, data: Partial<Doctor>): Observable<Doctor> {
     return this.http.patch<Doctor>(`${this.apiUrl}/${id}`, data);
   }
 
-  deleteDoctor(id: number): Observable<any> {
+  deleteDoctor(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

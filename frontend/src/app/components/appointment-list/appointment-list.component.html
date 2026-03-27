@@ -87,7 +87,7 @@
                 <tbody>
                     <!-- Itera sobre citas -->
                     <tr *ngFor="let appt of appointments" class="appointment-row">
-                        <td><strong>{{ appt?.time }}</strong></td>
+                        <td><strong>{{ (appt?.time || appt?.appointmentTime) | slice:0:5 }}</strong></td>
 
                         <!-- Manejo de valores nulos -->
                         <td>{{ appt?.patient?.firstName || 'Sin' }} {{ appt?.patient?.lastName || 'Paciente' }}</td>

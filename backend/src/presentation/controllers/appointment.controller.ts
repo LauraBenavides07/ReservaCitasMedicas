@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query, ParseIntPipe, UseGuards, Req, Patch, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, ParseUUIDPipe, UseGuards, Req, Patch, Param } from '@nestjs/common';
 import { AppointmentService } from '../../application/services/appointment.service';
 import { CreateAppointmentDto } from '../dto/create-appointment.dto';
 import { JwtAuthGuard } from '../../infrastructure/auth/jwt-auth.guard';
@@ -20,7 +20,7 @@ export class AppointmentController {
    */
   @Get()
   async getAppointments(
-    @Query('doctorId', ParseIntPipe) doctorId: number,
+    @Query('doctorId', ParseUUIDPipe) doctorId: string,
     @Query('date') date: string,
   ) {
     return this.appointmentService.findAllByDoctorAndDate(doctorId, date);
@@ -48,13 +48,13 @@ export class AppointmentController {
    */
   @UseGuards(JwtAuthGuard)
   @Patch(':id/cancel')
-  async cancelPatientAppointment(@Param('id', ParseIntPipe) id: number, @Req() req) {
+  async cancelPatientAppointment(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
     return this.appointmentService.cancelAppointment(id, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id/reschedule')
-  async reschedulePatientAppointment(@Param('id', ParseIntPipe) id: number, @Req() req, @Body() body: { date: string, time: string }) {
+  async reschedulePatientAppointment(@Param('id', ParseUUIDPipe) id: string, @Req() req, @Body() body: { date: string, time: string }) {
     return this.appointmentService.reschedule(id, req.user.id, body.date, body.time);
   }
 
@@ -63,7 +63,7 @@ export class AppointmentController {
    */
   @Get('available-slots')
   async getAvailableSlots(
-    @Query('doctorId', ParseIntPipe) doctorId: number,
+    @Query('doctorId', ParseUUIDPipe) doctorId: string,
     @Query('date') date: string,
   ) {
     return this.appointmentService.getAvailableSlots(doctorId, date);
@@ -75,4 +75,12 @@ export class AppointmentController {
     async findAllAppointments() {
       return this.appointmentService.findAll();
     }
+
+  /**
+   * Buscar paciente por documento
+   */
+  @Get('patient-by-document/:document')
+  async getPatientByDocument(@Param('document') document: string) {
+    return this.appointmentService.findPatientByDocument(document);
+  }
 }

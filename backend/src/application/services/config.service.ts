@@ -11,22 +11,28 @@ export class ConfigService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    // Asegurar que exista al menos una configuración
-    const count = await this.configRepository.count();
-    if (count === 0) {
+    const existing = await this.configRepository.findOne({ where: { key: 'appointment_rules' } });
+    if (!existing) {
       await this.configRepository.save({
-        minAdvanceHours: 2,
-        appointmentWindowWeeks: 4,
+        key: 'appointment_rules',
+        value: {
+          minAdvanceHours: 2,
+          appointmentWindowWeeks: 4,
+        },
       });
     }
   }
 
   async getConfig() {
-    return this.configRepository.findOne({ where: { id: 1 } });
+    const config = await this.configRepository.findOne({ where: { key: 'appointment_rules' } });
+    return config?.value;
   }
 
-  async updateConfig(data: Partial<Config>) {
-    await this.configRepository.update(1, data);
+  async updateConfig(data: any) {
+    const existing = await this.configRepository.findOne({ where: { key: 'appointment_rules' } });
+    if (existing) {
+      await this.configRepository.update({ key: 'appointment_rules' }, { value: data });
+    }
     return this.getConfig();
   }
 }

@@ -1,34 +1,40 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Appointment } from './appointment.entity';
 
 @Entity('patients')
 export class Patient {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 20 })
   document: string;
 
-  @Column()
+  @Column({ name: 'first_name', length: 100 })
   firstName: string;
 
-  @Column()
+  @Column({ name: 'last_name', length: 100 })
   lastName: string;
 
-  @Column()
+  @Column({ length: 20 })
   phone: string;
 
-  @Column()
+  @Column({ length: 10 })
   gender: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'birth_date', type: 'date', nullable: true })
   birthDate: string;
 
-  @Column({ nullable: true })
+  @Column({ length: 100, nullable: true })
   email: string;
 
-  @Column({ select: false }) // Don't return password by default
-  password: string;
+  @Column({ select: false, nullable: true }) // Optional if it wasn't there before
+  password?: string;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
   @OneToMany(() => Appointment, (appointment) => appointment.patient)
   appointments: Appointment[];

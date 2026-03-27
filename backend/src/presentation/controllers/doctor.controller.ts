@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Body, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Patch, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { DoctorService } from '../../application/services/doctor.service';
 
 @Controller('doctors')
@@ -11,7 +11,7 @@ export class DoctorController {
   }
 
   @Get(':id')
-  async getDoctor(@Param('id', ParseIntPipe) id: number) {
+  async getDoctor(@Param('id', ParseUUIDPipe) id: string) {
     return this.doctorService.findOne(id);
   }
 
@@ -21,12 +21,12 @@ export class DoctorController {
   }
 
   @Patch(':id')
-  async updateDoctor(@Param('id', ParseIntPipe) id: number, @Body() data: any) {
+  async updateDoctor(@Param('id', ParseUUIDPipe) id: string, @Body() data: any) {
     return this.doctorService.update(id, data);
   }
 
   @Delete(':id')
-  async deleteDoctor(@Param('id', ParseIntPipe) id: number) {
+  async deleteDoctor(@Param('id', ParseUUIDPipe) id: string) {
     return this.doctorService.remove(id);
   }
 }

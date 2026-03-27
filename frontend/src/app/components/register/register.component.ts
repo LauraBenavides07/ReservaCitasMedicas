@@ -32,10 +32,10 @@ export class RegisterComponent {
   constructor() {
     // Inicialización del formulario con validaciones
     this.registerForm = this.fb.group({
-      document: ['', [Validators.required]],
+      document: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
-      phone: ['', [Validators.required]],
+      phone: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
       gender: ['', [Validators.required]],
       email: ['', [Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]]
@@ -60,8 +60,14 @@ export class RegisterComponent {
     this.error.set('');
     this.successMessage.set('');
 
+    // Limpia el correo si está vacío para evitar error al validar en el servidor
+    const payload = { ...this.registerForm.value };
+    if (!payload.email || payload.email.trim() === '') {
+      delete payload.email;
+    }
+
     // Llama al servicio de autenticación para registrar al usuario
-    this.auth.register(this.registerForm.value).subscribe({
+    this.auth.register(payload).subscribe({
       next: (response) => {
         // Registro exitoso
         this.isLoading.set(false);
