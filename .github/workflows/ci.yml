@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ReservaCitasMedicas/backend
+        working-directory: backend
 
     strategy:
       matrix:
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ReservaCitasMedicas/frontend
+        working-directory: frontend
 
     strategy:
       matrix:
