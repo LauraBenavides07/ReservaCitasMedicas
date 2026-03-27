@@ -102,8 +102,12 @@ export class PatientAppointmentFormComponent implements OnInit {
 
       // Incluye solo si el día está en los días laborales del médico
       if (workingDaysArray.includes(dayOfWeek)) {
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+
         dates.push({
-          fullDate: d.toISOString().split('T')[0],  // Formato YYYY-MM-DD
+          fullDate: `${yyyy}-${mm}-${dd}`,  // Formato YYYY-MM-DD respetando zona horaria local
           dayName: dayNames[d.getDay()],
           dayNum: d.getDate(),
           monthName: monthNames[d.getMonth()]

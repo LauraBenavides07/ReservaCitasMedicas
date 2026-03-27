@@ -19,8 +19,10 @@
                             <input type="text" formControlName="patientDocument" placeholder="Nro. documento"
                                 [class.input-error]="f['patientDocument'].touched && f['patientDocument'].errors">
 
-                            <!-- Botón (aún sin lógica) -->
-                            <button type="button" class="btn-buscar">Buscar</button>
+                            <!-- Botón de búsqueda -->
+                            <button type="button" class="btn-buscar" (click)="searchPatient()" [disabled]="!f['patientDocument'].value || isSearchingPatient()">
+                                {{ isSearchingPatient() ? 'Buscando...' : 'Buscar' }}
+                            </button>
                         </div>
                     </div>
 

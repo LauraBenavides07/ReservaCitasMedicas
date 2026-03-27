@@ -20,6 +20,7 @@ export class RegisterComponent {
   isLoading = signal(false);
   error = signal('');
   successMessage = signal('');
+  showPassword = signal(false);
 
   // Formulario reactivo para el registro
   registerForm: FormGroup;
@@ -86,5 +87,10 @@ export class RegisterComponent {
         }
       }
     });
+  }
+
+  // Alterna la visibilidad de la contraseña
+  togglePassword(): void {
+    this.showPassword.update(v => !v);
   }
 }

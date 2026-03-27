@@ -1,22 +1,30 @@
 [33mÔØ»[39m Building...
 [32mÔ£ö[39m Building...
-[1mInitial chunk files[22m[2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
-[32mmain-LQXB2TC2.js[39m   [2m | [22m[2mmain[22m         [2m | [22m[36m400.81 kB[39m[2m | [22m               [36m95.02 kB[39m
-[32mstyles-RR4IXDRC.css[39m[2m | [22m[2mstyles[22m       [2m | [22m  [36m2.65 kB[39m[2m | [22m              [36m799 bytes[39m
+Application bundle generation failed. [2.345 seconds] - 2026-03-27T02:53:28.965Z
 
-[1m [22m                  [2m | [22m[1mInitial total[22m[2m | [22m[1m403.46 kB[22m[2m | [22m               [1m95.82 kB[22m
+X [ERROR] TS2345: Argument of type '"register"' is not assignable to parameter of type '"login"'. [plugin angular-compiler]
 
-Application bundle generation failed. [3.167 seconds] - 2026-03-25T01:48:57.203Z
+    src/app/components/landing-page/landing-page.component.html:24:69:
+      24 Ôöé ...s="btn-primary-light btn-nav" (click)="navigate.emit('register')">
+         ÔòÁ                                                         ~~~~~~~~~~
 
-Ôû▓ [WARNING] src/app/components/admin-config/admin-config.component.css exceeded maximum budget. Budget 4.00 kB was not met by 539 bytes with a total of 4.54 kB.
+  Error occurs in the template of component LandingPageComponent.
 
-
-Ôû▓ [WARNING] src/app/components/patient-appointment-form/patient-appointment-form.component.css exceeded maximum budget. Budget 4.00 kB was not met by 400 bytes with a total of 4.40 kB.
-
-
-Ôû▓ [WARNING] src/app/components/landing-page/landing-page.component.css exceeded maximum budget. Budget 4.00 kB was not met by 4.32 kB with a total of 8.32 kB.
+    src/app/components/landing-page/landing-page.component.ts:11:15:
+      11 Ôöé   templateUrl: './landing-page.component.html',
+         ÔòÁ                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-X [ERROR] src/app/components/landing-page/landing-page.component.css exceeded maximum budget. Budget 8.00 kB was not met by 320 bytes with a total of 8.32 kB.
+X [ERROR] TS2345: Argument of type '"register"' is not assignable to parameter of type '"login"'. [plugin angular-compiler]
+
+    src/app/components/landing-page/landing-page.component.html:61:65:
+      61 Ôöé ...-primary-light" (click)="navigate.emit('register'); toggleMenu()">
+         ÔòÁ                                           ~~~~~~~~~~
+
+  Error occurs in the template of component LandingPageComponent.
+
+    src/app/components/landing-page/landing-page.component.ts:11:15:
+      11 Ôöé   templateUrl: './landing-page.component.html',
+         ÔòÁ                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 

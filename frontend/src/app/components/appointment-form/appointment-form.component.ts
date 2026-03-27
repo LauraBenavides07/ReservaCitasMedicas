@@ -31,11 +31,18 @@ export class AppointmentFormComponent implements OnInit {
   doctors = signal<Doctor[]>([]);
   availableSlots = signal<string[]>([]);
   isSubmitting = signal(false);
+  isSearchingPatient = signal(false);
   successMessage = signal('');
   errorMessage = signal('');
 
-  // Fecha actual
-  today = new Date().toISOString().split('T')[0];
+  // Fecha actual respetando zona horaria local
+  today = (() => {
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  })();
 
   ngOnInit(): void {
     this.initForm();
@@ -122,6 +129,49 @@ export class AppointmentFormComponent implements OnInit {
     } else {
       this.availableSlots.set([]);
     }
+  }
+
+  // Buscar paciente por documento
+  searchPatient(): void {
+    const document = this.f['patientDocument'].value;
+    if (!document) return;
+
+    this.isSearchingPatient.set(true);
+    this.errorMessage.set('');
+    this.successMessage.set('');
+
+    this.auth.getPatientByDocument(document).pipe(
+      catchError(err => {
+        this.errorMessage.set('Paciente no encontrado.');
+        
+        // Limpiar los campos si no se encuentra
+        this.appointmentForm.patchValue({
+          firstName: '',
+          lastName: '',
+          phone: '',
+          gender: '',
+          email: '',
+          birthDate: null,
+        });
+        
+        this.isSearchingPatient.set(false);
+        return of(null);
+      })
+    ).subscribe(patient => {
+      this.isSearchingPatient.set(false);
+      if (patient) {
+        this.appointmentForm.patchValue({
+          firstName: patient.firstName,
+          lastName: patient.lastName,
+          phone: patient.phone,
+          gender: patient.gender,
+          email: patient.email || '',
+          birthDate: patient.birthDate ? patient.birthDate.split('T')[0] : null,
+        });
+        this.successMessage.set('Datos del paciente cargados exitosamente.');
+        setTimeout(() => this.successMessage.set(''), 3000);
+      }
+    });
   }
 
   // Envío del formulario

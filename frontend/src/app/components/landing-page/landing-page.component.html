@@ -21,7 +21,7 @@
     <button class="btn-outline-light" (click)="navigate.emit('login')">
       Iniciar sesión
     </button>
-    <button class="btn-primary-light btn-nav" (click)="navigate.emit('login')">
+    <button class="btn-primary-light btn-nav" (click)="navigate.emit('register')">
       Registrate
     </button>
   </div>
@@ -58,7 +58,7 @@
         <button class="btn-outline-light" (click)="navigate.emit('login'); toggleMenu()">
           Iniciar sesión
         </button>
-        <button class="btn-primary-light" (click)="navigate.emit('login'); toggleMenu()">
+        <button class="btn-primary-light" (click)="navigate.emit('register'); toggleMenu()">
           Registrate
         </button>
       </div>
@@ -100,68 +100,73 @@
       </div>
     </div>
     <!-- Columna derecha: Carrusel de imágenes -->
-      <div class="hero-visual">
-        <div class="carousel-container">
-          <div class="carousel-track" [style.transform]="'translateX(-' + currentSlide * 100 + '%)'">
-            
-            <!-- Slide 1 -->
-            <div class="carousel-slide">
-              <div class="carousel-card">
-                <img src="img/agendacita.png" alt="Agendar cita" class="carousel-img">
-                <div class="carousel-overlay"></div>
-                <div class="carousel-caption">
-                  <h3>Agenda tu cita fácilmente</h3>
-                  <p>Programa tus consultas desde cualquier lugar</p>
-                </div>
+    <div class="hero-visual">
+      <div class="carousel-container">
+        <div class="carousel-track" [style.transform]="'translateX(-' + currentSlide * 100 + '%)'">
+
+          <!-- Slide 1 -->
+          <div class="carousel-slide">
+            <div class="carousel-card">
+              <img src="img/agendacita.png" alt="Agendar cita" class="carousel-img">
+              <div class="carousel-overlay"></div>
+              <div class="carousel-caption">
+                <h3>Agenda tu cita fácilmente</h3>
+                <p>Programa tus consultas desde cualquier lugar</p>
               </div>
             </div>
-            
-            <!-- Slide 2 -->
-            <div class="carousel-slide">
-              <div class="carousel-card">
-                <img src="img/piedrazul.png" alt="Piedrazul Logo" class="carousel-img">
-                <div class="carousel-overlay"></div>
-                <div class="carousel-caption">
-                  <h3>Especialistas capacitados</h3>
-                  <p>Atención personalizada para tu bienestar</p>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Slide 3 -->
-            <div class="carousel-slide">
-              <div class="carousel-card">
-                <img src="img/terapianeutral.png" alt="Medicina alternativa" class="carousel-img">
-                <div class="carousel-overlay"></div>
-                <div class="carousel-caption">
-                  <h3>Medicina alternativa</h3>
-                  <p>Terapia neural, quiropráctica y fisioterapia</p>
-                </div>
-              </div>
-            </div>
-            
           </div>
-          
-          <!-- Botones de navegación del carrusel -->
-          <button class="carousel-btn prev" (click)="prevSlide()" aria-label="Imagen anterior">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-          </button>
-          <button class="carousel-btn next" (click)="nextSlide()" aria-label="Imagen siguiente">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
-          </button>
-        
-          <!-- Indicadores del carrusel -->
-          <div class="carousel-dots">
-            <button class="dot-indicator" [class.active]="currentSlide === 0" (click)="goToSlide(0)" aria-label="Ir a slide 1"></button>
-            <button class="dot-indicator" [class.active]="currentSlide === 1" (click)="goToSlide(1)" aria-label="Ir a slide 2"></button>
-            <button class="dot-indicator" [class.active]="currentSlide === 2" (click)="goToSlide(2)" aria-label="Ir a slide 3"></button>
+
+          <!-- Slide 2 -->
+          <div class="carousel-slide">
+            <div class="carousel-card">
+              <img src="img/piedrazul.png" alt="Piedrazul Logo" class="carousel-img">
+              <div class="carousel-overlay"></div>
+              <div class="carousel-caption">
+                <h3>Especialistas capacitados</h3>
+                <p>Atención personalizada para tu bienestar</p>
+              </div>
+            </div>
           </div>
+
+          <!-- Slide 3 -->
+          <div class="carousel-slide">
+            <div class="carousel-card">
+              <img src="img/terapianeutral.png" alt="Medicina alternativa" class="carousel-img">
+              <div class="carousel-overlay"></div>
+              <div class="carousel-caption">
+                <h3>Medicina alternativa</h3>
+                <p>Terapia neural, quiropráctica y fisioterapia</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Botones de navegación del carrusel -->
+        <button class="carousel-btn prev" (click)="prevSlide()" aria-label="Imagen anterior">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <button class="carousel-btn next" (click)="nextSlide()" aria-label="Imagen siguiente">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
+
+        <!-- Indicadores del carrusel -->
+        <div class="carousel-dots">
+          <button class="dot-indicator" [class.active]="currentSlide === 0" (click)="goToSlide(0)"
+            aria-label="Ir a slide 1"></button>
+          <button class="dot-indicator" [class.active]="currentSlide === 1" (click)="goToSlide(1)"
+            aria-label="Ir a slide 2"></button>
+          <button class="dot-indicator" [class.active]="currentSlide === 2" (click)="goToSlide(2)"
+            aria-label="Ir a slide 3"></button>
         </div>
       </div>
+    </div>
   </main>
   <!-- SECCIÓN DE ESPECIALISTAS (2 columnas, debajo del carrusel) -->
   <section class="specialists-section" id="medicos">
@@ -177,7 +182,7 @@
           <span class="avatar-initials">{{ getInitials(doc.name) }}</span>
         </div>
         <div class="specialist-info">
-          <h3 class="specialist-name">{{ doc.name }}</h3>
+          <h3 class="specialist-name"> Dr(a). {{ doc.name }}</h3>
           <p class="specialist-specialty">{{ doc.specialty || 'Especialista' }}</p>
           <div class="specialist-status">
             <span class="status-dot"></span>
@@ -188,7 +193,7 @@
           Agendar cita
         </button>
       </div>
-      
+
       <div *ngIf="doctors().length === 0" class="loading-specialists">
         <div class="loading-spinner"></div>
         <p>Cargando especialistas...</p>
