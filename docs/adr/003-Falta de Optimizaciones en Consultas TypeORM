@@ -1,0 +1,30 @@
+# ADR-003: Falta de Optimizaciones en Consultas TypeORM
+
+**Fecha:** 13 de abril de 2026  
+**Estado:** En desarrollo  
+
+## Contexto
+
+En la implementación actual del sistema, servicios como `appointment.service.ts` utilizan consultas básicas de TypeORM sin aplicar optimizaciones específicas. No se han configurado mecanismos como índices en la base de datos, ni estrategias de carga eficientes como eager o lazy loading selectivo.
+
+Esto implica que las consultas funcionan correctamente desde el punto de vista funcional, pero no están preparadas para escenarios de alto volumen de datos o alta concurrencia.
+
+## Decisión
+
+Se decidió mantener el uso de consultas estándar de TypeORM sin aplicar optimizaciones avanzadas en esta etapa del desarrollo, priorizando la correcta implementación de las funcionalidades principales sobre el rendimiento.
+
+Se contempla la incorporación de optimizaciones en futuras iteraciones, incluyendo el uso de índices, mejoras en las estrategias de carga de relaciones y ajustes en las consultas para soportar mayor escalabilidad.
+
+## Consecuencias
+
+### Positivas
+
+- Se simplifica el desarrollo al evitar configuraciones adicionales y complejidad en las consultas.
+- Permite enfocarse en la implementación de la lógica de negocio principal.
+- Es suficiente para escenarios iniciales con baja carga de datos.
+
+### Negativas o Riesgos
+
+- Puede generar degradación en el rendimiento a medida que aumenta el volumen de datos.
+- Incrementa los tiempos de respuesta en consultas más complejas o frecuentes.
+- Requerirá refactorización y optimización para soportar escenarios de mayor escala.
