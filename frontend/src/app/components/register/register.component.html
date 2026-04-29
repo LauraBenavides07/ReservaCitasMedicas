@@ -1,10 +1,10 @@
 <!-- Modal de registro de usuario -->
 <div class="auth-overlay">
     <div class="auth-card">
+        <!-- Botón para cerrar el modal -->
+        <button class="btn-close" (click)="navigate.emit('landing')" aria-label="Cerrar">×</button>
         <!-- Encabezado del modal con logo y título -->
         <div class="auth-header">
-            <!-- Botón para cerrar el modal -->
-            <button class="btn-close" (click)="navigate.emit('landing')" aria-label="Cerrar">×</button>
             <div class="header-content">
                 <img src="img/logo.png" alt="Piedrazul Logo" class="logo-img">
                 <h1 class="auth-title">Bienvenido a Piedrazul</h1>
@@ -25,7 +25,7 @@
         <div class="auth-body">
             <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
                 <!-- Fila de nombres y apellidos (2 columnas) -->
-                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-row">
                     <div class="form-field">
                         <label>NOMBRES (*)</label>
                         <input type="text" formControlName="firstName" placeholder="ejemplo Juan"
@@ -45,7 +45,7 @@
                 </div>
 
                 <!-- Fila de documento y teléfono (2 columnas) -->
-                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-row">
                     <div class="form-field">
                         <label>DOCUMENTO (*)</label>
                         <input type="text" formControlName="document" placeholder="Número de cédula"
@@ -67,7 +67,7 @@
                 </div>
 
                 <!-- Fila de correo y género (2 columnas) -->
-                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-row">
                     <div class="form-field">
                         <label>CORREO ELECTRÓNICO (Opcional)</label>
                         <input type="email" formControlName="email" placeholder="correo@ejemplo.com"
@@ -94,8 +94,14 @@
                 <!-- Campo de contraseña -->
                 <div class="form-field">
                     <label>CONTRASEÑA (*)</label>
-                    <input type="password" formControlName="password" placeholder="Mínimo 8 caracteres"
-                        [class.input-error]="f['password'].invalid && f['password'].touched">
+                    <div class="password-field-wrapper">
+                        <input [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="Mínimo 8 caracteres"
+                            [class.input-error]="f['password'].invalid && f['password'].touched">
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="show-password-reg" [checked]="showPassword()" (change)="togglePassword()">
+                        <label for="show-password-reg">Mostrar contraseña</label>
+                    </div>
                     <div *ngIf="f['password'].invalid && f['password'].touched" class="error-message">
                         <span *ngIf="f['password'].errors?.['required']">La contraseña es obligatoria.</span>
                         <span *ngIf="f['password'].errors?.['minlength']">La contraseña debe tener al menos 8 caracteres.</span>

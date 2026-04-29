@@ -1,7 +1,7 @@
 <div class="auth-overlay">
   <div class="auth-card">
+    <button class="btn-close" (click)="navigate.emit('landing')" aria-label="Cerrar">×</button>
     <div class="auth-header">
-      <button class="btn-close" (click)="navigate.emit('landing')" aria-label="Cerrar">×</button>
       <div class="header-content">
         <img src="img/logo.png" alt="Piedrazul Logo" class="logo-img">
         <h1 class="auth-title">Bienvenido a Piedrazul</h1>
@@ -29,9 +29,15 @@
         </div>
 
         <div class="form-field">
-          <label>CONTRASEÑA(*)</label>
-          <input type="password" formControlName="password" placeholder="••••••••"
-            [class.input-error]="f['password'].invalid && f['password'].touched">
+          <label>CONTRASEÑA (*)</label>
+          <div class="password-field-wrapper">
+            <input [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="••••••••"
+              [class.input-error]="f['password'].invalid && f['password'].touched">
+          </div>
+          <div class="checkbox-container">
+            <input type="checkbox" id="show-password-login" [checked]="showPassword()" (change)="togglePasswordVisibility()">
+            <label for="show-password-login">Mostrar contraseña</label>
+          </div>
           <div *ngIf="f['password'].invalid && f['password'].touched" class="error-message">
             Por favor digite su contraseña.
           </div>

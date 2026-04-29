@@ -18,8 +18,8 @@
 /* Título principal */
 .page-title {
     margin: 0;
-    font-size: 1.5rem;
-    color: #1e3a6a;
+    font-size: 1.8rem;
+    color: var(--primary-color, #3E7BA6);
     font-family: 'Playfair Display', 'Georgia', serif;
 }
 
@@ -45,10 +45,10 @@
 /* Título de la tarjeta */
 .card-title {
     margin: 0;
-    font-size: 1.15rem;
-    color: #1e3a6a;
+    font-size: 1.3rem;
+    color: var(--primary-color, #3E7BA6);
     font-family: 'Playfair Display', 'Georgia', serif;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 /* ============================================
@@ -63,19 +63,19 @@
 .styled-table th {
     text-align: left;
     padding: 1rem 1.5rem;
-    background: #f8fafc;
-    color: #94a3b8;
-    font-size: 0.75rem;
+    background: var(--neutral-background, #F8F4F3);
+    color: var(--primary-color, #3E7BA6);
+    font-size: 0.9rem;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 
 /* Celdas */
 .styled-table td {
     padding: 1.25rem 1.5rem;
-    color: #0f172a;
-    font-size: 0.95rem;
+    color: var(--text-dark, #1f1f1f);
+    font-size: 1rem;
     font-weight: 500;
 }
 
@@ -144,13 +144,15 @@
 
 /* Botón principal */
 .btn-primary {
-    background: #1a3972;
+    background: var(--primary-color, #3E7BA6);
     color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
 }
 
 /* Hover */
 .btn-primary:hover:not(:disabled) {
-    background: #0d2c5b;
+    background: var(--primary-hover, #2d5d80);
 }
 
 /* Botón cancelar */

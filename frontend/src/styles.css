@@ -1,17 +1,17 @@
 :root {
-  --primary-color: #1b3971;
-  --primary-hover: #0d2c5b;
-  --secondary-color: #547ea8;
-  --secondary-hover: #9bbfd7;
-  --soft-background: #e0eeef;
-  --neutral-background: #f4f9fb;
+  --primary-color: #3E7BA6; /* Azul principal */
+  --primary-hover: #2d5d80;
+  --secondary-color: #7FA5C9; /* Azul claro */
+  --secondary-hover: #6a8ba8;
+  --soft-background: #CCE1F4; /* Celeste muy claro */
+  --neutral-background: #F8F4F3; /* Beige claro */
   --text-dark: #1f1f1f;
   --text-muted: #555555;
   --text-light: #ffffff;
   --danger-color: #d32f2f;
   --success-color: #2e7d32;
-  --shadow-sm: 0 2px 4px rgba(27, 57, 113, 0.08);
-  --shadow-md: 0 6px 16px rgba(13, 44, 91, 0.12);
+  --shadow-sm: 0 2px 4px rgba(62, 123, 166, 0.1);
+  --shadow-md: 0 6px 16px rgba(62, 123, 166, 0.15);
   --radius: 12px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -137,7 +137,13 @@ button, .btn {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 2rem;
+  }
 }
 
 /* WCAG AAA Contrast Helpers */

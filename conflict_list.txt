@@ -1,6 +1,0 @@
-﻿frontend/error.log
-frontend/src/app/components/appointment-form/appointment-form.component.html
-frontend/src/app/components/appointment-form/appointment-form.component.ts
-frontend/src/app/components/landing-page/landing-page.component.ts
-frontend/src/app/components/login/login.component.html
-frontend/src/app/components/patient-appointment-form/patient-appointment-form.component.ts

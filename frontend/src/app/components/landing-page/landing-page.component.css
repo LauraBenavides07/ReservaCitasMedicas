@@ -2,17 +2,16 @@
    VARIABLES - PALETA PIEDRAZUL
    ============================================ */
 :host {
-  --primary: #1a3972;
-  --primary-dark: #0d2c5b;
-  --primary-light: #113669;
-  --accent: #9bbfd7;
-  --secondary: #547ea8;
-  --bg-light: #e0eeef;
+  --primary: #3E7BA6;
+  --primary-dark: #2d5d80;
+  --primary-light: #7FA5C9;
+  --accent: #CCE1F4;
+  --secondary: #7FA5C9;
+  --bg-light: #F8F4F3;
   --white: #ffffff;
   --text-light: #ffffff;
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
-  
 }
 
 /* ============================================

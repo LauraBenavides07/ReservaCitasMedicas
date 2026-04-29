@@ -31,8 +31,6 @@ de cálculo (por ejemplo, CSV) para que durante la jornada de atención haya un 
 organizar los pacientes y su ingreso a la consulta médica.
 
 ## Requisitos no funcionales
-1. Implementar un sistema de autenticación y autorización basado en tokens JWT. Usar un sistema
-externo como Keycloak. La gestión de usuarios y roles se puede hacer por Postman, no se requiere
-aún una interfaz gráfica en el frontend.
+1. Implementar un sistema de autenticación y autorización basado en tokens JWT integrado en NestJS. La gestión de usuarios y roles cuenta con interfaces gráficas en el frontend (Login/Registro).
 2. Testear con OWASP ZAP al menos dos vulnerabilidades de la aplicación web acorde a la
 especificación OWASP top 10. Generar un informe breve de las vulnerabilidades reportadas.
