@@ -24,7 +24,7 @@ export class AppointmentService {
     @InjectRepository(Doctor)
     private doctorRepository: Repository<Doctor>,
     private configService: ConfigService,
-  ) { }
+  ) {}
 
   /**
    * Requisito 1: Listar citas por médico y fecha
@@ -70,7 +70,8 @@ export class AppointmentService {
     const now = new Date();
     const appointmentDate = new Date(`${createDto.date}T${createDto.time}`);
 
-    const diffHours = (appointmentDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const diffHours =
+      (appointmentDate.getTime() - now.getTime()) / (1000 * 60 * 60);
     if (diffHours < minAdvanceHours) {
       throw new BadRequestException(
         `Debe agendar con al menos ${minAdvanceHours} horas de antelación.`,
@@ -415,10 +416,13 @@ export class AppointmentService {
       .update(Appointment)
       .set({ status: 'completada' })
       .where('status = :status', { status: 'agendada' })
-      .andWhere('(appointmentDate < :date OR (appointmentDate = :date AND appointmentTime < :time))', {
-        date: dateStr,
-        time: timeStr
-      })
+      .andWhere(
+        '(appointmentDate < :date OR (appointmentDate = :date AND appointmentTime < :time))',
+        {
+          date: dateStr,
+          time: timeStr,
+        },
+      )
       .execute();
   }
 }

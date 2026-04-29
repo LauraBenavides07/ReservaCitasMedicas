@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Doctor } from '../../domain/entities/doctor.entity';
@@ -38,17 +42,19 @@ export class DoctorService {
 
   async remove(id: string) {
     const doctor = await this.findOne(id);
-    
+
     // Verificar si el doctor tiene citas agendadas
     const count = await this.appointmentRepository.count({
       where: {
         doctor: { id },
-        status: 'agendada'
-      }
+        status: 'agendada',
+      },
     });
 
     if (count > 0) {
-      throw new BadRequestException('No se puede eliminar porque tiene citas agendadas.');
+      throw new BadRequestException(
+        'No se puede eliminar porque tiene citas agendadas.',
+      );
     }
 
     return this.doctorRepository.remove(doctor);

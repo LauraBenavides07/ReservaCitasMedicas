@@ -61,6 +61,11 @@ describe('AppointmentService', () => {
 
   // 1. Crear cita correctamente
   it('debería crear una cita correctamente', async () => {
+    // Fecha futura (mínimo 3 horas adelante)
+    const futureDate = new Date();
+    futureDate.setHours(futureDate.getHours() + 3);
+    const futureDateStr = futureDate.toISOString();
+
     mockDoctorRepository.findOneBy.mockResolvedValue({
       id: '2',
       name: 'Test Doc',
@@ -74,19 +79,19 @@ describe('AppointmentService', () => {
       id: '1',
       patient: { id: '1' },
       doctor: { id: '2' },
-      appointmentDate: '2026-03-30',
+      appointmentDate: futureDateStr,
     });
     mockAppointmentRepository.save.mockResolvedValue({
       id: '1',
       patient: { id: '1' },
       doctor: { id: '2' },
-      appointmentDate: '2026-03-30',
+      appointmentDate: futureDateStr,
     });
 
     const dto = {
       patientId: '1',
       doctorId: '2',
-      date: '2026-03-30',
+      date: futureDateStr,
       time: '10:00',
       patientDocument: '123',
     };
@@ -101,9 +106,13 @@ describe('AppointmentService', () => {
   it('debería fallar si falta doctorId', async () => {
     mockDoctorRepository.findOneBy.mockResolvedValue(null);
 
+    // Fecha futura
+    const futureDate = new Date();
+    futureDate.setHours(futureDate.getHours() + 3);
+
     const dto: any = {
       patientId: '1',
-      date: '2026-03-30',
+      date: futureDate.toISOString(),
       // missing doctorId
     };
 

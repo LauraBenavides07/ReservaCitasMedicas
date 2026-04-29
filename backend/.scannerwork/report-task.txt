@@ -1,0 +1,6 @@
+projectKey=Reserva-citas
+serverUrl=http://127.0.0.1:9000
+serverVersion=26.4.0.121862
+dashboardUrl=http://127.0.0.1:9000/dashboard?id=Reserva-citas
+ceTaskId=756a3f57-a325-4746-b92d-a34dd8d41358
+ceTaskUrl=http://127.0.0.1:9000/api/ce/task?id=756a3f57-a325-4746-b92d-a34dd8d41358
