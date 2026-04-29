@@ -169,4 +169,25 @@ onSearch(): void {
     });
   }
 
+  exportCsv(): void {
+    if (!this.selectedDoctorId || !this.selectedDate) return;
+
+    this.appointmentService
+      .exportAppointments(this.selectedDate, this.selectedDoctorId)
+      .subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `citas-${this.selectedDate}.csv`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (err) => {
+          alert('No existen citas para exportar o hubo un error');
+          console.error('Error exporting appointments:', err);
+        }
+      });
+  }
+
 }

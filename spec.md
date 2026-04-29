@@ -1,38 +1,227 @@
 # Especificación de Requisitos - Sistema de Gestión de Citas Médicas
 
-## Entregables
-Para el segundo corte, se trabajarán requisitos funcionales y no funcionales del Sistema de Reserva de
-Citas de Piedrazul. Los requisitos 1 y 2, son los del primer corte, se pueden mejorar para la segunda
-iteración, por ejemplo, implementar el autocompletado cuando se busque un paciente por cédula.
+## Prioridades de Implementación
+1. **Requisitos 1 y 2** (funcionalidades base para agendadores)
+2. **Requisitos 3, 4 y 5** (autogestión, configuración y exportación)
+3. **Requisitos adicionales** (bot de WhatsApp y recordatorios)
 
-## Requisitos funcionales
-Se deben implementar los siguientes requisitos funcionales de alto valor para el cliente:
-1. Yo como agendador de citas necesito listar las citas médicas de un determinado médico/terapista
-en una fecha determinada para visualizar el listado y la cantidad de citas. Contexto: Se sugiere
-diseñar un sistema de búsqueda con resultados en una tabla.
-2. Yo como agendador de citas necesito crear una nueva cita de un paciente que me ha contactado
-por WhatsApp para hacer efectiva esa cita. Contexto: los datos que se deben capturar del paciente
-son: Número de documento de identidad, nombres y apellidos, celular, género (Hombre, Mujer,
-Otro), fecha de nacimiento (opcional) y correo electrónico (opcional); los datos de la cita son:
-Médico/terapista, hora. Tener en cuenta el intervalo de tiempo de cada médico/terapista.
-3. Yo como paciente necesito agendar una cita mediante la web para tener una cita de manera
-sencilla y rápida sin tener que usar WhatsApp. Contexto: El paciente debe tener un registro de
-usuario para poder agendar una cita. El sistema debe brindar un mecanismo para hacer la cita de
-manera segura, usable y eficiente, mostrando las franjas disponibles para cada médico.
-4. Yo como administrador necesito configurar los parámetros del sistema para que el
-agendamiento de citas autónomo funcione acorde a la disponibilidad de los médicos y terapistas
-de Piedrazul. Contexto: Se debe configurar la ventana de tiempo que se habilitarán las citas (en
-semanas), los días de la semana que cada médico/terapista atiende, la franja horaria de cada
-médico/terapista, el intervalo de tiempo (minutos) que cada médico/terapista tiene entre cita y
-cita.
-5. Yo como médico/terapista/agendador necesito exportar las citas correspondientes a una fecha
-específica y a un médico o terapista determinado, en un formato de texto compatible con hojas
-de cálculo (por ejemplo, CSV) para que durante la jornada de atención haya un listado que
-organizar los pacientes y su ingreso a la consulta médica.
+---
+
+## Requisito 1: Listar citas por médico y fecha (Prioridad 1)
+
+**Actor:** Agendador de citas
+
+**Descripción:**  
+El agendador necesita consultar las citas programadas para un médico o terapista específico en una fecha determinada.
+
+**Criterios de aceptación:**
+- Selector de médico/terapista.
+- Selector de fecha.
+- Tabla con:
+  - Hora
+  - Nombre del paciente
+  - Documento
+  - Teléfono
+  - Estado
+- Total de citas.
+- Mensaje si no hay resultados.
+- Ordenamiento por hora.
+- Acciones: ver detalle, cancelar.
+- Mejora: autocompletado por documento del paciente.
+
+**UX:**
+- Texto mínimo 18px.
+- Botones grandes.
+- Alto contraste.
+
+---
+
+## Requisito 2: Crear cita desde contacto por WhatsApp (Prioridad 1)
+
+**Actor:** Agendador de citas
+
+**Descripción:**  
+Registrar pacientes y crear citas manualmente respetando disponibilidad.
+
+**Datos:**
+
+*Paciente:*
+- Documento
+- Nombres
+- Apellidos
+- Celular
+- Género
+- (Opcional) Fecha nacimiento, correo
+
+*Cita:*
+- Médico
+- Hora
+
+**Criterios:**
+- Formulario completo.
+- Selector de médico.
+- Horarios dinámicos según:
+  - Intervalos
+  - Jornada
+  - Citas existentes
+- Validación de duplicados.
+- Confirmación de cita.
+- Envío opcional por WhatsApp.
+- Mejora: autocompletado de paciente por cédula.
+
+---
+
+## Requisito 3: Autogestión de citas por parte del paciente vía web (Prioridad 2)
+
+**Actor:** Paciente
+
+### 3.1 Registro y autenticación
+- Registro con:
+  - Documento único
+  - Datos personales
+  - Contraseña segura
+- Login con documento o correo.
+- Verificación opcional (SMS/WhatsApp).
+
+### 3.2 Agendar cita
+- Flujo:
+  1. Elegir médico
+  2. Elegir fecha
+  3. Ver horarios disponibles
+  4. Confirmar
+- Validación de concurrencia.
+- Confirmación por correo o WhatsApp.
+
+### 3.3 Consulta y cancelación
+- Ver citas.
+- Cancelar con confirmación.
+- Restricción de cancelación (ej. 2 horas antes).
+
+**Seguridad:**
+- Expiración de sesión.
+- Protección de datos.
+
+---
+
+## Requisito 4: Configuración de parámetros del sistema (Prioridad 2)
+
+**Actor:** Administrador
+
+### 4.1 Ventana de agendamiento
+- Definir semanas disponibles.
+- Restricción para pacientes.
+- Configuración diferente para agendadores.
+
+### 4.2 Configuración por médico
+- Días de atención.
+- Horarios (inicio/fin).
+- Intervalos.
+- Descansos.
+- Excepciones.
+
+### 4.3 Validación
+- Vista previa.
+- Validación de errores.
+- Auditoría de cambios.
+
+---
+
+## Requisito 5: Exportar citas (Prioridad 2)
+
+**Actor:** Médico / Agendador
+
+**Descripción:**  
+Permite exportar citas de un médico en una fecha específica a un archivo compatible con hojas de cálculo.
+
+**Criterios de aceptación:**
+- Selección de médico/terapista.
+- Selección de fecha.
+- Exportación en formato **CSV**.
+- Archivo incluye:
+  - Hora
+  - Paciente
+  - Documento
+  - Estado
+- Descarga directa del archivo.
+
+---
+
+## Requisitos adicionales (Posteriores a implementación de 1-5)
+
+### Adicional A: Bot de WhatsApp
+- Agendar, consultar y cancelar citas.
+- Integración con API oficial.
+- Flujo conversacional.
+- Validación de disponibilidad.
+- Transferencia a humano.
+
+### Adicional B: Recordatorios
+- Envío automático (WhatsApp/SMS).
+- Citas del día siguiente.
+- Registro de envíos.
+- Restricción de horario.
+
+---
 
 ## Requisitos no funcionales
-1. Implementar un sistema de autenticación y autorización basado en tokens JWT. Usar un sistema
-externo como Keycloak. La gestión de usuarios y roles se puede hacer por Postman, no se requiere
-aún una interfaz gráfica en el frontend.
-2. Testear con OWASP ZAP al menos dos vulnerabilidades de la aplicación web acorde a la
-especificación OWASP top 10. Generar un informe breve de las vulnerabilidades reportadas.
+
+### Seguridad
+- Autenticación con JWT.
+- Integración con Keycloak.
+- Autorización basada en roles.
+
+### Seguridad (pruebas)
+- Evaluación con OWASP ZAP.
+- Identificación de al menos 2 vulnerabilidades.
+- Informe de resultados.
+
+### Rendimiento
+- LCP < 2.5s
+- FID < 100ms
+- CLS < 0.1
+
+### Arquitectura
+- Aplicación web responsiva.
+- Escalable.
+- Separación frontend/backend.
+
+---
+
+## Consideraciones transversales de accesibilidad
+
+- Texto mínimo 18px.
+- Alto contraste.
+- Navegación simple.
+- Formularios claros.
+- Mensajes comprensibles.
+- Feedback visual inmediato.
+
+---
+
+## Consideraciones técnicas generales
+
+- Uso de API de WhatsApp Business.
+- Base de datos escalable.
+- Arquitectura modular.
+- Integración backend/frontend.
+
+---
+
+## Criterios de aceptación por fase
+
+### Fase 1
+- [ ] Listar citas
+- [ ] Crear citas manuales
+- [ ] Accesibilidad
+
+### Fase 2
+- [ ] Autogestión paciente
+- [ ] Configuración del sistema
+- [ ] Exportación de citas (CSV)
+
+### Fase 3
+- [ ] Bot WhatsApp
+- [ ] Recordatorios automáticos
+- [ ] Auditoría y trazabilidad
+
+---

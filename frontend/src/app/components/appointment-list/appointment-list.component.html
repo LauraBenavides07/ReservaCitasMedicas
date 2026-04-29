@@ -67,8 +67,11 @@
     <div class="results-card" *ngIf="hasSearched && !loading && appointments.length > 0">
 
         <!-- Encabezado -->
-        <div class="results-header">
+        <div class="results-header" style="display: flex; justify-content: space-between; align-items: center;">
             <h3>Citas Programadas ({{ total }})</h3>
+            <button class="btn-search" (click)="exportCsv()" *ngIf="viewMode === 'filter'" style="background-color: #3E7BA6; border-radius: 4px; padding: 8px 16px; color: white; border: none; cursor: pointer; min-height: 48px; min-width: 48px;">
+                Exportar CSV
+            </button>
         </div>
 
         <!-- Tabla -->

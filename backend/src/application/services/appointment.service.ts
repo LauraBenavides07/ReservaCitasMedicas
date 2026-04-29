@@ -5,6 +5,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Parser } from 'json2csv';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -24,7 +25,7 @@ export class AppointmentService {
     @InjectRepository(Doctor)
     private doctorRepository: Repository<Doctor>,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   /**
    * Requisito 1: Listar citas por médico y fecha
@@ -304,6 +305,39 @@ export class AppointmentService {
     appointment.status = 'agendada'; // Asegurar que pase de cancelada a agendada si fuera el caso
 
     return this.appointmentRepository.save(appointment);
+  }
+
+  async exportAppointmentsByDateAndDoctor(
+    date: string,
+    doctorId: string,
+  ): Promise<string> {
+    const appointments = await this.appointmentRepository.find({
+      where: {
+        appointmentDate: date,
+        doctor: { id: doctorId },
+      },
+      relations: ['patient', 'doctor'],
+      order: {
+        appointmentTime: 'ASC',
+      },
+    });
+
+    if (!appointments.length) {
+      throw new NotFoundException('No hay citas para esa fecha');
+    }
+
+    const formatted = appointments.map((app) => ({
+      Hora: app.appointmentTime,
+      Paciente: `${app.patient.firstName} ${app.patient.lastName}`,
+      Documento: app.patient.document,
+      Telefono: app.patient.phone,
+      Estado: app.status,
+    }));
+
+    const parser = new Parser({
+      delimiter: ';'
+    });
+    return '\uFEFF' + parser.parse(formatted);
   }
 
   private timeToMinutes(time: string): number {

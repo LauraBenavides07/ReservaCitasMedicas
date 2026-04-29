@@ -51,6 +51,15 @@ export class AppointmentService {
     return this.http.get<AppointmentResponse>(`${this.apiUrl}?doctorId=${doctorId}&date=${date}`);
   }
 
+  exportAppointments(date: string, doctorId: string) {
+    return this.http.get(
+      `${this.apiUrl}/export?date=${date}&doctorId=${doctorId}`,
+      {
+        responseType: 'blob'
+      }
+    );
+  }
+
   getAvailableSlots(doctorId: string, date: string): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/available-slots?doctorId=${doctorId}&date=${date}`);
   }

@@ -9,8 +9,10 @@ import {
   Req,
   Patch,
   Param,
+  Res,
 } from '@nestjs/common';
 import { Request } from 'express';
+import type { Response } from 'express';
 import { AppointmentService } from '../../application/services/appointment.service';
 import { CreateAppointmentDto } from '../dto/create-appointment.dto';
 import { JwtAuthGuard } from '../../infrastructure/auth/jwt-auth.guard';
@@ -25,6 +27,25 @@ export class AppointmentController {
   @Get('stats')
   async getDashboardStats() {
     return this.appointmentService.getDashboardStats();
+  }
+
+  /**
+   * REQUISITO 5: Exportar citas (Agendador/Médico)
+   */
+  @Get('export')
+  async exportAppointments(
+    @Query('date') date: string,
+    @Query('doctorId', ParseUUIDPipe) doctorId: string,
+    @Res() res: Response,
+  ) {
+    const csv = await this.appointmentService.exportAppointmentsByDateAndDoctor(
+      date,
+      doctorId,
+    );
+
+    res.header('Content-Type', 'text/csv');
+    res.attachment(`citas-${date}.csv`);
+    res.send(csv);
   }
 
   /**
