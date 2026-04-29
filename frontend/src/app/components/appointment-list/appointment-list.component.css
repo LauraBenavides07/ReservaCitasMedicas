@@ -37,11 +37,11 @@
 
 /* Estilo del label */
 .search-field label {
-    font-size: 0.7rem;
+    font-size: 1rem; /* 18px */
     font-weight: 700;
-    color: #94a3b8;
+    color: var(--primary-color, #3E7BA6);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
 /* Estilo inputs y selects */
@@ -64,30 +64,31 @@
 /* Efecto al enfocar */
 .search-field select:focus,
 .search-field input:focus {
-    border-color: #1e3a6a;
-    box-shadow: 0 0 0 3px rgba(30, 58, 106, 0.1);
+    border-color: var(--primary-color, #3E7BA6);
+    box-shadow: 0 0 0 3px rgba(62, 123, 166, 0.1);
 }
 
 /* Botón de búsqueda */
 .btn-search {
-    background: #1e3a6a;
+    background: var(--primary-color, #3E7BA6);
     color: #ffffff;
     border: none;
     padding: 0 1.5rem;
     border-radius: 8px;
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
-    height: 44px;
+    min-height: 48px;
     transition: background 0.2s;
 }
 
 /* Hover del botón */
 .btn-search:hover:not(:disabled) {
-    background: #152e4d;
+    background: var(--primary-hover, #2d5d80);
 }
 
 /* Estado deshabilitado */
@@ -136,9 +137,9 @@
 
 .results-header h3 {
     margin: 0;
-    color: #1e293b;
-    font-size: 1.2rem;
-    font-weight: 600;
+    color: var(--primary-color, #3E7BA6);
+    font-size: 1.3rem;
+    font-weight: 700;
 }
 
 /* Contenedor de tabla con scroll horizontal */
@@ -162,16 +163,18 @@
 
 /* Encabezados */
 .styled-table th {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #64748b;
-    background: transparent;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--primary-color, #3E7BA6);
+    background: var(--neutral-background, #F8F4F3);
+    padding: 1.2rem 1rem;
 }
 
 /* Datos */
 .styled-table td {
-    color: #334155;
-    font-size: 0.95rem;
+    color: var(--text-dark, #1f1f1f);
+    font-size: 1rem;
+    padding: 1.2rem 1rem;
 }
 
 /* Hover fila */
@@ -220,12 +223,12 @@
 
 .btn-view {
   background: transparent;
-  border: 2px solid #1e3a6a;
-  color: #1e3a6a;
+  border: 2px solid var(--primary-color, #3E7BA6);
+  color: var(--primary-color, #3E7BA6);
   padding: 0.75rem 1.8rem;
   border-radius: 50px;
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
   min-height: 48px;
@@ -236,9 +239,9 @@
 
 /* Estado activo (botón seleccionado) */
 .btn-view.active {
-  background: #1e3a6a;
+  background: var(--primary-color, #3E7BA6);
   color: white;
-  box-shadow: 0 4px 12px rgba(30, 58, 106, 0.3);
+  box-shadow: 0 4px 12px rgba(62, 123, 166, 0.3);
 }
 
 /* Hover en botón inactivo */

@@ -15,7 +15,7 @@ Eres un desarrollador senior especializado en **Angular (frontend)** y **NestJS 
   - Secundario: `#7FA5C9` (azul claro)
   - Fondo suave: `#CCE1F4` (celeste muy claro)
   - Fondo neutro: `#F8F4F3` (beige claro)
-- **Accesibilidad**: Prioridad máxima para adultos mayores (texto ≥18px, contraste WCAG AAA, touch targets ≥48px)
+- **Accesibilidad y Diseño**: Prioridad máxima para adultos mayores (texto ≥18px, contraste WCAG AAA, touch targets ≥48px) y enfoque **Mobile-First** (optimizado para celulares).
 - **Prioridad de funcionalidades**:
   1. Listado de citas por médico/fecha (agendador)
   2. Búsqueda de pacientes por documento (agilizar citas)
@@ -50,16 +50,18 @@ Eres un desarrollador senior especializado en **Angular (frontend)** y **NestJS 
 - **Registro vs Citas**: Se ha eliminado `birthDate` de los formularios de citas para mantener consistencia con el flujo de registro simple de pacientes.
 - **Campos obligatorios**: Documento, Nombre, Apellido, Teléfono, Correo y Género (M, F, O).
 
-### 4. Accesibilidad (Adultos Mayores)
-- **Tipografía**: `font-size: 18px` base.
-- **Touch**: Interactivos con `min-height: 48px; min-width: 48px;`.
+### 4. Accesibilidad y Responsividad (Adultos Mayores y Móvil)
+- **Mobile-First**: El diseño debe estar optimizado para pantallas pequeñas (celulares) antes que para PC.
+- **Tipografía**: `font-size: 18px` base para legibilidad.
+- **Touch**: Interactivos con `min-height: 48px; min-width: 48px;` para facilitar el toque.
 - **Semántica**: Uso de etiquetas HTML5 correctas.
+- **Layout**: Uso de Flexbox/Grid para adaptabilidad sin scroll horizontal innecesario.
 
 ## Flujo de Trabajo para el Agente
 
 ### Antes de escribir código
 1. **Validación**: ¿El cambio respeta la sincronización entre el registro de pacientes y la creación de citas?
-2. **Accesibilidad**: ¿Los nuevos controles (ej. selectores) mantienen el tamaño y contraste adecuado?
+2. **Accesibilidad y Móvil**: ¿Los nuevos controles mantienen el tamaño adecuado para adultos mayores y se ven bien en pantallas de celulares (responsivo)?
 
 ### Al generar código
 - Incluye **tests unitarios** para nuevas funcionalidades (ej. búsquedas en service, endpoints en controller).

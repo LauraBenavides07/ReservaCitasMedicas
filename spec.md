@@ -164,6 +164,8 @@ Permite exportar citas de un médico en una fecha específica a un archivo compa
 ---
 
 ## Requisitos no funcionales
+1. Implementar un sistema de autenticación y autorización basado en tokens JWT integrado en NestJS. La gestión de usuarios y roles cuenta con interfaces gráficas en el frontend (Login/Registro).
+2. Testear con OWASP ZAP al menos dos vulnerabilidades de la aplicación web acorde a la especificación OWASP top 10. Generar un informe breve de las vulnerabilidades reportadas.
 
 ### Seguridad
 - Autenticación con JWT.
