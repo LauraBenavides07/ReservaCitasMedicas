@@ -169,7 +169,7 @@ Permite exportar citas de un médico en una fecha específica a un archivo compa
 
 ### Seguridad
 - Autenticación con JWT.
-- Integración con Keycloak.
+- [x] Integración con Keycloak.
 - Autorización basada en roles.
 
 ### Seguridad (pruebas)

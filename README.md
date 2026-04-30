@@ -14,6 +14,7 @@ Este proyecto es una aplicación web para la gestión de citas médicas, diseña
 - Node.js (versión 18 o superior)
 - npm
 - PostgreSQL corriendo localmente (Puerto 5432)
+- Docker (para ejecutar Keycloak)
 
 ### 2. Configuración del Backend
 Accede a la carpeta del servidor e instala las dependencias:
@@ -22,8 +23,12 @@ cd backend
 npm install
 ```
 
+#### Configuración de Keycloak (Autenticación)
+Para la gestión de identidades, utilizamos Keycloak. Es **obligatorio** configurar Keycloak antes de iniciar el backend. 
+👉 **[Sigue la guía de configuración de Keycloak aquí](docs/KEYCLOAK_SETUP.md)**.
+
 #### Configuración de Variables de Entorno
-Crea o edita el archivo `.env` en la carpeta `backend` con los datos de tu PostgreSQL:
+Crea o edita el archivo `.env` en la carpeta `backend` con los datos de tu PostgreSQL y Keycloak:
 ```env
 DB_HOST=localhost
 DB_PORT=5432
