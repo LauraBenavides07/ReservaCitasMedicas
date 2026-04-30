@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Patient } from '../../domain/entities/patient.entity';
 import { User } from '../../domain/entities/user.entity';
+import { DecodedToken } from '../../domain/types/keycloak.types';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -35,33 +36,37 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
+  async validate(payload: DecodedToken) {
     if (!payload) {
       throw new UnauthorizedException('Token inválido.');
     }
-    
+
     const roles = payload.realm_access?.roles || [];
     const username = payload.preferred_username; // En nuestro caso, CC para pacientes o Email para staff
-    
+
     // Buscamos estrictamente por keycloakId (Identity Linking Profesional)
     let localId = payload.sub; // Fallback
-    
-    const patient = await this.patientRepository.findOneBy({ keycloakId: payload.sub });
+
+    const patient = await this.patientRepository.findOneBy({
+      keycloakId: payload.sub,
+    });
     if (patient) {
       localId = patient.id;
     } else {
-      const staff = await this.userRepository.findOneBy({ keycloakId: payload.sub });
+      const staff = await this.userRepository.findOneBy({
+        keycloakId: payload.sub,
+      });
       if (staff) {
         localId = staff.id;
       }
     }
-    
-    return { 
-      id: localId, 
+
+    return {
+      id: localId,
       keycloakId: payload.sub,
       email: payload.email,
       document: username,
-      roles: roles 
+      roles: roles,
     };
   }
 }

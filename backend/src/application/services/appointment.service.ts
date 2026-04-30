@@ -28,7 +28,7 @@ export class AppointmentService {
     @InjectRepository(DoctorException)
     private doctorExceptionRepository: Repository<DoctorException>,
     private configService: ConfigService,
-  ) { }
+  ) {}
 
   /**
    * Requisito 1: Listar citas por médico y fecha
@@ -369,7 +369,7 @@ export class AppointmentService {
     }));
 
     const parser = new Parser({
-      delimiter: ';'
+      delimiter: ';',
     });
     return '\uFEFF' + parser.parse(formatted);
   }

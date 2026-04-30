@@ -64,7 +64,7 @@ describe('AuthService', () => {
     } as unknown as LoginDto);
 
     expect(result).toBeDefined();
-    expect(result.user.email).toBe('test@mail.com');
+    expect(result.user!.email).toBe('test@mail.com');
   });
 
   // 7. Login genera token

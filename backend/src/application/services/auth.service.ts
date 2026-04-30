@@ -13,6 +13,13 @@ import { RegisterDto } from '../../presentation/dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import axios from 'axios';
 import { JwtService } from '@nestjs/jwt';
+import {
+  DecodedToken,
+  KeycloakTokenResponse,
+  AxiosErrorResponse,
+  UserData,
+  DbUser,
+} from '../../domain/types/keycloak.types';
 
 @Injectable()
 export class AuthService {
@@ -42,7 +49,7 @@ export class AuthService {
     // Opcional: Aquí podrías hacer una petición HTTP POST al Admin API de Keycloak
     // para crear al usuario allá también. Por ahora, asumimos que se registra local.
     // (Ver documentación de Keycloak Admin REST API)
-    
+
     // Hash local (solo por seguridad si alguna vez apagas Keycloak)
     const hashedPassword = await bcrypt.hash(dto.password, 10);
     const patient = this.patientRepository.create({
@@ -61,66 +68,90 @@ export class AuthService {
       adminParams.append('client_id', 'admin-cli');
       adminParams.append('grant_type', 'password');
       adminParams.append('username', process.env.KEYCLOAK_ADMIN || 'admin');
-      adminParams.append('password', process.env.KEYCLOAK_ADMIN_PASSWORD || 'admin');
+      adminParams.append(
+        'password',
+        process.env.KEYCLOAK_ADMIN_PASSWORD || 'admin',
+      );
 
-      const adminTokenRes = await axios.post(adminTokenUrl, adminParams);
+      const adminTokenRes = await axios.post<KeycloakTokenResponse>(
+        adminTokenUrl,
+        adminParams,
+      );
       const adminToken = adminTokenRes.data.access_token;
 
       // 2. Crear usuario en el Realm 'piedrazul'
       const usersUrl = `${this.keycloakUrl}/admin/realms/${this.realm}/users`;
-      await axios.post(usersUrl, {
-        username: dto.document, // En nuestro sistema, el documento es el username de Keycloak
-        enabled: true,
-        firstName: dto.firstName,
-        lastName: dto.lastName,
-        email: dto.email,
-        credentials: [{
-          type: 'password',
-          value: dto.password,
-          temporary: false // Muy importante para que el login directo funcione
-        }]
-      }, {
-        headers: { Authorization: `Bearer ${adminToken}` }
-      });
-      console.log(`[Auto-Provisioning] Paciente ${dto.document} sincronizado con Keycloak exitosamente.`);
+      await axios.post(
+        usersUrl,
+        {
+          username: dto.document, // En nuestro sistema, el documento es el username de Keycloak
+          enabled: true,
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          email: dto.email,
+          credentials: [
+            {
+              type: 'password',
+              value: dto.password,
+              temporary: false, // Muy importante para que el login directo funcione
+            },
+          ],
+        },
+        {
+          headers: { Authorization: `Bearer ${adminToken}` },
+        },
+      );
+      console.log(
+        `[Auto-Provisioning] Paciente ${dto.document} sincronizado con Keycloak exitosamente.`,
+      );
     } catch (kcError) {
-      console.error('[Auto-Provisioning] Advertencia: No se pudo crear el usuario en Keycloak automáticamente.', kcError?.response?.data || kcError.message);
+      const errorResponse = kcError as AxiosErrorResponse;
+      console.error(
+        '[Auto-Provisioning] Advertencia: No se pudo crear el usuario en Keycloak automáticamente.',
+        errorResponse?.response?.data?.message || errorResponse?.message,
+      );
       // No detenemos el flujo, pero el login subsiguiente va a fallar si Keycloak no lo tiene.
     }
-    
+
     // 2. Intentar loguearse
     return this.login({ login: dto.document, password: dto.password });
   }
 
-  async login(dto: LoginDto) {
+  async login(
+    dto: LoginDto,
+  ): Promise<{ access_token: string; user: UserData | null; source: string }> {
     try {
       // Delegamos la autenticación a Keycloak (Direct Access Grants)
       const tokenUrl = `${this.keycloakUrl}/realms/${this.realm}/protocol/openid-connect/token`;
-      
+
       const params = new URLSearchParams();
       params.append('client_id', this.clientId);
       params.append('grant_type', 'password');
       params.append('username', dto.login);
       params.append('password', dto.password);
-      
-      const response = await axios.post(tokenUrl, params, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      });
+
+      const response = await axios.post<KeycloakTokenResponse>(
+        tokenUrl,
+        params,
+        {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        },
+      );
 
       // Keycloak nos devuelve el access_token
       const accessToken = response.data.access_token;
 
       // Decodificar el token para obtener el 'sub' (Keycloak UUID)
-      const decodedToken: any = this.jwtService.decode(accessToken);
+      const decodedToken: DecodedToken = this.jwtService.decode(accessToken);
       const keycloakSub = decodedToken?.sub;
 
       // 2. Buscar datos extendidos en nuestra BD local (Híbrido)
-      let userData: any = null;
+      let userData: UserData | null = null;
 
       // Intentar buscar como paciente (usando el login que suele ser el documento o email)
       const patient = await this.patientRepository.findOneBy([
         { document: dto.login },
-        { email: dto.login }
+        { email: dto.login },
       ]);
 
       if (patient) {
@@ -130,17 +161,19 @@ export class AuthService {
           await this.patientRepository.save(patient);
         }
 
-        userData = { 
-          id: patient.id, 
-          document: patient.document, 
+        userData = {
+          id: patient.id,
+          document: patient.document,
           firstName: patient.firstName,
           lastName: patient.lastName,
           email: patient.email,
-          role: 'patient' 
+          role: 'patient',
         };
       } else {
         // Si no es paciente, buscar en la tabla de usuarios administrativos (Admin, Doctor, Staff)
-        const staffUser = await this.userRepository.findOneBy({ email: dto.login });
+        const staffUser = await this.userRepository.findOneBy({
+          email: dto.login,
+        });
         if (staffUser) {
           // LAZY IDENTITY LINKING: Para el staff
           if (!staffUser.keycloakId && keycloakSub) {
@@ -148,12 +181,12 @@ export class AuthService {
             await this.userRepository.save(staffUser);
           }
 
-          userData = { 
-            id: staffUser.id, 
-            email: staffUser.email, 
+          userData = {
+            id: staffUser.id,
+            email: staffUser.email,
             firstName: staffUser.firstName,
             lastName: staffUser.lastName,
-            role: staffUser.role 
+            role: staffUser.role,
           };
         }
       }
@@ -161,27 +194,29 @@ export class AuthService {
       return {
         access_token: accessToken,
         user: userData,
-        source: 'keycloak'
+        source: 'keycloak',
       };
     } catch (error) {
-      console.error('Error autenticando con Keycloak:', error?.response?.data || error.message);
-      
+      const errorResponse = error as AxiosErrorResponse;
+      console.error(
+        'Error autenticando con Keycloak:',
+        errorResponse?.response?.data?.message || errorResponse?.message,
+      );
+
       // Fallback: Si Keycloak falla o no está configurado, podemos intentar con la BD Local (Opcional)
       // Si quieres que SOLO funcione con Keycloak, borra este bloque.
       return this.localLoginFallback(dto);
     }
   }
 
-  private async localLoginFallback(dto: LoginDto) {
+  private async localLoginFallback(dto: LoginDto): Promise<never> {
     console.warn('⚠️ Usando BD Local para Login (Fallback)');
-    
+
     // 1. Buscar en Pacientes
-    let dbUser: any = await this.patientRepository.findOne({
+    let dbUser: DbUser | null = await this.patientRepository.findOne({
       where: [{ document: dto.login }, { email: dto.login }],
       select: ['id', 'firstName', 'lastName', 'password', 'document', 'email'],
     });
-
-    let role = 'patient';
 
     // 2. Si no es paciente, buscar en Usuarios Administrativos
     if (!dbUser) {
@@ -189,14 +224,17 @@ export class AuthService {
         where: { email: dto.login },
         select: ['id', 'firstName', 'lastName', 'password', 'email', 'role'],
       });
-      if (dbUser) role = dbUser.role;
     }
 
-    if (dbUser && dbUser.password && (await bcrypt.compare(dto.password, dbUser.password))) {
-      // Como estamos en un flujo Keycloak, el fallback local sin Keycloak 
+    if (
+      dbUser &&
+      dbUser.password &&
+      (await bcrypt.compare(dto.password, dbUser.password))
+    ) {
+      // Como estamos en un flujo Keycloak, el fallback local sin Keycloak
       // solo sirve para validar que el usuario existe, pero no podemos dar un token válido.
       throw new InternalServerErrorException(
-        'Autenticación local exitosa, pero Keycloak no respondió. No se puede generar una sesión segura.'
+        'Autenticación local exitosa, pero Keycloak no respondió. No se puede generar una sesión segura.',
       );
     }
     throw new UnauthorizedException('Credenciales inválidas.');
@@ -205,7 +243,16 @@ export class AuthService {
   async getPatientByDocument(document: string) {
     const patient = await this.patientRepository.findOne({
       where: { document },
-      select: ['id', 'firstName', 'lastName', 'document', 'phone', 'gender', 'birthDate', 'email'],
+      select: [
+        'id',
+        'firstName',
+        'lastName',
+        'document',
+        'phone',
+        'gender',
+        'birthDate',
+        'email',
+      ],
     });
 
     if (!patient) {

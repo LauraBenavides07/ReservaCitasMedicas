@@ -35,7 +35,14 @@ import { AuthModule } from './auth.module';
         synchronize: true, // Solo para desarrollo
       }),
     }),
-    TypeOrmModule.forFeature([Doctor, Patient, Appointment, Config, User, DoctorException]),
+    TypeOrmModule.forFeature([
+      Doctor,
+      Patient,
+      Appointment,
+      Config,
+      User,
+      DoctorException,
+    ]),
     AuthModule,
     ScheduleModule.forRoot(),
   ],
