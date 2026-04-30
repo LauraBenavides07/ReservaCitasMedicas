@@ -1,170 +1,127 @@
 /* ============================================
-   APPOINTMENT FORM (TWO COLUMNS) - PREMIUM
-   Contenedor principal del formulario
+   APPOINTMENT FORM - MOBILE FIRST & ACCESSIBLE
    ============================================ */
+
 :host {
     display: block;
 }
 
 .appointment-form-wrapper {
-    padding-top: 1rem;
+    padding: 0.5rem 0;
 }
 
-/* Layout de dos columnas */
+/* Layout Responsivo: Columna en móvil, Dos columnas en desktop */
 .two-column-layout {
     display: flex;
-    gap: 2rem;
-    align-items: flex-start;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
-/* Columnas izquierda y derecha */
-.column-left,
-.column-right {
+@media (min-width: 1024px) {
+    .two-column-layout {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 2rem;
+    }
+}
+
+.column-left, .column-right {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
-/* Estilo base de tarjetas */
+/* ============================================
+   CARDS & TITLES
+   ============================================ */
 .card {
-    background: #ffffff;
-    border-radius: 12px;
+    background: white;
+    border-radius: var(--radius);
     padding: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(62, 123, 166, 0.1);
 }
 
-/* Título de tarjeta */
 .card-title {
     margin: 0 0 1.5rem 0;
-    color: var(--primary-color, #3E7BA6);
+    color: var(--primary-color);
     font-size: 1.3rem;
-    font-weight: 700;
-    border-bottom: 1px solid #f1f5f9;
-    padding-bottom: 1rem;
-}
-
-/* Margen superior reutilizable */
-.mt-1\.5rem {
-    margin-top: 1.5rem;
+    font-weight: 800;
+    border-bottom: 2px solid var(--soft-background);
+    padding-bottom: 0.75rem;
 }
 
 /* ============================================
-   FORM FIELDS
+   FORMS & INPUTS
    ============================================ */
 .form-grid {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
 }
 
-/* Fila de formulario */
-.form-row {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
-}
-
-@media (min-width: 640px) {
-    .form-row {
-        flex-direction: row;
-    }
-}
-
-/* Campo individual */
 .form-field {
     display: flex;
     flex-direction: column;
-    flex: 1;
     gap: 0.5rem;
 }
 
-.full-width {
-    width: 100%;
-}
-
-/* Label */
 .form-field label {
-    font-size: 1rem; /* 18px */
+    font-size: 0.8rem;
     font-weight: 700;
-    color: var(--primary-color, #3E7BA6);
+    color: var(--primary-color);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
-/* Inputs */
-.form-field input,
-.form-field select {
-    padding: 0.8rem 1rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    color: #1e293b;
-    outline: none;
-    background: #ffffff;
-    transition: all 0.2s;
-    min-height: 48px;
-    width: 100%;
-}
-
-/* Focus */
-.form-field input:focus,
-.form-field select:focus {
-    border-color: var(--primary-color, #3E7BA6);
-    box-shadow: 0 0 0 3px rgba(62, 123, 166, 0.1);
-}
-
-/* Error visual */
-.input-error {
-    border-color: #ef4444 !important;
-}
-
-/* Inputs divididos (nombre/apellido) */
-.split-inputs {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-@media (min-width: 640px) {
-    .split-inputs {
-        flex-direction: row;
-    }
-}
-
-.split-inputs input {
-    flex: 1;
-}
-
-/* Input con botón (buscar documento) */
 .input-with-button {
     display: flex;
     gap: 0.5rem;
 }
 
-.input-with-button input {
-    flex: 1;
-}
-
-/* Botón buscar */
 .btn-buscar {
-    background: #e2e8f0;
-    color: #475569;
+    background: var(--soft-background);
+    color: var(--primary-color);
     border: none;
-    font-weight: 600;
-    padding: 0 1.5rem;
+    padding: 0 1.25rem;
     border-radius: 8px;
+    font-weight: 700;
     cursor: pointer;
-    min-height: 48px;
+    transition: var(--transition);
 }
 
 .btn-buscar:hover {
-    background: #cbd5e1;
+    background: var(--secondary-color);
+    color: white;
+}
+
+.split-inputs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+@media (min-width: 480px) {
+    .split-inputs {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 480px) {
+    .form-row {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 /* ============================================
-   DOCTOR GRID
+   DOCTOR SELECTION
    ============================================ */
 .doctors-grid {
     display: grid;
@@ -172,85 +129,92 @@
     gap: 1rem;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 350px) {
     .doctors-grid {
         grid-template-columns: 1fr 1fr;
     }
 }
 
-/* Caja de cada doctor */
 .doctor-box {
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    background: var(--neutral-background);
+    border: 2px solid transparent;
+    border-radius: var(--radius);
     padding: 1rem;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
     gap: 0.75rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: var(--transition);
 }
 
-/* Hover */
 .doctor-box:hover {
-    border-color: #9bbfd7;
-    box-shadow: 0 4px 12px rgba(155, 191, 215, 0.2);
+    background: white;
+    border-color: var(--secondary-color);
+    transform: translateY(-2px);
 }
 
-/* Seleccionado */
 .doctor-box.selected {
-    border-color: var(--primary-color, #3E7BA6);
-    background: var(--soft-background, #CCE1F4);
-    box-shadow: 0 4px 12px rgba(62, 123, 166, 0.2);
+    background: white;
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-md);
 }
 
-/* Avatar del doctor */
 .doctor-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    color: #ffffff;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
+    font-size: 1.25rem;
+    font-weight: 800;
 }
 
-/* Info */
 .doctor-info h4 {
     margin: 0;
-    font-size: 0.95rem;
-    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-dark);
 }
 
-/* Botón principal */
-.btn-primary {
-    background: var(--primary-color, #3E7BA6);
-    color: #ffffff;
+.doctor-info .specialty {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ============================================
+   MESSAGES & UTILS
+   ============================================ */
+.alert {
+    padding: 1rem;
     border-radius: 8px;
-    min-height: 48px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    transition: background 0.3s;
+    font-weight: 600;
+    margin-top: 1rem;
 }
 
-.btn-primary:hover:not(:disabled) {
-    background: var(--primary-hover, #2d5d80);
+.alert-success { background: #d1fae5; color: #065f46; }
+.alert-error { background: #fee2e2; color: #991b1b; }
+
+.full-width { width: 100%; }
+.mt-1rem { margin-top: 1rem; }
+.mt-1\.5rem { margin-top: 1.5rem; }
+/* ============================================
+   VALIDATION STYLES
+   ============================================ */
+.input-error {
+    border-color: #ef4444 !important;
+    background-color: #fef2f2 !important;
 }
 
-/* Alertas */
-.alert-error {
-    background: #fef2f2;
-    color: #b91c1c;
-}
-
-.alert-success {
-    background: #f0fdf4;
-    color: #15803d;
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-    .two-column-layout {
-        flex-direction: column;
-    }
+.validation-message {
+    color: #ef4444;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }

@@ -84,7 +84,11 @@ export class AppointmentFormComponent implements OnInit {
   // Busca paciente por documento
   searchPatient(): void {
     const document = this.f['patientDocument'].value;
-    if (!document) return;
+    if (!document) {
+      this.f['patientDocument'].markAsTouched();
+      this.errorMessage.set('');
+      return;
+    }
 
     this.errorMessage.set('');
     this.appointmentService.getPatientByDocument(document).subscribe({
@@ -152,7 +156,16 @@ export class AppointmentFormComponent implements OnInit {
   // Envío del formulario
   onSubmit(): void {
 
-    if (this.appointmentForm.invalid) return;
+    if (this.appointmentForm.invalid) {
+      this.appointmentForm.markAllAsTouched();
+      this.errorMessage.set('Por favor, complete todos los campos obligatorios (*).');
+      
+      // Hacer scroll hacia arriba para que el usuario vea los errores
+      const wrapper = document.querySelector('.appointment-form-wrapper');
+      if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      return;
+    }
 
     this.isSubmitting.set(true);
     this.errorMessage.set('');
@@ -185,7 +198,7 @@ export class AppointmentFormComponent implements OnInit {
     ).subscribe(result => {
 
       if (result) {
-        this.successMessage.set('Cita agendada con exito.');
+        this.successMessage.set('✅ Cita agendada con éxito.');
 
         // Reinicia formulario
         this.appointmentForm.reset({
@@ -195,6 +208,13 @@ export class AppointmentFormComponent implements OnInit {
 
         this.availableSlots.set([]);
         this.loadAvailableSlots();
+        
+        // Hacer scroll hacia arriba para que el usuario vea el mensaje de éxito
+        const wrapper = document.querySelector('.appointment-form-wrapper');
+        if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Opcional: ocultar el mensaje de éxito después de unos segundos
+        setTimeout(() => this.successMessage.set(''), 4000);
       }
 
       this.isSubmitting.set(false);

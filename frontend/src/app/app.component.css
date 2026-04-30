@@ -266,47 +266,98 @@
 /* Móviles */
 @media (max-width: 768px) {
 
-    /* Cambia a layout en columna */
+    /* Cambia a layout en columna con grid para organizar el top */
     .dashboard-layout {
         grid-template-columns: 1fr;
         grid-template-rows: auto 1fr;
     }
 
-    /* Sidebar horizontal en móvil */
+    /* Sidebar se convierte en barra superior */
     .sidebar {
         padding: 1rem;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        display: grid;
+        grid-template-areas: 
+            "brand user"
+            "nav nav";
+        grid-template-columns: 1fr auto;
+        gap: 1rem;
+        align-items: center;
     }
 
     .sidebar-brand {
-        margin-bottom: 1rem;
+        grid-area: brand;
+        margin-bottom: 0;
+        padding: 0;
+    }
+
+    .logo-img {
+        width: 50px; /* Logo más pequeño en móvil */
+        height: 50px;
     }
 
     /* Navegación horizontal con scroll */
     .sidebar-nav {
+        grid-area: nav;
+        display: flex;
         flex-direction: row;
         overflow-x: auto;
-        padding-bottom: 0.5rem;
+        padding: 0.75rem 0.5rem 1rem 0.5rem; /* Más espacio inferior para el scrollbar */
+        gap: 1.25rem;
+        scrollbar-width: thin; /* Barra delgada en Firefox */
+        scrollbar-color: rgba(155, 191, 215, 0.3) transparent;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Barra de scroll elegante para Chrome/Safari */
+    .sidebar-nav::-webkit-scrollbar {
+        display: block;
+        height: 4px;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-thumb {
+        background: rgba(155, 191, 215, 0.3); /* Color acento muy suave */
+        border-radius: 10px;
     }
 
     .nav-item {
         white-space: nowrap;
         width: auto;
+        padding: 0.75rem 1.25rem; /* Botones más amplios */
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50px; /* Estilo píldora para móviles */
+        flex-shrink: 0; /* Evita que los botones se compriman */
     }
 
-    /* Oculta el título de sección en móvil */
-    .sidebar-section {
+    /* Oculta elementos innecesarios en móvil */
+    .sidebar-section, 
+    .sidebar-spacer {
         display: none;
     }
 
-    /* Ajusta el perfil de usuario a la esquina superior derecha */
+    /* Perfil de usuario al lado del logo */
     .sidebar-user {
+        grid-area: user;
         border-top: none;
         margin-top: 0;
         padding: 0;
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
+        position: static; /* Ya no es absoluto */
+    }
+
+    .user-details {
+        display: none; /* Ocultamos detalles largos en móviles muy pequeños */
+    }
+
+    @media (min-width: 480px) {
+        .user-details {
+            display: flex;
+        }
     }
 
     /* Reduce el padding del encabezado */
