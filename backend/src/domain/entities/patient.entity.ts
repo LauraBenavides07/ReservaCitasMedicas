@@ -16,6 +16,9 @@ export class Patient {
   @Column({ unique: true, length: 20 })
   document: string;
 
+  @Column({ name: 'keycloak_id', type: 'uuid', nullable: true, unique: true })
+  keycloakId: string;
+
   @Column({ name: 'first_name', length: 100 })
   firstName: string;
 

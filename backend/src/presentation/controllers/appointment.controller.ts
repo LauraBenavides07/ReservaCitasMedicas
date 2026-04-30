@@ -64,8 +64,12 @@ export class AppointmentController {
    */
   @UseGuards(JwtAuthGuard)
   @Get('my-appointments')
-  async getPatientAppointments(@Req() req: Request & { user: { id: string } }) {
-    return this.appointmentService.findAllByPatient(req.user.id);
+  async getPatientAppointments(@Req() req: Request & { user: { id: string, document: string } }) {
+    console.log('--- Fetching appointments for patient ---');
+    console.log('User in request:', req.user);
+    const appointments = await this.appointmentService.findAllByPatient(req.user.id);
+    console.log('Found appointments:', appointments.length);
+    return appointments;
   }
 
   /**

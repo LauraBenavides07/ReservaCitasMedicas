@@ -20,6 +20,9 @@ export class User {
   @Column({ unique: true, length: 100 })
   email: string;
 
+  @Column({ name: 'keycloak_id', type: 'uuid', nullable: true, unique: true })
+  keycloakId: string;
+
   @Column()
   password: string;
 
