@@ -47,7 +47,7 @@
                     </div>
                     <div class="info-block">
                         <span class="label">Ventana:</span>
-                        <span class="value">{{ configForm.value.appointmentWindowWeeks || 4 }} sem</span>
+                        <span class="value">{{ configForm.get('appointmentWindowDays')?.value || 15 }} días</span>
                     </div>
                 </div>
 
@@ -65,6 +65,9 @@
 
                 <!-- Acción: botón para editar -->
                 <div class="doc-actions">
+                    <button class="btn btn-secondary btn-sm" (click)="openExceptions(doctor)">
+                        📅 Excepciones
+                    </button>
                     <button class="btn btn-primary btn-edit-dark" (click)="openDoctorForm(doctor)">
                         ✏️ Editar
                     </button>
@@ -229,13 +232,46 @@
                     <input id="config-minAdvance" type="number" formControlName="minAdvanceHours" />
                 </div>
                 <div class="form-field">
-                    <label for="config-window">Ventana de Citas (Semanas)</label>
-                    <input id="config-window" type="number" formControlName="appointmentWindowWeeks" />
+                    <label for="config-window">Ventana de Citas (Días)</label>
+                    <input id="config-window" type="number" formControlName="appointmentWindowDays" />
                 </div>
                 
                 <div class="modal-actions">
                     <button type="submit" class="btn btn-primary" [disabled]="configForm.invalid">Actualizar Reglas</button>
                     <button type="button" (click)="showGlobalConfig.set(false)" class="btn btn-cancel">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Excepciones -->
+    <div *ngIf="showExceptionForm()" class="modal-overlay" (click)="showExceptionForm.set(false)">
+        <div class="modal" (click)="$event.stopPropagation()">
+            <h3 class="modal-title">Días No Laborables - Dr(a). {{ selectedDoctor()?.name }}</h3>
+            
+            <div class="exceptions-list" *ngIf="exceptions().length > 0" style="margin-bottom: 1.5rem;">
+                <div class="exception-item" *ngFor="let ex of exceptions()" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid #eee;">
+                    <span><strong>{{ ex.date | date:'dd/MM/yyyy' }}</strong>: {{ ex.reason }}</span>
+                    <button class="btn-icon" (click)="removeException(ex.id)" style="border: none; background: none; cursor: pointer;">🗑️</button>
+                </div>
+            </div>
+
+            <p *ngIf="exceptions().length === 0" class="text-muted" style="margin-bottom: 1.5rem;">No hay excepciones registradas.</p>
+
+            <h4 class="card-title">Añadir Nueva Excepción</h4>
+            <form [formGroup]="exceptionForm" (ngSubmit)="addException()" class="form-grid">
+                <div class="form-field">
+                    <label>Fecha</label>
+                    <input type="date" formControlName="date" />
+                </div>
+                <div class="form-field">
+                    <label>Motivo</label>
+                    <input type="text" formControlName="reason" placeholder="Ej: Vacaciones" />
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary" [disabled]="exceptionForm.invalid">Bloquear Día</button>
+                    <button type="button" (click)="showExceptionForm.set(false)" class="btn btn-cancel">Cerrar</button>
                 </div>
             </form>
         </div>

@@ -212,14 +212,14 @@ Permite exportar citas de un médico en una fecha específica a un archivo compa
 ## Criterios de aceptación por fase
 
 ### Fase 1
-- [ ] Listar citas
-- [ ] Crear citas manuales
-- [ ] Accesibilidad
+- [x] Listar citas
+- [x] Crear citas manuales
+- [x] Accesibilidad
 
 ### Fase 2
-- [ ] Autogestión paciente
-- [ ] Configuración del sistema
-- [ ] Exportación de citas (CSV)
+- [x] Autogestión paciente
+- [x] Configuración del sistema
+- [x] Exportación de citas (CSV)
 
 ### Fase 3
 - [ ] Bot WhatsApp

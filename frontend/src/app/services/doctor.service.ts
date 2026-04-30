@@ -37,4 +37,17 @@ export class DoctorService {
   deleteDoctor(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  // --- Excepciones ---
+  getExceptions(doctorId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${doctorId}/exceptions`);
+  }
+
+  addException(doctorId: string, data: { date: string, reason: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${doctorId}/exceptions`, data);
+  }
+
+  removeException(exceptionId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/exceptions/${exceptionId}`);
+  }
 }

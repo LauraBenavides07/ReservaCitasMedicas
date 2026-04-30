@@ -5,7 +5,7 @@ import { Config } from '../../domain/entities/config.entity';
 
 export class GlobalConfig {
   minAdvanceHours: number;
-  appointmentWindowWeeks: number;
+  appointmentWindowDays: number;
 }
 
 @Injectable()
@@ -24,7 +24,7 @@ export class ConfigService implements OnModuleInit {
         key: 'appointment_rules',
         value: {
           minAdvanceHours: 2,
-          appointmentWindowWeeks: 4,
+          appointmentWindowDays: 15,
         },
       });
     }

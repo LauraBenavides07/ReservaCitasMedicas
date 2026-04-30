@@ -12,6 +12,7 @@ import { Repository } from 'typeorm';
 import { Appointment } from '../../domain/entities/appointment.entity';
 import { Patient } from '../../domain/entities/patient.entity';
 import { Doctor } from '../../domain/entities/doctor.entity';
+import { DoctorException } from '../../domain/entities/doctor-exception.entity';
 import { CreateAppointmentDto } from '../../presentation/dto/create-appointment.dto';
 import { ConfigService } from './config.service';
 
@@ -24,6 +25,8 @@ export class AppointmentService {
     private patientRepository: Repository<Patient>,
     @InjectRepository(Doctor)
     private doctorRepository: Repository<Doctor>,
+    @InjectRepository(DoctorException)
+    private doctorExceptionRepository: Repository<DoctorException>,
     private configService: ConfigService,
   ) { }
 
@@ -66,7 +69,7 @@ export class AppointmentService {
     // Regla de Negocio: Ventana de tiempo
     const config = await this.configService.getConfig();
     const minAdvanceHours = config?.minAdvanceHours ?? 2;
-    const appointmentWindowWeeks = config?.appointmentWindowWeeks ?? 4;
+    const appointmentWindowDays = config?.appointmentWindowDays ?? 15;
 
     const now = new Date();
     const appointmentDate = new Date(`${createDto.date}T${createDto.time}`);
@@ -80,10 +83,21 @@ export class AppointmentService {
     }
 
     const horizonDate = new Date();
-    horizonDate.setDate(now.getDate() + appointmentWindowWeeks * 7);
+    horizonDate.setDate(now.getDate() + appointmentWindowDays);
     if (appointmentDate > horizonDate) {
       throw new BadRequestException(
-        `No se puede agendar con más de ${appointmentWindowWeeks} semanas de antelación.`,
+        `No se puede agendar con más de ${appointmentWindowDays} días de antelación.`,
+      );
+    }
+
+    // Regla de Negocio: Excepciones del médico
+    const exception = await this.doctorExceptionRepository.findOneBy({
+      doctorId: doctor.id,
+      date: createDto.date,
+    });
+    if (exception) {
+      throw new BadRequestException(
+        `El médico no atiende este día: ${exception.reason || 'No disponible'}`,
       );
     }
 
@@ -143,6 +157,15 @@ export class AppointmentService {
       },
     });
 
+    // Regla de Negocio: Excepciones del médico
+    const exception = await this.doctorExceptionRepository.findOneBy({
+      doctorId: doctor.id,
+      date: date,
+    });
+    if (exception) {
+      return []; // No hay horarios si hay una excepción
+    }
+
     const bookedSlots: string[] = appointments.map((a) =>
       a.appointmentTime.toString().slice(0, 5),
     );
@@ -173,7 +196,7 @@ export class AppointmentService {
     // Regla de Negocio: Ventana de tiempo
     const config = await this.configService.getConfig();
     const minAdvanceHours = config?.minAdvanceHours ?? 2;
-    const appointmentWindowWeeks = config?.appointmentWindowWeeks ?? 4;
+    const appointmentWindowDays = config?.appointmentWindowDays ?? 15;
 
     while (current + doctor.slotDuration <= end) {
       const timeStr = this.minutesToTime(current);
@@ -182,7 +205,7 @@ export class AppointmentService {
       const slotDate = new Date(`${date}T${timeStr}`);
       const diffHours = (slotDate.getTime() - now.getTime()) / (1000 * 60 * 60);
       const horizonDate = new Date();
-      horizonDate.setDate(now.getDate() + appointmentWindowWeeks * 7);
+      horizonDate.setDate(now.getDate() + appointmentWindowDays);
 
       const isDuringBreak =
         breakStartMin !== null &&
@@ -280,7 +303,7 @@ export class AppointmentService {
     // Regla de Negocio: Ventana de tiempo (igual que al crear)
     const config = await this.configService.getConfig();
     const minAdvanceHours = config?.minAdvanceHours ?? 2;
-    const appointmentWindowWeeks = config?.appointmentWindowWeeks ?? 4;
+    const appointmentWindowDays = config?.appointmentWindowDays ?? 15;
 
     const now = new Date();
     const newAppDate = new Date(`${date}T${time}`);
@@ -293,10 +316,21 @@ export class AppointmentService {
     }
 
     const horizonDate = new Date();
-    horizonDate.setDate(now.getDate() + appointmentWindowWeeks * 7);
+    horizonDate.setDate(now.getDate() + appointmentWindowDays);
     if (newAppDate > horizonDate) {
       throw new BadRequestException(
-        `No se puede reagendar con más de ${appointmentWindowWeeks} semanas de antelación.`,
+        `No se puede reagendar con más de ${appointmentWindowDays} días de antelación.`,
+      );
+    }
+
+    // Regla de Negocio: Excepciones del médico
+    const exception = await this.doctorExceptionRepository.findOneBy({
+      doctorId: appointment.doctor.id,
+      date: date,
+    });
+    if (exception) {
+      throw new BadRequestException(
+        `El médico no atiende este día: ${exception.reason || 'No disponible'}`,
       );
     }
 

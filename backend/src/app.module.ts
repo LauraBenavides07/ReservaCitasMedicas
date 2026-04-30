@@ -7,6 +7,7 @@ import { Patient } from './domain/entities/patient.entity';
 import { Appointment } from './domain/entities/appointment.entity';
 import { Config } from './domain/entities/config.entity';
 import { User } from './domain/entities/user.entity';
+import { DoctorException } from './domain/entities/doctor-exception.entity';
 import { ConfigController } from './presentation/controllers/config.controller';
 import { AppointmentController } from './presentation/controllers/appointment.controller';
 import { DoctorController } from './presentation/controllers/doctor.controller';
@@ -30,11 +31,11 @@ import { AuthModule } from './auth.module';
         username: configService.get<string>('DB_USERNAME', 'postgres'),
         password: configService.get<string>('DB_PASSWORD', 'postgres'),
         database: configService.get<string>('DB_DATABASE', 'piedrazul'),
-        entities: [Doctor, Patient, Appointment, Config, User],
+        entities: [Doctor, Patient, Appointment, Config, User, DoctorException],
         synchronize: true, // Solo para desarrollo
       }),
     }),
-    TypeOrmModule.forFeature([Doctor, Patient, Appointment, Config, User]),
+    TypeOrmModule.forFeature([Doctor, Patient, Appointment, Config, User, DoctorException]),
     AuthModule,
     ScheduleModule.forRoot(),
   ],

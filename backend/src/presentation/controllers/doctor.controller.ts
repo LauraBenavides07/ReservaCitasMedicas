@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { Doctor } from '../../domain/entities/doctor.entity';
+import { DoctorException } from '../../domain/entities/doctor-exception.entity';
 import { DoctorService } from '../../application/services/doctor.service';
 
 @Controller('doctors')
@@ -41,5 +42,24 @@ export class DoctorController {
   @Delete(':id')
   async deleteDoctor(@Param('id', ParseUUIDPipe) id: string) {
     return this.doctorService.remove(id);
+  }
+
+  // --- Excepciones ---
+  @Post(':id/exceptions')
+  async addException(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() data: Partial<DoctorException>,
+  ) {
+    return this.doctorService.addException({ ...data, doctorId: id });
+  }
+
+  @Get(':id/exceptions')
+  async getExceptions(@Param('id', ParseUUIDPipe) id: string) {
+    return this.doctorService.getExceptions(id);
+  }
+
+  @Delete('exceptions/:exceptionId')
+  async removeException(@Param('exceptionId', ParseUUIDPipe) id: string) {
+    return this.doctorService.removeException(id);
   }
 }

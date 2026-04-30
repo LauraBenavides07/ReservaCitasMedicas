@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Doctor } from '../../domain/entities/doctor.entity';
 import { Appointment } from '../../domain/entities/appointment.entity';
+import { DoctorException } from '../../domain/entities/doctor-exception.entity';
 
 @Injectable()
 export class DoctorService {
@@ -15,6 +16,8 @@ export class DoctorService {
     private doctorRepository: Repository<Doctor>,
     @InjectRepository(Appointment)
     private appointmentRepository: Repository<Appointment>,
+    @InjectRepository(DoctorException)
+    private exceptionRepository: Repository<DoctorException>,
   ) {}
 
   async findAll() {
@@ -58,5 +61,22 @@ export class DoctorService {
     }
 
     return this.doctorRepository.remove(doctor);
+  }
+
+  // --- Módulo de Excepciones ---
+  async addException(data: Partial<DoctorException>) {
+    const exception = this.exceptionRepository.create(data);
+    return this.exceptionRepository.save(exception);
+  }
+
+  async getExceptions(doctorId: string) {
+    return this.exceptionRepository.find({
+      where: { doctorId },
+      order: { date: 'ASC' },
+    });
+  }
+
+  async removeException(id: string) {
+    return this.exceptionRepository.delete(id);
   }
 }

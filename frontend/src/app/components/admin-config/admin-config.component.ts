@@ -20,6 +20,11 @@ export class AdminConfigComponent implements OnInit {
   showGlobalConfig = signal(false);
   selectedDoctor = signal<Doctor | null>(null);
 
+  // Excepciones del médico seleccionado
+  exceptions = signal<any[]>([]);
+  showExceptionForm = signal(false);
+  exceptionForm: FormGroup;
+
   // Lista de especialidades predefinidas
   specialties = [
     'Medicina General',
@@ -58,7 +63,13 @@ export class AdminConfigComponent implements OnInit {
     // Inicialización del formulario de configuración global
     this.configForm = this.fb.group({
       minAdvanceHours: [2, Validators.required],
-      appointmentWindowWeeks: [4, Validators.required]
+      appointmentWindowDays: [15, Validators.required]
+    });
+
+    // Inicialización del formulario de excepciones
+    this.exceptionForm = this.fb.group({
+      date: ['', Validators.required],
+      reason: ['', Validators.required]
     });
   }
 
@@ -141,6 +152,39 @@ export class AdminConfigComponent implements OnInit {
         }
       });
     }
+  }
+
+  // --- Gestión de Excepciones ---
+
+  openExceptions(doctor: Doctor): void {
+    this.selectedDoctor.set(doctor);
+    this.loadExceptions(doctor.id);
+    this.showExceptionForm.set(true);
+  }
+
+  loadExceptions(doctorId: string): void {
+    this.doctorService.getExceptions(doctorId).subscribe(data => {
+      this.exceptions.set(data);
+    });
+  }
+
+  addException(): void {
+    const doc = this.selectedDoctor();
+    if (!doc || this.exceptionForm.invalid) return;
+
+    this.doctorService.addException(doc.id, this.exceptionForm.value).subscribe(() => {
+      this.loadExceptions(doc.id);
+      this.exceptionForm.reset();
+    });
+  }
+
+  removeException(id: string): void {
+    const doc = this.selectedDoctor();
+    if (!doc) return;
+
+    this.doctorService.removeException(id).subscribe(() => {
+      this.loadExceptions(doc.id);
+    });
   }
 
   // Guarda la configuración global
