@@ -191,6 +191,12 @@ export class AuthService {
         }
       }
 
+      if (!userData) {
+        throw new UnauthorizedException(
+          'Usuario autenticado en Keycloak pero no encontrado en BD local.',
+        );
+      }
+
       return {
         access_token: accessToken,
         user: userData,

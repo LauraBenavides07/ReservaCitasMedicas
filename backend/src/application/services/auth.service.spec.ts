@@ -6,14 +6,17 @@ import { Patient } from '../../domain/entities/patient.entity';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from '../../presentation/dto/login.dto';
+import axios from 'axios';
 
 jest.mock('bcrypt');
+jest.mock('axios');
 
 describe('AuthService', () => {
   let service: AuthService;
 
   const mockUserRepository = {
     findOne: jest.fn(),
+    findOneBy: jest.fn(),
   };
   const mockPatientRepository = {
     findOne: jest.fn(),
@@ -23,6 +26,7 @@ describe('AuthService', () => {
   };
   const mockJwtService = {
     sign: jest.fn(),
+    decode: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -39,13 +43,13 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
+    jest.clearAllMocks();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  // 6. Validar usuario correcto
   it('debería validar usuario correctamente', async () => {
     const mockUser = {
       id: 1,
@@ -53,8 +57,18 @@ describe('AuthService', () => {
       password: '123456',
     };
 
-    // Configurar repuestas de mocks para simular que el usuario existe y la contraseña coincide
-    mockUserRepository.findOne.mockResolvedValue(mockUser);
+    // Mock Keycloak response
+    (axios.post as jest.Mock).mockResolvedValue({
+      data: {
+        access_token: 'fake-keycloak-token',
+      },
+    });
+
+    mockJwtService.decode.mockReturnValue({
+      sub: 'keycloak-uuid-123',
+    });
+
+    mockPatientRepository.findOneBy.mockResolvedValue(mockUser);
     (bcrypt.compare as jest.Mock).mockResolvedValue(true);
     mockJwtService.sign.mockReturnValue('fake-token');
 
@@ -64,31 +78,48 @@ describe('AuthService', () => {
     } as unknown as LoginDto);
 
     expect(result).toBeDefined();
-    expect(result.user!.email).toBe('test@mail.com');
+    expect(result.user).toBeDefined();
+    expect(result.access_token).toBe('fake-keycloak-token');
   });
 
-  // 7. Login genera token
   it('debería generar un token al hacer login', async () => {
-    mockUserRepository.findOne.mockResolvedValue({
+    (axios.post as jest.Mock).mockResolvedValue({
+      data: {
+        access_token: 'fake-keycloak-token',
+      },
+    });
+
+    mockJwtService.decode.mockReturnValue({
+      sub: 'keycloak-uuid-123',
+    });
+
+    mockPatientRepository.findOneBy.mockResolvedValue({
       id: 1,
       email: 'test@mail.com',
       password: 'hash',
     });
-    (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-    mockJwtService.sign.mockReturnValue('fake-token');
 
     const result = await service.login({
       login: 'test@mail.com',
       password: '123456',
     } as unknown as LoginDto);
 
-    expect(result.access_token).toBe('fake-token');
+    expect(result.access_token).toBe('fake-keycloak-token');
   });
 
-  // 8. Usuario inválido (login falla)
   it('debería fallar si el usuario no existe', async () => {
-    mockUserRepository.findOne.mockResolvedValue(null);
-    mockPatientRepository.findOne.mockResolvedValue(null);
+    (axios.post as jest.Mock).mockResolvedValue({
+      data: {
+        access_token: 'fake-keycloak-token',
+      },
+    });
+
+    mockJwtService.decode.mockReturnValue({
+      sub: 'keycloak-uuid-123',
+    });
+
+    mockPatientRepository.findOneBy.mockResolvedValue(null);
+    mockUserRepository.findOneBy.mockResolvedValue(null);
 
     await expect(
       service.login({

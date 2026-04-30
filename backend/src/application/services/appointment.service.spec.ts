@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Appointment } from '../../domain/entities/appointment.entity';
 import { Patient } from '../../domain/entities/patient.entity';
 import { Doctor } from '../../domain/entities/doctor.entity';
+import { DoctorException } from '../../domain/entities/doctor-exception.entity';
 import { ConfigService } from './config.service';
 import { CreateAppointmentDto } from '../../presentation/dto/create-appointment.dto';
 
@@ -29,6 +30,10 @@ describe('AppointmentService', () => {
     find: jest.fn(),
   };
 
+  const mockDoctorExceptionRepository = {
+    findOneBy: jest.fn(),
+  };
+
   const mockConfigService = {
     getConfig: jest
       .fn()
@@ -48,6 +53,10 @@ describe('AppointmentService', () => {
           useValue: mockPatientRepository,
         },
         { provide: getRepositoryToken(Doctor), useValue: mockDoctorRepository },
+        {
+          provide: getRepositoryToken(DoctorException),
+          useValue: mockDoctorExceptionRepository,
+        },
         { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compile();
