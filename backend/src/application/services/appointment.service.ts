@@ -8,7 +8,7 @@ import {
 import { Parser } from 'json2csv';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, FindOptionsWhere } from 'typeorm';
 import { Appointment } from '../../domain/entities/appointment.entity';
 import { Patient } from '../../domain/entities/patient.entity';
 import { Doctor } from '../../domain/entities/doctor.entity';
@@ -34,7 +34,7 @@ export class AppointmentService {
    * Requisito 1: Listar citas por médico y fecha
    */
   async findAllByDoctorAndDate(doctorId: string, date?: string) {
-    const whereClause: any = { doctor: { id: doctorId } };
+    const whereClause: FindOptionsWhere<Appointment> = { doctor: { id: doctorId } };
     if (date) {
         whereClause.appointmentDate = date;
     }
