@@ -27,16 +27,16 @@
                 <!-- Fila de nombres y apellidos (2 columnas) -->
                 <div class="form-row">
                     <div class="form-field">
-                        <label>NOMBRES (*)</label>
-                        <input type="text" formControlName="firstName" placeholder="ejemplo Juan"
+                        <label>NOMBRES *</label>
+                        <input type="text" formControlName="firstName" placeholder="Juan"
                             [class.input-error]="f['firstName'].invalid && f['firstName'].touched">
                         <div *ngIf="f['firstName'].invalid && f['firstName'].touched" class="error-message">
                             Por favor escriba sus nombres.
                         </div>
                     </div>
                     <div class="form-field">
-                        <label>APELLIDOS (*)</label>
-                        <input type="text" formControlName="lastName" placeholder="ejemplo Perez"
+                        <label>APELLIDOS *</label>
+                        <input type="text" formControlName="lastName" placeholder="Perez"
                             [class.input-error]="f['lastName'].invalid && f['lastName'].touched">
                         <div *ngIf="f['lastName'].invalid && f['lastName'].touched" class="error-message">
                             Por favor escriba sus apellidos.
@@ -47,16 +47,17 @@
                 <!-- Fila de documento y teléfono (2 columnas) -->
                 <div class="form-row">
                     <div class="form-field">
-                        <label>DOCUMENTO (*)</label>
+                        <label>CÉDULA *</label>
                         <input type="text" formControlName="document" placeholder="Número de cédula"
                             [class.input-error]="f['document'].invalid && f['document'].touched">
                         <div *ngIf="f['document'].invalid && f['document'].touched" class="error-message">
                             <span *ngIf="f['document'].errors?.['required']">El documento es obligatorio.</span>
-                            <span *ngIf="f['document'].errors?.['pattern']">El documento debe contener solo números.</span>
+                            <span *ngIf="f['document'].errors?.['pattern']">El documento debe contener solo
+                                números.</span>
                         </div>
                     </div>
                     <div class="form-field">
-                        <label>TELÉFONO (*)</label>
+                        <label>TELÉFONO *</label>
                         <input type="tel" formControlName="phone" placeholder="Número de celular"
                             [class.input-error]="f['phone'].invalid && f['phone'].touched">
                         <div *ngIf="f['phone'].invalid && f['phone'].touched" class="error-message">
@@ -69,7 +70,7 @@
                 <!-- Fila de correo y género (2 columnas) -->
                 <div class="form-row">
                     <div class="form-field">
-                        <label>CORREO ELECTRÓNICO (Opcional)</label>
+                        <label>CORREO ELECTRÓNICO</label>
                         <input type="email" formControlName="email" placeholder="correo@ejemplo.com"
                             [class.input-error]="f['email'].invalid && f['email'].touched">
                         <div *ngIf="f['email'].invalid && f['email'].touched" class="error-message">
@@ -77,7 +78,7 @@
                         </div>
                     </div>
                     <div class="form-field">
-                        <label>GÉNERO (*)</label>
+                        <label>GÉNERO *</label>
                         <select formControlName="gender"
                             [class.input-error]="f['gender'].invalid && f['gender'].touched">
                             <option value="">Seleccione</option>
@@ -93,18 +94,21 @@
 
                 <!-- Campo de contraseña -->
                 <div class="form-field">
-                    <label>CONTRASEÑA (*)</label>
+                    <label>CONTRASEÑA *</label>
                     <div class="password-field-wrapper">
-                        <input [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="Mínimo 8 caracteres"
+                        <input [type]="showPassword() ? 'text' : 'password'" formControlName="password"
+                            placeholder="Mínimo 8 caracteres"
                             [class.input-error]="f['password'].invalid && f['password'].touched">
                     </div>
                     <div class="checkbox-container">
-                        <input type="checkbox" id="show-password-reg" [checked]="showPassword()" (change)="togglePassword()">
+                        <input type="checkbox" id="show-password-reg" [checked]="showPassword()"
+                            (change)="togglePassword()">
                         <label for="show-password-reg">Mostrar contraseña</label>
                     </div>
                     <div *ngIf="f['password'].invalid && f['password'].touched" class="error-message">
                         <span *ngIf="f['password'].errors?.['required']">La contraseña es obligatoria.</span>
-                        <span *ngIf="f['password'].errors?.['minlength']">La contraseña debe tener al menos 8 caracteres.</span>
+                        <span *ngIf="f['password'].errors?.['minlength']">La contraseña debe tener al menos 8
+                            caracteres.</span>
                     </div>
                 </div>
 

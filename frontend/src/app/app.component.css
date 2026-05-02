@@ -18,8 +18,6 @@
 /* ============================================
    DASHBOARD LAYOUT
    ============================================ */
-
-/* Estructura principal del dashboard: barra lateral + contenido */
 .dashboard-layout {
     display: grid;
     grid-template-columns: 260px 1fr;
@@ -30,8 +28,6 @@
 /* ============================================
    SIDEBAR (BARRA LATERAL)
    ============================================ */
-
-/* Estilos de la barra lateral */
 .sidebar {
     background: var(--sidebar-bg);
     color: var(--sidebar-text);
@@ -42,7 +38,6 @@
     z-index: 10;
 }
 
-/* Contenedor del logo y nombre de la marca */
 .sidebar-brand {
     display: flex;
     align-items: center;
@@ -51,20 +46,27 @@
     padding: 0 0.5rem;
 }
 
-/* Imagen del logo */
 .logo-img {
     width: 70px;
     height: 70px;
     object-fit: contain;
 }
 
-/* Contenedor del texto del logo */
+.mobile-menu-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-left: auto;
+}
+
 .logo-text {
     display: flex;
     flex-direction: column;
 }
 
-/* Nombre de la marca */
 .brand-name {
     color: #ffffff;
     font-size: 1.25rem;
@@ -72,7 +74,6 @@
     line-height: 1;
 }
 
-/* Subtítulo de la marca */
 .brand-sub {
     color: #9bbfd7;
     font-size: 0.55rem;
@@ -80,7 +81,6 @@
     margin-top: 0.2rem;
 }
 
-/* Título de sección dentro del sidebar */
 .sidebar-section {
     font-size: 0.7rem;
     text-transform: uppercase;
@@ -91,14 +91,12 @@
     font-weight: 600;
 }
 
-/* Navegación del sidebar */
 .sidebar-nav {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
 }
 
-/* Elemento de navegación (botón) */
 .nav-item {
     display: flex;
     align-items: center;
@@ -114,22 +112,20 @@
     transition: all 0.2s;
     text-align: left;
     width: 100%;
+    justify-content: center;
 }
 
-/* Efecto hover en elementos de navegación */
 .nav-item:hover {
     background: rgba(255, 255, 255, 0.05);
     color: #ffffff;
 }
 
-/* Elemento de navegación activo */
 .nav-item.active {
     background: var(--sidebar-active);
     color: var(--sidebar-text-active);
     font-weight: 600;
 }
 
-/* Iconos dentro de la navegación */
 .icon {
     display: flex;
     align-items: center;
@@ -137,17 +133,14 @@
     opacity: 0.8;
 }
 
-/* Iconos en estado activo */
 .nav-item.active .icon {
     opacity: 1;
 }
 
-/* Espaciador flexible para empujar contenido al fondo */
 .sidebar-spacer {
     flex: 1;
 }
 
-/* Sección de perfil de usuario al final del sidebar */
 .sidebar-user {
     display: flex;
     align-items: center;
@@ -157,7 +150,6 @@
     margin-top: 1rem;
 }
 
-/* Avatar del usuario */
 .user-avatar {
     width: 36px;
     height: 36px;
@@ -171,7 +163,6 @@
     font-size: 0.9rem;
 }
 
-/* Detalles del usuario */
 .user-details {
     display: flex;
     flex-direction: column;
@@ -179,7 +170,6 @@
     overflow: hidden;
 }
 
-/* Nombre del usuario */
 .user-name {
     color: #ffffff;
     font-size: 0.85rem;
@@ -189,13 +179,11 @@
     text-overflow: ellipsis;
 }
 
-/* Rol del usuario */
 .user-role {
     font-size: 0.75rem;
     color: #94a3b8;
 }
 
-/* Botón de cerrar sesión */
 .btn-logout-icon {
     background: transparent;
     border: none;
@@ -208,7 +196,6 @@
     transition: background 0.2s;
 }
 
-/* Efecto hover en botón de cerrar sesión */
 .btn-logout-icon:hover {
     background: rgba(239, 68, 68, 0.1);
 }
@@ -216,21 +203,16 @@
 /* ============================================
    MAIN CONTENT (CONTENIDO PRINCIPAL)
    ============================================ */
-
-/* Contenedor del contenido principal */
 .dashboard-main {
     display: flex;
     flex-direction: column;
-    max-height: 100vh;
-    overflow-y: auto;
+
 }
 
-/* Encabezado del dashboard */
 .dashboard-header {
     padding: 2rem 3rem 1rem 3rem;
 }
 
-/* Título de la vista actual */
 .view-title {
     margin: 0;
     color: #1e293b;
@@ -239,119 +221,126 @@
     font-size: 1.75rem;
 }
 
-/* Área de contenido dinámico */
 .dashboard-content {
     flex: 1;
     padding: 1rem 3rem 3rem 3rem;
 }
 
 /* ============================================
-   RESPONSIVE ADJUSTMENTS
+   RESPONSIVE BREAKPOINTS
    ============================================ */
 
-/* Tablets y pantallas medianas */
+/* Tablet (<= 992px) */
 @media (max-width: 992px) {
     .dashboard-layout {
-        grid-template-columns: 200px 1fr;
-        /* Sidebar más estrecho */
+        grid-template-columns: 220px 1fr;
     }
 
     .dashboard-header,
     .dashboard-content {
-        padding-left: 2rem;
-        padding-right: 2rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
     }
 }
 
-/* Móviles */
+/* Móvil y Tablet pequeña (<= 768px) */
 @media (max-width: 768px) {
-
-    /* Cambia a layout en columna con grid para organizar el top */
     .dashboard-layout {
         grid-template-columns: 1fr;
         grid-template-rows: auto 1fr;
     }
 
-    /* Sidebar se convierte en barra superior */
+    /* Sidebar se convierte en barra superior compacta */
     .sidebar {
-        padding: 1rem;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        display: grid;
-        grid-template-areas: 
-            "brand user"
-            "nav nav";
-        grid-template-columns: 1fr auto;
-        gap: 1rem;
-        align-items: center;
+        padding: 0.85rem 1rem;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        position: relative;
     }
 
     .sidebar-brand {
-        grid-area: brand;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
         margin-bottom: 0;
         padding: 0;
     }
 
     .logo-img {
-        width: 50px; /* Logo más pequeño en móvil */
-        height: 50px;
+        width: 44px;
+        height: 44px;
     }
 
-    /* Navegación horizontal con scroll */
+    .brand-name {
+        font-size: 1.15rem;
+    }
+
+    .brand-sub {
+        font-size: 0.5rem;
+        margin-top: 0.1rem;
+    }
+
+
+    /* Navegación colapsada por defecto */
     .sidebar-nav {
-        grid-area: nav;
-        display: flex;
-        flex-direction: row;
-        overflow-x: auto;
-        padding: 0.75rem 0.5rem 1rem 0.5rem; /* Más espacio inferior para el scrollbar */
-        gap: 1.25rem;
-        scrollbar-width: thin; /* Barra delgada en Firefox */
-        scrollbar-color: rgba(155, 191, 215, 0.3) transparent;
-        -webkit-overflow-scrolling: touch;
+        margin-top: 0.6rem;
+        padding: 0.5rem 0;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+        flex-direction: column;
+        gap: 0.4rem;
     }
 
-    /* Barra de scroll elegante para Chrome/Safari */
-    .sidebar-nav::-webkit-scrollbar {
-        display: block;
-        height: 4px;
-    }
-
-    .sidebar-nav::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    .sidebar-nav::-webkit-scrollbar-thumb {
-        background: rgba(155, 191, 215, 0.3); /* Color acento muy suave */
-        border-radius: 10px;
+    /* Se abre al agregar clase */
+    .sidebar-nav.open {
+        max-height: 600px;
+        opacity: 1;
     }
 
     .nav-item {
-        white-space: nowrap;
-        width: auto;
-        padding: 0.75rem 1.25rem; /* Botones más amplios */
-        font-size: 1rem;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 50px; /* Estilo píldora para móviles */
-        flex-shrink: 0; /* Evita que los botones se compriman */
+        width: 100%;
+        padding: 0.8rem 1rem;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        justify-content: center;
     }
 
-    /* Oculta elementos innecesarios en móvil */
-    .sidebar-section, 
+    /* Ocultar elementos innecesarios en móvil */
+    .sidebar-section,
     .sidebar-spacer {
         display: none;
     }
 
-    /* Perfil de usuario al lado del logo */
+    /* Usuario alineado a la derecha en la barra superior */
     .sidebar-user {
-        grid-area: user;
+        position: absolute;
+        top: calc(0.85rem + 22px);
+        transform: translateY(-50%);
+        right: 1rem;
         border-top: none;
         margin-top: 0;
         padding: 0;
-        position: static; /* Ya no es absoluto */
+        z-index: 2;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Botón hamburguesa visible solo en móvil */
+    .mobile-menu-btn {
+        display: flex;
+        padding: 0.2rem;
+        margin-right: 0.5rem;
     }
 
     .user-details {
-        display: none; /* Ocultamos detalles largos en móviles muy pequeños */
+        display: none;
     }
 
     @media (min-width: 480px) {
@@ -360,13 +349,45 @@
         }
     }
 
-    /* Reduce el padding del encabezado */
+    /* Ajuste de padding en contenido principal */
     .dashboard-header {
-        padding: 1.5rem 1rem;
+        padding: 1.25rem 1rem;
     }
 
-    /* Reduce el padding del contenido */
     .dashboard-content {
         padding: 0 1rem 2rem 1rem;
+    }
+}
+
+/* Móvil pequeño (< 480px) */
+@media (max-width: 480px) {
+    .sidebar {
+        padding: 0.75rem 0.85rem;
+    }
+
+    .logo-img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .brand-name {
+        font-size: 1.05rem;
+    }
+
+    .sidebar-user {
+        right: 1rem;
+    }
+
+    .nav-item {
+        padding: 0.75rem 0.85rem;
+        font-size: 0.9rem;
+    }
+
+    .dashboard-header {
+        padding: 1rem 0.85rem;
+    }
+
+    .dashboard-content {
+        padding: 0 0.85rem 1.5rem 0.85rem;
     }
 }

@@ -43,7 +43,8 @@
                 <div class="doc-middle-info">
                     <div class="info-block">
                         <span class="label">Horario:</span>
-                        <span class="value">{{ doctor.scheduleStart | slice:0:5 }}–{{ doctor.scheduleEnd | slice:0:5 }}</span>
+                        <span class="value">{{ doctor.scheduleStart | slice:0:5 }}–{{ doctor.scheduleEnd | slice:0:5
+                            }}</span>
                     </div>
                     <div class="info-block">
                         <span class="label">Ventana:</span>
@@ -82,7 +83,8 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)"
+                        stroke-width="2">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                         <line x1="16" y1="2" x2="16" y2="6"></line>
                         <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -92,7 +94,7 @@
                 <div class="stat-value">{{ stats.total }}</div>
                 <div class="stat-label">TOTAL CITAS</div>
             </div>
-            
+
             <div class="stat-card">
                 <div class="stat-icon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
@@ -209,7 +211,8 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" [disabled]="doctorForm.invalid">Guardar Cambios</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="doctorForm.invalid">Guardar
+                        Cambios</button>
                     <button type="button" *ngIf="selectedDoctor()" (click)="deleteDoctor(selectedDoctor()!.id)"
                         class="btn btn-delete">Eliminar Médico</button>
                     <button type="button" (click)="showDoctorForm.set(false)" class="btn btn-cancel">Cancelar</button>
@@ -235,9 +238,10 @@
                     <label for="config-window">Ventana de Citas (Días)</label>
                     <input id="config-window" type="number" formControlName="appointmentWindowDays" />
                 </div>
-                
+
                 <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" [disabled]="configForm.invalid">Actualizar Reglas</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="configForm.invalid">Actualizar
+                        Reglas</button>
                     <button type="button" (click)="showGlobalConfig.set(false)" class="btn btn-cancel">Cerrar</button>
                 </div>
             </form>
@@ -248,15 +252,18 @@
     <div *ngIf="showExceptionForm()" class="modal-overlay" (click)="showExceptionForm.set(false)">
         <div class="modal" (click)="$event.stopPropagation()">
             <h3 class="modal-title">Días No Laborables - Dr(a). {{ selectedDoctor()?.name }}</h3>
-            
+
             <div class="exceptions-list" *ngIf="exceptions().length > 0" style="margin-bottom: 1.5rem;">
-                <div class="exception-item" *ngFor="let ex of exceptions()" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid #eee;">
+                <div class="exception-item" *ngFor="let ex of exceptions()"
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid #eee;">
                     <span><strong>{{ ex.date | date:'dd/MM/yyyy' }}</strong>: {{ ex.reason }}</span>
-                    <button class="btn-icon" (click)="removeException(ex.id)" style="border: none; background: none; cursor: pointer;">🗑️</button>
+                    <button class="btn-icon" (click)="removeException(ex.id)"
+                        style="border: none; background: none; cursor: pointer;">🗑️</button>
                 </div>
             </div>
 
-            <p *ngIf="exceptions().length === 0" class="text-muted" style="margin-bottom: 1.5rem;">No hay excepciones registradas.</p>
+            <p *ngIf="exceptions().length === 0" class="text-muted" style="margin-bottom: 1.5rem;">No hay excepciones
+                registradas.</p>
 
             <h4 class="card-title">Añadir Nueva Excepción</h4>
             <form [formGroup]="exceptionForm" (ngSubmit)="addException()" class="form-grid">
@@ -268,9 +275,10 @@
                     <label>Motivo</label>
                     <input type="text" formControlName="reason" placeholder="Ej: Vacaciones" />
                 </div>
-                
+
                 <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" [disabled]="exceptionForm.invalid">Bloquear Día</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="exceptionForm.invalid">Bloquear
+                        Día</button>
                     <button type="button" (click)="showExceptionForm.set(false)" class="btn btn-cancel">Cerrar</button>
                 </div>
             </form>

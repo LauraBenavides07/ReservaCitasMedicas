@@ -33,15 +33,18 @@ export class AppointmentService {
   /**
    * Requisito 1: Listar citas por médico y fecha
    */
-  async findAllByDoctorAndDate(doctorId: string, date: string) {
+  async findAllByDoctorAndDate(doctorId: string, date?: string) {
+    const whereClause: any = { doctor: { id: doctorId } };
+    if (date) {
+        whereClause.appointmentDate = date;
+    }
+
     const [appointments, total] = await this.appointmentRepository.findAndCount(
       {
-        where: {
-          doctor: { id: doctorId },
-          appointmentDate: date,
-        },
+        where: whereClause,
         relations: ['patient', 'doctor'],
         order: {
+          appointmentDate: 'DESC',
           appointmentTime: 'ASC',
         },
       },
@@ -267,6 +270,26 @@ export class AppointmentService {
     }
 
     appointment.status = 'cancelada';
+    return this.appointmentRepository.save(appointment);
+  }
+
+  /**
+   * Requisito 3 (Variante): Confirmar cita (Médico/Agendador)
+   */
+  async confirmAppointment(appointmentId: string) {
+    const appointment = await this.appointmentRepository.findOne({
+      where: { id: appointmentId }
+    });
+
+    if (!appointment) {
+      throw new NotFoundException('Cita no encontrada.');
+    }
+
+    if (appointment.status === 'cancelada') {
+      throw new BadRequestException('No se puede confirmar una cita cancelada.');
+    }
+
+    appointment.status = 'confirmada';
     return this.appointmentRepository.save(appointment);
   }
 

@@ -89,9 +89,10 @@
                         <td>{{ appt?.patient?.document || 'N/A' }}</td>
                         <td>{{ appt?.patient?.phone || 'N/A' }}</td>
                         <td>
-                            <span class="badge" [class]="getStatusClass(appt?.status)">
-                                {{ appt?.status || 'desconocido' }}
-                            </span>
+                            <div class="apt-status" [ngClass]="getStatusClass(appt?.status)">
+                                <span class="status-dot"></span>
+                                {{ (appt?.status || 'desconocido') | titlecase }}
+                            </div>
                         </td>
                     </tr>
                 </tbody>

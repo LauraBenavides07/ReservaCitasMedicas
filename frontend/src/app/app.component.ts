@@ -10,6 +10,9 @@ import { AdminConfigComponent } from './components/admin-config/admin-config.com
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { AuthService } from './services/auth.service';
 import { PatientAppointmentFormComponent } from './components/patient-appointment-form/patient-appointment-form.component';
+import { DoctorDashboardComponent } from './components/doctor-dashboard/doctor-dashboard.component';
+import { DoctorPatientsComponent } from './components/doctor-patients/doctor-patients.component';
+import { DoctorHistoryComponent } from './components/doctor-history/doctor-history.component';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +26,10 @@ import { PatientAppointmentFormComponent } from './components/patient-appointmen
     PatientDashboardComponent,
     AdminConfigComponent,
     LandingPageComponent,
-    PatientAppointmentFormComponent
+    PatientAppointmentFormComponent,
+    DoctorDashboardComponent,
+    DoctorPatientsComponent,
+    DoctorHistoryComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
@@ -34,8 +40,11 @@ export class AppComponent {
 
   // Señal que controla la vista actual de la aplicación
   // Posibles valores: 'landing', 'admin-list', 'admin-create', 'admin-config', 
-  // 'login', 'register', 'patient-dashboard', 'patient-create'
-  view = signal<'landing' | 'admin-list' | 'admin-create' | 'admin-config' | 'login' | 'register' | 'patient-dashboard' | 'patient-create'>('landing');
+  // 'login', 'register', 'patient-dashboard', 'patient-create', 'doctor-dashboard', 'doctor-patients', 'doctor-history'
+  view = signal<'landing' | 'admin-list' | 'admin-create' | 'admin-config' | 'login' | 'register' | 'patient-dashboard' | 'patient-create' | 'doctor-dashboard' | 'doctor-patients' | 'doctor-history'>('landing');
+
+  // Estado para el menú móvil
+  isMobileMenuOpen = signal(false);
 
   constructor() {
     // Efecto reactivo que se ejecuta cada vez que cambia el usuario autenticado
@@ -58,6 +67,8 @@ export class AppComponent {
       if (currentView === 'login' || currentView === 'register' || currentView === 'landing') {
         if (user.role === 'patient') {
           this.view.set('patient-dashboard');
+        } else if (user.role === 'doctor') {
+          this.view.set('doctor-dashboard');
         } else {
           this.view.set('admin-list');
         }
@@ -69,5 +80,16 @@ export class AppComponent {
   logout(): void {
     this.auth.logout();
     this.view.set('landing');
+  }
+
+  // Método seguro para cambiar de vista desde HTML sin problemas de tipos estrictos
+  changeView(newView: any): void {
+    this.view.set(newView);
+    this.isMobileMenuOpen.set(false); // Cierra el menú móvil al cambiar de vista
+  }
+
+  // Método para alternar el menú móvil
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen.set(!this.isMobileMenuOpen());
   }
 }

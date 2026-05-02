@@ -1,31 +1,21 @@
 /* ============================================
    APPOINTMENT FORM - MOBILE FIRST & ACCESSIBLE
+   (Colores exactos del Código 1 + Estructura unificada)
    ============================================ */
-
-:host {
-    display: block;
-}
 
 .appointment-form-wrapper {
     padding: 0.5rem 0;
 }
 
-/* Layout Responsivo: Columna en móvil, Dos columnas en desktop */
+/* Layout base (Móvil) */
 .two-column-layout {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
-@media (min-width: 1024px) {
-    .two-column-layout {
-        flex-direction: row;
-        align-items: flex-start;
-        gap: 2rem;
-    }
-}
-
-.column-left, .column-right {
+.column-left,
+.column-right {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -36,20 +26,19 @@
    CARDS & TITLES
    ============================================ */
 .card {
-    background: white;
-    border-radius: var(--radius);
+    background: #ffffff;
+    border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid rgba(62, 123, 166, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .card-title {
     margin: 0 0 1.5rem 0;
-    color: var(--primary-color);
-    font-size: 1.3rem;
-    font-weight: 800;
-    border-bottom: 2px solid var(--soft-background);
-    padding-bottom: 0.75rem;
+    color: #1e3a6a;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 1rem;
 }
 
 /* ============================================
@@ -70,9 +59,29 @@
 .form-field label {
     font-size: 0.8rem;
     font-weight: 700;
-    color: var(--primary-color);
+    color: #94a3b8;
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+.form-field input,
+.form-field select {
+    padding: 0.8rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #1e293b;
+    outline: none;
+    background: #ffffff;
+    transition: all 0.2s;
+    min-height: 48px;
+    width: 100%;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+    border-color: #1e3a6a;
+    box-shadow: 0 0 0 3px rgba(30, 58, 106, 0.1);
 }
 
 .input-with-button {
@@ -80,44 +89,37 @@
     gap: 0.5rem;
 }
 
+.input-with-button input {
+    flex: 1;
+}
+
 .btn-buscar {
-    background: var(--soft-background);
-    color: var(--primary-color);
+    background: #e2e8f0;
+    color: #475569;
     border: none;
     padding: 0 1.25rem;
     border-radius: 8px;
     font-weight: 700;
     cursor: pointer;
-    transition: var(--transition);
+    min-height: 48px;
+    transition: all 0.2s;
 }
 
 .btn-buscar:hover {
-    background: var(--secondary-color);
-    color: white;
+    background: #cbd5e1;
 }
 
+/* Base mobile: 1 columna */
 .split-inputs {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.75rem;
 }
 
-@media (min-width: 480px) {
-    .split-inputs {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
 .form-row {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.25rem;
-}
-
-@media (min-width: 480px) {
-    .form-row {
-        grid-template-columns: 1fr 1fr;
-    }
 }
 
 /* ============================================
@@ -129,16 +131,10 @@
     gap: 1rem;
 }
 
-@media (min-width: 350px) {
-    .doctors-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
 .doctor-box {
-    background: var(--neutral-background);
-    border: 2px solid transparent;
-    border-radius: var(--radius);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
     padding: 1rem;
     display: flex;
     flex-direction: column;
@@ -146,43 +142,43 @@
     text-align: center;
     gap: 0.75rem;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.2s;
 }
 
 .doctor-box:hover {
-    background: white;
-    border-color: var(--secondary-color);
+    border-color: #9bbfd7;
+    box-shadow: 0 4px 12px rgba(155, 191, 215, 0.2);
     transform: translateY(-2px);
 }
 
 .doctor-box.selected {
-    background: white;
-    border-color: var(--primary-color);
-    box-shadow: var(--shadow-md);
+    background: #f8fafc;
+    border-color: #1a3972;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .doctor-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
-    font-weight: 800;
+    font-size: 1rem;
+    font-weight: 700;
 }
 
 .doctor-info h4 {
     margin: 0;
-    font-size: 1rem;
-    color: var(--text-dark);
+    font-size: 0.95rem;
+    color: #1e293b;
 }
 
 .doctor-info .specialty {
     margin: 0;
     font-size: 0.8rem;
-    color: var(--text-muted);
+    color: #94a3b8;
 }
 
 /* ============================================
@@ -195,12 +191,28 @@
     margin-top: 1rem;
 }
 
-.alert-success { background: #d1fae5; color: #065f46; }
-.alert-error { background: #fee2e2; color: #991b1b; }
+.alert-success {
+    background: #f0fdf4;
+    color: #15803d;
+}
 
-.full-width { width: 100%; }
-.mt-1rem { margin-top: 1rem; }
-.mt-1\.5rem { margin-top: 1.5rem; }
+.alert-error {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.mt-1rem {
+    margin-top: 1rem;
+}
+
+.mt-1\.5rem {
+    margin-top: 1.5rem;
+}
+
 /* ============================================
    VALIDATION STYLES
    ============================================ */
@@ -217,4 +229,31 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+@media (min-width: 350px) {
+    .doctors-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 480px) {
+    .split-inputs {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 1024px) {
+    .two-column-layout {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 2rem;
+    }
 }

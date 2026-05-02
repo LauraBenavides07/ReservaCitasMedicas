@@ -31,7 +31,8 @@
                             <!-- Botón con lógica de búsqueda -->
                             <button type="button" class="btn-buscar" (click)="searchPatient()">🔍 Buscar</button>
                         </div>
-                        <span class="validation-message" *ngIf="f['patientDocument'].touched && f['patientDocument'].invalid">
+                        <span class="validation-message"
+                            *ngIf="f['patientDocument'].touched && f['patientDocument'].invalid">
                             El documento es necesario
                         </span>
                     </div>
@@ -44,12 +45,14 @@
                             <div>
                                 <input type="text" formControlName="firstName" placeholder="Nombres"
                                     [class.input-error]="f['firstName'].touched && f['firstName'].invalid">
-                                <span class="validation-message" *ngIf="f['firstName'].touched && f['firstName'].invalid">Requerido</span>
+                                <span class="validation-message"
+                                    *ngIf="f['firstName'].touched && f['firstName'].invalid">Requerido</span>
                             </div>
                             <div>
                                 <input type="text" formControlName="lastName" placeholder="Apellidos"
                                     [class.input-error]="f['lastName'].touched && f['lastName'].invalid">
-                                <span class="validation-message" *ngIf="f['lastName'].touched && f['lastName'].invalid">Requerido</span>
+                                <span class="validation-message"
+                                    *ngIf="f['lastName'].touched && f['lastName'].invalid">Requerido</span>
                             </div>
                         </div>
                     </div>
@@ -60,18 +63,21 @@
                             <label>CELULAR *</label>
                             <input type="tel" formControlName="phone" placeholder="300 000 0000"
                                 [class.input-error]="f['phone'].touched && f['phone'].invalid">
-                            <span class="validation-message" *ngIf="f['phone'].touched && f['phone'].invalid">Obligatorio</span>
+                            <span class="validation-message"
+                                *ngIf="f['phone'].touched && f['phone'].invalid">Obligatorio</span>
                         </div>
 
                         <div class="form-field">
                             <label>GÉNERO *</label>
-                            <select formControlName="gender" [class.input-error]="f['gender'].touched && f['gender'].invalid">
+                            <select formControlName="gender"
+                                [class.input-error]="f['gender'].touched && f['gender'].invalid">
                                 <option value="">Seleccionar...</option>
                                 <option value="M">Masculino</option>
                                 <option value="F">Femenino</option>
                                 <option value="O">Otro</option>
                             </select>
-                            <span class="validation-message" *ngIf="f['gender'].touched && f['gender'].invalid">Obligatorio</span>
+                            <span class="validation-message"
+                                *ngIf="f['gender'].touched && f['gender'].invalid">Obligatorio</span>
                         </div>
                     </div>
 
@@ -80,7 +86,8 @@
                         <label>CORREO ELECTRÓNICO</label>
                         <input type="email" formControlName="email" placeholder="paciente@ejemplo.com"
                             [class.input-error]="f['email'].touched && f['email'].invalid">
-                        <span class="validation-message" *ngIf="f['email'].touched && f['email'].invalid">Correo inválido</span>
+                        <span class="validation-message" *ngIf="f['email'].touched && f['email'].invalid">Correo
+                            inválido</span>
                     </div>
 
                 </div>
@@ -122,7 +129,8 @@
                             <label>DÍA DE CITA *</label>
                             <input type="date" formControlName="date" (change)="onDateChange()" [min]="today"
                                 [class.input-error]="f['date'].touched && f['date'].invalid">
-                            <span class="validation-message" *ngIf="f['date'].touched && f['date'].invalid">Obligatorio</span>
+                            <span class="validation-message"
+                                *ngIf="f['date'].touched && f['date'].invalid">Obligatorio</span>
                         </div>
 
                         <div class="form-field">
@@ -133,7 +141,8 @@
                                     {{ slot }}
                                 </option>
                             </select>
-                            <span class="validation-message" *ngIf="f['time'].touched && f['time'].invalid">Seleccione una hora</span>
+                            <span class="validation-message" *ngIf="f['time'].touched && f['time'].invalid">Seleccione
+                                una hora</span>
                         </div>
                     </div>
 
@@ -147,7 +156,7 @@
                 <!-- Botón de envío -->
                 <div class="form-actions mt-1.5rem">
                     <button type="submit" class="btn btn-primary full-width"
-                        [disabled]="isSubmitting()">
+                        [disabled]="appointmentForm.invalid || isSubmitting()">
                         {{ isSubmitting() ? 'Procesando...' : 'Confirmar Cita Médica' }}
                     </button>
                 </div>

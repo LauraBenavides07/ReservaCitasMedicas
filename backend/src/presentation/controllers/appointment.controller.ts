@@ -96,6 +96,13 @@ export class AppointmentController {
     return this.appointmentService.cancelAppointment(id, req.user.id);
   }
 
+  @Patch(':id/confirm')
+  async confirmAppointment(
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.appointmentService.confirmAppointment(id);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Patch(':id/reschedule')
   async reschedulePatientAppointment(

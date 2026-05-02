@@ -58,9 +58,10 @@
 
                     <!-- Estado -->
                     <td>
-                        <span class="status-badge" [class]="getStatusClass(app.status)">
+                        <div class="apt-status" [ngClass]="getStatusClass(app.status)">
+                            <span class="status-dot"></span>
                             {{ app.status | titlecase }}
-                        </span>
+                        </div>
                     </td>
 
                     <!-- Acciones -->

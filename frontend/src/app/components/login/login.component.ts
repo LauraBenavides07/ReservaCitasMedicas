@@ -99,6 +99,9 @@ export class LoginComponent {
     } else if (normalizedRole === 'patient') {
       this.router.navigate(['/appointments/list']);
 
+    } else if (normalizedRole === 'doctor') {
+      this.router.navigate(['/doctor/dashboard']);
+
     } else {
       this.router.navigate(['/']);
     }

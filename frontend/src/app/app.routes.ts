@@ -6,6 +6,9 @@ import { AppointmentFormComponent } from './components/appointment-form/appointm
 import { AdminConfigComponent } from './components/admin-config/admin-config.component';
 import { PatientDashboardComponent } from './components/patient-dashboard/patient-dashboard.component';
 import { PatientAppointmentFormComponent } from './components/patient-appointment-form/patient-appointment-form.component';
+import { DoctorDashboardComponent } from './components/doctor-dashboard/doctor-dashboard.component';
+import { DoctorPatientsComponent } from './components/doctor-patients/doctor-patients.component';
+import { DoctorHistoryComponent } from './components/doctor-history/doctor-history.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -16,5 +19,8 @@ export const routes: Routes = [
   { path: 'admin/config', component: AdminConfigComponent },
   { path: 'patient/dashboard', component: PatientDashboardComponent },
   { path: 'patient/appointments/create', component: PatientAppointmentFormComponent },
+  { path: 'doctor/dashboard', component: DoctorDashboardComponent },
+  { path: 'doctor/patients', component: DoctorPatientsComponent },
+  { path: 'doctor/history', component: DoctorHistoryComponent },
   { path: '**', redirectTo: '/login' }
 ];

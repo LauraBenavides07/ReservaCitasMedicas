@@ -1,0 +1,466 @@
+:host {
+    display: block;
+}
+
+.doctor-view-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ============================================
+   ESTADÍSTICAS 
+   ============================================ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: #ffffff;
+    border: 2px solid transparent;
+    /* Reserva espacio para evitar saltos de layout */
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Icono: hereda automáticamente el color del borde */
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 0.5rem;
+    color: inherit;
+}
+
+/* Etiqueta: mayúsculas, pequeña y espaciada */
+.stat-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    color: inherit;
+}
+
+/* Número: grande, bold y al fondo */
+.stat-value {
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1;
+    color: inherit;
+}
+
+/* Colores exactos de la imagen */
+.stat-card.blue {
+    border-color: #1e3a6a;
+    color: #1e3a6a;
+}
+
+.stat-card.green {
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.stat-card.red {
+    border-color: #cd0f1f;
+    color: #cd0f1f;
+}
+
+.stat-card.gray {
+    border-color: #6e7781;
+    color: #6e7781;
+}
+
+/* ============================================
+   TARJETAS DE HISTORIAL
+   ============================================ */
+.history-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.history-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.history-card.status-completed {
+    border-left: 6px solid #10b981 !important;
+}
+
+.history-card.status-cancelled {
+    border-left: 6px solid #ff0015 !important;
+}
+
+.history-card.status-noshow {
+    border-left: 6px solid #5d6d7e !important;
+}
+
+.history-card.status-pending {
+    border-left: 6px solid #1e6bf0 !important;
+}
+
+/* ============================================
+   STATUS BADGE
+   ============================================ */
+.status-container {
+    flex-shrink: 0;
+}
+
+.apt-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    line-height: 1.2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    flex-shrink: 0;
+}
+
+.apt-status.status-completed {
+    background-color: #10b981;
+}
+
+.apt-status.status-cancelled {
+    background-color: #ff0015;
+}
+
+.apt-status.status-noshow {
+    background-color: #5d6d7e;
+}
+
+.apt-status.status-pending {
+    background-color: #1e6bf0;
+}
+
+/* ============================================
+   TOP HEADER
+   ============================================ */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+}
+
+.header-title p {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.btn-export {
+    background-color: #0d2c5b;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    /* equivalent to var(--radius-md) */
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ============================================
+   SEARCH BAR
+   ============================================ */
+.search-container {
+    margin-bottom: 2rem;
+    max-width: 500px;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 3rem;
+    border: none;
+    background: #f1f5f9;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #334155;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.btn-search {
+    background-color: #0d2c5b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* ============================================
+   LOADING & EMPTY STATES
+   ============================================ */
+.loading-state {
+    text-align: center;
+    padding: 3rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.empty-icon {
+    margin-bottom: 1rem;
+}
+
+.empty-icon svg {
+    display: inline-block;
+}
+
+.empty-state h3 {
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #64748b;
+}
+
+/* ============================================
+   APPOINTMENTS LIST & CARD LAYOUT
+   ============================================ */
+.appointments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.history-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: stretch;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.date-box {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 140px;
+    border-right: 1px solid #e2e8f0;
+}
+
+.date-badge {
+    background-color: #CCE1F4;
+    color: #294d67;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    min-width: 70px;
+}
+
+.date-month {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.date-day {
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.date-badge.status-completed { background-color: #10b981; color: white; }
+.date-badge.status-cancelled { background-color: #ff0015; color: white; }
+.date-badge.status-noshow { background-color: #5d6d7e; color: white; }
+.date-badge.status-pending { background-color: #1e6bf0; color: white; }
+
+.time-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.content-area {
+    flex: 1;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+/* ============================================
+   PATIENT INFO & DETAILS
+   ============================================ */
+.patient-info {
+    flex: 1;
+    min-width: 250px;
+}
+
+.patient-info-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+}
+
+.patient-info-header svg {
+    margin-top: 2px;
+}
+
+.patient-info-header h3 {
+    margin: 0 0 0.4rem 0;
+    color: #1e293b;
+    font-size: 1.1rem;
+}
+
+.patient-info-header .cc {
+    margin: 0 0 0.2rem 0;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.patient-info-header .phone {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.details-info {
+    flex: 2;
+    min-width: 300px;
+}
+
+.detail-block {
+    margin-bottom: 1rem;
+}
+
+.detail-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #334155;
+    margin-top: 0.2rem;
+}
+
+.detail-text {
+    margin: 0.2rem 0 0.5rem 0;
+    color: #475569;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.detail-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+/* ============================================
+   STATUS BADGE
+   ============================================ */
+.status-container {
+    flex-shrink: 0;
+}
+
+
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .doctor-view-container {
+        padding: 1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+    .content-area {
+        flex-direction: column;
+        gap: 1.5rem !important;
+    }
+
+    .date-box {
+        border-right: none !important;
+        border-bottom: 1px solid #e2e8f0;
+        width: 100%;
+        flex-direction: row !important;
+        justify-content: flex-start !important;
+        gap: 1.5rem;
+    }
+
+    .date-box>div:first-child {
+        margin-bottom: 0 !important;
+    }
+
+    .history-card {
+        flex-direction: column;
+    }
+}

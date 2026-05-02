@@ -1,10 +1,11 @@
 :root {
-  --primary-color: #3E7BA6; /* Azul principal */
+  --primary-dark: #0d2c5b;
+  --primary-color: #294d67;
   --primary-hover: #2d5d80;
-  --secondary-color: #7FA5C9; /* Azul claro */
+  --secondary-color: #7FA5C9;
   --secondary-hover: #6a8ba8;
-  --soft-background: #CCE1F4; /* Celeste muy claro */
-  --neutral-background: #F8F4F3; /* Beige claro */
+  --soft-background: #CCE1F4;
+  --neutral-background: #F8F4F3;
   --text-dark: #1f1f1f;
   --text-muted: #555555;
   --text-light: #ffffff;
@@ -17,7 +18,8 @@
 }
 
 html {
-  font-size: 18px; /* Texto grande para adultos mayores */
+  font-size: 18px;
+  /* Texto grande para adultos mayores */
   background-color: var(--neutral-background);
   color: var(--text-dark);
 }
@@ -31,14 +33,18 @@ body {
 }
 
 /* Accesibilidad: Touch targets >= 48px */
-button, input, select, a.btn {
+button,
+input,
+select,
+a.btn {
   min-height: 48px;
   min-width: 48px;
   font-size: 1rem;
 }
 
 /* Beautiful Inputs */
-input, select {
+input,
+select {
   width: 100%;
   padding: 0.75rem 1rem;
   border: 2px solid #e0e0e0;
@@ -49,14 +55,16 @@ input, select {
   box-sizing: border-box;
 }
 
-input:focus, select:focus {
+input:focus,
+select:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 4px rgba(27, 57, 113, 0.15);
 }
 
 /* Premium Buttons */
-button, .btn {
+button,
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -70,23 +78,26 @@ button, .btn {
 }
 
 .btn:disabled {
-  opacity: 0.6;
+  opacity: 0.8;
   cursor: not-allowed;
   transform: none !important;
   box-shadow: none !important;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  color: var(--text-light);
-  box-shadow: var(--shadow-sm);
+  background: #0d2c5b;
+  color: #ffffff;
+  border-radius: 8px;
+  min-height: 48px;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-color) 100%);
-  box-shadow: var(--shadow-md);
+  background: #0d2c5b;
+  color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
-  color: var(--text-light);
 }
 
 .btn-secondary {
@@ -147,7 +158,20 @@ button, .btn {
 }
 
 /* WCAG AAA Contrast Helpers */
-.text-primary { color: var(--primary-color); }
-.text-muted { color: var(--text-muted); }
-.bg-primary { background-color: var(--primary-color); color: var(--text-light); }
-.bg-soft { background-color: var(--soft-background); color: var(--text-dark); }
+.text-primary {
+  color: var(--primary-color);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.bg-primary {
+  background-color: var(--primary-color);
+  color: var(--text-light);
+}
+
+.bg-soft {
+  background-color: var(--soft-background);
+  color: var(--text-dark);
+}

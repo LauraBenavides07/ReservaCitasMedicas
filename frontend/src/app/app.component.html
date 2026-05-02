@@ -23,10 +23,12 @@
     <aside class="sidebar">
       <!-- Logo y nombre del centro médico -->
       <div class="sidebar-brand">
-        <img src="img/logo.png" alt="Piedrazul Logo" class="logo-img">
-        <div class="logo-text">
-          <span class="brand-name">Piedrazul</span>
-          <span class="brand-sub">CENTRO MÉDICO</span>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <img src="img/logo.png" alt="Piedrazul Logo" class="logo-img">
+          <div class="logo-text">
+            <span class="brand-name">Piedrazul</span>
+            <span class="brand-sub">CENTRO MÉDICO</span>
+          </div>
         </div>
       </div>
 
@@ -34,12 +36,12 @@
       <div class="sidebar-section">MENÚ</div>
 
       <!-- Navegación principal -->
-      <nav class="sidebar-nav">
+      <nav class="sidebar-nav" [class.open]="isMobileMenuOpen()">
 
-        <!-- VISTAS PARA ADMINISTRADORES Y STAFF (no pacientes) -->
-        <ng-container *ngIf="auth.isLoggedIn() && auth.user()?.role !== 'patient'">
+        <!-- VISTAS PARA ADMINISTRADORES Y STAFF (no pacientes, no médicos) -->
+        <ng-container *ngIf="auth.isLoggedIn() && (auth.user()?.role === 'admin' || auth.user()?.role === 'staff')">
           <!-- Botón para buscar citas -->
-          <button class="nav-item" (click)="view.set('admin-list')" [class.active]="view() === 'admin-list'">
+          <button class="nav-item" (click)="changeView('admin-list')" [class.active]="view() === 'admin-list'">
             <span class="icon">
               <!-- Icono de lupa (buscar) -->
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -52,7 +54,7 @@
           </button>
 
           <!-- Botón para crear nueva cita -->
-          <button class="nav-item" (click)="view.set('admin-create')" [class.active]="view() === 'admin-create'">
+          <button class="nav-item" (click)="changeView('admin-create')" [class.active]="view() === 'admin-create'">
             <span class="icon">
               <!-- Icono de más (+) -->
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -65,7 +67,7 @@
           </button>
 
           <!-- Botón de configuración (solo visible para administradores) -->
-          <button *ngIf="auth.user()?.role === 'admin'" class="nav-item" (click)="view.set('admin-config')"
+          <button *ngIf="auth.user()?.role === 'admin'" class="nav-item" (click)="changeView('admin-config')"
             [class.active]="view() === 'admin-config'">
             <span class="icon">
               <!-- Icono de engranaje (configuración) -->
@@ -84,7 +86,7 @@
         <!-- VISTAS PARA PACIENTES -->
         <ng-container *ngIf="auth.isLoggedIn() && auth.user()?.role === 'patient'">
           <!-- Botón para ver mis citas -->
-          <button class="nav-item" (click)="view.set('patient-dashboard')"
+          <button class="nav-item" (click)="changeView('patient-dashboard')"
             [class.active]="view() === 'patient-dashboard'">
             <span class="icon">
               <!-- Icono de calendario -->
@@ -100,7 +102,7 @@
           </button>
 
           <!-- Botón para crear nueva cita -->
-          <button class="nav-item" (click)="view.set('patient-create')" [class.active]="view() === 'patient-create'">
+          <button class="nav-item" (click)="changeView('patient-create')" [class.active]="view() === 'patient-create'">
             <span class="icon">
               <!-- Icono de más (+) -->
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -112,19 +114,72 @@
             Nueva Cita
           </button>
         </ng-container>
+
+        <!-- VISTAS PARA DOCTORES -->
+        <ng-container *ngIf="auth.isLoggedIn() && auth.user()?.role === 'doctor'">
+          <button class="nav-item" (click)="changeView('doctor-dashboard')"
+            [class.active]="view() === 'doctor-dashboard'">
+            <span class="icon">
+              <!-- Icono de agenda -->
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path
+                  d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z" />
+              </svg>
+            </span>
+            Mi Agenda
+          </button>
+
+          <button class="nav-item" (click)="changeView('doctor-patients')"
+            [class.active]="view() === 'doctor-patients'">
+            <span class="icon">
+              <!-- Icono de pacientes -->
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path
+                  d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+              </svg>
+            </span>
+            Pacientes
+          </button>
+
+          <button class="nav-item" (click)="changeView('doctor-history')" [class.active]="view() === 'doctor-history'">
+            <span class="icon">
+              <!-- Icono de historial -->
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path
+                  d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" />
+              </svg>
+            </span>
+            Historial Médico
+          </button>
+        </ng-container>
       </nav>
 
       <!-- Espaciador flexible para empujar el perfil al fondo -->
       <div class="sidebar-spacer"></div>
 
-      <!-- PERFIL DE USUARIO Y CIERRE DE SESIÓN -->
+      <!-- PERFIL DE USUARIO Y MENÚ MÓVIL -->
       <div class="sidebar-user" *ngIf="auth.isLoggedIn()">
+        <!-- Botón menú hamburguesa -->
+        <button class="mobile-menu-btn" (click)="toggleMobileMenu()" aria-label="Abrir menú">
+          <svg *ngIf="!isMobileMenuOpen()" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <svg *ngIf="isMobileMenuOpen()" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+
         <!-- Avatar con inicial del nombre -->
         <div class="user-avatar">{{ auth.user()?.firstName?.[0] || 'U' }}</div>
         <div class="user-details">
           <span class="user-name">{{ auth.user()?.firstName }} {{ auth.user()?.lastName }}</span>
-          <span class="user-role">{{ auth.user()?.role === 'admin' ? 'Administrador' : (auth.user()?.role === 'patient'
-            ? 'Paciente' : 'Agendador') }}</span>
+          <span class="user-role">{{ auth.user()?.role === 'admin' ? 'Administrador' : (auth.user()?.role === 'doctor' ?
+            'Médico' : (auth.user()?.role === 'patient' ? 'Paciente' : 'Agendador')) }}</span>
         </div>
         <!-- Botón para cerrar sesión -->
         <button class="btn-logout-icon" (click)="logout()" title="Cerrar sesión">
@@ -147,6 +202,9 @@
           <ng-container *ngIf="view() === 'admin-create' || view() === 'patient-create'">Nueva Cita</ng-container>
           <ng-container *ngIf="view() === 'admin-config'">Configuración</ng-container>
           <ng-container *ngIf="view() === 'patient-dashboard'">Mis Citas</ng-container>
+          <ng-container *ngIf="view() === 'doctor-dashboard'">Panel del Médico</ng-container>
+          <ng-container *ngIf="view() === 'doctor-patients'">Mis Pacientes</ng-container>
+          <ng-container *ngIf="view() === 'doctor-history'">Historial Médico</ng-container>
         </h2>
       </header>
 
@@ -167,10 +225,21 @@
 
         <!-- VISTAS DE PACIENTE -->
         <div *ngIf="view() === 'patient-dashboard'">
-          <app-patient-dashboard (navigate)="view.set($event)"></app-patient-dashboard>
+          <app-patient-dashboard (navigate)="changeView($event)"></app-patient-dashboard>
         </div>
         <div *ngIf="view() === 'patient-create'">
-          <app-patient-appointment-form (navigate)="view.set($event)"></app-patient-appointment-form>
+          <app-patient-appointment-form (navigate)="changeView($event)"></app-patient-appointment-form>
+        </div>
+
+        <!-- VISTAS DE DOCTOR -->
+        <div *ngIf="view() === 'doctor-dashboard'">
+          <app-doctor-dashboard (navigate)="changeView($event)"></app-doctor-dashboard>
+        </div>
+        <div *ngIf="view() === 'doctor-patients'">
+          <app-doctor-patients (navigate)="changeView($event)"></app-doctor-patients>
+        </div>
+        <div *ngIf="view() === 'doctor-history'">
+          <app-doctor-history (navigate)="changeView($event)"></app-doctor-history>
         </div>
       </div>
     </main>

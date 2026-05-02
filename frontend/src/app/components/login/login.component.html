@@ -20,8 +20,8 @@
     <div class="auth-body">
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="form-field">
-          <label>CÉDULA O CORREO ELECTRÓNICO (*)</label>
-          <input type="text" formControlName="login" placeholder="Ej: 123456789 o correo@ejemplo.com"
+          <label>CÉDULA O CORREO ELECTRÓNICO *</label>
+          <input type="text" formControlName="login" placeholder="123456789 o correo@ejemplo.com"
             [class.input-error]="f['login'].invalid && f['login'].touched">
           <div *ngIf="f['login'].invalid && f['login'].touched" class="error-message">
             Por favor digite su cédula o correo.
@@ -29,13 +29,14 @@
         </div>
 
         <div class="form-field">
-          <label>CONTRASEÑA (*)</label>
+          <label>CONTRASEÑA *</label>
           <div class="password-field-wrapper">
             <input [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="••••••••"
               [class.input-error]="f['password'].invalid && f['password'].touched">
           </div>
           <div class="checkbox-container">
-            <input type="checkbox" id="show-password-login" [checked]="showPassword()" (change)="togglePasswordVisibility()">
+            <input type="checkbox" id="show-password-login" [checked]="showPassword()"
+              (change)="togglePasswordVisibility()">
             <label for="show-password-login">Mostrar contraseña</label>
           </div>
           <div *ngIf="f['password'].invalid && f['password'].touched" class="error-message">

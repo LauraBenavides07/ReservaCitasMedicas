@@ -1,0 +1,557 @@
+:host {
+    display: block;
+}
+
+.doctor-view-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.top-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+    .top-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.header-title p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* ============================================
+   DATE FILTER & BUTTONS
+   ============================================ */
+.date-filter-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.date-input {
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    outline: none;
+    font-family: inherit;
+}
+
+.date-input:focus {
+    border-color: var(--primary-color);
+}
+
+.btn-search {
+    background-color: #0d2c5b;
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-search:hover {
+    background-color: #426180;
+}
+
+.btn-clear {
+    background-color: #e6eef2;
+    color: #0d2c5b;
+    border: 1px solid #0d2c5b;
+    border-radius: var(--radius);
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+
+
+/* ============================================
+   STATS
+   ============================================ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    background-color: white;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 0.75rem;
+    color: inherit;
+}
+
+.stat-card.blue {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.stat-card.green {
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.stat-card.orange {
+    border-color: #f59e0b;
+    color: #f59e0b;
+}
+
+.stat-card.light-blue {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+/* ============================================
+   INFO BOX
+   ============================================ */
+.agenda-info-box {
+    background-color: white;
+    border: 1px solid rgba(62, 123, 166, 0.1);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.icon-calendar {
+    background-color: var(--soft-background);
+    padding: 12px;
+    border-radius: 50%;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-text h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.info-text p {
+    margin: 5px 0 0;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+/* ============================================
+   PATIENT LIST
+   ============================================ */
+.section-title {
+    font-size: 1.3rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.patient-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.patient-card {
+    background-color: white;
+    border: 1px solid rgba(62, 123, 166, 0.1);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.patient-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--secondary-color);
+    box-shadow: var(--shadow-md);
+}
+
+.patient-card.status-confirmed {
+    border-left: 6px solid #10b981 !important;
+}
+
+.patient-card.status-pending {
+    border-left: 6px solid #f59e0b !important;
+}
+
+.patient-card.status-completed {
+    border-left: 6px solid #0d2c5b !important;
+}
+
+.patient-card.status-cancelled {
+    border-left: 6px solid #ef4444 !important;
+}
+
+/* STATUS BADGES */
+.apt-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    line-height: 1.2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: fit-content;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    flex-shrink: 0;
+}
+
+.apt-status.status-confirmed {
+    background-color: #10b981;
+}
+
+.apt-status.status-pending {
+    background-color: #f59e0b;
+}
+
+.apt-status.status-completed {
+    background-color: #0d2c5b;
+}
+
+.apt-status.status-cancelled {
+    background-color: #ef4444;
+}
+
+/* CARD STRUCTURE */
+.card-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
+.time-badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    background-color: var(--soft-background);
+    padding: 6px 10px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.card-middle {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.patient-info,
+.reason-info {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.icon-user,
+.icon-doc {
+    color: var(--text-muted);
+}
+
+.patient-info .name {
+    font-weight: 700;
+    color: var(--text-dark);
+    font-size: 1.1rem;
+}
+
+.patient-info .cc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.patient-info .phone {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reason-info .label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.reason-info .value {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+}
+
+/* ACTION BUTTONS */
+.apt-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--soft-background);
+}
+
+.btn-action {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-action.primary {
+    background-color: #e0f2fe;
+    color: #0284c7;
+}
+
+.btn-action.primary:hover {
+    background-color: #bae6fd;
+}
+
+.btn-action.complete {
+    background-color: #05903f;
+    color: white;
+    border: none;
+}
+
+.btn-action.complete:hover {
+    background-color: #00a846;
+}
+
+.btn-action.danger {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-action.danger:hover {
+    background-color: #fecaca;
+}
+
+/*  NUEVO: Forzar mismo tamaño para Completar y Cancelar */
+.btn-action.complete,
+.btn-action.danger {
+    width: 100%;
+    min-width: 130px;
+    /* Ancho base idéntico */
+    padding: 0.6rem 1rem;
+    flex: 1;
+    /* Crecen proporcionalmente si hay espacio */
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+/* Desktop / Tablet (≥ 768px) */
+@media (min-width: 768px) {
+    .patient-card {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .card-left {
+        flex-direction: column;
+        border-right: 1px solid var(--soft-background);
+        padding-right: 1.5rem;
+        min-width: 90px;
+    }
+
+    .time-badge {
+        margin-top: 0;
+        background: transparent;
+        padding: 0;
+    }
+
+    .card-middle {
+        flex: 1;
+        flex-direction: row;
+        align-items: center;
+        padding-left: 0.5rem;
+        gap: 2rem;
+    }
+
+    .patient-info {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .reason-info {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    /* Desktop: Sin línea superior, botones alineados a la derecha */
+    .apt-actions {
+        border-top: none;
+        padding-top: 0;
+        margin-top: 0;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.75rem;
+        min-width: 160px;
+    }
+}
+
+/* Móvil (< 768px) */
+@media (max-width: 767px) {
+    .patient-card {
+        padding: 1rem;
+    }
+
+    .card-left {
+        justify-content: flex-start;
+    }
+
+    .card-middle {
+        gap: 1.5rem;
+    }
+
+    .patient-info,
+    .reason-info {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    /* Móvil: Línea separadora y botones full width */
+    .apt-actions {
+        border-top: 1px solid var(--soft-background);
+        padding-top: 1rem;
+        margin-top: 0.5rem;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .apt-actions .btn-action {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .apt-status {
+        align-self: flex-start;
+        padding: 0.4rem 1rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Móvil muy pequeño (< 480px) */
+@media (max-width: 480px) {
+    .patient-card {
+        padding: 0.85rem;
+    }
+
+    .patient-info .name {
+        font-size: 1rem;
+    }
+
+    .reason-info .label {
+        font-size: 0.75rem;
+    }
+
+    .btn-action {
+        padding: 0.6rem 0.85rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+    background-color: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    color: #6b7280;
+}
+
+.empty-state h3 {
+    margin: 0 0 0.5rem 0;
+    color: #6b7280;
+    font-size: 1.25rem;
+}
+
+.empty-state p {
+    margin: 0;
+    color: #9ca3af;
+}

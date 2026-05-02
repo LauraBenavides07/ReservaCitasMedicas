@@ -98,28 +98,43 @@
 /* ============================================
    BADGES
    ============================================ */
-.status-badge {
-    display: inline-block;
-    padding: 0.35rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
+.apt-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
     font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    line-height: 1.2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Estados */
-.badge-agendada {
-    background: #d1fae5;
-    color: #065f46;
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    flex-shrink: 0;
 }
 
-.badge-completada {
-    background: #e2e8f0;
-    color: #475569;
+.apt-status.badge-agendada,
+.apt-status.badge-pendiente {
+    background-color: #f59e0b; /* Pendiente/Agendada naranja */
 }
 
-.badge-cancelada {
-    background: #fee2e2;
-    color: #991b1b;
+.apt-status.badge-confirmada {
+    background-color: #10b981; /* Confirmada verde */
+}
+
+.apt-status.badge-completada {
+    background-color: #0d2c5b; /* Completada azul oscuro */
+}
+
+.apt-status.badge-cancelada {
+    background-color: #ef4444; /* Cancelada rojo */
 }
 
 /* ============================================

@@ -1,0 +1,184 @@
+<div class="doctor-view-container">
+    <!-- Top Header -->
+    <header class="top-header">
+        <div class="header-title">
+            <p>Consulte el historial completo de sus citas realizadas</p>
+        </div>
+        <button class="btn btn-secondary" (click)="exportCSV()">
+            📥 Exportar a CSV
+        </button>
+    </header>
+
+    <div class="content-body">
+
+        <!-- Stats Grid -->
+        <section class="stats-grid">
+            <!-- Total Citas -->
+            <div class="stat-card blue">
+                <div class="stat-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </div>
+                <span class="stat-label">Total Citas</span>
+                <span class="stat-value">{{ totalCount }}</span>
+            </div>
+
+            <!-- Completadas -->
+            <div class="stat-card green">
+                <div class="stat-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+                <span class="stat-label">Completadas</span>
+                <span class="stat-value">{{ completedCount }}</span>
+            </div>
+
+            <!-- Canceladas -->
+            <div class="stat-card red">
+                <div class="stat-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                </div>
+                <span class="stat-label">Canceladas</span>
+                <span class="stat-value">{{ cancelledCount }}</span>
+            </div>
+
+            <!-- No Asistió -->
+            <div class="stat-card gray">
+                <div class="stat-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <line x1="18" y1="8" x2="23" y2="13"></line>
+                        <line x1="23" y1="8" x2="18" y2="13"></line>
+                    </svg>
+                </div>
+                <span class="stat-label">No Asistió</span>
+                <span class="stat-value">{{ noShowCount }}</span>
+            </div>
+        </section>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" fill="#94a3b8">
+                    <path
+                        d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                </svg>
+                <input type="text" class="search-input" placeholder="Buscar paciente o motivo..." [(ngModel)]="searchTerm"
+                    (keyup.enter)="onSearchChange()">
+            </div>
+            <button class="btn-search" (click)="onSearchChange()">
+                Buscar
+            </button>
+        </div>
+
+        <!-- Loading state -->
+        <div *ngIf="isLoading" class="loading-state">
+            <p>Cargando historial...</p>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="!isLoading && filteredAppointments.length === 0" class="empty-state">
+            <div class="empty-icon">
+                <svg viewBox="0 0 24 24" width="64" height="64" fill="#CBD5E1">
+                    <path
+                        d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+                </svg>
+            </div>
+            <h3>Sin historial</h3>
+            <p>No se encontraron citas que coincidan con la búsqueda.</p>
+        </div>
+
+        <!-- Appointments List -->
+        <div *ngIf="!isLoading && filteredAppointments.length > 0" class="appointments-list">
+
+            <div *ngFor="let apt of filteredAppointments" class="history-card" [ngClass]="getStatusClass(apt.status)">
+
+                <!-- Date Box (Left side) -->
+                <div class="date-box">
+                    <div class="date-badge" [ngClass]="getStatusClass(apt.status)">
+                        <div class="date-month">{{ apt.monthStr }}</div>
+                        <div class="date-day">{{ apt.dayStr }}</div>
+                        <div class="date-month">{{ apt.monthStr }}</div>
+                    </div>
+                    <div class="time-info">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                            <path
+                                d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+                        </svg>
+                        {{ apt.time }}
+                    </div>
+                </div>
+
+                <!-- Content Area -->
+                <div class="content-area">
+
+                    <!-- Patient Info -->
+                    <div class="patient-info">
+                        <div class="patient-info-header">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="#94a3b8">
+                                <path
+                                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            </svg>
+                            <div>
+                                <h3>{{ apt.patientName }}</h3>
+                                <p class="cc">CC: {{ apt.document }}</p>
+                                <p class="phone">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                                        <path
+                                            d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z" />
+                                    </svg>
+                                    555-0147
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Details -->
+                    <div class="details-info">
+                        <div class="detail-block">
+                            <span class="detail-label">MOTIVO</span>
+                            <div class="detail-value">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="#94a3b8">
+                                    <path
+                                        d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+                                </svg>
+                                Consulta general
+                            </div>
+                        </div>
+                        <div>
+                            <span class="detail-label">OBSERVACIONES</span>
+                            <p class="detail-text">{{ apt.observation }}</p>
+                            <div class="detail-meta">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                                    <path
+                                        d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+                                </svg>
+                                Duración: 30 minutos
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Badge -->
+                    <div class="status-container">
+                        <div class="apt-status" [ngClass]="getStatusClass(apt.status)">
+                            <span class="status-dot"></span>
+                            {{ apt.status | titlecase }}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
