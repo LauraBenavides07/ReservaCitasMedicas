@@ -84,10 +84,10 @@ describe('AppointmentService', () => {
       doctorId: '1',
       date: futureDate.toISOString().split('T')[0],
       time: '10:00',
-      patientDocument: '123'
+      patientDocument: '123',
     };
 
-    const result = await service.create(dto as any);
+    const result = await service.create(dto as unknown as CreateAppointmentDto);
 
     expect(result).toBeDefined();
   });
@@ -99,8 +99,8 @@ describe('AppointmentService', () => {
     await expect(
       service.create({
         doctorId: '99',
-        patientId: '1'
-      } as any)
+        patientId: '1',
+      } as unknown as CreateAppointmentDto),
     ).rejects.toThrow();
   });
 
@@ -116,8 +116,8 @@ describe('AppointmentService', () => {
         doctorId: '1',
         patientId: '1',
         date: nearDate.toISOString().split('T')[0],
-        time: nearDate.toTimeString().substring(0, 5)
-      } as any)
+        time: nearDate.toTimeString().substring(0, 5),
+      } as unknown as CreateAppointmentDto),
     ).rejects.toThrow();
   });
 
@@ -133,8 +133,8 @@ describe('AppointmentService', () => {
         doctorId: '1',
         patientId: '1',
         date: farDate.toISOString().split('T')[0],
-        time: '10:00'
-      } as any)
+        time: '10:00',
+      } as unknown as CreateAppointmentDto),
     ).rejects.toThrow();
   });
 
@@ -151,8 +151,8 @@ describe('AppointmentService', () => {
         doctorId: '1',
         patientId: '1',
         date: futureDate.toISOString().split('T')[0],
-        time: '10:00'
-      } as any)
+        time: '10:00',
+      } as unknown as CreateAppointmentDto),
     ).rejects.toThrow();
   });
 
@@ -161,7 +161,7 @@ describe('AppointmentService', () => {
     mockDoctorRepository.findOneBy.mockResolvedValue({
       id: '1',
       scheduleStart: '08:00',
-      scheduleEnd: '17:00'
+      scheduleEnd: '17:00',
     });
 
     mockAppointmentRepository.find.mockResolvedValue([]);
@@ -177,12 +177,12 @@ describe('AppointmentService', () => {
     mockAppointmentRepository.findOne.mockResolvedValue({
       id: '1',
       status: 'ACTIVE',
-      patient: { id: 'patient1' }
+      patient: { id: 'patient1' },
     });
 
     mockAppointmentRepository.save.mockResolvedValue({
       id: '1',
-      status: 'cancelada'
+      status: 'cancelada',
     });
 
     const result = await service.cancelAppointment('1', 'patient1');
@@ -198,21 +198,21 @@ describe('AppointmentService', () => {
     mockAppointmentRepository.findOne.mockResolvedValue({
       id: '1',
       doctor: { id: '1' },
-      patient: { id: 'patient1' }
+      patient: { id: 'patient1' },
     });
 
     mockAppointmentRepository.findOneBy.mockResolvedValue(null);
 
     mockAppointmentRepository.save.mockResolvedValue({
       id: '1',
-      appointmentTime: '15:00'
+      appointmentTime: '15:00',
     });
 
     const result = await service.reschedule(
       '1',
       'patient1',
       futureDate.toISOString().split('T')[0],
-      '15:00'
+      '15:00',
     );
 
     expect(result.appointmentTime).toBe('15:00');
