@@ -4,17 +4,20 @@ import {
   BadRequestException,
   NotFoundException,
   UnauthorizedException,
+  Inject,
 } from '@nestjs/common';
 import { Parser } from 'json2csv';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOptionsWhere } from 'typeorm';
+import { ClientProxy } from '@nestjs/microservices';
 import { Appointment } from '../../domain/entities/appointment.entity';
 import { Patient } from '../../domain/entities/patient.entity';
 import { Doctor } from '../../domain/entities/doctor.entity';
 import { DoctorException } from '../../domain/entities/doctor-exception.entity';
 import { CreateAppointmentDto } from '../../presentation/dto/create-appointment.dto';
 import { ConfigService } from './config.service';
+import { NOTIFICATION_SERVICE } from '../../infrastructure/messaging/notifications-client.module';
 
 @Injectable()
 export class AppointmentService {
@@ -28,6 +31,8 @@ export class AppointmentService {
     @InjectRepository(DoctorException)
     private doctorExceptionRepository: Repository<DoctorException>,
     private configService: ConfigService,
+    @Inject(NOTIFICATION_SERVICE)
+    private notificationClient: ClientProxy,
   ) {}
 
   /**
@@ -140,7 +145,19 @@ export class AppointmentService {
       status: 'agendada',
     });
 
-    return this.appointmentRepository.save(appointment);
+    const saved = await this.appointmentRepository.save(appointment);
+
+    // Publicar evento fire-and-forget hacia RabbitMQ
+    this.notificationClient.emit('appointment.created', {
+      appointmentId: saved.id,
+      patientName: `${patient.firstName} ${patient.lastName}`,
+      patientPhone: patient.phone,
+      doctorName: doctor.name,
+      appointmentDate: saved.appointmentDate,
+      appointmentTime: saved.appointmentTime,
+    });
+
+    return saved;
   }
 
   /**
@@ -270,7 +287,25 @@ export class AppointmentService {
     }
 
     appointment.status = 'cancelada';
-    return this.appointmentRepository.save(appointment);
+    const saved = await this.appointmentRepository.save(appointment);
+
+    // Publicar evento fire-and-forget hacia RabbitMQ
+    const fullAppointment = await this.appointmentRepository.findOne({
+      where: { id: appointmentId },
+      relations: ['patient', 'doctor'],
+    });
+    if (fullAppointment) {
+      this.notificationClient.emit('appointment.cancelled', {
+        appointmentId: fullAppointment.id,
+        patientName: `${fullAppointment.patient.firstName} ${fullAppointment.patient.lastName}`,
+        patientPhone: fullAppointment.patient.phone,
+        doctorName: fullAppointment.doctor.name,
+        appointmentDate: fullAppointment.appointmentDate,
+        appointmentTime: fullAppointment.appointmentTime,
+      });
+    }
+
+    return saved;
   }
 
   /**
@@ -515,5 +550,35 @@ export class AppointmentService {
         },
       )
       .execute();
+  }
+
+  /**
+   * Fase 3: Recordatorios automáticos – se ejecuta cada día a las 8:00 AM
+   * Envía un evento por cada cita agendada del día siguiente.
+   */
+  @Cron('0 8 * * *')
+  async sendReminders() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const year = tomorrow.getFullYear();
+    const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+    const day = String(tomorrow.getDate()).padStart(2, '0');
+    const tomorrowStr = `${year}-${month}-${day}`;
+
+    const appointments = await this.appointmentRepository.find({
+      where: { appointmentDate: tomorrowStr, status: 'agendada' },
+      relations: ['patient', 'doctor'],
+    });
+
+    for (const app of appointments) {
+      this.notificationClient.emit('appointment.reminder', {
+        appointmentId: app.id,
+        patientName: `${app.patient.firstName} ${app.patient.lastName}`,
+        patientPhone: app.patient.phone,
+        doctorName: app.doctor.name,
+        appointmentDate: app.appointmentDate,
+        appointmentTime: app.appointmentTime,
+      });
+    }
   }
 }
