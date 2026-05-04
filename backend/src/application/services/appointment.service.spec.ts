@@ -7,6 +7,7 @@ import { Doctor } from '../../domain/entities/doctor.entity';
 import { DoctorException } from '../../domain/entities/doctor-exception.entity';
 import { ConfigService } from './config.service';
 import { CreateAppointmentDto } from '../../presentation/dto/create-appointment.dto';
+import { NOTIFICATION_SERVICE } from '../../infrastructure/messaging/notifications-client.module';
 
 describe('AppointmentService', () => {
   let service: AppointmentService;
@@ -38,7 +39,11 @@ describe('AppointmentService', () => {
   const mockConfigService = {
     getConfig: jest
       .fn()
-      .mockResolvedValue({ minAdvanceHours: 2, appointmentWindowWeeks: 4 }),
+      .mockResolvedValue({ minAdvanceHours: 2, appointmentWindowDays: 15 }),
+  };
+
+  const mockNotificationClient = {
+    emit: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -59,6 +64,7 @@ describe('AppointmentService', () => {
           useValue: mockDoctorExceptionRepository,
         },
         { provide: ConfigService, useValue: mockConfigService },
+        { provide: NOTIFICATION_SERVICE, useValue: mockNotificationClient },
       ],
     }).compile();
 
@@ -71,23 +77,36 @@ describe('AppointmentService', () => {
 
   // 1. Crear cita correctamente
   it('debería crear una cita válida', async () => {
-    const futureDate = new Date();
-    futureDate.setHours(futureDate.getHours() + 4);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-    mockDoctorRepository.findOneBy.mockResolvedValue({ id: '1' });
-    mockPatientRepository.findOneBy.mockResolvedValue({ id: '1' });
+    mockDoctorRepository.findOneBy.mockResolvedValue({ id: '1', name: 'Dr. Smith' });
+    mockPatientRepository.findOneBy.mockResolvedValue({ 
+      id: '1', 
+      firstName: 'Juan', 
+      lastName: 'Perez',
+      phone: '3001234567' 
+    });
     mockAppointmentRepository.findOneBy.mockResolvedValue(null);
-    mockAppointmentRepository.save.mockResolvedValue({ id: '10' });
+    mockAppointmentRepository.save.mockResolvedValue({ 
+      id: '10',
+      appointmentDate: tomorrowStr,
+      appointmentTime: '10:00'
+    });
 
-    const dto = {
-      patientId: '1',
+    const dto: CreateAppointmentDto = {
+      patientDocument: '123',
+      firstName: 'Juan',
+      lastName: 'Perez',
+      phone: '3001234567',
+      gender: 'M',
       doctorId: '1',
-      date: futureDate.toISOString().split('T')[0],
+      date: tomorrowStr,
       time: '10:00',
-      patientDocument: '123'
     };
 
-    const result = await service.create(dto as any);
+    const result = await service.create(dto);
 
     expect(result).toBeDefined();
   });
@@ -99,8 +118,14 @@ describe('AppointmentService', () => {
     await expect(
       service.create({
         doctorId: '99',
-        patientId: '1'
-      } as any)
+        patientDocument: '123',
+        firstName: 'Juan',
+        lastName: 'Perez',
+        phone: '3001234567',
+        gender: 'M',
+        date: '2026-05-10',
+        time: '10:00',
+      } as CreateAppointmentDto)
     ).rejects.toThrow();
   });
 
@@ -114,10 +139,14 @@ describe('AppointmentService', () => {
     await expect(
       service.create({
         doctorId: '1',
-        patientId: '1',
+        patientDocument: '123',
+        firstName: 'Juan',
+        lastName: 'Perez',
+        phone: '3001234567',
+        gender: 'M',
         date: nearDate.toISOString().split('T')[0],
         time: nearDate.toTimeString().substring(0, 5)
-      } as any)
+      } as CreateAppointmentDto)
     ).rejects.toThrow();
   });
 
@@ -131,10 +160,14 @@ describe('AppointmentService', () => {
     await expect(
       service.create({
         doctorId: '1',
-        patientId: '1',
+        patientDocument: '123',
+        firstName: 'Juan',
+        lastName: 'Perez',
+        phone: '3001234567',
+        gender: 'M',
         date: farDate.toISOString().split('T')[0],
         time: '10:00'
-      } as any)
+      } as CreateAppointmentDto)
     ).rejects.toThrow();
   });
 
@@ -149,10 +182,14 @@ describe('AppointmentService', () => {
     await expect(
       service.create({
         doctorId: '1',
-        patientId: '1',
+        patientDocument: '123',
+        firstName: 'Juan',
+        lastName: 'Perez',
+        phone: '3001234567',
+        gender: 'M',
         date: futureDate.toISOString().split('T')[0],
         time: '10:00'
-      } as any)
+      } as CreateAppointmentDto)
     ).rejects.toThrow();
   });
 
@@ -174,14 +211,18 @@ describe('AppointmentService', () => {
 
   // 7. Cancelar cita
   it('debería cancelar una cita existente', async () => {
-    mockAppointmentRepository.findOne.mockResolvedValue({
+    const appointmentData = {
       id: '1',
       status: 'ACTIVE',
-      patient: { id: 'patient1' }
-    });
+      appointmentDate: '2026-05-10',
+      appointmentTime: '10:00',
+      patient: { id: 'patient1', firstName: 'Juan', lastName: 'Perez', phone: '3001234567' },
+      doctor: { id: 'doctor1', name: 'Dr. Smith' }
+    };
 
+    mockAppointmentRepository.findOne.mockResolvedValue(appointmentData);
     mockAppointmentRepository.save.mockResolvedValue({
-      id: '1',
+      ...appointmentData,
       status: 'cancelada'
     });
 

@@ -15,6 +15,7 @@ import { AppointmentService } from './application/services/appointment.service';
 import { DoctorService } from './application/services/doctor.service';
 import { ConfigService as AppConfigService } from './application/services/config.service';
 import { AuthModule } from './auth.module';
+import { NotificationsClientModule } from './infrastructure/messaging/notifications-client.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { AuthModule } from './auth.module';
     ]),
     AuthModule,
     ScheduleModule.forRoot(),
+    NotificationsClientModule,
   ],
   controllers: [AppointmentController, DoctorController, ConfigController],
   providers: [AppointmentService, DoctorService, AppConfigService],
