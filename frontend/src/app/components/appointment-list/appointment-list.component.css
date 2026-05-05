@@ -1,227 +1,436 @@
 /* ============================================
-   APPOINTMENT LIST - MOBILE FIRST & ACCESSIBLE
+   APPOINTMENT LIST — BUSCAR CITAS
+   Mobile-first · Responsive · Piedrazul
    ============================================ */
 
 :host {
     display: block;
+    width: 100%;
+    overflow-x: hidden;
 }
 
-.search-container {
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* ---------- Contenedor raíz ---------- */
+.al-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    padding-top: 0.5rem;
-}
-
-/* ============================================
-   VIEW BUTTONS
-   ============================================ */
-.view-buttons {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
-}
-
-@media (min-width: 600px) {
-    .view-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-    }
-}
-
-.btn-view {
-    background: transparent;
-    border: 2px solid var(--primary-dark);
-    color: var(--primary-dark);
-    padding: 0.75rem 1.25rem;
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: var(--transition);
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.btn-view.active {
-    background: var(--primary-dark);
-    color: white;
-    box-shadow: var(--shadow-sm);
-}
-
-/* ============================================
-   SEARCH BAR
-   ============================================ */
-.search-bar {
-    background: white;
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    display: grid;
-    grid-template-columns: 1fr;
     gap: 1.25rem;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid rgba(62, 123, 166, 0.1);
-}
-
-@media (min-width: 900px) {
-    .search-bar {
-        grid-template-columns: 1fr 200px auto;
-        align-items: flex-end;
-    }
-}
-
-.search-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.search-field label {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.btn-search {
-    background: var(--primary-dark);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    min-height: 48px;
-    transition: var(--transition);
-}
-
-.btn-search:hover:not(:disabled) {
-    background: var(--primary-hover);
-    transform: translateY(-2px);
+    width: 100%;
 }
 
 /* ============================================
-   RESULTS & TABLE
+   TOGGLE DE VISTA (pills centrados)
    ============================================ */
-.results-card {
-    background: white;
-    border-radius: var(--radius);
-    padding: 1rem;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid rgba(62, 123, 166, 0.1);
+.al-toggle-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.al-toggle-btn {
+    padding: 0.65rem 1.4rem;
+    border-radius: 50px;
+    border: 1.5px solid #CBD5E1;
+    background: #ffffff;
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 48px;
+    white-space: nowrap;
+}
+
+.al-toggle-btn:hover:not(:disabled) {
+    border-color: #3E7BA6;
+    color: #3E7BA6;
+}
+
+.al-toggle-btn.al-toggle-active {
+    background: #1e3a6a;
+    border-color: #1e3a6a;
+    color: #ffffff;
+}
+
+.al-toggle-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ============================================
+   CARD DE FILTROS
+   ============================================ */
+.al-filter-card {
+    background: #ffffff;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.al-filter-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+}
+
+/* Campo de filtro */
+.al-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.al-filter-field--date {
+    flex: 0 0 auto;
+}
+
+.al-field-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #c6ceda;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.al-field-input {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: #1e293b;
+    background: #F8FAFC;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-height: 48px;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.al-field-input:focus {
+    border-color: #3E7BA6;
+    box-shadow: 0 0 0 3px rgba(62, 123, 166, 0.12);
+    background: #ffffff;
+}
+
+/* Botón buscar */
+.al-btn-search {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #1e3a6a;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 48px;
+    white-space: nowrap;
+    align-self: flex-end;
+    width: 100%;
+}
+
+.al-btn-search:hover:not(:disabled) {
+    background: #152e4d;
+    transform: translateY(-1px);
+}
+
+.al-btn-search:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Spinner */
+.al-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: al-spin 0.7s linear infinite;
+}
+
+@keyframes al-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   ESTADOS VACÍOS
+   ============================================ */
+.al-state-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: #94A3B8;
+    font-size: 0.9rem;
+    background: #ffffff;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+}
+
+/* ============================================
+   CARD DE RESULTADOS
+   ============================================ */
+.al-results-card {
+    background: #ffffff;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     overflow: hidden;
 }
 
+.al-results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.al-results-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+/* Botón exportar */
+.al-btn-export {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    background: #F1F5F9;
+    color: #475569;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-height: 36px;
+}
+
+.al-btn-export:hover {
+    background: #E2E8F0;
+}
+
+/* ============================================
+   TABLA (visible en tablet+)
+   ============================================ */
+.al-table-wrapper {
+    display: none;
+    /* oculto en móvil, visible en tablet */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.al-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 480px;
+}
+
+.al-table th {
+    text-align: left;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #94A3B8;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #F1F5F9;
+    white-space: nowrap;
+}
+
+.al-table td {
+    padding: 0.8rem 0.75rem;
+    font-size: 0.875rem;
+    color: #0F172A;
+    border-bottom: 1px solid #F8FAFC;
+    font-weight: 500;
+}
+
+.al-table-row:last-child td {
+    border-bottom: none;
+}
+
+.al-table-row:hover td {
+    background: #F8FAFC;
+}
+
+/* ============================================
+   BADGES DE ESTADO
+   ============================================ */
+.al-badge {
+    display: inline-block;
+    padding: 0.25rem 0.7rem;
+    border-radius: 50px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+}
+
+/* agendada */
+.al-badge--agendada {
+    background: #EFF6FF;
+    color: #1D4ED8;
+    border-color: #BFDBFE;
+}
+
+/* completada */
+.al-badge--completada {
+    background: #F0FDF4;
+    color: #15803D;
+    border-color: #BBF7D0;
+}
+
+/* cancelada */
+.al-badge--cancelada {
+    background: #FEF2F2;
+    color: #DC2626;
+    border-color: #FECACA;
+}
+
+/* pendiente */
+.al-badge--pendiente {
+    background: #FFFBEB;
+    color: #D97706;
+    border-color: #FDE68A;
+}
+
+/* desconocido / fallback */
+.al-badge--desconocido {
+    background: #F1F5F9;
+    color: #64748B;
+    border-color: #E2E8F0;
+}
+
+/* ============================================
+   CARDS MÓVIL (visible solo en móvil)
+   ============================================ */
+.al-mobile-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.al-appt-card {
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    background: #FAFBFF;
+}
+
+.al-appt-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.al-appt-time {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e3a6a;
+}
+
+.al-appt-patient {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0F172A;
+}
+
+.al-appt-doctor {
+    font-size: 0.8rem;
+    color: #64748B;
+}
+
+.al-appt-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    color: #64748B;
+    margin-top: 0.2rem;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+/* Tablet (≥640px): fila horizontal en filtros */
+@media (min-width: 640px) {
+    .al-filter-row {
+        flex-direction: row;
+        align-items: flex-end;
+    }
+
+    .al-btn-search {
+        width: auto;
+        flex-shrink: 0;
+    }
+
+    .al-filter-field--date {
+        min-width: 160px;
+    }
+}
+
+/* Tablet (≥768px): mostrar tabla, ocultar cards */
 @media (min-width: 768px) {
-    .results-card {
+    .al-table-wrapper {
+        display: block;
+    }
+
+    .al-mobile-cards {
+        display: none;
+    }
+
+    .al-results-card {
+        padding: 1.5rem;
+    }
+
+    .al-filter-card {
         padding: 1.5rem;
     }
 }
 
-.results-header {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--soft-background);
-    padding-bottom: 1rem;
-}
-
-@media (min-width: 480px) {
-    .results-header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
+/* Desktop (≥1024px) */
+@media (min-width: 1024px) {
+    .al-container {
+        gap: 1.5rem;
     }
-}
 
-.results-header h3 {
-    margin: 0;
-    color: var(--primary-color);
-    font-size: 1.25rem;
-}
-
-.table-container {
-    overflow-x: auto;
-    margin: 0 -1rem;
-    /* Sangría negativa para que el scroll llegue al borde */
-    padding: 0 1rem;
-}
-
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 800px;
-}
-
-.styled-table th {
-    text-align: left;
-    padding: 1rem;
-    background: var(--neutral-background);
-    color: var(--primary-color);
-    font-size: 0.85rem;
-    font-weight: 700;
-    border-bottom: 2px solid var(--soft-background);
-}
-
-.styled-table td {
-    padding: 1.25rem 1rem;
-    border-bottom: 1px solid var(--soft-background);
-    font-size: 0.95rem;
-}
-
-.apt-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1.2rem;
-    border-radius: 999px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #ffffff;
-    white-space: nowrap;
-    line-height: 1.2;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #ffffff;
-    flex-shrink: 0;
-}
-
-.apt-status.badge-agendada,
-.apt-status.badge-programada,
-.apt-status.badge-pendiente {
-    background-color: #f59e0b; /* Pendiente naranja */
-}
-
-.apt-status.badge-confirmada {
-    background-color: #10b981; /* Confirmada verde */
-}
-
-.apt-status.badge-completada {
-    background-color: #0d2c5b; /* Completada azul oscuro */
-}
-
-.apt-status.badge-cancelada {
-    background-color: #ef4444; /* Cancelada rojo */
-}
-
-.empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: var(--text-muted);
+    .al-results-title {
+        font-size: 1.1rem;
+    }
 }

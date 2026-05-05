@@ -1,10 +1,13 @@
 /* ============================================
    AUTH MODAL STYLES (SHARED FOR LOGIN & REGISTER)
    ============================================ */
+
+/* Contenedor principal del componente */
 :host {
     display: block;
 }
 
+/* Capa de fondo oscura con efecto blur */
 .auth-overlay {
     position: fixed;
     top: 0;
@@ -23,6 +26,7 @@
     animation: fadeIn 0.3s ease-out;
 }
 
+/* Animación de entrada */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -35,42 +39,44 @@
     }
 }
 
-/* ANCHO AUMENTADO para que quepa el registro */
+/* Tarjeta principal del modal */
 .auth-card {
     background: #ffffff;
     border-radius: 24px;
     width: 100%;
     max-width: 750px;
-    /* CAMBIADO: de 480px a 750px */
+    max-height: 90vh;
+    /* Altura máxima respecto a la ventana */
     overflow: hidden;
     position: relative;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
 }
 
 /* ============================================
-   CARD HEADER - MANTENIENDO COLOR ORIGINAL
+   CARD HEADER
    ============================================ */
+
+/* Cabecera de color azul */
 .auth-header {
     background: #1e3a6a;
-    /* MISMO COLOR */
     position: relative;
     padding: 1.5rem 2rem 1rem 2rem;
-    /* CAMBIADO: más compacto */
     color: #ffffff;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
+/* Botón de cerrar */
 .btn-close {
     position: absolute;
     top: 1rem;
-    /* Ajustado */
     right: 1rem;
-    /* Ajustado */
     background: rgba(255, 255, 255, 0.2);
     border: none;
     color: #ffffff;
     width: 36px;
-    /* Ligeramente más pequeño */
     height: 36px;
     border-radius: 50%;
     font-size: 1.25rem;
@@ -84,41 +90,41 @@
 }
 
 .btn-close:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.3);
 }
 
+/* Contenedor del contenido de cabecera */
 .header-content {
     position: relative;
     z-index: 5;
 }
 
+/* Logo */
 .logo-img {
     width: 55px;
-    /* Más pequeño */
     height: 55px;
     object-fit: contain;
     margin-bottom: 0.75rem;
-    /* Menor margen */
 }
 
+/* Título principal */
 .auth-title {
     font-size: 1.6rem;
-    /* Más pequeño */
     font-family: 'Georgia', serif;
     font-weight: 400;
     margin: 0 0 0.25rem 0;
     color: #ffffff;
 }
 
+/* Subtítulo */
 .auth-subtitle {
     font-size: 0.85rem;
-    /* Más pequeño */
     color: #9abed6;
     margin: 0;
     font-weight: 500;
 }
 
-/* Background decorators for the header */
+/* Elementos decorativos de fondo en la cabecera */
 .header-decorator {
     position: absolute;
     border-radius: 50%;
@@ -141,54 +147,54 @@
 }
 
 /* ============================================
-   TABS - MÁS COMPACTOS
+   TABS
    ============================================ */
+
+/* Contenedor de pestañas */
 .auth-tabs {
     display: flex;
     background: #ffffff;
     border-bottom: 1px solid #eef2f6;
     padding: 0 1.5rem;
+    flex-shrink: 0;
 }
 
+/* Botón de cada pestaña */
 .tab-btn {
     flex: 1;
     background: none;
     border: none;
     border-bottom: 3px solid transparent;
     padding: 0.875rem 0;
-    /* Más compacto */
     font-size: 1rem;
-    /* Más pequeño */
     font-weight: 600;
     color: #94a3b8;
     cursor: pointer;
     position: relative;
     transition: all 0.2s;
-    min-height: 44px;
-    /* Más pequeño */
 }
 
+/* Pestaña activa */
 .tab-btn.active {
     color: #1e3a6a;
-    /* MISMO COLOR */
     border-bottom: 3px solid #1e3a6a;
-    /* MISMO COLOR */
 }
 
 /* ============================================
-   BODY & FORM - CON SCROLL Y MÁS COMPACTO
+   BODY & FORM - CON SCROLL Y ESPACIO INTERNO
    ============================================ */
+
+/* Cuerpo del modal con scroll */
 .auth-body {
     padding: 1.5rem;
-    /* Padding reducido */
+    /* Padding normal */
     background: #ffffff;
-    max-height: 65vh;
-    /* Altura máxima con scroll */
+    flex: 1;
     overflow-y: auto;
-    /* Scroll si es necesario */
+    /* Scroll cuando el contenido excede */
 }
 
-/* Scroll personalizada (opcional, se ve bonito) */
+/* Scroll personalizada */
 .auth-body::-webkit-scrollbar {
     width: 6px;
 }
@@ -200,66 +206,63 @@
 
 .auth-body::-webkit-scrollbar-thumb {
     background: #1e3a6a;
-    /* MISMO COLOR */
     border-radius: 4px;
 }
 
+/* Contenedor del formulario */
 form {
     display: grid;
     gap: 1rem;
-    /* Gap reducido */
 }
 
-/* Layout de 2 columnas para campos que van juntos */
+/* Fila de dos columnas */
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
 }
 
+/* Contenedor de cada campo */
 .form-field {
     display: flex;
     flex-direction: column;
     gap: 0.375rem;
-    /* Gap reducido */
 }
 
+/* Etiqueta del campo */
 .form-field label {
     font-size: 0.7rem;
-    /* Más pequeño */
     font-weight: 700;
     color: #94a3b8;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
+/* Inputs y selects */
 .form-field input,
 .form-field select {
     padding: 0.625rem 0.875rem;
-    /* Padding reducido */
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     font-size: 0.9rem;
-    /* Fuente más pequeña */
     font-family: inherit;
     transition: all 0.2s;
     color: #0f172a;
-    min-height: 40px;
-    /* Altura reducida */
     width: 100%;
     box-sizing: border-box;
 }
 
+/* Placeholder */
 .form-field input::placeholder {
-    color: #64748b;
+    color: #94a3b8;
     opacity: 0.8;
 }
 
+/* Estado focus */
 .form-field input:focus,
 .form-field select:focus {
     outline: none;
     border-color: #1e3a6a;
-    /* MISMO COLOR */
     box-shadow: 0 0 0 3px rgba(30, 58, 106, 0.1);
 }
 
@@ -273,14 +276,15 @@ form {
     background-size: 1rem;
 }
 
+/* Clase para input con error */
 .input-error {
     border-color: #ef4444 !important;
 }
 
+/* Mensaje de error */
 .error-message {
     color: #ef4444;
     font-size: 0.7rem;
-    /* Más pequeño */
     font-weight: 500;
     margin-top: 0.125rem;
 }
@@ -288,6 +292,8 @@ form {
 /* ============================================
    PASSWORD TOGGLE
    ============================================ */
+
+/* Contenedor para input de contraseña */
 .password-container {
     position: relative;
     display: flex;
@@ -299,6 +305,7 @@ form {
     padding-right: 2.5rem;
 }
 
+/* Botón para toggle de contraseña */
 .toggle-password-btn {
     position: absolute;
     right: 0.75rem;
@@ -315,53 +322,53 @@ form {
 
 .toggle-password-btn:hover {
     color: #1e3a6a;
-    /* MISMO COLOR */
 }
 
 /* ============================================
-   BUTTONS - MÁS COMPACTOS
+   BUTTONS
    ============================================ */
+
+/* Clase base para botones */
 .btn {
     padding: 0.75rem 1.25rem;
-    /* Padding reducido */
     border-radius: 8px;
     font-size: 0.9rem;
-    /* Fuente más pequeña */
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
     border: none;
-    min-height: 42px;
-    /* Altura reducida */
     display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 
+/* Estado deshabilitado */
 .btn:disabled {
     opacity: 0.7;
     cursor: not-allowed;
 }
 
+/* Botón primario */
 .btn-primary {
     background: #233e68;
-    /* MISMO COLOR */
     color: #ffffff;
     margin-top: 0.5rem;
 }
 
 .btn-primary:hover:not(:disabled) {
     background: #1a2f52;
-    /* MISMO COLOR HOVER */
 }
 
+/* Botón que ocupa todo el ancho */
 .btn-full {
     width: 100%;
 }
 
 /* ============================================
-   CHECKBOX STYLES - MÁS COMPACTO
+   CHECKBOX STYLES
    ============================================ */
+
+/* Contenedor de checkbox */
 .checkbox-container {
     display: flex;
     align-items: center;
@@ -382,7 +389,7 @@ form {
     cursor: pointer;
     text-transform: none;
     font-weight: normal;
-    color: #666;
+    color: #475569;
     font-size: 0.85rem;
 }
 
@@ -393,6 +400,8 @@ form {
 /* ============================================
    ALERTS
    ============================================ */
+
+/* Clase base para alertas */
 .alert {
     padding: 0.75rem;
     border-radius: 8px;
@@ -401,12 +410,14 @@ form {
     text-align: center;
 }
 
+/* Alerta de error */
 .alert-error {
     background: #fef2f2;
     color: #b91c1c;
     border: 1px solid #fecaca;
 }
 
+/* Alerta de éxito */
 .alert-success {
     background: #f0fdf4;
     color: #15803d;
@@ -416,15 +427,23 @@ form {
 /* ============================================
    RESPONSIVE
    ============================================ */
+
+/* Tablet y desktop (ancho mínimo 768px) */
+@media (min-width: 768px) {
+    .auth-card {
+        max-width: 750px;
+    }
+}
+
+/* Móvil (ancho máximo 768px) */
 @media (max-width: 768px) {
     .auth-card {
         max-width: 95%;
-        margin: 0 1rem;
+        max-height: 85vh;
     }
 
     .auth-body {
         padding: 1rem;
-        max-height: 70vh;
     }
 
     .form-row {
@@ -442,15 +461,56 @@ form {
     }
 
     .auth-title {
-        font-size: 1.25rem;
+        font-size: 1.4rem;
     }
 
     .logo-img {
-        width: 45px;
-        height: 45px;
+        width: 48px;
+        height: 48px;
     }
 
     .auth-header {
-        padding: 1rem 1.5rem 0.875rem 1.5rem;
+        padding: 1.25rem 1.5rem 1rem 1.5rem;
+    }
+}
+
+/* Móvil muy pequeño (ancho máximo 480px) */
+@media (max-width: 480px) {
+    .auth-card {
+        max-width: 98%;
+        max-height: 80vh;
+    }
+
+    .auth-body {
+        padding: 0.875rem;
+    }
+
+    .auth-title {
+        font-size: 1.25rem;
+    }
+
+    .auth-subtitle {
+        font-size: 0.75rem;
+    }
+
+    .logo-img {
+        width: 42px;
+        height: 42px;
+    }
+
+    .tab-btn {
+        font-size: 0.85rem;
+        padding: 0.65rem 0;
+    }
+
+    .form-field input,
+    .form-field select {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .btn {
+        padding: 0.65rem 1rem;
+        font-size: 0.85rem;
     }
 }

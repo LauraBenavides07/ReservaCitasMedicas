@@ -2,52 +2,71 @@
    ADMIN CONFIGURATION - MOBILE FIRST & ACCESSIBLE
    ============================================ */
 
-:host {
-    display: block;
+/* Deshabilitar zoom táctil en móviles */
+@viewport {
+    width: device-width;
+    initial-scale: 1;
+    maximum-scale: 1;
+    user-scalable: no;
 }
 
+/* Contenedor principal del componente */
+:host {
+    display: block;
+    width: 100%;
+    overflow-x: hidden;
+    touch-action: pan-y pinch-zoom;
+}
+
+/* Evita zoom automático en inputs en iOS (mínimo 16px sin sobreescribir todo) */
+input,
+select,
+textarea {
+    font-size: max(16px, 1em);
+}
+
+/* Contenedor principal de la configuración de administrador */
 .admin-config-container {
     padding: 0.5rem 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 /* ============================================
-   TABS NAVIGATION
+   TABS NAVIGATION - RESPONSIVO
    ============================================ */
+
+/* Contenedor de pestañas de navegación */
 .tabs {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
     border-bottom: 2px solid var(--soft-background);
     margin-bottom: 1.5rem;
-    overflow-x: auto;
-    /* Scroll horizontal en móvil */
-    padding-bottom: 2px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    /* Ocultar scrollbar en Firefox */
+    padding-bottom: 0;
+    flex-wrap: wrap;
 }
 
-.tabs::-webkit-scrollbar {
-    display: none;
-    /* Ocultar scrollbar en Chrome/Safari */
-}
-
+/* Botón de cada pestaña */
 .tab-btn {
     background: transparent;
     border: none;
     border-bottom: 4px solid transparent;
-    padding: 1rem;
+    padding: 0.5rem 0.75rem;
     color: var(--text-muted);
-    font-size: 1.1rem;
+    font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     transition: var(--transition);
     white-space: nowrap;
-    min-height: 48px;
+    min-height: 40px;
 }
 
+/* Pestaña activa */
 .tab-btn.active {
     color: var(--primary-color);
     border-bottom-color: var(--primary-color);
@@ -56,37 +75,35 @@
 /* ============================================
    ACTIONS BAR
    ============================================ */
+
+/* Barra de acciones (botones de crear, etc.) */
 .actions-bar {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.75rem;
     margin-bottom: 1.5rem;
 }
 
-@media (min-width: 480px) {
-    .actions-bar {
-        flex-direction: row;
-        justify-content: flex-end;
-    }
-}
-
 /* ============================================
-   DOCTOR CARDS
+   DOCTOR CARDS (MÓVIL: VERTICAL)
    ============================================ */
+
+/* Lista de tarjetas de médicos */
 .doctor-cards-list {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.875rem;
 }
 
+/* Tarjeta individual de médico */
 .doctor-card {
     background: white;
     border: 1px solid rgba(62, 123, 166, 0.1);
     border-radius: var(--radius);
-    padding: 1.25rem;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
     box-shadow: var(--shadow-sm);
     transition: var(--transition);
 }
@@ -96,225 +113,259 @@
     border-color: var(--secondary-color);
 }
 
+/* Información principal del médico (avatar + nombre) */
 .doc-main-info {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.875rem;
 }
 
+/* Avatar del médico */
 .doc-avatar {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
     border-radius: 12px;
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: 800;
     flex-shrink: 0;
 }
 
+/* Nombre del médico */
 .doc-name {
     margin: 0 0 0.2rem 0;
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: var(--text-dark);
 }
 
+/* Especialidad del médico */
 .doc-specialty {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.8rem;
     color: var(--primary-color);
     font-weight: 500;
 }
 
+/* Información media (horarios, días) */
 .doc-middle-info,
 .doc-right-info {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
-@media (min-width: 350px) {
-
-    .doc-middle-info,
-    .doc-right-info {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
+/* Bloque de información individual */
 .info-block {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.2rem;
 }
 
+/* Etiqueta del campo */
 .label {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
 }
 
+/* Valor del campo */
 .value {
-    font-size: 1rem;
+    font-size: 0.85rem;
     color: var(--text-dark);
     font-weight: 600;
 }
 
+/* Contenedor de acciones (botones) */
 .doc-actions {
     margin-top: 0.5rem;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
+/* Botón de editar en móvil (ancho completo) */
 .btn-edit-dark {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+}
+
+/* ============================================
+   STATISTICS (ESTADÍSTICAS) — MOBILE FIRST
+   ============================================ */
+
+/* Contenedor de estadísticas */
+.stats-wrapper {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* Grid: 2 columnas en móvil base para mejor aprovechamiento */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
     width: 100%;
 }
 
-/* Desktop layout for Doctor Cards */
-@media (min-width: 1024px) {
-    .doctor-card {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1.5rem 2rem;
-    }
-
-    .doc-main-info {
-        flex: 1.5;
-        min-width: 300px;
-    }
-
-    .doc-middle-info,
-    .doc-right-info {
-        flex: 1;
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-        min-width: 150px;
-    }
-
-    .info-block {
-        flex-direction: row;
-        align-items: baseline;
-        gap: 0.5rem;
-    }
-
-    .label {
-        min-width: 80px;
-    }
-
-    .btn-edit-dark {
-        width: auto;
-    }
-}
-
-/* ============================================
-   STATISTICS
-   ============================================ */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
+/* Tarjeta de estadística — layout horizontal en móvil */
 .stat-card {
     background: white;
-    border-radius: var(--radius);
-    padding: 1.25rem;
-    box-shadow: var(--shadow-sm);
-    text-align: center;
-    border: 1px solid rgba(62, 123, 166, 0.05);
-}
-
-.stat-icon {
-    margin-bottom: 1rem;
+    border-radius: 12px;
+    padding: 0.875rem 1rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(62, 123, 166, 0.1);
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
-    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: left;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
+.stat-card:hover {
+    box-shadow: 0 4px 12px rgba(62, 123, 166, 0.12);
+    transform: translateY(-1px);
+}
+
+/* Icono de estadística */
+.stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(62, 123, 166, 0.08);
+    margin-bottom: 0;
+}
+
+.stat-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* Contenido de texto de la tarjeta */
+.stat-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+}
+
+/* Valor numérico */
 .stat-value {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 800;
     color: var(--primary-color);
-    margin-bottom: 0.25rem;
+    line-height: 1.1;
+    overflow-wrap: break-word;
 }
 
+/* Etiqueta */
 .stat-label {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: var(--text-muted);
-    letter-spacing: 0.5px;
-}
-
-@media (min-width: 768px) {
-    .stats-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.5rem;
-    }
-
-    .stat-value {
-        font-size: 2.5rem;
-    }
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    line-height: 1.3;
+    overflow-wrap: break-word;
 }
 
 /* ============================================
-   TABLES
+   TABLES (TABLAS)
    ============================================ */
+
+/* Contenedor de tabla — card con scroll interno */
 .table-card {
-    overflow-x: auto;
-    /* Importante para tablas en móvil */
+    background: white;
+    border-radius: 12px;
+    border: 1px solid rgba(62, 123, 166, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    padding: 1rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
+/* Wrapper de scroll horizontal para la tabla */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE / Edge antiguo */
+}
+
+.table-responsive::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+/* Título de la tarjeta/tabla */
 .card-title {
-    margin: 0 0 1.5rem 0;
-    font-size: 1.3rem;
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 700;
     color: var(--primary-color);
 }
 
+/* Tabla estilizada */
 .styled-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 500px;
-    /* Asegura que la tabla no se colapse demasiado */
+    min-width: 320px;
 }
 
+/* Encabezados de la tabla */
 .styled-table th {
     text-align: left;
-    padding: 1rem;
+    padding: 0.75rem;
     background: var(--neutral-background);
     color: var(--primary-color);
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 700;
     border-bottom: 2px solid var(--soft-background);
 }
 
+/* Celdas de la tabla */
 .styled-table td {
-    padding: 1.25rem 1rem;
+    padding: 0.875rem 0.75rem;
     border-bottom: 1px solid var(--soft-background);
+    font-size: 0.8rem;
 }
 
+/* Celda de proporción para barras de progreso */
 .proportion-cell {
     width: 40%;
 }
 
+/* Contenedor de barra de progreso */
 .progress-bar-container {
     background: var(--soft-background);
-    height: 10px;
-    border-radius: 5px;
+    height: 6px;
+    border-radius: 3px;
     overflow: hidden;
 }
 
+/* Relleno de la barra de progreso */
 .progress-bar-fill {
     height: 100%;
     background: var(--primary-color);
 }
 
 /* ============================================
-   MODALS
+   MODALS (VENTANAS MODALES)
    ============================================ */
+
+/* Capa de fondo del modal */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -325,59 +376,51 @@
     backdrop-filter: blur(8px);
     display: flex;
     align-items: flex-end;
-    /* En móvil sale de abajo */
     justify-content: center;
     z-index: 9999;
     padding: 0;
 }
 
+/* Contenedor del modal (sale desde abajo en móvil) */
 .modal {
     background: white;
     width: 100%;
-    max-height: 90vh;
-    border-top-left-radius: 24px;
-    border-top-right-radius: 24px;
-    padding: 2rem 1.5rem;
+    max-height: 85vh;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 1.5rem;
     overflow-y: auto;
     box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.1);
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE / Edge antiguo */
 }
 
-@media (min-width: 768px) {
-    .modal-overlay {
-        align-items: center;
-        padding: 2rem;
-    }
-
-    .modal {
-        max-width: 600px;
-        border-radius: var(--radius);
-    }
+.modal::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
+/* Título del modal */
 .modal-title {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     color: var(--primary-color);
-    font-size: 1.5rem;
+    font-size: 1.3rem;
 }
 
+/* Grid del formulario dentro del modal */
 .form-grid {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-}
-
-.form-row-responsive {
-    display: grid;
-    grid-template-columns: 1fr;
     gap: 1rem;
 }
 
-@media (min-width: 480px) {
-    .form-row-responsive {
-        grid-template-columns: 1fr 1fr;
-    }
+/* Fila responsiva del formulario */
+.form-row-responsive {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
 }
 
+/* Acciones del modal (botones) */
 .modal-actions {
     display: grid;
     grid-template-columns: 1fr;
@@ -385,27 +428,7 @@
     margin-top: 1.5rem;
 }
 
-@media (min-width: 480px) {
-    .modal-actions {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .btn-delete {
-        grid-column: span 2;
-    }
-}
-
-@media (min-width: 768px) {
-    .modal-actions {
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    .btn-delete {
-        margin-right: auto;
-    }
-}
-
+/* Botón de eliminar */
 .btn-delete {
     background-color: #fff1f0;
     color: var(--danger-color);
@@ -417,7 +440,283 @@
     color: white;
 }
 
+/* Botón de cancelar */
 .btn-cancel {
     background: transparent;
     color: var(--text-muted);
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+/* Pantallas muy pequeñas (ancho mínimo 350px) */
+@media (min-width: 350px) {
+
+    .doc-middle-info,
+    .doc-right-info {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Móvil pequeño (ancho mínimo 480px) */
+@media (min-width: 480px) {
+    .actions-bar {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .form-row-responsive {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .modal-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .btn-delete {
+        grid-column: span 2;
+    }
+
+    .tabs {
+        gap: 0.75rem;
+    }
+
+    .tab-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* ESTADÍSTICAS: 2 columnas — ya definido en base, mantener gap */
+}
+
+/* Tablet (ancho mínimo 768px) */
+@media (min-width: 768px) {
+    .modal-overlay {
+        align-items: center;
+        padding: 2rem;
+    }
+
+    .modal {
+        max-width: 550px;
+        border-radius: 20px;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .btn-delete {
+        margin-right: auto;
+        grid-column: auto;
+    }
+
+    .tabs {
+        gap: 1rem;
+    }
+
+    .tab-btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.95rem;
+    }
+
+    /* ESTADÍSTICAS: 4 columnas en tablet (las 4 caben bien en 768px) */
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+
+    /* En tablet volvemos a layout centrado/vertical */
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        padding: 1.25rem 0.75rem;
+        gap: 0.5rem;
+    }
+
+    .stat-icon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .stat-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+    }
+
+    .stat-label {
+        font-size: 0.68rem;
+    }
+
+    .table-card {
+        padding: 1.25rem;
+    }
+}
+
+/* Desktop (ancho mínimo 1024px) */
+@media (min-width: 1024px) {
+
+    /* Tarjetas de médico horizontales */
+    .doctor-card {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .doc-main-info {
+        flex: 1.5;
+        min-width: 250px;
+    }
+
+    .doc-middle-info,
+    .doc-right-info {
+        flex: 1;
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        min-width: 140px;
+    }
+
+    .info-block {
+        flex-direction: row;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+
+    .label {
+        min-width: 70px;
+    }
+
+    .btn-edit-dark {
+        width: auto;
+    }
+
+    .tabs {
+        gap: 1.5rem;
+        flex-wrap: nowrap;
+        overflow-x: visible;
+    }
+
+    .tab-btn {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    /* ESTADÍSTICAS: 4 columnas desktop — valores más grandes */
+    .stat-value {
+        font-size: 2rem;
+    }
+}
+
+/* Desktop grande (ancho mínimo 1200px) */
+@media (min-width: 1200px) {
+    .admin-config-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .stat-value {
+        font-size: 2.2rem;
+    }
+
+    .stat-icon {
+        width: 52px;
+        height: 52px;
+    }
+
+    .stat-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+/* Móvil muy pequeño (ancho máximo 340px) */
+@media (max-width: 340px) {
+    .admin-config-container {
+        padding: 0.25rem 0;
+    }
+
+    .doctor-card {
+        padding: 0.75rem;
+    }
+
+    .doc-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+
+    .doc-name {
+        font-size: 0.9rem;
+    }
+
+    .doc-specialty {
+        font-size: 0.7rem;
+    }
+
+    .info-block {
+        gap: 0.1rem;
+    }
+
+    .label {
+        font-size: 0.6rem;
+    }
+
+    .value {
+        font-size: 0.75rem;
+    }
+
+    .modal {
+        padding: 1.25rem;
+    }
+
+    .modal-title {
+        font-size: 1.1rem;
+    }
+
+    .tabs {
+        gap: 0.4rem;
+    }
+
+    .tab-btn {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.75rem;
+        min-height: 36px;
+    }
+
+    /* ESTADÍSTICAS: 2 columnas en pantallas muy pequeñas */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .stat-card {
+        padding: 0.65rem 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .stat-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+    }
+
+    .stat-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .stat-value {
+        font-size: 1.2rem;
+    }
+
+    .stat-label {
+        font-size: 0.6rem;
+    }
 }

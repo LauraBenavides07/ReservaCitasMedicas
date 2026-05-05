@@ -1,11 +1,15 @@
 :host {
     display: block;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 .doctor-view-container {
-    padding: 2rem;
+    padding: 1rem;
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    box-sizing: border-box;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -14,44 +18,50 @@
 ============================================ */
 .top-header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 2rem;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
 }
 
 .header-title h1 {
     color: #1e3a5f;
-    margin-bottom: 0.5rem;
-    font-size: 2rem;
+    margin-bottom: 0.25rem;
+    font-size: 1.4rem;
 }
 
 .header-title p {
     color: #64748b;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     margin: 0;
 }
 
 /* ============================================
-   ESTADÍSTICAS 
+   ESTADÍSTICAS — 2 columnas en móvil
 ============================================ */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    width: 100%;
 }
 
 .stat-card {
-    padding: 1.5rem;
+    padding: 0.875rem 0.75rem;
     border-radius: var(--radius);
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    gap: 0.75rem;
     box-shadow: var(--shadow-sm);
-    text-align: center;
+    text-align: left;
     background-color: white;
     border: 1px solid transparent;
     transition: all 0.2s;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .stat-card:hover {
@@ -60,23 +70,31 @@
 }
 
 .stat-icon {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 0.75rem;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
     color: inherit;
 }
 
+.stat-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
 .stat-label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    margin-bottom: 0.15rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
+    line-height: 1.2;
 }
 
 .stat-value {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 800;
+    line-height: 1.1;
 }
 
 .stat-card.blue {
@@ -100,11 +118,11 @@
 }
 
 /* ============================================
-   BÚSQUEDA
+   BÚSQUEDA — ancho completo en móvil
 ============================================ */
 .search-container {
-    margin-bottom: 2rem;
-    max-width: 600px;
+    margin-bottom: 1.5rem;
+    width: 100%;
     display: flex;
     gap: 0.5rem;
 }
@@ -190,12 +208,14 @@
     background: white;
     border-radius: 12px;
     border: 1px solid #e2e8f0;
-    padding: 1.5rem;
+    padding: 1rem;
     display: flex;
-    align-items: stretch;
-    gap: 2rem;
+    flex-direction: column;
+    gap: 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
     transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .patient-horizontal-card:hover {
@@ -217,52 +237,48 @@
 
 .patient-avatar-wrapper {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    min-width: 80px;
+    gap: 0.75rem;
 }
 
 .patient-avatar {
-    width: 70px;
-    height: 70px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.6rem;
+    font-size: 1.2rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    flex-shrink: 0;
 }
 
 .content-area {
     flex: 1;
     display: flex;
-    justify-content: space-between;
-    align-items: stretch;
-    flex-wrap: wrap;
-    gap: 2rem;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 0;
 }
 
 .basic-info {
-    flex: 1;
-    min-width: 200px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
 }
 
 .basic-info h3 {
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 0.4rem 0;
     color: #1e293b;
-    font-size: 1.25rem;
+    font-size: 1.05rem;
 }
 
 .contact-details {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.3rem;
 }
 
 .contact-item {
@@ -270,15 +286,15 @@
     align-items: center;
     gap: 0.5rem;
     color: #64748b;
-    font-size: 0.95rem;
+    font-size: 0.875rem;
 }
 
 .medical-info {
-    flex: 1.5;
-    min-width: 250px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 0.5rem;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 0.75rem;
 }
 
 .info-block {
@@ -344,11 +360,13 @@
 
 .actions-status {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
-    align-items: flex-end;
-    min-width: 140px;
+    align-items: center;
     gap: 0.5rem;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 0.75rem;
+    flex-wrap: wrap;
 }
 
 .apt-status {
@@ -540,47 +558,91 @@
 }
 
 /* ============================================
-   RESPONSIVE
+   RESPONSIVE BREAKPOINTS
 ============================================ */
-@media (max-width: 768px) {
-    .doctor-view-container {
-        padding: 1rem;
+
+/* Tablet (≥640px): search limitado, stat-cards 4 col */
+@media (min-width: 640px) {
+    .search-container {
+        max-width: 560px;
     }
 
     .stats-grid {
-        grid-template-columns: 1fr 1fr !important;
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        padding: 1.25rem 0.75rem;
+    }
+
+    .stat-icon {
+        width: 44px;
+        height: 44px;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+    }
+}
+
+/* Desktop (≥1024px): card horizontal */
+@media (min-width: 1024px) {
+    .doctor-view-container {
+        padding: 2rem;
     }
 
     .patient-horizontal-card {
+        flex-direction: row;
+        align-items: stretch;
+        padding: 1.5rem;
+        gap: 2rem;
+    }
+
+    .patient-avatar-wrapper {
         flex-direction: column;
         align-items: center;
-        text-align: center;
-        gap: 1.5rem !important;
+        min-width: 80px;
+    }
+
+    .patient-avatar {
+        width: 64px;
+        height: 64px;
+        font-size: 1.5rem;
     }
 
     .content-area {
-        flex-direction: column;
-        gap: 1.5rem !important;
-        width: 100%;
+        flex-direction: row;
+        align-items: stretch;
+        flex-wrap: wrap;
+        gap: 1.5rem;
     }
 
     .basic-info {
-        align-items: center;
+        min-width: 180px;
+        flex: 1;
     }
 
     .medical-info {
-        align-items: center;
-        border-top: 1px solid #e2e8f0;
-        padding-top: 1rem;
+        min-width: 220px;
+        flex: 1.5;
+        border-top: none;
+        padding-top: 0;
     }
 
     .actions-status {
-        align-items: center !important;
-        flex-direction: row !important;
-        justify-content: space-between !important;
-        width: 100%;
-        border-top: 1px solid #e2e8f0;
-        padding-top: 1rem;
-        margin-top: 0.5rem;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: space-between;
+        border-top: none;
+        padding-top: 0;
+        min-width: 130px;
+    }
+
+    .stat-value {
+        font-size: 2rem;
     }
 }

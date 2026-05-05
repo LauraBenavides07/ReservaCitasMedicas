@@ -38,8 +38,8 @@ async function seed() {
     const admin = userRepo.create({
       email: 'admin@piedrazul.com',
       password: commonPasswordHash,
-      firstName: 'Admin',
-      lastName: 'System',
+      firstName: 'Sofia',
+      lastName: 'Paz',
       role: UserRole.ADMIN,
     });
     await userRepo.save(admin);
@@ -48,15 +48,15 @@ async function seed() {
     const doctorUser = userRepo.create({
       email: 'medico@piedrazul.com',
       password: commonPasswordHash,
-      firstName: 'Medico',
-      lastName: 'Prueba',
+      firstName: 'Juan',
+      lastName: 'Lopez',
       role: UserRole.DOCTOR,
     });
     await userRepo.save(doctorUser);
 
     // Crear Doctor (Entity para turnos)
     const doctor = doctorRepo.create({
-      name: 'Dr. Medico Prueba',
+      name: 'Juan Lopez',
       specialty: 'Cardiología',
       scheduleStart: '08:00',
       scheduleEnd: '18:00',
@@ -67,8 +67,8 @@ async function seed() {
     // Crear Paciente
     const patient = patientRepo.create({
       document: '123456789',
-      firstName: 'Paciente',
-      lastName: 'Prueba',
+      firstName: 'Luisa',
+      lastName: 'Perez',
       phone: '3000000000',
       gender: 'Mujer',
       email: 'paciente@piedrazul.com',

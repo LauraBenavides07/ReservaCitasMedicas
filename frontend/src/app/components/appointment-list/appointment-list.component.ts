@@ -104,12 +104,16 @@ export class AppointmentListComponent implements OnInit {
       });
   }
 
-  // Devuelve la clase CSS según el estado
+  // Devuelve la clase CSS según el estado (legacy - usada en otros componentes)
   getStatusClass(status: string | undefined): string {
     if (!status) return 'badge-desconocido';
-
-    // Convierte a minúsculas para coincidir con CSS
     return `badge-${status.toLowerCase()}`;
+  }
+
+  // Clase del badge con prefijo al- para el nuevo diseño
+  getAlBadgeClass(status: string | undefined): string {
+    if (!status) return 'al-badge--desconocido';
+    return `al-badge--${status.toLowerCase()}`;
   }
 
   // Formatea fecha (ej: 5 de mar)

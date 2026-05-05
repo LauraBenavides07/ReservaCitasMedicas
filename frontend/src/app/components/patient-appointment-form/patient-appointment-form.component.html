@@ -27,7 +27,7 @@
         </div>
         <div class="step-divider">›</div>
 
-        <!-- Paso 4: Confirmar (no se puede volver desde aquí) -->
+        <!-- Paso 4: Confirmar -->
         <div class="step" [class.active]="step() === 4" [class.completed]="step() > 4">
             <div class="step-circle">4</div>
             <span class="step-label">Confirmar</span>
@@ -43,26 +43,23 @@
                 <h3 class="step-title">Elige tu especialista</h3>
             </div>
             <div class="card-body">
-                <!-- Grid con todos los médicos disponibles -->
                 <div class="doctors-grid">
                     <div class="doctor-box" *ngFor="let doctor of doctors()" (click)="selectDoctor(doctor)">
-                        <!-- Avatar con iniciales y color dinámico -->
                         <div class="doctor-avatar" [ngStyle]="{'background-color': getDoctorColor(doctor.id)}">
                             {{ doctor.name.substring(0,2).toUpperCase() }}
                         </div>
                         <div class="doctor-info">
                             <h4>Dr(a). {{ doctor.name }}</h4>
                             <p class="specialty">{{ doctor.specialty }}</p>
-                            <!-- Horario y duración de la cita -->
                             <p class="schedule-info">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <polyline points="12 6 12 12 16 14"></polyline>
                                 </svg>
-                                {{ doctor.scheduleStart | slice:0:5 }}–{{ doctor.scheduleEnd | slice:0:5 }} · {{ doctor.slotDuration }}min
+                                {{ doctor.scheduleStart | slice:0:5 }}–{{ doctor.scheduleEnd | slice:0:5 }} · {{
+                                doctor.slotDuration }}min
                             </p>
-                            <!-- Días laborables -->
                             <p class="schedule-days">{{ formatDays(doctor.activeDays) }}</p>
                         </div>
                     </div>
@@ -74,7 +71,6 @@
         <ng-container *ngIf="step() === 2">
             <div class="card-header space-between">
                 <h3 class="step-title">Selecciona una fecha</h3>
-                <!-- Botón para volver al paso anterior -->
                 <button class="btn-link" (click)="goToStep(1)">← Cambiar</button>
             </div>
             <div class="card-body">
@@ -83,12 +79,26 @@
                     Especialista: Dr(a). {{ selectedDoctor()?.name }}
                 </div>
 
-                <!-- Carrusel de fechas disponibles -->
-                <div class="dates-carousel">
-                    <div class="date-box" *ngFor="let d of availableDates()" (click)="selectDate(d)">
+                <!-- VERSIÓN DESKTOP: Carrusel horizontal -->
+                <div class="dates-carousel desktop-view">
+                    <div class="date-box" *ngFor="let d of availableDates()" (click)="selectDate(d)"
+                        [class.selected]="selectedDate() === d">
                         <span class="day-name">{{ d.dayName }}</span>
                         <span class="day-num">{{ d.dayNum }}</span>
                         <span class="month-name">{{ d.monthName }}</span>
+                    </div>
+                </div>
+
+                <!-- VERSIÓN MÓVIL/TABLET: Grid vertical -->
+                <div class="dates-grid mobile-view">
+                    <div class="date-item" *ngFor="let d of availableDates()" (click)="selectDate(d)"
+                        [class.selected]="selectedDate() === d">
+                        <div class="date-info">
+                            <span class="date-day">{{ d.dayName }}</span>
+                            <span class="date-number">{{ d.dayNum }}</span>
+                            <span class="date-month">{{ d.monthName }}</span>
+                        </div>
+                        <div class="date-arrow">→</div>
                     </div>
                 </div>
             </div>
@@ -98,23 +108,20 @@
         <ng-container *ngIf="step() === 3">
             <div class="card-header space-between">
                 <h3 class="step-title">Elige franja horaria</h3>
-                <!-- Botón para volver al paso anterior -->
                 <button class="btn-link" (click)="goToStep(2)">← Cambiar</button>
             </div>
             <div class="card-body">
-                <!-- Banner con médico y fecha seleccionados -->
-                <div class="selected-context-banner light-blue">
+                <div class="selected-context-banner">
                     Dr(a). {{ selectedDoctor()?.name }} — {{ getFullDateHuman() }}
                 </div>
 
-                <!-- Grid de horarios disponibles -->
                 <div class="slots-grid" *ngIf="availableSlots().length > 0">
-                    <button class="slot-btn" *ngFor="let slot of availableSlots()" (click)="selectTime(slot)">
+                    <button class="slot-btn" *ngFor="let slot of availableSlots()" (click)="selectTime(slot)"
+                        [class.selected]="selectedTime() === slot">
                         {{ slot }}
                     </button>
                 </div>
 
-                <!-- Mensaje cuando no hay horarios disponibles -->
                 <div class="empty-state" *ngIf="availableSlots().length === 0">
                     <p>No hay franjas disponibles para esta fecha.</p>
                 </div>
@@ -125,12 +132,10 @@
         <ng-container *ngIf="step() === 4">
             <div class="card-header space-between">
                 <h3 class="step-title">Confirmar cita</h3>
-                <!-- Botón para volver al paso anterior (oculto mientras se envía) -->
                 <button class="btn-link" (click)="goToStep(3)" *ngIf="!isSubmitting()">← Cambiar</button>
             </div>
             <div class="card-body">
-                <!-- Banner de resumen verde con información de la cita -->
-                <div class="summary-banner green-banner">
+                <div class="summary-banner">
                     <div class="summary-row space-between p-bot">
                         <div class="summary-doctor">
                             <span class="icon">🧑‍⚕️</span> Dr(a). {{ selectedDoctor()?.name }}
@@ -144,17 +149,14 @@
                     </div>
                 </div>
 
-                <!-- Tarjeta con información del paciente autenticado -->
                 <div class="patient-box">
                     <h4>{{ auth.user()?.firstName }} {{ auth.user()?.lastName }}</h4>
                     <p>Doc: {{ auth.user()?.document }} · {{ auth.user()?.phone }}</p>
                 </div>
 
-                <!-- Mensajes de error y éxito -->
                 <div *ngIf="errorMessage()" class="alert alert-error">{{ errorMessage() }}</div>
                 <div *ngIf="successMessage()" class="alert alert-success">{{ successMessage() }}</div>
 
-                <!-- Botón de confirmación -->
                 <div class="form-actions">
                     <button class="btn btn-primary full-width" (click)="confirmAppointment()"
                         [disabled]="isSubmitting() || successMessage() !== ''">

@@ -1,36 +1,43 @@
 :host {
     display: block;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 .doctor-view-container {
-    padding: 2rem;
+    padding: 1rem;
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    box-sizing: border-box;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 /* ============================================
-   ESTADÍSTICAS 
+   ESTADÍSTICAS — 2 columnas en móvil
    ============================================ */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    width: 100%;
 }
 
 .stat-card {
     background: #ffffff;
     border: 2px solid transparent;
-    /* Reserva espacio para evitar saltos de layout */
     border-radius: 12px;
-    padding: 1.5rem 1rem;
+    padding: 0.875rem 0.75rem;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    text-align: center;
+    gap: 0.75rem;
+    text-align: left;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .stat-card:hover {
@@ -38,29 +45,33 @@
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* Icono: hereda automáticamente el color del borde */
 .stat-icon {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 0.5rem;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
     color: inherit;
 }
 
-/* Etiqueta: mayúsculas, pequeña y espaciada */
+.stat-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
 .stat-label {
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.5rem;
+    letter-spacing: 0.4px;
+    margin-bottom: 0.1rem;
     color: inherit;
+    line-height: 1.2;
 }
 
-/* Número: grande, bold y al fondo */
 .stat-value {
-    font-size: 2.25rem;
+    font-size: 1.5rem;
     font-weight: 800;
-    line-height: 1;
+    line-height: 1.1;
     color: inherit;
 }
 
@@ -163,14 +174,16 @@
    ============================================ */
 .top-header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 2rem;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
 }
 
 .header-title p {
     color: #64748b;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     margin: 0;
 }
 
@@ -189,11 +202,11 @@
 }
 
 /* ============================================
-   SEARCH BAR
+   SEARCH BAR — ancho completo en móvil
    ============================================ */
 .search-container {
-    margin-bottom: 2rem;
-    max-width: 500px;
+    margin-bottom: 1.5rem;
+    width: 100%;
     display: flex;
     gap: 0.5rem;
 }
@@ -280,21 +293,23 @@
     border-radius: 12px;
     border: 1px solid #e2e8f0;
     display: flex;
-    align-items: stretch;
+    flex-direction: column;
     position: relative;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .date-box {
-    padding: 1.5rem;
+    padding: 0.875rem 1rem;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    min-width: 140px;
-    border-right: 1px solid #e2e8f0;
+    gap: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    border-right: none;
 }
 
 .date-badge {
@@ -334,20 +349,18 @@
 
 .content-area {
     flex: 1;
-    padding: 1.5rem;
+    padding: 1rem;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 2rem;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 0;
 }
 
 /* ============================================
    PATIENT INFO & DETAILS
    ============================================ */
 .patient-info {
-    flex: 1;
-    min-width: 250px;
+    width: 100%;
 }
 
 .patient-info-header {
@@ -358,32 +371,32 @@
 
 .patient-info-header svg {
     margin-top: 2px;
+    flex-shrink: 0;
 }
 
 .patient-info-header h3 {
-    margin: 0 0 0.4rem 0;
+    margin: 0 0 0.3rem 0;
     color: #1e293b;
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .patient-info-header .cc {
     margin: 0 0 0.2rem 0;
     color: #64748b;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .patient-info-header .phone {
     margin: 0;
     color: #64748b;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     display: flex;
     align-items: center;
     gap: 0.3rem;
 }
 
 .details-info {
-    flex: 2;
-    min-width: 300px;
+    width: 100%;
 }
 
 .detail-block {
@@ -431,36 +444,78 @@
 
 
 /* ============================================
-   RESPONSIVE
+   RESPONSIVE BREAKPOINTS
    ============================================ */
-@media (max-width: 768px) {
-    .doctor-view-container {
-        padding: 1rem;
+
+/* Tablet (≥640px): stats 4 columnas, card horizontal */
+@media (min-width: 640px) {
+    .search-container {
+        max-width: 500px;
     }
 
     .stats-grid {
-        grid-template-columns: 1fr 1fr !important;
+        grid-template-columns: repeat(4, 1fr);
     }
 
-    .content-area {
+    .stat-card {
         flex-direction: column;
-        gap: 1.5rem !important;
+        text-align: center;
+        align-items: center;
+        padding: 1.25rem 0.75rem;
     }
 
-    .date-box {
-        border-right: none !important;
-        border-bottom: 1px solid #e2e8f0;
-        width: 100%;
-        flex-direction: row !important;
-        justify-content: flex-start !important;
-        gap: 1.5rem;
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 0.5rem;
     }
 
-    .date-box>div:first-child {
-        margin-bottom: 0 !important;
+    .stat-value {
+        font-size: 1.8rem;
+    }
+}
+
+/* Desktop (≥1024px): card horizontal con date-box lateral */
+@media (min-width: 1024px) {
+    .doctor-view-container {
+        padding: 2rem;
     }
 
     .history-card {
+        flex-direction: row;
+        align-items: stretch;
+    }
+
+    .date-box {
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+        border-right: 1px solid #e2e8f0;
+        border-bottom: none;
+        padding: 1.5rem;
+        gap: 0;
+    }
+
+    .content-area {
+        flex-direction: row;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .patient-info {
+        flex: 1;
+        min-width: 220px;
+    }
+
+    .details-info {
+        flex: 2;
+        min-width: 260px;
+    }
+
+    .stat-value {
+        font-size: 2.25rem;
     }
 }

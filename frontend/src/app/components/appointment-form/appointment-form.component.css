@@ -1,19 +1,20 @@
 /* ============================================
    APPOINTMENT FORM - MOBILE FIRST & ACCESSIBLE
-   (Colores exactos del Código 1 + Estructura unificada)
    ============================================ */
 
+/* Contenedor principal del formulario de citas */
 .appointment-form-wrapper {
     padding: 0.5rem 0;
 }
 
-/* Layout base (Móvil) */
+/* Layout base (Móvil) - dos columnas */
 .two-column-layout {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
+/* Columna izquierda y derecha */
 .column-left,
 .column-right {
     flex: 1;
@@ -25,6 +26,8 @@
 /* ============================================
    CARDS & TITLES
    ============================================ */
+
+/* Tarjeta blanca con sombra */
 .card {
     background: #ffffff;
     border-radius: 12px;
@@ -32,6 +35,7 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
+/* Título dentro de las tarjetas */
 .card-title {
     margin: 0 0 1.5rem 0;
     color: #1e3a6a;
@@ -44,18 +48,22 @@
 /* ============================================
    FORMS & INPUTS
    ============================================ */
+
+/* Grid del formulario - diseño vertical */
 .form-grid {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
 }
 
+/* Contenedor de cada campo del formulario */
 .form-field {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
+/* Etiqueta del campo */
 .form-field label {
     font-size: 0.8rem;
     font-weight: 700;
@@ -64,6 +72,7 @@
     letter-spacing: 1px;
 }
 
+/* Inputs y selects */
 .form-field input,
 .form-field select {
     padding: 0.8rem 1rem;
@@ -76,14 +85,17 @@
     transition: all 0.2s;
     min-height: 48px;
     width: 100%;
+    box-sizing: border-box;
 }
 
+/* Estado focus de inputs */
 .form-field input:focus,
 .form-field select:focus {
     border-color: #1e3a6a;
     box-shadow: 0 0 0 3px rgba(30, 58, 106, 0.1);
 }
 
+/* Contenedor para input con botón al lado */
 .input-with-button {
     display: flex;
     gap: 0.5rem;
@@ -93,6 +105,7 @@
     flex: 1;
 }
 
+/* Botón de búsqueda */
 .btn-buscar {
     background: #e2e8f0;
     color: #475569;
@@ -109,13 +122,14 @@
     background: #cbd5e1;
 }
 
-/* Base mobile: 1 columna */
+/* Base mobile: 1 columna para inputs divididos */
 .split-inputs {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.75rem;
 }
 
+/* Fila del formulario - mobile por defecto */
 .form-row {
     display: grid;
     grid-template-columns: 1fr;
@@ -125,12 +139,15 @@
 /* ============================================
    DOCTOR SELECTION
    ============================================ */
+
+/* Grid de tarjetas de médicos - mobile 1 columna */
 .doctors-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
 }
 
+/* Tarjeta individual de médico */
 .doctor-box {
     background: #ffffff;
     border: 1px solid #e2e8f0;
@@ -145,18 +162,21 @@
     transition: all 0.2s;
 }
 
+/* Efecto hover en tarjeta de médico */
 .doctor-box:hover {
     border-color: #9bbfd7;
     box-shadow: 0 4px 12px rgba(155, 191, 215, 0.2);
     transform: translateY(-2px);
 }
 
+/* Tarjeta de médico seleccionada */
 .doctor-box.selected {
     background: #f8fafc;
     border-color: #1a3972;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
+/* Avatar del médico */
 .doctor-avatar {
     width: 40px;
     height: 40px;
@@ -169,12 +189,14 @@
     font-weight: 700;
 }
 
+/* Información del médico */
 .doctor-info h4 {
     margin: 0;
     font-size: 0.95rem;
     color: #1e293b;
 }
 
+/* Especialidad del médico */
 .doctor-info .specialty {
     margin: 0;
     font-size: 0.8rem;
@@ -184,6 +206,8 @@
 /* ============================================
    MESSAGES & UTILS
    ============================================ */
+
+/* Clase base para alertas */
 .alert {
     padding: 1rem;
     border-radius: 8px;
@@ -191,24 +215,29 @@
     margin-top: 1rem;
 }
 
+/* Alerta de éxito */
 .alert-success {
     background: #f0fdf4;
     color: #15803d;
 }
 
+/* Alerta de error */
 .alert-error {
     background: #fef2f2;
     color: #b91c1c;
 }
 
+/* Utilidad para ancho completo */
 .full-width {
     width: 100%;
 }
 
+/* Margen superior de 1rem */
 .mt-1rem {
     margin-top: 1rem;
 }
 
+/* Margen superior de 1.5rem */
 .mt-1\.5rem {
     margin-top: 1.5rem;
 }
@@ -216,11 +245,14 @@
 /* ============================================
    VALIDATION STYLES
    ============================================ */
+
+/* Clase para input con error */
 .input-error {
     border-color: #ef4444 !important;
     background-color: #fef2f2 !important;
 }
 
+/* Mensaje de validación */
 .validation-message {
     color: #ef4444;
     font-size: 0.75rem;
@@ -234,12 +266,15 @@
 /* ============================================
    RESPONSIVE BREAKPOINTS
    ============================================ */
+
+/* Pantallas muy pequeñas (ancho mínimo 350px) */
 @media (min-width: 350px) {
     .doctors-grid {
         grid-template-columns: 1fr 1fr;
     }
 }
 
+/* Móvil pequeño (ancho mínimo 480px) */
 @media (min-width: 480px) {
     .split-inputs {
         grid-template-columns: 1fr 1fr;
@@ -250,10 +285,163 @@
     }
 }
 
+/* Tablet (ancho mínimo 768px) */
+@media (min-width: 768px) {
+    .appointment-form-wrapper {
+        padding: 1rem 0;
+    }
+
+    .card {
+        padding: 1.75rem;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+    }
+
+    .form-grid {
+        gap: 1.5rem;
+    }
+
+    .form-field label {
+        font-size: 0.85rem;
+    }
+
+    .form-field input,
+    .form-field select {
+        padding: 0.9rem 1.1rem;
+        font-size: 1rem;
+        min-height: 52px;
+    }
+
+    .btn-buscar {
+        min-height: 52px;
+        padding: 0 1.5rem;
+    }
+
+    .doctors-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .doctor-box {
+        padding: 1.25rem;
+    }
+
+    .doctor-avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 1.1rem;
+    }
+
+    .doctor-info h4 {
+        font-size: 1rem;
+    }
+
+    .doctor-info .specialty {
+        font-size: 0.85rem;
+    }
+}
+
+/* Desktop (ancho mínimo 1024px) - Layout de dos columnas */
 @media (min-width: 1024px) {
     .two-column-layout {
         flex-direction: row;
         align-items: flex-start;
         gap: 2rem;
+    }
+
+    .appointment-form-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .card {
+        padding: 2rem;
+    }
+
+    .card-title {
+        font-size: 1.3rem;
+        margin-bottom: 1.75rem;
+    }
+}
+
+/* Desktop grande (ancho mínimo 1440px) */
+@media (min-width: 1440px) {
+    .two-column-layout {
+        gap: 2.5rem;
+    }
+
+    .card {
+        padding: 2.25rem;
+    }
+
+    .form-field input,
+    .form-field select {
+        padding: 1rem 1.25rem;
+        font-size: 1.05rem;
+        min-height: 56px;
+    }
+
+    .btn-buscar {
+        min-height: 56px;
+        font-size: 1rem;
+    }
+}
+
+/* Ajustes para móvil vertical muy pequeño (ancho máximo 340px) */
+@media (max-width: 340px) {
+    .appointment-form-wrapper {
+        padding: 0.25rem 0;
+    }
+
+    .card {
+        padding: 1rem;
+    }
+
+    .card-title {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .form-field input,
+    .form-field select {
+        padding: 0.65rem 0.75rem;
+        font-size: 0.85rem;
+        min-height: 40px;
+    }
+
+    .btn-buscar {
+        min-height: 40px;
+        padding: 0 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .form-field label {
+        font-size: 0.7rem;
+    }
+
+    .doctor-box {
+        padding: 0.75rem;
+    }
+
+    .doctor-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 0.85rem;
+    }
+
+    .doctor-info h4 {
+        font-size: 0.85rem;
+    }
+
+    .doctor-info .specialty {
+        font-size: 0.7rem;
+    }
+
+    .alert {
+        padding: 0.75rem;
+        font-size: 0.8rem;
     }
 }
