@@ -36,6 +36,10 @@
     padding: 1.5rem 1rem;
     box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
     z-index: 10;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
 }
 
 .sidebar-brand {
@@ -112,7 +116,7 @@
     transition: all 0.2s;
     text-align: left;
     width: 100%;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .nav-item:hover {
@@ -206,7 +210,8 @@
 .dashboard-main {
     display: flex;
     flex-direction: column;
-
+    min-height: 100vh;
+    overflow-x: auto;
 }
 
 .dashboard-header {
@@ -224,13 +229,16 @@
 .dashboard-content {
     flex: 1;
     padding: 1rem 3rem 3rem 3rem;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
 }
 
 /* ============================================
    RESPONSIVE BREAKPOINTS
    ============================================ */
 
-/* Tablet (<= 992px) */
+/* Tablet (≤ 992px) */
 @media (max-width: 992px) {
     .dashboard-layout {
         grid-template-columns: 220px 1fr;
@@ -243,29 +251,21 @@
     }
 }
 
-/* Móvil y Tablet pequeña (<= 768px) */
+/* Móvil (≤ 768px) */
 @media (max-width: 768px) {
     .dashboard-layout {
         grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
     }
 
-    /* Sidebar se convierte en barra superior compacta */
     .sidebar {
-        padding: 0.85rem 1rem;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         position: relative;
+        height: auto;
+        padding: 0.85rem 1rem;
     }
 
     .sidebar-brand {
-        display: flex;
-        align-items: center;
         justify-content: space-between;
-        width: 100%;
         margin-bottom: 0;
-        padding: 0;
     }
 
     .logo-img {
@@ -277,79 +277,48 @@
         font-size: 1.15rem;
     }
 
-    .brand-sub {
-        font-size: 0.5rem;
-        margin-top: 0.1rem;
-    }
-
-
-    /* Navegación colapsada por defecto */
     .sidebar-nav {
-        margin-top: 0.6rem;
-        padding: 0.5rem 0;
         max-height: 0;
         overflow: hidden;
         opacity: 0;
-        transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
-        flex-direction: column;
-        gap: 0.4rem;
+        transition: all 0.35s ease;
     }
 
-    /* Se abre al agregar clase */
     .sidebar-nav.open {
         max-height: 600px;
         opacity: 1;
+        margin-top: 1rem;
     }
 
     .nav-item {
-        width: 100%;
-        padding: 0.8rem 1rem;
+        justify-content: center;
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 8px;
-        font-size: 0.95rem;
-        justify-content: center;
     }
 
-    /* Ocultar elementos innecesarios en móvil */
     .sidebar-section,
     .sidebar-spacer {
         display: none;
     }
 
-    /* Usuario alineado a la derecha en la barra superior */
     .sidebar-user {
         position: absolute;
-        top: calc(0.85rem + 22px);
-        transform: translateY(-50%);
+        top: 50%;
         right: 1rem;
+        transform: translateY(-50%);
         border-top: none;
         margin-top: 0;
         padding: 0;
-        z-index: 2;
-        flex-direction: row;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    /* Botón hamburguesa visible solo en móvil */
-    .mobile-menu-btn {
-        display: flex;
-        padding: 0.2rem;
-        margin-right: 0.5rem;
     }
 
     .user-details {
         display: none;
     }
 
-    @media (min-width: 480px) {
-        .user-details {
-            display: flex;
-        }
+    .mobile-menu-btn {
+        display: flex;
     }
 
-    /* Ajuste de padding en contenido principal */
     .dashboard-header {
         padding: 1.25rem 1rem;
     }
@@ -359,10 +328,10 @@
     }
 }
 
-/* Móvil pequeño (< 480px) */
+/* Móvil pequeño (≤ 480px) */
 @media (max-width: 480px) {
     .sidebar {
-        padding: 0.75rem 0.85rem;
+        padding: 0.75rem;
     }
 
     .logo-img {
@@ -370,24 +339,11 @@
         height: 40px;
     }
 
-    .brand-name {
-        font-size: 1.05rem;
-    }
-
-    .sidebar-user {
-        right: 1rem;
-    }
-
-    .nav-item {
-        padding: 0.75rem 0.85rem;
-        font-size: 0.9rem;
-    }
-
     .dashboard-header {
-        padding: 1rem 0.85rem;
+        padding: 1rem;
     }
 
     .dashboard-content {
-        padding: 0 0.85rem 1.5rem 0.85rem;
+        padding: 0 1rem 1.5rem 1rem;
     }
 }

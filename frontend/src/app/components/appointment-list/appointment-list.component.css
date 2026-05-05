@@ -1,436 +1,437 @@
 /* ============================================
-   APPOINTMENT LIST — BUSCAR CITAS
-   Mobile-first · Responsive · Piedrazul
+   APPOINTMENT LIST (SEARCH VIEW) - PREMIUM
+   Contenedor principal del componente
    ============================================ */
-
 :host {
     display: block;
     width: 100%;
     overflow-x: hidden;
 }
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
-/* ---------- Contenedor raíz ---------- */
-.al-container {
+.search-container {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 2rem;
     width: 100%;
 }
 
 /* ============================================
-   TOGGLE DE VISTA (pills centrados)
+   BOTONES DE VISTA (TODOS LOS MEDICOS)
    ============================================ */
-.al-toggle-group {
+.view-buttons {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.al-toggle-btn {
-    padding: 0.65rem 1.4rem;
-    border-radius: 50px;
-    border: 1.5px solid #CBD5E1;
-    background: #ffffff;
-    color: #475569;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-height: 48px;
-    white-space: nowrap;
-}
-
-.al-toggle-btn:hover:not(:disabled) {
-    border-color: #3E7BA6;
-    color: #3E7BA6;
-}
-
-.al-toggle-btn.al-toggle-active {
-    background: #1e3a6a;
-    border-color: #1e3a6a;
-    color: #ffffff;
-}
-
-.al-toggle-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-/* ============================================
-   CARD DE FILTROS
-   ============================================ */
-.al-filter-card {
-    background: #ffffff;
-    border: 1px solid #E2E8F0;
-    border-radius: 14px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.al-filter-row {
-    display: flex;
-    flex-direction: column;
     gap: 1rem;
-    align-items: stretch;
-}
-
-/* Campo de filtro */
-.al-filter-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    flex: 1;
-    min-width: 0;
-}
-
-.al-filter-field--date {
-    flex: 0 0 auto;
-}
-
-.al-field-label {
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: #c6ceda;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-}
-
-.al-field-input {
+    margin-bottom: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
     width: 100%;
-    padding: 0.7rem 0.9rem;
-    border: 1px solid #E2E8F0;
-    border-radius: 10px;
+}
+
+.btn-view {
+    background: transparent;
+    border: 2px solid #1e3a6a;
+    color: #1e3a6a;
+    padding: 0.7rem 1.6rem;
+    border-radius: 50px;
+    font-weight: 600;
     font-size: 0.9rem;
-    color: #1e293b;
-    background: #F8FAFC;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    min-height: 48px;
-    appearance: none;
-    -webkit-appearance: none;
-}
-
-.al-field-input:focus {
-    border-color: #3E7BA6;
-    box-shadow: 0 0 0 3px rgba(62, 123, 166, 0.12);
-    background: #ffffff;
-}
-
-/* Botón buscar */
-.al-btn-search {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 0.5rem;
-    background: #1e3a6a;
-    color: #ffffff;
-    border: none;
-    border-radius: 10px;
-    padding: 0.75rem 1.5rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-height: 48px;
-    white-space: nowrap;
-    align-self: flex-end;
-    width: 100%;
 }
 
-.al-btn-search:hover:not(:disabled) {
+.btn-view.active {
+    background: #1e3a6a;
+    color: white;
+    box-shadow: 0 4px 12px rgba(30, 58, 106, 0.3);
+}
+
+.btn-view:hover:not(.active) {
+    background: rgba(30, 58, 106, 0.08);
+    transform: translateY(-1px);
+    border-color: #1e3a6a;
+}
+
+.btn-view.active:hover {
     background: #152e4d;
     transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(30, 58, 106, 0.4);
 }
 
-.al-btn-search:disabled {
+.btn-view:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
 }
 
-/* Spinner */
-.al-spinner {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.4);
-    border-top-color: #ffffff;
-    border-radius: 50%;
-    animation: al-spin 0.7s linear infinite;
+/* ============================================
+   SEARCH BAR - DISEÑO ORIGINAL DE ESCRITORIO
+   ============================================ */
+.search-bar {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-end;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    width: 100%;
+    box-sizing: border-box;
+    /* padding no desborda el ancho */
 }
 
-@keyframes al-spin {
-    to {
-        transform: rotate(360deg);
-    }
+.search-field {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.search-field label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.search-field select,
+.search-field input {
+    padding: 0.8rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #1e293b;
+    outline: none;
+    background: #ffffff;
+    transition: all 0.2s;
+    min-height: 44px;
+    font-family: inherit;
+    width: 100%;
+    cursor: pointer;
+}
+
+.search-field select:focus,
+.search-field input:focus {
+    border-color: #1e3a6a;
+    box-shadow: 0 0 0 3px rgba(30, 58, 106, 0.1);
+}
+
+/* Flecha personalizada para selects */
+.search-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+}
+
+/* Campo de fecha con ancho fijo en desktop */
+.search-field.date-field {
+    max-width: 250px;
+    flex: none;
+}
+
+/* Botón de búsqueda */
+.btn-search {
+    background: #1e3a6a;
+    color: #ffffff;
+    border: none;
+    padding: 0 1.5rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 44px;
+    transition: background 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    /* nunca se encoge */
+}
+
+.btn-search:hover:not(:disabled) {
+    background: #152e4d;
+}
+
+.btn-search:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 /* ============================================
-   ESTADOS VACÍOS
+   EMPTY STATE
    ============================================ */
-.al-state-empty {
+.empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
-    padding: 2.5rem 1rem;
-    text-align: center;
-    color: #94A3B8;
-    font-size: 0.9rem;
-    background: #ffffff;
-    border: 1px solid #E2E8F0;
-    border-radius: 14px;
-}
-
-/* ============================================
-   CARD DE RESULTADOS
-   ============================================ */
-.al-results-card {
-    background: #ffffff;
-    border: 1px solid #E2E8F0;
-    border-radius: 14px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    overflow: hidden;
-}
-
-.al-results-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-}
-
-.al-results-title {
-    margin: 0;
+    padding: 3rem 1.5rem;
+    color: #94a3b8;
     font-size: 1rem;
-    font-weight: 700;
-    color: #0F172A;
+    background: #ffffff;
+    border-radius: 12px;
+    text-align: center;
 }
 
-/* Botón exportar */
-.al-btn-export {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 1rem;
-    background: #F1F5F9;
-    color: #475569;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    min-height: 36px;
-}
-
-.al-btn-export:hover {
-    background: #E2E8F0;
+.empty-icon {
+    margin-bottom: 1rem;
+    opacity: 0.5;
 }
 
 /* ============================================
-   TABLA (visible en tablet+)
+   RESULTS CARD & TABLE
    ============================================ */
-.al-table-wrapper {
-    display: none;
-    /* oculto en móvil, visible en tablet */
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+.results-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    box-sizing: border-box;
+    /* padding no desborda el ancho */
 }
 
-.al-table {
+.results-header {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 0.75rem;
+}
+
+.results-header h3 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE / Edge */
+}
+
+.table-container::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+}
+
+.styled-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 480px;
+    min-width: 500px;
 }
 
-.al-table th {
+.styled-table th,
+.styled-table td {
+    padding: 0.875rem 1rem;
     text-align: left;
-    padding: 0.65rem 0.75rem;
-    font-size: 0.68rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.styled-table th {
+    font-size: 0.75rem;
     font-weight: 700;
-    color: #94A3B8;
-    letter-spacing: 0.8px;
+    color: #94a3b8;
+    background: transparent;
     text-transform: uppercase;
-    border-bottom: 1px solid #F1F5F9;
-    white-space: nowrap;
+    letter-spacing: 0.5px;
 }
 
-.al-table td {
-    padding: 0.8rem 0.75rem;
-    font-size: 0.875rem;
-    color: #0F172A;
-    border-bottom: 1px solid #F8FAFC;
-    font-weight: 500;
+.styled-table td {
+    color: #334155;
+    font-size: 0.85rem;
 }
 
-.al-table-row:last-child td {
-    border-bottom: none;
+.appointment-row:hover {
+    background-color: #f8fafc;
+    cursor: pointer;
 }
 
-.al-table-row:hover td {
-    background: #F8FAFC;
-}
-
-/* ============================================
-   BADGES DE ESTADO
-   ============================================ */
-.al-badge {
+/* Badges de estado */
+.badge {
     display: inline-block;
     padding: 0.25rem 0.7rem;
-    border-radius: 50px;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    border: 1px solid transparent;
-}
-
-/* agendada */
-.al-badge--agendada {
-    background: #EFF6FF;
-    color: #1D4ED8;
-    border-color: #BFDBFE;
-}
-
-/* completada */
-.al-badge--completada {
-    background: #F0FDF4;
-    color: #15803D;
-    border-color: #BBF7D0;
-}
-
-/* cancelada */
-.al-badge--cancelada {
-    background: #FEF2F2;
-    color: #DC2626;
-    border-color: #FECACA;
-}
-
-/* pendiente */
-.al-badge--pendiente {
-    background: #FFFBEB;
-    color: #D97706;
-    border-color: #FDE68A;
-}
-
-/* desconocido / fallback */
-.al-badge--desconocido {
-    background: #F1F5F9;
-    color: #64748B;
-    border-color: #E2E8F0;
-}
-
-/* ============================================
-   CARDS MÓVIL (visible solo en móvil)
-   ============================================ */
-.al-mobile-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.al-appt-card {
-    border: 1px solid #E2E8F0;
-    border-radius: 10px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    background: #FAFBFF;
-}
-
-.al-appt-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-}
-
-.al-appt-time {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #1e3a6a;
-}
-
-.al-appt-patient {
-    font-size: 0.9rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
     font-weight: 600;
-    color: #0F172A;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.al-appt-doctor {
-    font-size: 0.8rem;
-    color: #64748B;
+.badge-scheduled,
+.badge-programada {
+    background-color: #e0e7ff;
+    color: #3730a3;
 }
 
-.al-appt-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    font-size: 0.8rem;
-    color: #64748B;
-    margin-top: 0.2rem;
+.badge-completed,
+.badge-completada {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge-cancelled,
+.badge-cancelada {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.badge-pendiente {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.badge-confirmada {
+    background-color: #d1fae5;
+    color: #065f46;
 }
 
 /* ============================================
-   RESPONSIVE
+   RESPONSIVE - SOLO PARA MÓVIL
    ============================================ */
 
-/* Tablet (≥640px): fila horizontal en filtros */
-@media (min-width: 640px) {
-    .al-filter-row {
-        flex-direction: row;
-        align-items: flex-end;
-    }
-
-    .al-btn-search {
-        width: auto;
-        flex-shrink: 0;
-    }
-
-    .al-filter-field--date {
-        min-width: 160px;
-    }
-}
-
-/* Tablet (≥768px): mostrar tabla, ocultar cards */
-@media (min-width: 768px) {
-    .al-table-wrapper {
-        display: block;
-    }
-
-    .al-mobile-cards {
-        display: none;
-    }
-
-    .al-results-card {
-        padding: 1.5rem;
-    }
-
-    .al-filter-card {
-        padding: 1.5rem;
-    }
-}
-
-/* Desktop (≥1024px) */
-@media (min-width: 1024px) {
-    .al-container {
+/* Móvil (ancho máximo 768px) */
+@media (max-width: 768px) {
+    .search-container {
         gap: 1.5rem;
     }
 
-    .al-results-title {
-        font-size: 1.1rem;
+    /* Barra de búsqueda vertical en móvil */
+    .search-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    /* El campo de fecha ya no tiene ancho fijo */
+    .search-field.date-field {
+        max-width: 100%;
+    }
+
+    /* Botón de búsqueda ancho completo en móvil */
+    .btn-search {
+        justify-content: center;
+        width: 100%;
+        padding: 0.75rem;
+        height: auto;
+        min-height: 44px;
+    }
+
+    /* Botones de vista apilados en móvil muy pequeño */
+    .view-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .btn-view {
+        justify-content: center;
+        width: 100%;
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    /* Resultados */
+    .results-card {
+        padding: 1rem;
+    }
+
+    .results-header h3 {
+        font-size: 1rem;
+    }
+
+    .styled-table th,
+    .styled-table td {
+        padding: 0.7rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    .badge {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.65rem;
+    }
+}
+
+/* Móvil muy pequeño (ancho máximo 480px) */
+@media (max-width: 480px) {
+    .search-bar {
+        padding: 0.875rem;
+        gap: 0.875rem;
+    }
+
+    .search-field select,
+    .search-field input {
+        padding: 0.65rem 0.875rem;
+        font-size: 0.85rem;
+        min-height: 40px;
+    }
+
+    .search-field label {
+        font-size: 0.65rem;
+    }
+
+    .btn-search {
+        font-size: 0.85rem;
+        min-height: 42px;
+    }
+
+    .btn-view {
+        font-size: 0.8rem;
+        padding: 0.5rem 0.8rem;
+        min-height: 40px;
+    }
+
+    .styled-table th,
+    .styled-table td {
+        padding: 0.5rem 0.5rem;
+        font-size: 0.7rem;
+    }
+}
+
+/* Desktop (ancho mínimo 1024px) */
+@media (min-width: 1024px) {
+    .search-container {
+        gap: 1.5rem;
+
+    }
+
+    .view-buttons {
+        justify-content: center;
+    }
+
+    .search-bar {
+        padding: 1.25rem 1.75rem;
+        gap: 2rem;
+    }
+
+    .results-card {
+        padding: 1.5rem 1.75rem;
+    }
+
+    .styled-table th,
+    .styled-table td {
+        padding: 1rem 1.25rem;
+        font-size: 0.9rem;
+    }
+
+    .badge {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.75rem;
+    }
+
+    .search-field.date-field {
+        max-width: 220px;
     }
 }
