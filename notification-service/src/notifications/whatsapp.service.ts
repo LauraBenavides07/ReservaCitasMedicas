@@ -1,14 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 
-/**
- * Adaptador (puerto de salida) para la WhatsApp Cloud API de Meta.
- * Todos los envíos pasan por este servicio para facilitar el testing y la sustitución del proveedor.
- */
 @Injectable()
 export class WhatsAppService {
   private readonly logger = new Logger(WhatsAppService.name);
-
   private readonly phoneNumberId: string;
   private readonly accessToken: string;
   private readonly apiVersion = 'v19.0';
@@ -20,14 +15,6 @@ export class WhatsAppService {
     this.baseUrl = `https://graph.facebook.com/${this.apiVersion}/${this.phoneNumberId}/messages`;
   }
 
-  /**
-   * Envía un mensaje de texto libre al número indicado.
-   * En producción, Meta requiere usar plantillas aprobadas para mensajes
-   * iniciados por el negocio. Para pruebas, el sandbox permite texto libre.
-   *
-   * @param to   Número en formato internacional sin '+' (ej. 573001234567)
-   * @param body Texto del mensaje
-   */
   async sendTextMessage(to: string, body: string): Promise<void> {
     if (!this.phoneNumberId || !this.accessToken) {
       this.logger.warn(
@@ -37,7 +24,6 @@ export class WhatsAppService {
       return;
     }
 
-    // Normalizar número: quitar '+' y espacios
     const normalizedTo = to.replace(/[\s+\-]/g, '');
 
     try {
@@ -57,10 +43,14 @@ export class WhatsAppService {
         },
       );
       this.logger.log(`✅ WhatsApp message sent to ${normalizedTo}`);
-    } catch (error) {
-      const errMsg = error?.response?.data
-        ? JSON.stringify(error.response.data)
-        : error.message;
+    } catch (error: unknown) {
+      let errMsg: string;
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: unknown } };
+        errMsg = axiosError.response?.data ? JSON.stringify(axiosError.response.data) : 'Unknown error';
+      } else {
+        errMsg = error instanceof Error ? error.message : 'Unknown error';
+      }
       this.logger.error(`❌ WhatsApp send failed to ${normalizedTo}: ${errMsg}`);
       throw new Error(errMsg);
     }
