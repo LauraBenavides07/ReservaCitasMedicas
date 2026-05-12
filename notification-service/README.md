@@ -32,6 +32,9 @@ $ npm install @nestjs/config @nestjs/typeorm typeorm pg
 
 $ npm install nodemailer @types/nodemailer
 
+$ npm install -D jest @types/jest ts-jest
+
+
 ```
 
 ## Compile and run the project

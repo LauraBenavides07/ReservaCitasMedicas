@@ -8,22 +8,30 @@ export class WhatsAppService {
   private readonly accessToken: string;
   private readonly apiVersion = 'v19.0';
   private readonly baseUrl: string;
+  private readonly simulationMode: boolean;
 
   constructor() {
     this.phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID ?? '';
     this.accessToken = process.env.WHATSAPP_ACCESS_TOKEN ?? '';
     this.baseUrl = `https://graph.facebook.com/${this.apiVersion}/${this.phoneNumberId}/messages`;
+    
+    this.simulationMode = !this.phoneNumberId || !this.accessToken;
+    
+    if (this.simulationMode) {
+      this.logger.log('WhatsApp service running in SIMULATION mode');
+    } else {
+      this.logger.log('WhatsApp service configured with real API');
+    }
   }
 
   async sendTextMessage(to: string, body: string): Promise<void> {
-    if (!this.phoneNumberId || !this.accessToken) {
-      this.logger.warn(
-        'WhatsApp credentials not configured. Skipping send. ' +
-          `Set WHATSAPP_PHONE_NUMBER_ID and WHATSAPP_ACCESS_TOKEN in .env`,
-      );
+    // Modo simulación: solo mostrar log, sin error
+    if (this.simulationMode) {
+      this.logger.log(`[SIMULACION WHATSAPP] Mensaje para ${to}: ${body.substring(0, 80)}...`);
       return;
     }
 
+    // Modo real (solo si hay credenciales)
     const normalizedTo = to.replace(/[\s+\-]/g, '');
 
     try {
@@ -42,8 +50,9 @@ export class WhatsAppService {
           },
         },
       );
-      this.logger.log(`✅ WhatsApp message sent to ${normalizedTo}`);
+      this.logger.log(`WhatsApp message sent to ${normalizedTo}`);
     } catch (error: unknown) {
+      // En modo real, si falla, solo logueamos el error pero no lo propagamos
       let errMsg: string;
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as { response?: { data?: unknown } };
@@ -51,8 +60,8 @@ export class WhatsAppService {
       } else {
         errMsg = error instanceof Error ? error.message : 'Unknown error';
       }
-      this.logger.error(`❌ WhatsApp send failed to ${normalizedTo}: ${errMsg}`);
-      throw new Error(errMsg);
+      this.logger.warn(`WhatsApp send failed (real mode) to ${normalizedTo}: ${errMsg}`);
+      // No lanzamos error para no interrumpir el flujo
     }
   }
 }

@@ -100,6 +100,10 @@ cd frontend
 npx vitest run
 ```
 
+## Correos de prueba para microservicio-Notificacines
+pacientep26@gmail.com
+
+
 ## Características Clave
 - **Accesibilidad**: Texto de 18px+, botones de 48px+, contraste WCAG AAA.
 - **Búsqueda de Pacientes**: En el dashboard de admin, puedes buscar pacientes existentes por documento para agilizar el agendamiento.

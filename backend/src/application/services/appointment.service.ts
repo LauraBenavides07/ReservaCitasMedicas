@@ -146,7 +146,7 @@ export class AppointmentService {
     });
 
     const saved = await this.appointmentRepository.save(appointment);
-
+   
     // Publicar evento fire-and-forget hacia RabbitMQ
     this.notificationClient.emit('appointment.created', {
       appointmentId: saved.id,
@@ -332,71 +332,89 @@ export class AppointmentService {
    * Requisito 3: Reagendar cita (Paciente)
    */
   async reschedule(id: string, patientId: string, date: string, time: string) {
-    const appointment = await this.appointmentRepository.findOne({
-      where: { id },
-      relations: ['patient', 'doctor'],
+  const appointment = await this.appointmentRepository.findOne({
+    where: { id },
+    relations: ['patient', 'doctor'],
+  });
+
+  if (!appointment) {
+    throw new NotFoundException('Cita no encontrada.');
+  }
+
+  if (appointment.patient.id !== patientId) {
+    throw new UnauthorizedException(
+      'No tienes permiso para modificar esta cita.',
+    );
+  }
+
+  // Verificar disponibilidad del NUEVO horario
+  const existing = await this.appointmentRepository.findOneBy({
+    doctor: { id: appointment.doctor.id },
+    appointmentDate: date,
+    appointmentTime: time,
+  });
+
+  if (existing && existing.id !== id) {
+    throw new ConflictException('El nuevo horario elegido ya está ocupado.');
+  }
+
+  // Regla de Negocio: Ventana de tiempo (igual que al crear)
+  const config = await this.configService.getConfig();
+  const minAdvanceHours = config?.minAdvanceHours ?? 2;
+  const appointmentWindowDays = config?.appointmentWindowDays ?? 15;
+
+  const now = new Date();
+  const newAppDate = new Date(`${date}T${time}`);
+
+  const diffHours = (newAppDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+  if (diffHours < minAdvanceHours) {
+    throw new BadRequestException(
+      `Debe reagendar con al menos ${minAdvanceHours} horas de antelación.`,
+    );
+  }
+
+  const horizonDate = new Date();
+  horizonDate.setDate(now.getDate() + appointmentWindowDays);
+  if (newAppDate > horizonDate) {
+    throw new BadRequestException(
+      `No se puede reagendar con más de ${appointmentWindowDays} días de antelación.`,
+    );
+  }
+
+  // Regla de Negocio: Excepciones del médico
+  const exception = await this.doctorExceptionRepository.findOneBy({
+    doctorId: appointment.doctor.id,
+    date: date,
+  });
+  if (exception) {
+    throw new BadRequestException(
+      `El médico no atiende este día: ${exception.reason || 'No disponible'}`,
+    );
+  }
+
+  appointment.appointmentDate = date;
+  appointment.appointmentTime = time;
+  appointment.status = 'agendada';
+
+  const saved = await this.appointmentRepository.save(appointment);
+  
+  const fullAppointment = await this.appointmentRepository.findOne({
+    where: { id: saved.id },
+    relations: ['patient', 'doctor'],
+  });
+  if (fullAppointment) {
+    this.notificationClient.emit('appointment.rescheduled', {
+      appointmentId: fullAppointment.id,
+      patientName: `${fullAppointment.patient.firstName} ${fullAppointment.patient.lastName}`,
+      patientPhone: fullAppointment.patient.phone,
+      doctorName: fullAppointment.doctor.name,
+      appointmentDate: fullAppointment.appointmentDate,
+      appointmentTime: fullAppointment.appointmentTime,
     });
-
-    if (!appointment) {
-      throw new NotFoundException('Cita no encontrada.');
-    }
-
-    if (appointment.patient.id !== patientId) {
-      throw new UnauthorizedException(
-        'No tienes permiso para modificar esta cita.',
-      );
-    }
-
-    // Verificar disponibilidad del NUEVO horario
-    const existing = await this.appointmentRepository.findOneBy({
-      doctor: { id: appointment.doctor.id },
-      appointmentDate: date,
-      appointmentTime: time,
-    });
-
-    if (existing && existing.id !== id) {
-      throw new ConflictException('El nuevo horario elegido ya está ocupado.');
-    }
-
-    // Regla de Negocio: Ventana de tiempo (igual que al crear)
-    const config = await this.configService.getConfig();
-    const minAdvanceHours = config?.minAdvanceHours ?? 2;
-    const appointmentWindowDays = config?.appointmentWindowDays ?? 15;
-
-    const now = new Date();
-    const newAppDate = new Date(`${date}T${time}`);
-
-    const diffHours = (newAppDate.getTime() - now.getTime()) / (1000 * 60 * 60);
-    if (diffHours < minAdvanceHours) {
-      throw new BadRequestException(
-        `Debe reagendar con al menos ${minAdvanceHours} horas de antelación.`,
-      );
-    }
-
-    const horizonDate = new Date();
-    horizonDate.setDate(now.getDate() + appointmentWindowDays);
-    if (newAppDate > horizonDate) {
-      throw new BadRequestException(
-        `No se puede reagendar con más de ${appointmentWindowDays} días de antelación.`,
-      );
-    }
-
-    // Regla de Negocio: Excepciones del médico
-    const exception = await this.doctorExceptionRepository.findOneBy({
-      doctorId: appointment.doctor.id,
-      date: date,
-    });
-    if (exception) {
-      throw new BadRequestException(
-        `El médico no atiende este día: ${exception.reason || 'No disponible'}`,
-      );
-    }
-
-    appointment.appointmentDate = date;
-    appointment.appointmentTime = time;
-    appointment.status = 'agendada'; // Asegurar que pase de cancelada a agendada si fuera el caso
-
-    return this.appointmentRepository.save(appointment);
+  }
+  
+  
+  return saved;
   }
 
   async exportAppointmentsByDateAndDoctor(
