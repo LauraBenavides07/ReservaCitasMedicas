@@ -435,3 +435,39 @@
         max-width: 220px;
     }
 }
+/* ============================================
+   ESTILOS PARA SWEETALERT2
+   ============================================ */
+
+.swal2-popup.custom-popup {
+    border-radius: 16px !important;
+    padding: 1.5rem !important;
+}
+
+.swal2-title.custom-title {
+    color: #1e293b !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-weight: 700 !important;
+}
+
+.swal2-confirm.custom-confirm-btn {
+    background-color: #1e3a6a !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.5rem !important;
+    font-weight: 600 !important;
+}
+
+.swal2-confirm.custom-confirm-btn:hover {
+    background-color: #0d2c5b !important;
+}
+
+.swal2-confirm.custom-success-btn {
+    background-color: #10b981 !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.5rem !important;
+    font-weight: 600 !important;
+}
+
+.swal2-confirm.custom-success-btn:hover {
+    background-color: #059669 !important;
+}

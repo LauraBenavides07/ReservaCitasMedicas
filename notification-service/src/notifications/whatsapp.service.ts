@@ -25,7 +25,6 @@ export class WhatsAppService {
   }
 
   async sendTextMessage(to: string, body: string): Promise<void> {
-    // Modo simulación: solo mostrar log, sin error
     if (this.simulationMode) {
       this.logger.log(`[SIMULACION WHATSAPP] Mensaje para ${to}: ${body.substring(0, 80)}...`);
       return;
@@ -52,7 +51,6 @@ export class WhatsAppService {
       );
       this.logger.log(`WhatsApp message sent to ${normalizedTo}`);
     } catch (error: unknown) {
-      // En modo real, si falla, solo logueamos el error pero no lo propagamos
       let errMsg: string;
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as { response?: { data?: unknown } };
@@ -61,7 +59,7 @@ export class WhatsAppService {
         errMsg = error instanceof Error ? error.message : 'Unknown error';
       }
       this.logger.warn(`WhatsApp send failed (real mode) to ${normalizedTo}: ${errMsg}`);
-      // No lanzamos error para no interrumpir el flujo
+
     }
   }
 }

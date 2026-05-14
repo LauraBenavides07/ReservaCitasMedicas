@@ -13,7 +13,7 @@ async function bootstrap() {
       options: {
         urls: [
           process.env.RABBITMQ_URL ||
-            'amqp://piedrazul:piedrazul_pass@localhost:5672',
+            'amqp://guest:guest@localhost:5672',
         ],
         queue: 'notifications_queue',        
         queueOptions: {

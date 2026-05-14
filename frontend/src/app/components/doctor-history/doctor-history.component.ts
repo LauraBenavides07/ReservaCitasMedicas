@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { AppointmentService, Appointment } from '../../services/appointment.service';
 import { DoctorService } from '../../services/doctor.service';
+import Swal from 'sweetalert2';
 
 interface HistoryDisplay {
   id: string;
@@ -147,6 +148,7 @@ export class DoctorHistoryComponent implements OnInit {
       error: (err) => {
         console.error('Error al cargar historial:', err);
         if (this.appointments.length === 0) this.isLoading = false;
+        this.showErrorModal('error', 'Error al cargar el historial de citas.');
       }
     });
   }
@@ -175,25 +177,67 @@ export class DoctorHistoryComponent implements OnInit {
       this.filterAppointments();
   }
 
-  exportCSV() {
-      if (!this.filteredAppointments.length) {
-          alert("No hay datos para exportar.");
-          return;
-      }
-      
-      let csvContent = "Fecha,Hora,Paciente,Documento,Estado\n";
-      this.filteredAppointments.forEach(a => {
-          csvContent += `${a.date},${a.time},${a.patientName},${a.document},${a.status}\n`;
+  exportCSV(): void {
+    if (!this.filteredAppointments.length) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Sin datos para exportar',
+            text: 'No hay registros en el historial para exportar.',
+            customClass: {
+                popup: 'custom-popup',
+                title: 'custom-title',
+                confirmButton: 'custom-confirm-btn'
+            },
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+    
+    
+    // Generar CSV 
+    let csvContent = "Fecha,Hora,Paciente,Documento,Estado\n";
+    this.filteredAppointments.forEach(a => {
+        csvContent += `${a.date},${a.time},${a.patientName},${a.document},${a.status}\n`;
+    });
+    
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "historial_citas.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    Swal.fire({
+        icon: 'success',
+        title: 'Exportación exitosa',
+        text: 'El archivo CSV se ha descargado correctamente.',
+        customClass: {
+            popup: 'custom-popup',
+            title: 'custom-title',
+            confirmButton: 'custom-success-btn'
+        },
+        confirmButtonText: 'Aceptar',
+        showConfirmButton: true,
+        timer: undefined,
+        timerProgressBar: false
+    });
+  }
+
+  private showErrorModal(title: string, message: string): void {
+      Swal.fire({
+          icon: 'error',
+          title: title,
+          text: message,
+          customClass: {
+              popup: 'custom-popup',
+              title: 'custom-title',
+              confirmButton: 'custom-confirm-btn'
+          },
+          confirmButtonText: 'Entendido'
       });
-      
-      const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", "historial_citas.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
   }
 
   getStatusClass(status: string): string {

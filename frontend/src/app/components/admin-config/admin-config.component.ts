@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { DoctorService, Doctor } from '../../services/doctor.service';
 import { ConfigService, GlobalConfig } from '../../services/config.service';
 import { AppointmentService } from '../../services/appointment.service';
-
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-admin-config',
   standalone: true,
@@ -195,6 +195,41 @@ export class AdminConfigComponent implements OnInit {
   }
 
   // ============================================
+  // MODALES DE ÉXITO Y ERROR
+  // ============================================
+
+  private showSuccessModal(message: string): void {
+    Swal.fire({
+      icon: 'success',
+      title: 'Éxito',
+      text: message,
+      customClass: {
+        popup: 'custom-popup',
+        title: 'custom-title',
+        confirmButton: 'custom-success-btn'
+      },
+      confirmButtonText: 'Aceptar',
+      showConfirmButton: true,
+      timer: undefined,
+      timerProgressBar: false
+    });
+  }
+
+  private showErrorModal(message: string): void {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: message,
+      customClass: {
+        popup: 'custom-popup',
+        title: 'custom-title',
+        confirmButton: 'custom-confirm-btn'
+      },
+      confirmButtonText: 'Entendido'
+    });
+  }
+
+  // ============================================
   // Métodos auxiliares para la interfaz de usuario
   // ============================================
 
@@ -214,3 +249,5 @@ export class AdminConfigComponent implements OnInit {
     return daysStr.split(',').map(d => map[d.trim()]).filter(d => Boolean(d)).join(', ');
   }
 }
+
+ 
