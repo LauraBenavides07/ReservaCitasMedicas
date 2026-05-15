@@ -8,6 +8,30 @@ import { AuthService } from '../../services/auth.service';
 import { of, throwError } from 'rxjs';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
+beforeAll(() => {
+  // Mock para window.matchMedia (SweetAlert2 lo necesita)
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  });
+});
+
+vi.mock('sweetalert2', () => ({
+  default: {
+    fire: vi.fn().mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false }),
+  },
+}));
+
+
 describe('AppointmentFormComponent', () => {
   let component: AppointmentFormComponent;
   let fixture: ComponentFixture<AppointmentFormComponent>;
