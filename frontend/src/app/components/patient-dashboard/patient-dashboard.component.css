@@ -521,3 +521,62 @@
         padding: 2rem 1rem;
     }
 }
+/* ============================================
+   ESTILOS PARA SWEETALERT2
+   ============================================ */
+
+.swal2-popup.custom-popup {
+    border-radius: 16px !important;
+    padding: 1.5rem !important;
+}
+
+.swal2-title.custom-title {
+    color: #1e293b !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-weight: 700 !important;
+}
+
+.swal2-confirm.custom-confirm-btn {
+    background-color: #1e3a6a !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.5rem !important;
+    font-weight: 600 !important;
+}
+
+.swal2-confirm.custom-confirm-btn:hover {
+    background-color: #0d2c5b !important;
+}
+
+.swal2-confirm.custom-success-btn {
+    background-color: #10b981 !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.5rem !important;
+    font-weight: 600 !important;
+}
+
+.swal2-confirm.custom-success-btn:hover {
+    background-color: #059669 !important;
+}
+
+.swal2-confirm.custom-danger-btn {
+    background-color: #dc2626 !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.5rem !important;
+    font-weight: 600 !important;
+}
+
+.swal2-confirm.custom-danger-btn:hover {
+    background-color: #b91c1c !important;
+}
+
+.swal2-cancel.custom-cancel-btn {
+    background-color: #e2e8f0 !important;
+    color: #475569 !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.5rem !important;
+    font-weight: 600 !important;
+}
+
+.swal2-cancel.custom-cancel-btn:hover {
+    background-color: #cbd5e1 !important;
+}

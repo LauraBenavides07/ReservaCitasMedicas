@@ -1,6 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
+import { Logger } from '@nestjs/common';
+
+const logger = new Logger('Bootstrap');
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
@@ -10,20 +13,19 @@ async function bootstrap() {
       options: {
         urls: [
           process.env.RABBITMQ_URL ||
-            'amqp://piedrazul:piedrazul_pass@localhost:5672',
+            'amqp://guest:guest@localhost:5672',
         ],
-        queue: 'notifications_queue',
+        queue: 'notifications_queue',        
         queueOptions: {
-          durable: true,
+          durable: true,                    // La cola persiste si RabbitMQ reinicia
         },
-        // Prefetch 1: procesa un mensaje a la vez para no sobrecargar el API de WhatsApp
-        prefetchCount: 1,
-        noAck: false,
+        prefetchCount: 1,                  // Un mensaje a la vez
+        noAck: false,                      // Confirmación manual (ACK)
       },
     },
   );
 
   await app.listen();
-  console.log('🔔 Notification microservice is listening on RabbitMQ...');
+  logger.log('🔔 Microservicio de Notificaciones escuchando en RabbitMQ');
 }
 bootstrap();

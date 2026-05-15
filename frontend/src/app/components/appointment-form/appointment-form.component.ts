@@ -5,6 +5,7 @@ import { AppointmentService, CreateAppointmentDto } from '../../services/appoint
 import { DoctorService, Doctor } from '../../services/doctor.service';
 import { AuthService } from '../../services/auth.service';
 import { catchError, of } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-appointment-form',
@@ -100,7 +101,7 @@ export class AppointmentFormComponent implements OnInit {
           gender: patient.gender,
           email: patient.email
         });
-        this.successMessage.set('Paciente encontrado.');
+        this.showSuccessToast('Paciente encontrado correctamente.');
         setTimeout(() => this.successMessage.set(''), 3000);
       },
       error: () => {
@@ -152,19 +153,64 @@ export class AppointmentFormComponent implements OnInit {
       this.availableSlots.set([]);
     }
   }
+  // ============================================
+// TOASTS CON SweetAlert2
+// ============================================
+
+private showSuccessToast(message: string): void {
+    Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: message,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: '#1d86b7',
+        color: 'white'
+    });
+}
+
+private showErrorToast(message: string): void {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 4000,
+        timerProgressBar: true,
+        background: '#ef4444',
+        color: 'white'
+    });
+}
+
+private showInfoToast(message: string): void {
+    Swal.fire({
+        icon: 'info',
+        title: 'Información',
+        text: message,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        background: '#3b82f6',
+        color: 'white'
+    });
+}
 
   // Envío del formulario
   onSubmit(): void {
-
     if (this.appointmentForm.invalid) {
-      this.appointmentForm.markAllAsTouched();
-      this.errorMessage.set('Por favor, complete todos los campos obligatorios (*).');
-      
-      // Hacer scroll hacia arriba para que el usuario vea los errores
-      const wrapper = document.querySelector('.appointment-form-wrapper');
-      if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      
-      return;
+        this.appointmentForm.markAllAsTouched();
+        this.showErrorToast('Por favor, complete todos los campos obligatorios (*).');
+        
+        const wrapper = document.querySelector('.appointment-form-wrapper');
+        if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
     }
 
     this.isSubmitting.set(true);
@@ -172,52 +218,51 @@ export class AppointmentFormComponent implements OnInit {
     this.successMessage.set('');
 
     const formValue = this.appointmentForm.getRawValue();
+    const patientName = `${formValue.firstName} ${formValue.lastName}`;
+    const doctor = this.doctors().find(d => d.id === formValue.doctorId);
+    const doctorName = doctor?.name || 'médico';
 
-    // DTO para enviar al backend
     const dto: CreateAppointmentDto = {
-      patientDocument: formValue.patientDocument,
-      firstName: formValue.firstName,
-      lastName: formValue.lastName,
-      phone: formValue.phone,
-      gender: formValue.gender,
-      doctorId: formValue.doctorId,
-      date: formValue.date,
-      time: formValue.time
+        patientDocument: formValue.patientDocument,
+        firstName: formValue.firstName,
+        lastName: formValue.lastName,
+        phone: formValue.phone,
+        gender: formValue.gender,
+        doctorId: formValue.doctorId,
+        date: formValue.date,
+        time: formValue.time
     };
 
-    // Campos opcionales
     if (formValue.email) dto.email = formValue.email;
 
-    // Llamada al servicio
     this.appointmentService.createAppointment(dto).pipe(
-      catchError(err => {
-        this.errorMessage.set(err.error?.message || 'Error al crear la cita.');
-        this.isSubmitting.set(false);
-        return of(null);
-      })
+        catchError(err => {
+            this.showErrorToast(err.error?.message || 'Error al crear la cita.');
+            this.isSubmitting.set(false);
+            return of(null);
+        })
     ).subscribe(result => {
+        if (result) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Cita agendada con éxito!',
+                text: `Paciente: ${patientName}\nMédico: Dr(a). ${doctorName}\nFecha: ${formValue.date}\nHora: ${formValue.time}`,
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#1d86b7',
+                showConfirmButton: true,
+                timer: undefined
+            });
 
-      if (result) {
-        this.successMessage.set('✅ Cita agendada con éxito.');
-
-        // Reinicia formulario
-        this.appointmentForm.reset({
-          date: this.today,
-          doctorId: dto.doctorId
-        });
-
-        this.availableSlots.set([]);
-        this.loadAvailableSlots();
-        
-        // Hacer scroll hacia arriba para que el usuario vea el mensaje de éxito
-        const wrapper = document.querySelector('.appointment-form-wrapper');
-        if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        
-        // Opcional: ocultar el mensaje de éxito después de unos segundos
-        setTimeout(() => this.successMessage.set(''), 4000);
-      }
-
-      this.isSubmitting.set(false);
+            // Resetear formulario
+            this.appointmentForm.reset({
+                date: this.today
+            });
+            this.availableSlots.set([]);
+            
+            const wrapper = document.querySelector('.appointment-form-wrapper');
+            if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        this.isSubmitting.set(false);
     });
   }
 }

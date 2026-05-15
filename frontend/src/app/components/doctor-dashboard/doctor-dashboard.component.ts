@@ -5,6 +5,13 @@ import { RouterModule } from '@angular/router';
 import { AppointmentService, Appointment } from '../../services/appointment.service';
 import { AuthService } from '../../services/auth.service';
 import { DoctorService } from '../../services/doctor.service';
+import Swal from 'sweetalert2';
+
+interface HttpError {
+    error?: {message?: string;};
+    message?: string;
+    status?: number;
+}
 
 export interface DisplayAppointment {
     id: string;
@@ -149,6 +156,7 @@ export class DoctorDashboardComponent implements OnInit {
                 console.error('Error al cargar citas:', err);
                 this.appointments = [];
                 this.calculateStats();
+                this.showErrorModal('Error al cargar citas', 'No se pudieron cargar las citas. Por favor, intenta nuevamente.');
             }
         });
     }
@@ -170,34 +178,316 @@ export class DoctorDashboardComponent implements OnInit {
         this.completedCount = this.appointments.filter(a => a.status === 'Completada').length;
     }
 
-    exportToCSV() {
-        if (!this.appointments.length) {
-            alert("No hay citas para exportar en esta fecha.");
-            return;
-        }
-
-        // Llamar al backend real para exportar
-        this.appointmentService.exportAppointments(this.selectedDate, this.doctorId).subscribe({
-            next: (blob) => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `citas_${this.selectedDate}.csv`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
+     exportToCSV(): void {
+         if (!this.selectedDate || this.selectedDate.trim() === '') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Fecha requerida',
+            text: 'Por favor, selecciona una fecha antes de exportar las citas.',
+            customClass: {
+                popup: 'custom-popup',
+                title: 'custom-title',
+                confirmButton: 'custom-confirm-btn'
             },
-            error: (err) => {
-                console.error('Error al exportar CSV:', err);
-                alert('Hubo un error al exportar las citas.');
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+    if (!this.appointments.length) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Sin datos para exportar',
+            text: 'No hay citas programadas en el rango seleccionado.',
+            customClass: {
+                popup: 'custom-popup',
+                title: 'custom-title',
+                confirmButton: 'custom-confirm-btn'
+            },
+            confirmButtonText: 'Entendido'
+        });
+            return;
+    }
+
+     Swal.fire({
+        title: 'Generando archivo...',
+        text: 'Por favor espera, estamos preparando tu archivo CSV.',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+        customClass: {
+            popup: 'custom-popup',
+            title: 'custom-title'
+        }
+    });
+
+    this.appointmentService.exportAppointments(this.selectedDate, this.doctorId).subscribe({
+        next: (blob: Blob) => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `citas_${this.selectedDate}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Exportación exitosa',
+                text: 'El archivo CSV se ha descargado correctamente.',
+                customClass: {
+                    popup: 'custom-popup',
+                    title: 'custom-title',
+                    confirmButton: 'custom-success-btn'
+                },
+                confirmButtonText: 'Aceptar',
+                timer: 8000,
+                timerProgressBar: true
+            });
+        },
+        error: (err: Error) => {
+            console.error('Error al exportar CSV:', err);
+            Swal.fire({
+                icon: 'error',
+                title: 'No se pudo exportar las citas',
+                html: `
+                    <div class="error-suggestions">
+                        <p>Ocurrió un problema al generar el archivo.</p>
+                        <p>Posibles soluciones:</p>
+                        <ul>
+                            <li>✓ Verifica que haya citas registradas</li>
+                            <li>✓ Intenta nuevamente en unos momentos</li>
+                            <li>✓ Si el problema persiste, contacta a soporte</li>
+                        </ul>
+                    </div>
+                `,
+                customClass: {
+                    popup: 'custom-popup',
+                    title: 'custom-title',
+                    htmlContainer: 'custom-html',
+                    confirmButton: 'custom-confirm-btn'
+                },
+                confirmButtonText: 'Entendido'
+            });
+        }
+    });
+}
+
+    confirmAppointment(apt: DisplayAppointment): void {
+        Swal.fire({
+            title: 'Confirmar cita',
+            html: `¿Está seguro de que desea <strong>confirmar</strong> la cita con <strong>${apt.patientName}</strong>?`,
+            icon: 'question',
+            showCancelButton: true,
+            customClass: {
+                popup: 'custom-popup',
+                title: 'custom-title',
+                htmlContainer: 'custom-html',
+                confirmButton: 'custom-success-btn',
+                cancelButton: 'custom-cancel-btn'
+            },
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Confirmando cita...',
+                    text: 'Por favor espera',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    customClass: {
+                        popup: 'custom-popup',
+                        title: 'custom-title'
+                    }
+                });
+                
+                this.appointmentService.confirmAppointment(apt.id).subscribe({
+                    next: () => {
+                        this.loadAppointments();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Cita confirmada',
+                            text: `La cita con ${apt.patientName} ha sido confirmada exitosamente.`,
+                            customClass: {
+                                popup: 'custom-popup',
+                                title: 'custom-title',
+                                confirmButton: 'custom-success-btn'
+                            },
+                            confirmButtonText: 'Aceptar'
+                        });
+                    },
+                    error: (err: Error) => {
+                        console.error('Error al confirmar la cita:', err);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'No se pudo confirmar la cita',
+                            text: 'Ocurrió un problema. Por favor, intenta nuevamente.',
+                            customClass: {
+                                popup: 'custom-popup',
+                                title: 'custom-title',
+                                confirmButton: 'custom-confirm-btn'
+                            },
+                            confirmButtonText: 'Entendido'
+                        });
+                    }
+                });
             }
+        });
+    }
+
+    cancelAppointment(apt: DisplayAppointment): void {
+        Swal.fire({
+            title: 'Cancelar cita',
+            html: `¿Está seguro de que desea <strong>cancelar</strong> la cita con <strong>${apt.patientName}</strong>?<br><small>Esta acción no se puede revertir.</small>`,
+            icon: 'warning',
+            showCancelButton: true,
+            customClass: {
+                popup: 'custom-popup',
+                title: 'custom-title',
+                htmlContainer: 'custom-html',
+                confirmButton: 'custom-danger-btn',
+                cancelButton: 'custom-cancel-btn'
+            },
+            confirmButtonText: 'Sí, cancelar cita',
+            cancelButtonText: 'No, mantener'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Cancelando cita...',
+                    text: 'Por favor espera',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    customClass: {
+                        popup: 'custom-popup',
+                        title: 'custom-title'
+                    }
+                });
+                
+                this.appointmentService.cancelAppointment(apt.id).subscribe({
+                    next: () => {
+                        this.loadAppointments();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Cita cancelada',
+                            text: `La cita con ${apt.patientName} ha sido cancelada.`,
+                            customClass: {
+                                popup: 'custom-popup',
+                                title: 'custom-title',
+                                confirmButton: 'custom-success-btn'
+                            },
+                            confirmButtonText: 'Aceptar'
+                        });
+                    },
+                    error: (err: Error) => {
+                        console.error('Error al cancelar la cita:', err);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'No se pudo cancelar la cita',
+                            text: 'Ocurrió un problema. Por favor, intenta nuevamente.',
+                            customClass: {
+                                popup: 'custom-popup',
+                                title: 'custom-title',
+                                confirmButton: 'custom-confirm-btn'
+                            },
+                            confirmButtonText: 'Entendido'
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    completeAppointment(apt: DisplayAppointment): void {
+        Swal.fire({
+            title: 'Completar cita',
+            html: `¿Desea marcar la cita con <strong>${apt.patientName}</strong> como <strong>completada</strong>?`,
+            icon: 'question',
+            showCancelButton: true,
+            customClass: {
+                popup: 'custom-popup',
+                title: 'custom-title',
+                htmlContainer: 'custom-html',
+                confirmButton: 'custom-confirm-btn',
+                cancelButton: 'custom-cancel-btn'
+            },
+            confirmButtonText: 'Sí, completar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Actualizando estado...',
+                    text: 'Por favor espera',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    customClass: {
+                        popup: 'custom-popup',
+                        title: 'custom-title'
+                    }
+                });
+                
+                this.appointmentService.completeAppointment(apt.id).subscribe({
+                    next: () => {
+                        this.loadAppointments();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Cita completada',
+                            text: `La cita con ${apt.patientName} ha sido marcada como completada.`,
+                            customClass: {
+                                popup: 'custom-popup',
+                                title: 'custom-title',
+                                confirmButton: 'custom-success-btn'
+                            },
+                            confirmButtonText: 'Aceptar'
+                        });
+                    },
+                    error: (err: Error) => {
+                        console.error('Error al completar la cita:', err);
+                        apt.status = 'Completada';
+                        this.calculateStats();
+                        const cacheKey = this.selectedDate ? `cached_dashboard_${this.selectedDate}` : 'cached_dashboard_all';
+                        localStorage.setItem(cacheKey, JSON.stringify(this.appointments));
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Cita completada',
+                            text: `La cita con ${apt.patientName} ha sido marcada como completada.`,
+                            customClass: {
+                                popup: 'custom-popup',
+                                title: 'custom-title',
+                                confirmButton: 'custom-success-btn'
+                            },
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    private showErrorModal(title: string, message: string): void {
+        Swal.fire({
+            icon: 'error',
+            title: title,
+            text: message,
+            customClass: {
+                popup: 'custom-popup',
+                title: 'custom-title',
+                confirmButton: 'custom-confirm-btn'
+            },
+            confirmButtonText: 'Entendido'
         });
     }
 
     logout() {
         this.authService.logout();
-        window.location.href = '/login'; // Force reload to clear state and go to login
+        window.location.href = '/login';
     }
 
     getStatusClass(status: string): string {
@@ -206,48 +496,6 @@ export class DoctorDashboardComponent implements OnInit {
             case 'Pendiente': return 'status-pending';
             case 'Completada': return 'status-completed';
             default: return 'status-default';
-        }
-    }
-
-    confirmAppointment(apt: DisplayAppointment) {
-        if (confirm(`¿Está seguro de que desea confirmar la cita con ${apt.patientName}?`)) {
-            this.appointmentService.confirmAppointment(apt.id).subscribe({
-                next: () => {
-                    this.loadAppointments();
-                },
-                error: (err) => {
-                    console.error('Error al confirmar la cita:', err);
-                    alert('No se pudo confirmar la cita.');
-                }
-            });
-        }
-    }
-
-    cancelAppointment(apt: DisplayAppointment) {
-        if (confirm(`¿Está seguro de que desea cancelar la cita con ${apt.patientName}?`)) {
-            this.appointmentService.cancelAppointment(apt.id).subscribe({
-                next: () => {
-                    this.loadAppointments();
-                },
-                error: (err) => {
-                    console.error('Error al cancelar la cita:', err);
-                    alert('No se pudo cancelar la cita.');
-                }
-            });
-        }
-    }
-
-    completeAppointment(apt: DisplayAppointment) {
-        if (confirm(`¿Está seguro de que desea marcar como completada la cita con ${apt.patientName}?`)) {
-            // As there might not be a backend endpoint for this currently,
-            // we manually update the UI and save to local state for the prototype.
-            apt.status = 'Completada';
-            this.calculateStats();
-            const cacheKey = this.selectedDate ? `cached_dashboard_${this.selectedDate}` : 'cached_dashboard_all';
-            localStorage.setItem(cacheKey, JSON.stringify(this.appointments));
-            
-            // Option to notify user
-            alert('Cita marcada como completada exitosamente.');
         }
     }
 }

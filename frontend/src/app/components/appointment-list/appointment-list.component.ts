@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
+import Swal from 'sweetalert2';
 
 // Servicios y modelos
 import { AppointmentService, Appointment, AppointmentResponse } from '../../services/appointment.service';
@@ -174,24 +175,74 @@ onSearch(): void {
   }
 
   exportCsv(): void {
-    if (!this.selectedDoctorId || !this.selectedDate) return;
+    if (!this.selectedDoctorId || !this.selectedDate) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Filtros requeridos',
+            text: 'Por favor selecciona un médico y una fecha antes de exportar.',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#1e3a6a',
+            customClass: {
+                popup: 'custom-popup',
+                title: 'custom-title',
+                confirmButton: 'custom-confirm-btn'
+            }
+        });
+        return;
+    }
 
-    this.appointmentService
-      .exportAppointments(this.selectedDate, this.selectedDoctorId)
-      .subscribe({
-        next: (blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `citas-${this.selectedDate}.csv`;
-          a.click();
-          window.URL.revokeObjectURL(url);
+    Swal.fire({
+    title: 'Generando archivo...',
+    text: 'Por favor espera',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+    customClass: {
+      popup: 'custom-popup',
+      title: 'custom-title'
+    }
+  });
+
+  this.appointmentService
+  .exportAppointments(this.selectedDate, this.selectedDoctorId)
+    .subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `citas-${this.selectedDate}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+                
+        Swal.fire({
+          icon: 'success',
+          title: 'Exportación exitosa',
+          text: 'El archivo CSV se ha descargado correctamente.',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#2e67b8',
+          customClass: {
+            popup: 'custom-popup',
+            title: 'custom-title',
+            confirmButton: 'custom-success-btn'
+            }
+          });
         },
-        error: (err) => {
-          alert('No existen citas para exportar o hubo un error');
-          console.error('Error exporting appointments:', err);
-        }
-      });
+        error: () => {
+          Swal.fire({
+          icon: 'error',
+          title: 'No se pudo exportar',
+          text: 'No hay citas para exportar o ocurrió un error.',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#1e3a6a',
+          customClass: {
+            popup: 'custom-popup',
+            title: 'custom-title',
+            confirmButton: 'custom-confirm-btn'
+          }
+        });
+      }
+    });
   }
 
 }

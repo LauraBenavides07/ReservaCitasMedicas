@@ -1,43 +1,36 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 
-/**
- * Adaptador (puerto de salida) para la WhatsApp Cloud API de Meta.
- * Todos los envíos pasan por este servicio para facilitar el testing y la sustitución del proveedor.
- */
 @Injectable()
 export class WhatsAppService {
   private readonly logger = new Logger(WhatsAppService.name);
-
   private readonly phoneNumberId: string;
   private readonly accessToken: string;
   private readonly apiVersion = 'v19.0';
   private readonly baseUrl: string;
+  private readonly simulationMode: boolean;
 
   constructor() {
     this.phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID ?? '';
     this.accessToken = process.env.WHATSAPP_ACCESS_TOKEN ?? '';
     this.baseUrl = `https://graph.facebook.com/${this.apiVersion}/${this.phoneNumberId}/messages`;
+    
+    this.simulationMode = !this.phoneNumberId || !this.accessToken;
+    
+    if (this.simulationMode) {
+      this.logger.log('WhatsApp service running in SIMULATION mode');
+    } else {
+      this.logger.log('WhatsApp service configured with real API');
+    }
   }
 
-  /**
-   * Envía un mensaje de texto libre al número indicado.
-   * En producción, Meta requiere usar plantillas aprobadas para mensajes
-   * iniciados por el negocio. Para pruebas, el sandbox permite texto libre.
-   *
-   * @param to   Número en formato internacional sin '+' (ej. 573001234567)
-   * @param body Texto del mensaje
-   */
   async sendTextMessage(to: string, body: string): Promise<void> {
-    if (!this.phoneNumberId || !this.accessToken) {
-      this.logger.warn(
-        'WhatsApp credentials not configured. Skipping send. ' +
-          `Set WHATSAPP_PHONE_NUMBER_ID and WHATSAPP_ACCESS_TOKEN in .env`,
-      );
+    if (this.simulationMode) {
+      this.logger.log(`[SIMULACION WHATSAPP] Mensaje para ${to}: ${body.substring(0, 80)}...`);
       return;
     }
 
-    // Normalizar número: quitar '+' y espacios
+    // Modo real (solo si hay credenciales)
     const normalizedTo = to.replace(/[\s+\-]/g, '');
 
     try {
@@ -56,13 +49,17 @@ export class WhatsAppService {
           },
         },
       );
-      this.logger.log(`✅ WhatsApp message sent to ${normalizedTo}`);
-    } catch (error) {
-      const errMsg = error?.response?.data
-        ? JSON.stringify(error.response.data)
-        : error.message;
-      this.logger.error(`❌ WhatsApp send failed to ${normalizedTo}: ${errMsg}`);
-      throw new Error(errMsg);
+      this.logger.log(`WhatsApp message sent to ${normalizedTo}`);
+    } catch (error: unknown) {
+      let errMsg: string;
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: unknown } };
+        errMsg = axiosError.response?.data ? JSON.stringify(axiosError.response.data) : 'Unknown error';
+      } else {
+        errMsg = error instanceof Error ? error.message : 'Unknown error';
+      }
+      this.logger.warn(`WhatsApp send failed (real mode) to ${normalizedTo}: ${errMsg}`);
+
     }
   }
 }

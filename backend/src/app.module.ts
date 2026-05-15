@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ScheduleModule } from '@nestjs/schedule';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import { Doctor } from './domain/entities/doctor.entity';
 import { Patient } from './domain/entities/patient.entity';
 import { Appointment } from './domain/entities/appointment.entity';
@@ -21,29 +21,33 @@ import { NotificationsClientModule } from './infrastructure/messaging/notificati
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DB_HOST', 'localhost'),
-        port: configService.get<number>('DB_PORT', 5432),
-        username: configService.get<string>('DB_USERNAME', 'postgres'),
-        password: configService.get<string>('DB_PASSWORD', 'postgres'),
-        database: configService.get<string>('DB_DATABASE', 'piedrazul'),
-        entities: [Doctor, Patient, Appointment, Config, User, DoctorException],
-        synchronize: true, // Solo para desarrollo
-      }),
+      useFactory: (configService: ConfigService) => {
+        console.log('🔍 DB Config from TypeORM:', {
+          host: configService.get<string>('DB_HOST'),
+          port: configService.get<number>('DB_PORT'),
+          username: configService.get<string>('DB_USERNAME'),
+          password: configService.get<string>('DB_PASSWORD'),
+          database: configService.get<string>('DB_DATABASE'),
+        });
+        return {
+          type: 'postgres',
+          host: configService.get<string>('DB_HOST'),
+          port: configService.get<number>('DB_PORT'),
+          username: configService.get<string>('DB_USERNAME'),
+          password: configService.get<string>('DB_PASSWORD'),
+          database: configService.get<string>('DB_DATABASE'),
+          entities: [Doctor, Patient, Appointment, Config, User, DoctorException],
+          synchronize: true,
+          logging: true,
+        };
+      },
     }),
-    TypeOrmModule.forFeature([
-      Doctor,
-      Patient,
-      Appointment,
-      Config,
-      User,
-      DoctorException,
-    ]),
+    TypeOrmModule.forFeature([Doctor, Patient, Appointment, Config, User, DoctorException]),
     AuthModule,
     ScheduleModule.forRoot(),
     NotificationsClientModule,

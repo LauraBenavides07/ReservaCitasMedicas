@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-  # ─── Base de Datos ───────────────────────────────────────────
   postgres:
     image: postgres:15-alpine
     container_name: piedrazul-postgres
@@ -14,21 +11,71 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # ─── Message Broker ──────────────────────────────────────────
+  postgres-notifications:
+    image: postgres:15-alpine
+    container_name: piedrazul-postgres-notifications
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: notifications_db
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgres_notifications_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: piedrazul-rabbitmq
     ports:
-      - '5672:5672'   # Conexiones AMQP (aplicaciones)
-      - '15672:15672' # Consola web de administración
+      - '5672:5672'
+      - '15672:15672'
     environment:
       RABBITMQ_DEFAULT_USER: piedrazul
       RABBITMQ_DEFAULT_PASS: piedrazul_pass
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: keycloak/keycloak:22.0.5
+    container_name: piedrazul-keycloak
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: localhost
+    command: start-dev
+    ports:
+      - '8080:8080'
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+  postgres_notifications_data:
   rabbitmq_data:
+  keycloak_data:

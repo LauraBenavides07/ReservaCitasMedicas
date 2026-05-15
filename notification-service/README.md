@@ -28,7 +28,13 @@
 ## Project setup
 
 ```bash
-$ npm install
+$ npm install @nestjs/config @nestjs/typeorm typeorm pg
+
+$ npm install nodemailer @types/nodemailer
+
+$ npm install -D jest @types/jest ts-jest
+
+
 ```
 
 ## Compile and run the project
@@ -55,6 +61,7 @@ $ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
+
 ```
 
 ## Deployment

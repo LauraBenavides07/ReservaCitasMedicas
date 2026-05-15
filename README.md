@@ -15,9 +15,16 @@ Este proyecto es una aplicación web para la gestión de citas médicas, diseña
 - npm
 - PostgreSQL corriendo localmente (Puerto 5432)
 - Docker (para ejecutar Keycloak)
+### 1.1. Levantamiento docker 
 
+Levanta todos los servicios, Se debe realizar solo 1 vez la configuracion delservicio de Keycloak
+
+```bash
+docker-compose up -d 
+```
 ### 2. Configuración del Backend
 Accede a la carpeta del servidor e instala las dependencias:
+
 ```bash
 cd backend
 npm install
@@ -35,6 +42,21 @@ DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=tu_contraseña
 DB_DATABASE=piedrazul
+
+# Keycloak
+
+KEYCLOAK_URL=http://localhost:8080
+KEYCLOAK_REALM=piedrazul
+KEYCLOAK_CLIENT_ID=piedrazul-app
+KEYCLOAK_ADMIN=admin
+KEYCLOAK_ADMIN_PASSWORD=admin
+
+# ─ RabbitMQ 
+
+RABBITMQ_URL=amqp://piedrazul:piedrazul_pass@localhost:5672
+
+# ── Server 
+PORT=3000
 ```
 
 #### Inicializar Base de Datos (Seed)
@@ -77,6 +99,10 @@ Ejecutar todos los tests:
 cd frontend
 npx vitest run
 ```
+
+## Correos de prueba para microservicio-Notificacines
+pacientep26@gmail.com
+
 
 ## Características Clave
 - **Accesibilidad**: Texto de 18px+, botones de 48px+, contraste WCAG AAA.

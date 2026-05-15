@@ -95,4 +95,8 @@ export class AppointmentService {
   getPatientByDocument(document: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/patient-by-document/${document}`);
   }
+
+  completeAppointment(id: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}/complete`, {});
+  }
 }

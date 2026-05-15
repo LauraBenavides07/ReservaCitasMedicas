@@ -24,7 +24,10 @@
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
+## 🐳 Paso 1: Levantar Servicios con Docker Compose
+```bash
+$ docker-compose up -d
+```
 ## Project setup
 
 ```bash
@@ -96,3 +99,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+
+
+
