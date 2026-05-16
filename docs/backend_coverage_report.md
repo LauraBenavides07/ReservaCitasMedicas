@@ -60,7 +60,17 @@
 
 > Nota: Las entidades muestran 0% en Funcs al carecer de métodos explícitos (son data classes con decoradores TypeORM). Config y User tienen getters/setters implícitos que se cubren en sus tests.
 
-### 6. Boilerplate NestJS (no unit-testable por ESM) - 🔴 0%
+### 6. Pruebas de Integración (E2E) - 🟢 20 tests, 0 fallos
+| Categoría              | Tests | Estado |
+|------------------------|:-----:|:------:|
+| Doctores CRUD          |   7   |  ✅    |
+| Excepciones de doctor  |   3   |  ✅    |
+| Citas (disponibilidad, creación, listado, confirmación) | 8 | ✅ |
+| Configuración (GET/PATCH) | 2 | ✅ |
+
+> Suite completa en `backend/test/app.e2e-spec.ts`. Base de datos `piedrazul_test`. Super-test + PostgreSQL real. Passport/JWT mockeado.
+
+### 7. Boilerplate NestJS (no unit-testable por ESM) - 🔴 0%
 | Archivo       | Stmts | Branch | Funcs | Lines |
 |---------------|:-----:|:------:|:-----:|:-----:|
 | app.module.ts |   0%  |  100%  |   0%  |   0%  |
@@ -109,11 +119,23 @@
 
 ## 🚀 Roadmap de Calidad Sugerido
 
-1. **Prioridad 1**: Tests de integración (e2e) para cubrir flujo completo Registro → Login → Agendar y validar módulos NestJS
+1. ✅ **Prioridad 1 (COMPLETADA)**: Tests de integración (e2e) — 20 tests, 0 fallos (PostgreSQL real, DB `piedrazul_test`)
 2. **Prioridad 2**: Ampliar cobertura de branches en `AppointmentService` (escenarios de reschedule con conflicto, dashboard con estados variados)
 3. **Prioridad 3**: Tests de estrés para búsqueda de disponibilidad con grandes volúmenes de datos
 
 ---
 
+## ▶️ Cómo Ejecutar
+
+```bash
+# Tests unitarios
+cd backend && npm test
+
+# Tests de integración e2e (requiere PostgreSQL con DB piedrazul_test)
+cd backend && npx jest --config test/jest-e2e.json
+```
+
+---
+
 *Generado con `npx jest --coverage` (Jest v30.3.0, ts-jest)*  
-*117 tests unitarios, 17 suites, 0 fallos*
+*117 tests unitarios (17 suites) + 20 tests e2e — 0 fallos totales*
