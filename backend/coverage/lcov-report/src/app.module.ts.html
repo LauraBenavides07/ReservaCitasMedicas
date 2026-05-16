@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/20</span>
+                <span class='fraction'>0/23</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/18</span>
+                <span class='fraction'>0/21</span>
             </div>
         
             
@@ -107,7 +107,20 @@
 <a name='L42'></a><a href='#L42'>42</a>
 <a name='L43'></a><a href='#L43'>43</a>
 <a name='L44'></a><a href='#L44'>44</a>
-<a name='L45'></a><a href='#L45'>45</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -123,9 +136,20 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -150,16 +174,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import { Module } from '@nestjs/common';</span>
-<span class="cstat-no" title="statement not covered" >import { ScheduleModule } from '@nestjs/schedule';</span>
-<span class="cstat-no" title="statement not covered" >import { TypeOrmModule } from '@nestjs/typeorm';</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import { Module } from '@nestjs/common';</span>
 <span class="cstat-no" title="statement not covered" >import { ConfigModule, ConfigService } from '@nestjs/config';</span>
+<span class="cstat-no" title="statement not covered" >import { TypeOrmModule } from '@nestjs/typeorm';</span>
+<span class="cstat-no" title="statement not covered" >import { ScheduleModule } from '@nestjs/schedule';</span>
 <span class="cstat-no" title="statement not covered" >import { Doctor } from './domain/entities/doctor.entity';</span>
 <span class="cstat-no" title="statement not covered" >import { Patient } from './domain/entities/patient.entity';</span>
 <span class="cstat-no" title="statement not covered" >import { Appointment } from './domain/entities/appointment.entity';</span>
 <span class="cstat-no" title="statement not covered" >import { Config } from './domain/entities/config.entity';</span>
 <span class="cstat-no" title="statement not covered" >import { User } from './domain/entities/user.entity';</span>
+<span class="cstat-no" title="statement not covered" >import { DoctorException } from './domain/entities/doctor-exception.entity';</span>
 <span class="cstat-no" title="statement not covered" >import { ConfigController } from './presentation/controllers/config.controller';</span>
 <span class="cstat-no" title="statement not covered" >import { AppointmentController } from './presentation/controllers/appointment.controller';</span>
 <span class="cstat-no" title="statement not covered" >import { DoctorController } from './presentation/controllers/doctor.controller';</span>
@@ -167,42 +194,54 @@
 <span class="cstat-no" title="statement not covered" >import { DoctorService } from './application/services/doctor.service';</span>
 <span class="cstat-no" title="statement not covered" >import { ConfigService as AppConfigService } from './application/services/config.service';</span>
 <span class="cstat-no" title="statement not covered" >import { AuthModule } from './auth.module';</span>
+<span class="cstat-no" title="statement not covered" >import { NotificationsClientModule } from './infrastructure/messaging/notifications-client.module';</span>
 &nbsp;
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: <span class="fstat-no" title="function not covered" >(c</span>onfigService: ConfigService) =&gt; (<span class="cstat-no" title="statement not covered" >{</span>
-        type: 'postgres',
-        host: configService.get&lt;string&gt;('DB_HOST', 'localhost'),
-        port: configService.get&lt;number&gt;('DB_PORT', 5432),
-        username: configService.get&lt;string&gt;('DB_USERNAME', 'postgres'),
-        password: configService.get&lt;string&gt;('DB_PASSWORD', 'postgres'),
-        database: configService.get&lt;string&gt;('DB_DATABASE', 'piedrazul'),
-        entities: [Doctor, Patient, Appointment, Config, User],
-        synchronize: true, // Solo para desarrollo
-      }),
+      useFactory: <span class="fstat-no" title="function not covered" >(c</span>onfigService: ConfigService) =&gt; {
+<span class="cstat-no" title="statement not covered" >        console.log('🔍 DB Config from TypeORM:', {</span>
+          host: configService.get&lt;string&gt;('DB_HOST'),
+          port: configService.get&lt;number&gt;('DB_PORT'),
+          username: configService.get&lt;string&gt;('DB_USERNAME'),
+          password: configService.get&lt;string&gt;('DB_PASSWORD'),
+          database: configService.get&lt;string&gt;('DB_DATABASE'),
+        });
+<span class="cstat-no" title="statement not covered" >        return {</span>
+          type: 'postgres',
+          host: configService.get&lt;string&gt;('DB_HOST'),
+          port: configService.get&lt;number&gt;('DB_PORT'),
+          username: configService.get&lt;string&gt;('DB_USERNAME'),
+          password: configService.get&lt;string&gt;('DB_PASSWORD'),
+          database: configService.get&lt;string&gt;('DB_DATABASE'),
+          entities: [Doctor, Patient, Appointment, Config, User, DoctorException],
+          synchronize: true,
+          logging: true,
+        };
+      },
     }),
-    TypeOrmModule.forFeature([Doctor, Patient, Appointment, Config, User]),
+    TypeOrmModule.forFeature([Doctor, Patient, Appointment, Config, User, DoctorException]),
     AuthModule,
     ScheduleModule.forRoot(),
+    NotificationsClientModule,
   ],
   controllers: [AppointmentController, DoctorController, ConfigController],
   providers: [AppointmentService, DoctorService, AppConfigService],
 })
-export <span class="cstat-no" title="statement not covered" >class <span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" >AppModule </span>{}</span></span>
-&nbsp;</pre></td></tr></table></pre>
+export <span class="cstat-no" title="statement not covered" >class <span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" >AppModule </span>{}</span></span></pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-28T01:14:13.518Z
+                at 2026-05-16T21:12:48.663Z
             </div>
         <script src="../prettify.js"></script>
         <script>

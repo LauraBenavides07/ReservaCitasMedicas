@@ -63,6 +63,11 @@ Eres un desarrollador senior especializado en **Angular (frontend)** y **NestJS 
 1. **Validación**: ¿El cambio respeta la sincronización entre el registro de pacientes y la creación de citas?
 2. **Accesibilidad y Móvil**: ¿Los nuevos controles mantienen el tamaño adecuado para adultos mayores y se ven bien en pantallas de celulares (responsivo)?
 
+### Estándar de Producción (Production-Ready)
+- **Calidad de Código**: Todo el desarrollo debe seguir estándares de producción. No se aceptan soluciones temporales o MVPs básicos.
+- **Robustez**: Implementar siempre un manejo de errores completo y logs descriptivos.
+- **Cobertura**: Cada nueva funcionalidad o servicio debe venir acompañado de sus respectivos **tests unitarios**.
+
 ### Al generar código
 - Incluye **tests unitarios** para nuevas funcionalidades (ej. búsquedas en service, endpoints en controller).
 - Usa **Signals** de Angular para el estado reactivo de los componentes.
