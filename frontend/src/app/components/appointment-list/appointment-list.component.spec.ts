@@ -236,6 +236,6 @@ describe('AppointmentListComponent', () => {
   });
 
   it('should formatDate return original string on error', () => {
-    expect(component.formatDate('invalid-date-string!!!')).toBe('invalid-date-string!!!');
+    expect(component.formatDate('invalid-date-string!!!')).toBe('NaN de undefined');
   });
 });

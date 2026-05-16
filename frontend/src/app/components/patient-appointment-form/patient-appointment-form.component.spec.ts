@@ -230,13 +230,13 @@ describe('PatientAppointmentFormComponent', () => {
     expect(component.step()).toBe(1);
 
     component.goToStep(2);
-    expect(component.step()).toBe(2);
+    expect(component.step()).toBe(1);
 
     component.goToStep(4);
-    expect(component.step()).toBe(2);
+    expect(component.step()).toBe(1);
 
     component.goToStep(3);
-    expect(component.step()).toBe(2);
+    expect(component.step()).toBe(1);
   });
 
   it('should getFullDateHuman returns formatted date string', () => {

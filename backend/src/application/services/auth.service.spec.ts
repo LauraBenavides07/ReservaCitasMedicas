@@ -47,7 +47,7 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('debería hacer login exitoso vía Keycloak', async () => {
+    it('debería hacer login exitoso vía Keycloak para paciente', async () => {
       (axios.post as jest.Mock).mockResolvedValue({ data: { access_token: 'tk-123' } });
       mockJwtService.decode.mockReturnValue({ sub: 'uuid-kc' });
       mockPatientRepository.findOneBy.mockResolvedValue({ id: 'p1', keycloakId: 'uuid-kc', document: '123' });
@@ -55,7 +55,26 @@ describe('AuthService', () => {
       const result = await service.login({ login: '123', password: 'pwd' } as LoginDto);
       
       expect(result.access_token).toBe('tk-123');
-      expect(result.source).toBe('keycloak');
+    });
+
+    it('debería vincular un staff sin keycloakId al loguear', async () => {
+      (axios.post as jest.Mock).mockResolvedValue({ data: { access_token: 'tk-staff' } });
+      mockJwtService.decode.mockReturnValue({ sub: 'uuid-staff' });
+      mockPatientRepository.findOneBy.mockResolvedValue(null);
+      mockUserRepository.findOneBy.mockResolvedValue({ id: 's1', email: 'staff@test.com', keycloakId: null });
+
+      await service.login({ login: 'staff@test.com', password: 'pwd' } as LoginDto);
+      expect(mockUserRepository.save).toHaveBeenCalledWith(expect.objectContaining({ keycloakId: 'uuid-staff' }));
+    });
+
+    it('debería fallar si se autentica en Keycloak pero no existe en BD local', async () => {
+      (axios.post as jest.Mock).mockResolvedValue({ data: { access_token: 'tk-ghost' } });
+      mockJwtService.decode.mockReturnValue({ sub: 'uuid-ghost' });
+      mockPatientRepository.findOneBy.mockResolvedValue(null);
+      mockUserRepository.findOneBy.mockResolvedValue(null);
+
+      await expect(service.login({ login: 'ghost', password: 'pwd' } as LoginDto))
+        .rejects.toThrow(UnauthorizedException);
     });
 
     it('debería fallar si no existe en Keycloak ni localmente', async () => {
@@ -64,6 +83,15 @@ describe('AuthService', () => {
       mockUserRepository.findOne.mockResolvedValue(null);
 
       await expect(service.login({ login: 'none', password: 'pwd' } as LoginDto))
+        .rejects.toThrow(UnauthorizedException);
+    });
+
+    it('debería fallar en fallback si el password local es incorrecto', async () => {
+      (axios.post as jest.Mock).mockRejectedValue(new Error('Keycloak Down'));
+      mockPatientRepository.findOne.mockResolvedValue({ id: 'p1', password: 'hashed' });
+      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+
+      await expect(service.login({ login: 'p1', password: 'wrong' } as LoginDto))
         .rejects.toThrow(UnauthorizedException);
     });
   });
@@ -85,6 +113,12 @@ describe('AuthService', () => {
       const result = await service.register(dto);
 
       expect(result.access_token).toBe('user-tk');
+    });
+
+    it('debería fallar si el documento ya está registrado', async () => {
+      mockPatientRepository.findOneBy.mockResolvedValue({ id: 'existing' });
+      const dto: RegisterDto = { document: '123' } as any;
+      await expect(service.register(dto)).rejects.toThrow(ConflictException);
     });
 
     it('debería registrar localmente pero fallar el login final si Keycloak está caído', async () => {

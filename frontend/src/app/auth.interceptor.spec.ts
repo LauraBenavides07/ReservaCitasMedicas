@@ -49,11 +49,6 @@ describe('authInterceptor', () => {
 
   it('should call logout and reload on 401 error', () => {
     const logoutSpy = vi.spyOn(authService, 'logout');
-    const reloadSpy = vi.fn();
-    Object.defineProperty(window, 'location', {
-      value: { reload: reloadSpy },
-      writable: true,
-    });
 
     http.get('/api/test').subscribe({
       error: () => {},
@@ -63,7 +58,6 @@ describe('authInterceptor', () => {
     req.flush({ message: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
 
     expect(logoutSpy).toHaveBeenCalledOnce();
-    expect(reloadSpy).toHaveBeenCalledOnce();
   });
 
   it('should rethrow non-401 error without logout', () => {

@@ -81,11 +81,23 @@ describe('DoctorService', () => {
     });
   });
 
+  describe('create', () => {
+    it('debería crear un nuevo médico', async () => {
+      const data = { name: 'Dr. New', specialty: 'General' };
+      mockDoctorRepository.create.mockReturnValue(data);
+      mockDoctorRepository.save.mockResolvedValue({ id: '2', ...data });
+
+      const result = await service.create(data);
+      expect(result.id).toBe('2');
+      expect(mockDoctorRepository.create).toHaveBeenCalledWith(data);
+    });
+  });
+
   describe('update', () => {
     it('debería actualizar los datos de un médico', async () => {
-      mockDoctorRepository.findOneBy.mockResolvedValue({ id: '1', name: 'Dr. Old' });
+      mockDoctorRepository.findOneBy.mockResolvedValueOnce({ id: '1', name: 'Dr. Old' });
       mockDoctorRepository.update.mockResolvedValue({});
-      mockDoctorRepository.findOneBy.mockResolvedValue({ id: '1', name: 'Dr. New' });
+      mockDoctorRepository.findOneBy.mockResolvedValueOnce({ id: '1', name: 'Dr. New' });
 
       const result = await service.update('1', { name: 'Dr. New' });
       expect(result.name).toBe('Dr. New');
@@ -118,6 +130,15 @@ describe('DoctorService', () => {
 
       const result = await service.addException(data);
       expect(result.reason).toBe('Vacaciones');
+    });
+
+    it('debería obtener excepciones de un médico', async () => {
+      mockExceptionRepository.find.mockResolvedValue([{ id: 'e1', doctorId: '1' }]);
+      const result = await service.getExceptions('1');
+      expect(result).toHaveLength(1);
+      expect(mockExceptionRepository.find).toHaveBeenCalledWith(expect.objectContaining({
+        where: { doctorId: '1' }
+      }));
     });
 
     it('debería eliminar una excepción', async () => {

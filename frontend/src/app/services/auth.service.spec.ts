@@ -23,6 +23,8 @@ describe('AuthService', () => {
 
   it('should remove "patient" key from localStorage on construction', () => {
     localStorage.setItem('patient', 'some-value');
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({ imports: [HttpClientTestingModule], providers: [AuthService] });
     const s = TestBed.inject(AuthService);
     expect(localStorage.getItem('patient')).toBeNull();
   });
@@ -93,6 +95,8 @@ describe('AuthService', () => {
   it('should logout and clear session', () => {
     localStorage.setItem('access_token', 'token');
     localStorage.setItem('user', JSON.stringify({ id: '1', firstName: 'Test', lastName: 'User', role: 'patient' }));
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({ imports: [HttpClientTestingModule], providers: [AuthService] });
     const s = TestBed.inject(AuthService);
     expect(s.isLoggedIn()).toBe(true);
 
@@ -124,6 +128,8 @@ describe('AuthService', () => {
   it('should return user from localStorage if pre-stored', () => {
     const user: User = { id: '5', firstName: 'Pre', lastName: 'Stored', role: 'admin' };
     localStorage.setItem('user', JSON.stringify(user));
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({ imports: [HttpClientTestingModule], providers: [AuthService] });
     const s = TestBed.inject(AuthService);
     expect(s.user()).toEqual(user);
     expect(s.isLoggedIn()).toBe(true);

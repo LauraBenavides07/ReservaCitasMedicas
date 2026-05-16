@@ -111,5 +111,21 @@ describe('AppointmentController', () => {
       await controller.getPatientByDocument('123');
       expect(service.findPatientByDocument).toHaveBeenCalledWith('123');
     });
+
+    it('getAppointments debería llamar al servicio', async () => {
+      await controller.getAppointments('d1', '2026-10-10');
+      expect(service.findAllByDoctorAndDate).toHaveBeenCalledWith('d1', '2026-10-10');
+    });
+
+    it('createAppointment debería llamar al servicio', async () => {
+      const dto = { doctorId: 'd1' } as any;
+      await controller.createAppointment(dto);
+      expect(service.create).toHaveBeenCalledWith(dto);
+    });
+
+    it('confirmAppointment debería llamar al servicio', async () => {
+      await controller.confirmAppointment('a1');
+      expect(service.confirmAppointment).toHaveBeenCalledWith('a1');
+    });
   });
 });
