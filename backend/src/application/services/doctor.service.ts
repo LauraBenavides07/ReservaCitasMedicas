@@ -27,7 +27,7 @@ export class DoctorService {
   async findOne(id: string) {
     const doctor = await this.doctorRepository.findOneBy({ id });
     if (!doctor) {
-      throw new NotFoundException(`Doctor with ID ${id} not found`);
+      throw new NotFoundException(`Doctor con ID ${id} no encontrado`);
     }
     return doctor;
   }

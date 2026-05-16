@@ -23,7 +23,7 @@ export class Appointment {
   @Column({ name: 'appointment_time', type: 'time' })
   appointmentTime: string;
 
-  @Column({ length: 20, default: 'scheduled' })
+  @Column({ length: 20, default: 'agendada' })
   status: string;
 
   @Column({ name: 'created_by', length: 100, nullable: true })

@@ -80,7 +80,7 @@ describe('DoctorController', () => {
     });
 
     it('removeException debería llamar a service.removeException', async () => {
-      await controller.removeException('e1');
+      await controller.removeException('d1', 'e1');
       expect(service.removeException).toHaveBeenCalledWith('e1');
     });
   });

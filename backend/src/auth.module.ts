@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Patient } from './domain/entities/patient.entity';
 import { User } from './domain/entities/user.entity';
 import { AuthService } from './application/services/auth.service';
@@ -12,9 +13,13 @@ import { JwtStrategy } from './infrastructure/auth/jwt.strategy';
   imports: [
     TypeOrmModule.forFeature([Patient, User]),
     PassportModule,
-    JwtModule.register({
-      secret: 'PIEDRAZUL_SECRET_KEY', // Debe ser env var en producción
-      signOptions: { expiresIn: '1d' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET', 'PIEDRAZUL_SECRET_KEY'),
+        signOptions: { expiresIn: '1d' },
+      }),
     }),
   ],
   providers: [AuthService, JwtStrategy],

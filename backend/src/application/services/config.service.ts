@@ -37,15 +37,14 @@ export class ConfigService implements OnModuleInit {
     return config?.value as GlobalConfig | undefined;
   }
 
-  async updateConfig(data: GlobalConfig): Promise<GlobalConfig | undefined> {
+  async updateConfig(data: Partial<GlobalConfig>): Promise<GlobalConfig | undefined> {
     const existing = await this.configRepository.findOne({
       where: { key: 'appointment_rules' },
     });
     if (existing) {
       await this.configRepository.update(
         { key: 'appointment_rules' },
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        { value: data as any },
+        { value: { ...existing.value, ...data } },
       );
     }
     return this.getConfig();

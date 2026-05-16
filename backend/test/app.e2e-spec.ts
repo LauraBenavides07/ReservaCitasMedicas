@@ -187,7 +187,7 @@ describe('Piedrazul API (e2e)', () => {
         const exc = await excRepo.save({ doctorId: seed.doctor.id, date: '2026-12-25', reason: 'Navidad' });
 
         await request(app.getHttpServer())
-          .delete(`/doctors/exceptions/${exc.id}`)
+          .delete(`/doctors/${seed.doctor.id}/exceptions/${exc.id}`)
           .expect(200);
       });
     });

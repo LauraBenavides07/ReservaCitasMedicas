@@ -1,8 +1,7 @@
 import { Controller, Get, Body, Patch } from '@nestjs/common';
-import {
-  ConfigService,
-  GlobalConfig,
-} from '../../application/services/config.service';
+import { ConfigService } from '../../application/services/config.service';
+import { UpdateConfigDto } from '../dto/update-config.dto';
+import type { GlobalConfig } from '../../application/services/config.service';
 
 @Controller('configs')
 export class ConfigController {
@@ -15,7 +14,7 @@ export class ConfigController {
 
   @Patch()
   async updateConfig(
-    @Body() data: GlobalConfig,
+    @Body() data: UpdateConfigDto,
   ): Promise<GlobalConfig | undefined> {
     return this.configService.updateConfig(data);
   }

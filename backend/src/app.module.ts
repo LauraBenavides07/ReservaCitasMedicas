@@ -26,26 +26,17 @@ import { NotificationsClientModule } from './infrastructure/messaging/notificati
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        console.log('🔍 DB Config from TypeORM:', {
-          host: configService.get<string>('DB_HOST'),
-          port: configService.get<number>('DB_PORT'),
-          username: configService.get<string>('DB_USERNAME'),
-          password: configService.get<string>('DB_PASSWORD'),
-          database: configService.get<string>('DB_DATABASE'),
-        });
-        return {
-          type: 'postgres',
-          host: configService.get<string>('DB_HOST'),
-          port: configService.get<number>('DB_PORT'),
-          username: configService.get<string>('DB_USERNAME'),
-          password: configService.get<string>('DB_PASSWORD'),
-          database: configService.get<string>('DB_DATABASE'),
-          entities: [Doctor, Patient, Appointment, Config, User, DoctorException],
-          synchronize: true,
-          logging: true,
-        };
-      },
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres' as const,
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_DATABASE'),
+        entities: [Doctor, Patient, Appointment, Config, User, DoctorException],
+        synchronize: true,
+        logging: true,
+      }),
     }),
     TypeOrmModule.forFeature([Doctor, Patient, Appointment, Config, User, DoctorException]),
     AuthModule,

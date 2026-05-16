@@ -114,7 +114,7 @@ describe('AppointmentController', () => {
 
     it('getAppointments debería llamar al servicio', async () => {
       await controller.getAppointments('d1', '2026-10-10');
-      expect(service.findAllByDoctorAndDate).toHaveBeenCalledWith('d1', '2026-10-10');
+      expect(service.findAllByDoctorAndDate).toHaveBeenCalledWith('d1', '2026-10-10', 0, 100);
     });
 
     it('createAppointment debería llamar al servicio', async () => {

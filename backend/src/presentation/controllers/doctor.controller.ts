@@ -8,9 +8,10 @@ import {
   Delete,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { Doctor } from '../../domain/entities/doctor.entity';
-import { DoctorException } from '../../domain/entities/doctor-exception.entity';
 import { DoctorService } from '../../application/services/doctor.service';
+import { CreateDoctorDto } from '../dto/create-doctor.dto';
+import { UpdateDoctorDto } from '../dto/update-doctor.dto';
+import { CreateExceptionDto } from '../dto/create-exception.dto';
 
 @Controller('doctors')
 export class DoctorController {
@@ -27,14 +28,14 @@ export class DoctorController {
   }
 
   @Post()
-  async createDoctor(@Body() data: Partial<Doctor>) {
+  async createDoctor(@Body() data: CreateDoctorDto) {
     return this.doctorService.create(data);
   }
 
   @Patch(':id')
   async updateDoctor(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() data: Partial<Doctor>,
+    @Body() data: UpdateDoctorDto,
   ) {
     return this.doctorService.update(id, data);
   }
@@ -44,11 +45,10 @@ export class DoctorController {
     return this.doctorService.remove(id);
   }
 
-  // --- Excepciones ---
   @Post(':id/exceptions')
   async addException(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() data: Partial<DoctorException>,
+    @Body() data: CreateExceptionDto,
   ) {
     return this.doctorService.addException({ ...data, doctorId: id });
   }
@@ -58,8 +58,11 @@ export class DoctorController {
     return this.doctorService.getExceptions(id);
   }
 
-  @Delete('exceptions/:exceptionId')
-  async removeException(@Param('exceptionId', ParseUUIDPipe) id: string) {
-    return this.doctorService.removeException(id);
+  @Delete(':id/exceptions/:exceptionId')
+  async removeException(
+    @Param('id', ParseUUIDPipe) _id: string,
+    @Param('exceptionId', ParseUUIDPipe) exceptionId: string,
+  ) {
+    return this.doctorService.removeException(exceptionId);
   }
 }

@@ -193,7 +193,7 @@ export class AuthService {
 
       if (!userData) {
         throw new UnauthorizedException(
-          'Usuario autenticado en Keycloak pero no encontrado en BD local.',
+          'Usuario autenticado pero no encontrado en la base de datos local.',
         );
       }
 
@@ -240,7 +240,7 @@ export class AuthService {
       // Como estamos en un flujo Keycloak, el fallback local sin Keycloak
       // solo sirve para validar que el usuario existe, pero no podemos dar un token válido.
       throw new InternalServerErrorException(
-        'Autenticación local exitosa, pero Keycloak no respondió. No se puede generar una sesión segura.',
+        'Error del servidor de autenticación. Intente más tarde.',
       );
     }
     throw new UnauthorizedException('Credenciales inválidas.');

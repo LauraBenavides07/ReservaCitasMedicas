@@ -7,7 +7,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Parser } from 'json2csv';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOptionsWhere } from 'typeorm';
 import { ClientProxy } from '@nestjs/microservices';
@@ -18,6 +18,7 @@ import { DoctorException } from '../../domain/entities/doctor-exception.entity';
 import { CreateAppointmentDto } from '../../presentation/dto/create-appointment.dto';
 import { ConfigService } from './config.service';
 import { NOTIFICATION_SERVICE } from '../../infrastructure/messaging/notifications-client.module';
+import { timeToMinutes, minutesToTime } from '../utils/time.utils';
 
 @Injectable()
 export class AppointmentService {
@@ -38,7 +39,12 @@ export class AppointmentService {
   /**
    * Requisito 1: Listar citas por médico y fecha
    */
-  async findAllByDoctorAndDate(doctorId: string, date?: string) {
+  async findAllByDoctorAndDate(
+    doctorId: string,
+    date?: string,
+    skip = 0,
+    take = 100,
+  ) {
     const whereClause: FindOptionsWhere<Appointment> = { doctor: { id: doctorId } };
     if (date && date.trim() !== '') {
         whereClause.appointmentDate = date;
@@ -52,6 +58,8 @@ export class AppointmentService {
           appointmentDate: 'DESC',
           appointmentTime: 'ASC',
         },
+        skip,
+        take,
       },
     );
 
@@ -70,7 +78,7 @@ export class AppointmentService {
     });
     if (!doctor) {
       throw new NotFoundException(
-        `Doctor with ID ${createDto.doctorId} not found`,
+        `Doctor con ID ${createDto.doctorId} no encontrado`,
       );
     }
 
@@ -114,14 +122,26 @@ export class AppointmentService {
       document: createDto.patientDocument,
     });
     if (!patient) {
-      patient = this.patientRepository.create({
-        document: createDto.patientDocument,
-        firstName: createDto.firstName,
-        lastName: createDto.lastName,
-        phone: createDto.phone,
-        gender: createDto.gender,
-      });
-      await this.patientRepository.save(patient);
+      try {
+        patient = this.patientRepository.create({
+          document: createDto.patientDocument,
+          firstName: createDto.firstName,
+          lastName: createDto.lastName,
+          phone: createDto.phone,
+          gender: createDto.gender,
+        });
+        await this.patientRepository.save(patient);
+      } catch (error: unknown) {
+        const pgError = error as { code?: string };
+        if (pgError?.code === '23505') {
+          patient = await this.patientRepository.findOneBy({
+            document: createDto.patientDocument,
+          });
+          if (!patient) throw error;
+        } else {
+          throw error;
+        }
+      }
     }
 
     // Verificar disponibilidad
@@ -145,10 +165,20 @@ export class AppointmentService {
       status: 'agendada',
     });
 
-    const saved = await this.appointmentRepository.save(appointment);
+    let saved;
+    try {
+      saved = await this.appointmentRepository.save(appointment);
+    } catch (error: unknown) {
+      const pgError = error as { code?: string };
+      if (pgError?.code === '23505') {
+        throw new ConflictException(
+          'El horario ya está ocupado para este médico.',
+        );
+      }
+      throw error;
+    }
    
-    // Publicar evento fire-and-forget hacia RabbitMQ
-    this.notificationClient.emit('appointment.created', {
+    this.emitEvent('appointment.created', {
       appointmentId: saved.id,
       patientName: `${patient.firstName} ${patient.lastName}`,
       patientPhone: patient.phone,
@@ -166,7 +196,7 @@ export class AppointmentService {
   async getAvailableSlots(doctorId: string, date: string) {
     const doctor = await this.doctorRepository.findOneBy({ id: doctorId });
     if (!doctor) {
-      throw new NotFoundException(`Doctor with ID ${doctorId} not found`);
+      throw new NotFoundException(`Doctor con ID ${doctorId} no encontrado`);
     }
 
     // Obtener citas existentes
@@ -204,13 +234,13 @@ export class AppointmentService {
       return []; // El médico no trabaja este día
     }
 
-    let current = this.timeToMinutes(doctor.scheduleStart);
-    const end = this.timeToMinutes(doctor.scheduleEnd);
+    let current = timeToMinutes(doctor.scheduleStart);
+    const end = timeToMinutes(doctor.scheduleEnd);
     const breakStartMin = doctor.lunchStart
-      ? this.timeToMinutes(doctor.lunchStart)
+      ? timeToMinutes(doctor.lunchStart)
       : null;
     const breakEndMin = doctor.lunchEnd
-      ? this.timeToMinutes(doctor.lunchEnd)
+      ? timeToMinutes(doctor.lunchEnd)
       : null;
 
     // Regla de Negocio: Ventana de tiempo
@@ -219,7 +249,7 @@ export class AppointmentService {
     const appointmentWindowDays = config?.appointmentWindowDays ?? 15;
 
     while (current + doctor.slotDuration <= end) {
-      const timeStr = this.minutesToTime(current);
+      const timeStr = minutesToTime(current);
 
       const now = new Date();
       const slotDate = new Date(`${date}T${timeStr}`);
@@ -251,12 +281,16 @@ export class AppointmentService {
    * Requisito 3: Listar mis citas (Paciente)
    */
   async findAllByPatient(patientId: string, document?: string) {
+    const whereConditions: FindOptionsWhere<Appointment>[] = [
+      { patient: { id: patientId } },
+      { patient: { keycloakId: patientId } },
+    ];
+    if (document) {
+      whereConditions.push({ patient: { document } });
+    }
+
     const appointments = await this.appointmentRepository.find({
-      where: [
-        { patient: { id: patientId } },
-        { patient: { keycloakId: patientId } },
-        { patient: { document: document } },
-      ],
+      where: whereConditions,
       relations: ['doctor'],
       order: { appointmentDate: 'DESC', appointmentTime: 'ASC' },
     });
@@ -269,7 +303,7 @@ export class AppointmentService {
   async cancelAppointment(appointmentId: string, patientId: string) {
     const appointment = await this.appointmentRepository.findOne({
       where: { id: appointmentId },
-      relations: ['patient'],
+      relations: ['patient', 'doctor'],
     });
 
     if (!appointment) {
@@ -297,21 +331,14 @@ export class AppointmentService {
     appointment.status = 'cancelada';
     const saved = await this.appointmentRepository.save(appointment);
 
-    // Publicar evento fire-and-forget hacia RabbitMQ
-    const fullAppointment = await this.appointmentRepository.findOne({
-      where: { id: appointmentId },
-      relations: ['patient', 'doctor'],
+    this.emitEvent('appointment.cancelled', {
+      appointmentId: saved.id,
+      patientName: `${appointment.patient.firstName} ${appointment.patient.lastName}`,
+      patientPhone: appointment.patient.phone,
+      doctorName: appointment.doctor.name,
+      appointmentDate: saved.appointmentDate,
+      appointmentTime: saved.appointmentTime,
     });
-    if (fullAppointment) {
-      this.notificationClient.emit('appointment.cancelled', {
-        appointmentId: fullAppointment.id,
-        patientName: `${fullAppointment.patient.firstName} ${fullAppointment.patient.lastName}`,
-        patientPhone: fullAppointment.patient.phone,
-        doctorName: fullAppointment.doctor.name,
-        appointmentDate: fullAppointment.appointmentDate,
-        appointmentTime: fullAppointment.appointmentTime,
-      });
-    }
 
     return saved;
   }
@@ -408,23 +435,16 @@ export class AppointmentService {
   appointment.status = 'agendada';
 
   const saved = await this.appointmentRepository.save(appointment);
-  
-  const fullAppointment = await this.appointmentRepository.findOne({
-    where: { id: saved.id },
-    relations: ['patient', 'doctor'],
+
+  this.emitEvent('appointment.rescheduled', {
+    appointmentId: saved.id,
+    patientName: `${appointment.patient.firstName} ${appointment.patient.lastName}`,
+    patientPhone: appointment.patient.phone,
+    doctorName: appointment.doctor.name,
+    appointmentDate: saved.appointmentDate,
+    appointmentTime: saved.appointmentTime,
   });
-  if (fullAppointment) {
-    this.notificationClient.emit('appointment.rescheduled', {
-      appointmentId: fullAppointment.id,
-      patientName: `${fullAppointment.patient.firstName} ${fullAppointment.patient.lastName}`,
-      patientPhone: fullAppointment.patient.phone,
-      doctorName: fullAppointment.doctor.name,
-      appointmentDate: fullAppointment.appointmentDate,
-      appointmentTime: fullAppointment.appointmentTime,
-    });
-  }
-  
-  
+
   return saved;
   }
 
@@ -461,15 +481,12 @@ export class AppointmentService {
     return '\uFEFF' + parser.parse(formatted);
   }
 
-  private timeToMinutes(time: string): number {
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours * 60 + minutes;
-  }
-
-  private minutesToTime(minutes: number): string {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  private emitEvent(pattern: string, data: Record<string, unknown>): void {
+    try {
+      this.notificationClient.emit(pattern, data);
+    } catch (error) {
+      console.error(`[Notification] Error emitiendo evento ${pattern}:`, error);
+    }
   }
 
   /**
@@ -523,10 +540,12 @@ export class AppointmentService {
   /**
    * Listar TODAS las citas (sin filtrar)
    */
-  async findAll() {
+  async findAll(skip = 0, take = 100) {
     return this.appointmentRepository.find({
       relations: ['doctor', 'patient'],
       order: { appointmentDate: 'DESC', appointmentTime: 'ASC' },
+      skip,
+      take,
     });
   }
 
@@ -550,9 +569,7 @@ export class AppointmentService {
 
   /**
    * Tarea programada: marca como completadas las citas que ya pasaron
-   * DESACTIVADO TEMPORALMENTE PARA PRUEBAS
    */
-  // @Cron(CronExpression.EVERY_MINUTE)
   async autoCompletePastAppointments() {
     const now = new Date();
 
@@ -601,7 +618,7 @@ export class AppointmentService {
     });
 
     for (const app of appointments) {
-      this.notificationClient.emit('appointment.reminder', {
+      this.emitEvent('appointment.reminder', {
         appointmentId: app.id,
         patientName: `${app.patient.firstName} ${app.patient.lastName}`,
         patientPhone: app.patient.phone,

@@ -55,8 +55,15 @@ export class AppointmentController {
   async getAppointments(
     @Query('doctorId', ParseUUIDPipe) doctorId: string,
     @Query('date') date: string,
+    @Query('skip') skip?: string,
+    @Query('take') take?: string,
   ) {
-    return this.appointmentService.findAllByDoctorAndDate(doctorId, date);
+    return this.appointmentService.findAllByDoctorAndDate(
+      doctorId,
+      date,
+      skip ? Number(skip) : 0,
+      take ? Number(take) : 100,
+    );
   }
 
   /**
@@ -67,13 +74,10 @@ export class AppointmentController {
   async getPatientAppointments(
     @Req() req: Request & { user: { id: string; document: string } },
   ) {
-    console.log('--- Fetching appointments for patient ---');
-    console.log('User in request:', req.user);
     const appointments = await this.appointmentService.findAllByPatient(
       req.user.id,
       req.user.document,
     );
-    console.log('Found appointments:', appointments.length);
     return appointments;
   }
 
