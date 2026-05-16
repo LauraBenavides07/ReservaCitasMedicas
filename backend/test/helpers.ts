@@ -69,3 +69,19 @@ export function futureTime(): string {
   d.setHours(d.getHours() + 4);
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
+
+export function daysFromNow(n: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d.toISOString().split('T')[0];
+}
+
+export function today(): string {
+  return new Date().toISOString().split('T')[0];
+}
+
+export function nearFutureTime(): string {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() + 30);
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}

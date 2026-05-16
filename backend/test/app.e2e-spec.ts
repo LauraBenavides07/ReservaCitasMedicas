@@ -25,7 +25,7 @@ import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { JwtAuthGuard } from '../src/infrastructure/auth/jwt-auth.guard';
 import { NOTIFICATION_SERVICE } from '../src/infrastructure/messaging/notifications-client.module';
-import { seedTestData, cleanDatabase, tomorrow, futureTime, TestSeed } from './helpers';
+import { seedTestData, cleanDatabase, tomorrow, futureTime, TestSeed, daysFromNow } from './helpers';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Doctor } from '../src/domain/entities/doctor.entity';
@@ -34,10 +34,12 @@ import { Appointment } from '../src/domain/entities/appointment.entity';
 import { Config } from '../src/domain/entities/config.entity';
 import { DoctorException } from '../src/domain/entities/doctor-exception.entity';
 
+const AUTH_PATIENT_ID = '11111111-1111-4111-8111-111111111111';
+
 class MockAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest();
-    req.user = { id: 'test-patient-id', document: '12345', roles: ['patient'] };
+    req.user = { id: AUTH_PATIENT_ID, document: '12345', roles: ['patient'] };
     return true;
   }
 }
@@ -343,6 +345,98 @@ describe('Piedrazul API (e2e)', () => {
 
       expect(res.body.minAdvanceHours).toBe(4);
       expect(res.body.appointmentWindowDays).toBe(30);
+    });
+  });
+
+  describe('Citas - autenticadas (MockAuthGuard)', () => {
+    beforeEach(async () => {
+      await patientRepo.save({
+        id: AUTH_PATIENT_ID,
+        document: '12345', firstName: 'Autenticado', lastName: 'Paciente',
+        phone: '300', gender: 'M',
+      });
+    });
+
+    it('GET /appointments/my-appointments debería retornar citas del paciente', async () => {
+      const appt = await appointmentRepo.save({
+        appointmentDate: daysFromNow(5), appointmentTime: '10:00',
+        doctor: seed.doctor, patient: { id: AUTH_PATIENT_ID } as Patient, status: 'agendada',
+      });
+
+      const res = await request(app.getHttpServer())
+        .get('/appointments/my-appointments')
+        .expect(200);
+
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBe(1);
+      expect(res.body[0].id).toBe(appt.id);
+    });
+
+    it('PATCH /appointments/:id/cancel debería cancelar la cita del paciente', async () => {
+      const appt = await appointmentRepo.save({
+        appointmentDate: daysFromNow(5), appointmentTime: '10:00',
+        doctor: seed.doctor, patient: { id: AUTH_PATIENT_ID } as Patient, status: 'agendada',
+      });
+
+      const res = await request(app.getHttpServer())
+        .patch(`/appointments/${appt.id}/cancel`)
+        .expect(200);
+
+      expect(res.body.status).toBe('cancelada');
+    });
+
+    it('PATCH /appointments/:id/reschedule debería reagendar la cita', async () => {
+      const appt = await appointmentRepo.save({
+        appointmentDate: daysFromNow(5), appointmentTime: '10:00',
+        doctor: seed.doctor, patient: { id: AUTH_PATIENT_ID } as Patient, status: 'agendada',
+      });
+
+      const newDate = daysFromNow(6);
+      const res = await request(app.getHttpServer())
+        .patch(`/appointments/${appt.id}/reschedule`)
+        .send({ date: newDate, time: '11:00' })
+        .expect(200);
+
+      expect(res.body.appointmentDate).toBe(newDate);
+      expect(res.body.appointmentTime).toBe('11:00');
+    });
+  });
+
+  describe('Citas - reglas de validación', () => {
+    it('POST /appointments debería fallar si el médico tiene excepción ese día', async () => {
+      const excRepo = app.get<Repository<DoctorException>>(getRepositoryToken(DoctorException));
+      await excRepo.save({ doctorId: seed.doctor.id, date: tomorrow(), reason: 'Feriado' });
+
+      await request(app.getHttpServer())
+        .post('/appointments')
+        .send({
+          patientDocument: '11111111', firstName: 'A', lastName: 'B',
+          phone: '300', gender: 'M',
+          doctorId: seed.doctor.id, date: tomorrow(), time: futureTime(),
+        })
+        .expect(400);
+    });
+  });
+
+  describe('Exportar citas CSV', () => {
+    it('GET /appointments/export debería retornar CSV', async () => {
+      const patient = await patientRepo.save({
+        document: '11111111', firstName: 'Juan', lastName: 'Pérez',
+        phone: '300', gender: 'M',
+      });
+      const testDate = daysFromNow(5);
+      await appointmentRepo.save({
+        appointmentDate: testDate, appointmentTime: '10:00',
+        doctor: seed.doctor, patient, status: 'agendada',
+      });
+
+      const res = await request(app.getHttpServer())
+        .get(`/appointments/export?date=${testDate}&doctorId=${seed.doctor.id}`)
+        .expect(200);
+
+      expect(res.text).toContain('Hora');
+      expect(res.text).toContain('Juan Pérez');
+      expect(res.text).toContain('10:00');
     });
   });
 });
