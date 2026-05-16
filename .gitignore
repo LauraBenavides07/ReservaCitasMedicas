@@ -7,6 +7,9 @@ dist/
 # Angular
 .angular/
 
+# Coverage
+coverage/
+
 # Environment
 .env
 .env.local

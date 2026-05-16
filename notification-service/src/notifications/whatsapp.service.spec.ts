@@ -18,7 +18,6 @@ describe('WhatsAppService', () => {
   afterEach(() => jest.clearAllMocks());
 
   it('should skip sending if credentials are not configured', async () => {
-    // Sin credenciales en env, no debería llamar a axios
     process.env.WHATSAPP_PHONE_NUMBER_ID = '';
     process.env.WHATSAPP_ACCESS_TOKEN = '';
 
@@ -29,7 +28,6 @@ describe('WhatsAppService', () => {
   it('should call WhatsApp API when credentials are set', async () => {
     process.env.WHATSAPP_PHONE_NUMBER_ID = 'test_phone_id';
     process.env.WHATSAPP_ACCESS_TOKEN = 'test_token';
-    // Re-instanciar para que tome las variables de entorno
     const freshService = new WhatsAppService();
 
     mockedAxios.post = jest.fn().mockResolvedValueOnce({ data: { messages: [{ id: 'wamid.123' }] } });
@@ -44,17 +42,49 @@ describe('WhatsAppService', () => {
     });
   });
 
-  it('should throw when WhatsApp API returns an error', async () => {
+  it('should log error when WhatsApp API fails without throwing', async () => {
     process.env.WHATSAPP_PHONE_NUMBER_ID = 'test_phone_id';
     process.env.WHATSAPP_ACCESS_TOKEN = 'test_token';
     const freshService = new WhatsAppService();
 
-    mockedAxios.post = jest
-      .fn()
-      .mockRejectedValueOnce(new Error('API error'));
+    mockedAxios.post = jest.fn().mockRejectedValueOnce(new Error('API error'));
 
-    await expect(
-      freshService.sendTextMessage('573001234567', 'Test'),
-    ).rejects.toThrow('API error');
+    await expect(freshService.sendTextMessage('573001234567', 'Test')).resolves.toBeUndefined();
+    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+  });
+
+  it('should handle axios error with response data', async () => {
+    process.env.WHATSAPP_PHONE_NUMBER_ID = 'test_phone_id';
+    process.env.WHATSAPP_ACCESS_TOKEN = 'test_token';
+    const freshService = new WhatsAppService();
+
+    const axiosError = new Error('Request failed');
+    (axiosError as any).response = { data: { error: { message: 'Invalid token' } } };
+    mockedAxios.post = jest.fn().mockRejectedValueOnce(axiosError);
+
+    await expect(freshService.sendTextMessage('573001234567', 'Test')).resolves.toBeUndefined();
+    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+  });
+
+  it('should normalize phone numbers by removing spaces and hyphens', async () => {
+    process.env.WHATSAPP_PHONE_NUMBER_ID = 'test_phone_id';
+    process.env.WHATSAPP_ACCESS_TOKEN = 'test_token';
+    const freshService = new WhatsAppService();
+
+    mockedAxios.post = jest.fn().mockResolvedValueOnce({ data: {} });
+
+    await freshService.sendTextMessage('573 001 234-567', 'Test');
+    const callArgs = (mockedAxios.post as jest.Mock).mock.calls[0];
+    expect(callArgs[1].to).toBe('573001234567');
+  });
+
+  it('should log simulation message with truncated body', async () => {
+    process.env.WHATSAPP_PHONE_NUMBER_ID = '';
+    process.env.WHATSAPP_ACCESS_TOKEN = '';
+    const freshService = new WhatsAppService();
+    const logSpy = jest.spyOn(freshService['logger'], 'log');
+
+    await freshService.sendTextMessage('573001234567', 'A'.repeat(100));
+    expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('[SIMULACION WHATSAPP]'));
   });
 });
