@@ -76,7 +76,7 @@ export class PatientDashboardComponent implements OnInit {
         cancelButton: 'custom-cancel-btn'
         
       }
-    }).then((result) => {
+    }).then((result: any) => {
       if (result.isConfirmed) {
         Swal.fire({
           title: 'Cancelando cita...',
@@ -157,7 +157,7 @@ export class PatientDashboardComponent implements OnInit {
         confirmButton: 'custom-confirm-btn',
         cancelButton: 'custom-cancel-btn'
       }
-    }).then((result) => {
+    }).then((result: any) => {
       if (result.isConfirmed) {
         Swal.fire({
           title: 'Reagendando cita...',

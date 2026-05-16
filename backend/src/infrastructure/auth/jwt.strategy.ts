@@ -31,7 +31,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         jwksUri: `${keycloakUrl}/realms/${realm}/protocol/openid-connect/certs`,
       }),
       // Opcional: Validar el emisor
-      issuer: `${keycloakUrl}/realms/${realm}`,
+      // issuer: `${keycloakUrl}/realms/${realm}`,
       algorithms: ['RS256'],
     });
   }

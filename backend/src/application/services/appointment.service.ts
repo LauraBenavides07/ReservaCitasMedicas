@@ -40,7 +40,7 @@ export class AppointmentService {
    */
   async findAllByDoctorAndDate(doctorId: string, date?: string) {
     const whereClause: FindOptionsWhere<Appointment> = { doctor: { id: doctorId } };
-    if (date) {
+    if (date && date.trim() !== '') {
         whereClause.appointmentDate = date;
     }
 
@@ -250,12 +250,17 @@ export class AppointmentService {
   /**
    * Requisito 3: Listar mis citas (Paciente)
    */
-  async findAllByPatient(patientId: string) {
-    return this.appointmentRepository.find({
-      where: { patient: { id: patientId } },
+  async findAllByPatient(patientId: string, document?: string) {
+    const appointments = await this.appointmentRepository.find({
+      where: [
+        { patient: { id: patientId } },
+        { patient: { keycloakId: patientId } },
+        { patient: { document: document } },
+      ],
       relations: ['doctor'],
       order: { appointmentDate: 'DESC', appointmentTime: 'ASC' },
     });
+    return appointments;
   }
 
   /**
@@ -271,7 +276,10 @@ export class AppointmentService {
       throw new NotFoundException('Cita no encontrada.');
     }
 
-    if (appointment.patient.id !== patientId) {
+    if (
+      appointment.patient.id !== patientId &&
+      appointment.patient.keycloakId !== patientId
+    ) {
       throw new UnauthorizedException(
         'No tienes permiso para cancelar esta cita.',
       );
@@ -341,7 +349,10 @@ export class AppointmentService {
     throw new NotFoundException('Cita no encontrada.');
   }
 
-  if (appointment.patient.id !== patientId) {
+  if (
+    appointment.patient.id !== patientId &&
+    appointment.patient.keycloakId !== patientId
+  ) {
     throw new UnauthorizedException(
       'No tienes permiso para modificar esta cita.',
     );
@@ -539,8 +550,9 @@ export class AppointmentService {
 
   /**
    * Tarea programada: marca como completadas las citas que ya pasaron
+   * DESACTIVADO TEMPORALMENTE PARA PRUEBAS
    */
-  @Cron(CronExpression.EVERY_MINUTE)
+  // @Cron(CronExpression.EVERY_MINUTE)
   async autoCompletePastAppointments() {
     const now = new Date();
 

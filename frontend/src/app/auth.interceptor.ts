@@ -1,19 +1,28 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from './services/auth.service';
+import { catchError, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
 
-  console.log('Token en interceptor:', token ? 'Existe' : 'No existe');
+  let request = req;
   
   if (token) {
-    const cloned = req.clone({
+    request = req.clone({
       headers: req.headers.set('Authorization', `Bearer ${token}`),
     });
-    return next(cloned);
   }
 
-  return next(req);
+  return next(request).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401) {
+        console.warn('Sesión expirada (401). Cerrando sesión...');
+        authService.logout();
+        location.reload(); // Recargar para volver al login
+      }
+      return throwError(() => error);
+    })
+  );
 };

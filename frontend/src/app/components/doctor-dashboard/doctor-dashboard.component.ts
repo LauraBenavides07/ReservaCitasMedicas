@@ -289,7 +289,7 @@ export class DoctorDashboardComponent implements OnInit {
             },
             confirmButtonText: 'Sí, confirmar',
             cancelButtonText: 'Cancelar'
-        }).then((result) => {
+        }).then((result: any) => {
             if (result.isConfirmed) {
                 Swal.fire({
                     title: 'Confirmando cita...',
@@ -353,7 +353,7 @@ export class DoctorDashboardComponent implements OnInit {
             },
             confirmButtonText: 'Sí, cancelar cita',
             cancelButtonText: 'No, mantener'
-        }).then((result) => {
+        }).then((result: any) => {
             if (result.isConfirmed) {
                 Swal.fire({
                     title: 'Cancelando cita...',
@@ -417,7 +417,7 @@ export class DoctorDashboardComponent implements OnInit {
             },
             confirmButtonText: 'Sí, completar',
             cancelButtonText: 'Cancelar'
-        }).then((result) => {
+        }).then((result: any) => {
             if (result.isConfirmed) {
                 Swal.fire({
                     title: 'Actualizando estado...',

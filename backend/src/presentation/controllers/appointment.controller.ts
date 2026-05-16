@@ -71,6 +71,7 @@ export class AppointmentController {
     console.log('User in request:', req.user);
     const appointments = await this.appointmentService.findAllByPatient(
       req.user.id,
+      req.user.document,
     );
     console.log('Found appointments:', appointments.length);
     return appointments;
