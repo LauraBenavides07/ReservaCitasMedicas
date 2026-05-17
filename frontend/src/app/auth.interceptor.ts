@@ -17,7 +17,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(request).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
+      if (error.status === 401 && !req.url.includes('/auth/')) {
         console.warn('Sesión expirada (401). Cerrando sesión...');
         authService.logout();
         location.reload(); // Recargar para volver al login

@@ -1,7 +1,7 @@
 import { Controller, Get, Body, Patch } from '@nestjs/common';
 import { ConfigService } from '../../application/services/config.service';
 import { UpdateConfigDto } from '../dto/update-config.dto';
-import type { GlobalConfig } from '../../application/services/config.service';
+import type { GlobalConfig } from '../../domain/types/global-config.type';
 
 @Controller('configs')
 export class ConfigController {

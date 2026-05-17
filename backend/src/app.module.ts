@@ -12,10 +12,25 @@ import { ConfigController } from './presentation/controllers/config.controller';
 import { AppointmentController } from './presentation/controllers/appointment.controller';
 import { DoctorController } from './presentation/controllers/doctor.controller';
 import { AppointmentService } from './application/services/appointment.service';
+import { AvailabilityService } from './application/services/availability.service';
+import { StatsService } from './application/services/stats.service';
+import { ExportService } from './application/services/export.service';
+import { AppointmentJobService } from './application/services/appointment-job.service';
+import { NotificationService } from './application/services/notification.service';
+import { PatientService } from './application/services/patient.service';
 import { DoctorService } from './application/services/doctor.service';
+import { DoctorExceptionService } from './application/services/doctor-exception.service';
 import { ConfigService as AppConfigService } from './application/services/config.service';
 import { AuthModule } from './auth.module';
 import { NotificationsClientModule } from './infrastructure/messaging/notifications-client.module';
+import { ICsvExporter } from './application/abstractions/icsv-exporter.interface';
+import { Json2CsvExporter } from './infrastructure/export/json2csv-exporter';
+import { IAppointmentRepository } from './application/ports/appointment.repository';
+import { IDoctorRepository } from './application/ports/doctor.repository';
+import { IDoctorExceptionRepository } from './application/ports/doctor-exception.repository';
+import { TypeOrmAppointmentRepository } from './infrastructure/persistence/typeorm-appointment.repository';
+import { TypeOrmDoctorRepository } from './infrastructure/persistence/typeorm-doctor.repository';
+import { TypeOrmDoctorExceptionRepository } from './infrastructure/persistence/typeorm-doctor-exception.repository';
 
 @Module({
   imports: [
@@ -44,6 +59,21 @@ import { NotificationsClientModule } from './infrastructure/messaging/notificati
     NotificationsClientModule,
   ],
   controllers: [AppointmentController, DoctorController, ConfigController],
-  providers: [AppointmentService, DoctorService, AppConfigService],
+  providers: [
+    AppointmentService,
+    AvailabilityService,
+    StatsService,
+    ExportService,
+    AppointmentJobService,
+    NotificationService,
+    PatientService,
+    DoctorService,
+    DoctorExceptionService,
+    AppConfigService,
+    { provide: ICsvExporter, useClass: Json2CsvExporter },
+    { provide: IAppointmentRepository, useClass: TypeOrmAppointmentRepository },
+    { provide: IDoctorRepository, useClass: TypeOrmDoctorRepository },
+    { provide: IDoctorExceptionRepository, useClass: TypeOrmDoctorExceptionRepository },
+  ],
 })
 export class AppModule {}

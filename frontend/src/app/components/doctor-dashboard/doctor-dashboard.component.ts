@@ -291,22 +291,10 @@ export class DoctorDashboardComponent implements OnInit {
             cancelButtonText: 'Cancelar'
         }).then((result: any) => {
             if (result.isConfirmed) {
-                Swal.fire({
-                    title: 'Confirmando cita...',
-                    text: 'Por favor espera',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    },
-                    customClass: {
-                        popup: 'custom-popup',
-                        title: 'custom-title'
-                    }
-                });
-                
                 this.appointmentService.confirmAppointment(apt.id).subscribe({
                     next: () => {
-                        this.loadAppointments();
+                        apt.status = 'Confirmada';
+                        this.calculateStats();
                         Swal.fire({
                             icon: 'success',
                             title: 'Cita confirmada',
@@ -355,22 +343,10 @@ export class DoctorDashboardComponent implements OnInit {
             cancelButtonText: 'No, mantener'
         }).then((result: any) => {
             if (result.isConfirmed) {
-                Swal.fire({
-                    title: 'Cancelando cita...',
-                    text: 'Por favor espera',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    },
-                    customClass: {
-                        popup: 'custom-popup',
-                        title: 'custom-title'
-                    }
-                });
-                
                 this.appointmentService.cancelAppointment(apt.id).subscribe({
                     next: () => {
-                        this.loadAppointments();
+                        apt.status = 'Cancelada';
+                        this.calculateStats();
                         Swal.fire({
                             icon: 'success',
                             title: 'Cita cancelada',
@@ -419,22 +395,10 @@ export class DoctorDashboardComponent implements OnInit {
             cancelButtonText: 'Cancelar'
         }).then((result: any) => {
             if (result.isConfirmed) {
-                Swal.fire({
-                    title: 'Actualizando estado...',
-                    text: 'Por favor espera',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    },
-                    customClass: {
-                        popup: 'custom-popup',
-                        title: 'custom-title'
-                    }
-                });
-                
                 this.appointmentService.completeAppointment(apt.id).subscribe({
                     next: () => {
-                        this.loadAppointments();
+                        apt.status = 'Completada';
+                        this.calculateStats();
                         Swal.fire({
                             icon: 'success',
                             title: 'Cita completada',
@@ -451,9 +415,6 @@ export class DoctorDashboardComponent implements OnInit {
                         console.error('Error al completar la cita:', err);
                         apt.status = 'Completada';
                         this.calculateStats();
-                        const cacheKey = this.selectedDate ? `cached_dashboard_${this.selectedDate}` : 'cached_dashboard_all';
-                        localStorage.setItem(cacheKey, JSON.stringify(this.appointments));
-                        
                         Swal.fire({
                             icon: 'success',
                             title: 'Cita completada',
@@ -495,6 +456,7 @@ export class DoctorDashboardComponent implements OnInit {
             case 'Confirmada': return 'status-confirmed';
             case 'Pendiente': return 'status-pending';
             case 'Completada': return 'status-completed';
+            case 'Cancelada': return 'status-cancelled';
             default: return 'status-default';
         }
     }

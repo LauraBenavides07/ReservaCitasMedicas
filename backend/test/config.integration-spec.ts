@@ -2,7 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
-import { ConfigService, GlobalConfig } from '../src/application/services/config.service';
+import { ConfigService } from '../src/application/services/config.service';
+import { GlobalConfig } from '../src/domain/types/global-config.type';
 import { Config } from '../src/domain/entities/config.entity';
 
 async function cleanDatabase(module: TestingModule) {

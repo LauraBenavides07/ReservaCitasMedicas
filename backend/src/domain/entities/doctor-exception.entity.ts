@@ -28,4 +28,8 @@ export class DoctorException {
   @ManyToOne(() => Doctor, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'doctor_id' })
   doctor: Doctor;
+
+  isOnDate(dateStr: string): boolean {
+    return this.date === dateStr;
+  }
 }

@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DoctorService } from './doctor.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { Doctor } from '../../domain/entities/doctor.entity';
-import { Appointment } from '../../domain/entities/appointment.entity';
-import { DoctorException } from '../../domain/entities/doctor-exception.entity';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { IDoctorRepository } from '../ports/doctor.repository';
+import { IAppointmentRepository } from '../ports/appointment.repository';
 
 describe('DoctorService', () => {
   let service: DoctorService;
@@ -22,29 +21,12 @@ describe('DoctorService', () => {
     count: jest.fn(),
   };
 
-  const mockExceptionRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    find: jest.fn(),
-    delete: jest.fn(),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DoctorService,
-        {
-          provide: getRepositoryToken(Doctor),
-          useValue: mockDoctorRepository,
-        },
-        {
-          provide: getRepositoryToken(Appointment),
-          useValue: mockAppointmentRepository,
-        },
-        {
-          provide: getRepositoryToken(DoctorException),
-          useValue: mockExceptionRepository,
-        },
+        { provide: IDoctorRepository, useValue: mockDoctorRepository },
+        { provide: IAppointmentRepository, useValue: mockAppointmentRepository },
       ],
     }).compile();
 
@@ -119,32 +101,6 @@ describe('DoctorService', () => {
       mockAppointmentRepository.count.mockResolvedValue(5);
 
       await expect(service.remove('1')).rejects.toThrow(BadRequestException);
-    });
-  });
-
-  describe('Excepciones', () => {
-    it('debería agregar una excepción', async () => {
-      const data = { doctorId: '1', date: '2026-05-20', reason: 'Vacaciones' };
-      mockExceptionRepository.create.mockReturnValue(data);
-      mockExceptionRepository.save.mockResolvedValue(data);
-
-      const result = await service.addException(data);
-      expect(result.reason).toBe('Vacaciones');
-    });
-
-    it('debería obtener excepciones de un médico', async () => {
-      mockExceptionRepository.find.mockResolvedValue([{ id: 'e1', doctorId: '1' }]);
-      const result = await service.getExceptions('1');
-      expect(result).toHaveLength(1);
-      expect(mockExceptionRepository.find).toHaveBeenCalledWith(expect.objectContaining({
-        where: { doctorId: '1' }
-      }));
-    });
-
-    it('debería eliminar una excepción', async () => {
-      mockExceptionRepository.delete.mockResolvedValue({ affected: 1 });
-      await service.removeException('e1');
-      expect(mockExceptionRepository.delete).toHaveBeenCalledWith('e1');
     });
   });
 });

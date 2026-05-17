@@ -280,6 +280,10 @@
     background-color: #ef4444;
 }
 
+.apt-status.status-default {
+    background-color: #6b7280;
+}
+
 /* CARD STRUCTURE */
 .card-left {
     display: flex;
@@ -604,3 +608,5 @@
     border-radius: 16px !important;
     padding: 1.5rem !important;
 }
+
+

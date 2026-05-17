@@ -125,19 +125,36 @@ export class AdminConfigComponent implements OnInit {
   // Guarda los datos del médico (crea o actualiza)
   saveDoctor(): void {
     const data = this.doctorForm.value;
+
+    // PostgreSQL retorna TIME con segundos (HH:mm:ss), el backend solo acepta HH:mm
+    if (data.scheduleStart) data.scheduleStart = data.scheduleStart.substring(0, 5);
+    if (data.scheduleEnd) data.scheduleEnd = data.scheduleEnd.substring(0, 5);
+    if (data.lunchStart) data.lunchStart = data.lunchStart.substring(0, 5);
+    if (data.lunchEnd) data.lunchEnd = data.lunchEnd.substring(0, 5);
+
     const doc = this.selectedDoctor();
 
     if (doc) {
       // Si existe, actualiza el médico existente
-      this.doctorService.updateDoctor(doc.id, data).subscribe(() => {
-        this.loadDoctors();
-        this.showDoctorForm.set(false);
+      this.doctorService.updateDoctor(doc.id, data).subscribe({
+        next: () => {
+          this.loadDoctors();
+          this.showDoctorForm.set(false);
+        },
+        error: (err) => {
+          this.showErrorModal(err.error?.message || 'Error al actualizar el médico.');
+        }
       });
     } else {
       // Si no existe, crea un nuevo médico
-      this.doctorService.createDoctor(data).subscribe(() => {
-        this.loadDoctors();
-        this.showDoctorForm.set(false);
+      this.doctorService.createDoctor(data).subscribe({
+        next: () => {
+          this.loadDoctors();
+          this.showDoctorForm.set(false);
+        },
+        error: (err) => {
+          this.showErrorModal(err.error?.message || 'Error al crear el médico.');
+        }
       });
     }
   }
@@ -182,7 +199,7 @@ export class AdminConfigComponent implements OnInit {
     const doc = this.selectedDoctor();
     if (!doc) return;
 
-    this.doctorService.removeException(id).subscribe(() => {
+    this.doctorService.removeException(doc.id, id).subscribe(() => {
       this.loadExceptions(doc.id);
     });
   }

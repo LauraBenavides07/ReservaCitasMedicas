@@ -129,6 +129,18 @@
             Mi Agenda
           </button>
 
+          <button class="nav-item" (click)="changeView('doctor-create')"
+            [class.active]="view() === 'doctor-create'">
+            <span class="icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </span>
+            Nueva Cita
+          </button>
+
           <button class="nav-item" (click)="changeView('doctor-patients')"
             [class.active]="view() === 'doctor-patients'">
             <span class="icon">
@@ -203,6 +215,7 @@
           <ng-container *ngIf="view() === 'admin-config'">Configuración</ng-container>
           <ng-container *ngIf="view() === 'patient-dashboard'">Mis Citas</ng-container>
           <ng-container *ngIf="view() === 'doctor-dashboard'">Panel del Médico</ng-container>
+          <ng-container *ngIf="view() === 'doctor-create'">Nueva Cita</ng-container>
           <ng-container *ngIf="view() === 'doctor-patients'">Mis Pacientes</ng-container>
           <ng-container *ngIf="view() === 'doctor-history'">Historial Médico</ng-container>
         </h2>
@@ -234,6 +247,9 @@
         <!-- VISTAS DE DOCTOR -->
         <div *ngIf="view() === 'doctor-dashboard'">
           <app-doctor-dashboard (navigate)="changeView($event)"></app-doctor-dashboard>
+        </div>
+        <div *ngIf="view() === 'doctor-create'">
+          <app-appointment-form></app-appointment-form>
         </div>
         <div *ngIf="view() === 'doctor-patients'">
           <app-doctor-patients (navigate)="changeView($event)"></app-doctor-patients>

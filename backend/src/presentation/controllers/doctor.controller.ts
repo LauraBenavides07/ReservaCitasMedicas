@@ -9,13 +9,17 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { DoctorService } from '../../application/services/doctor.service';
+import { DoctorExceptionService } from '../../application/services/doctor-exception.service';
 import { CreateDoctorDto } from '../dto/create-doctor.dto';
 import { UpdateDoctorDto } from '../dto/update-doctor.dto';
 import { CreateExceptionDto } from '../dto/create-exception.dto';
 
 @Controller('doctors')
 export class DoctorController {
-  constructor(private readonly doctorService: DoctorService) {}
+  constructor(
+    private readonly doctorService: DoctorService,
+    private readonly doctorExceptionService: DoctorExceptionService,
+  ) {}
 
   @Get()
   async getDoctors() {
@@ -50,12 +54,12 @@ export class DoctorController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: CreateExceptionDto,
   ) {
-    return this.doctorService.addException({ ...data, doctorId: id });
+    return this.doctorExceptionService.add({ ...data, doctorId: id });
   }
 
   @Get(':id/exceptions')
   async getExceptions(@Param('id', ParseUUIDPipe) id: string) {
-    return this.doctorService.getExceptions(id);
+    return this.doctorExceptionService.findByDoctor(id);
   }
 
   @Delete(':id/exceptions/:exceptionId')
@@ -63,6 +67,6 @@ export class DoctorController {
     @Param('id', ParseUUIDPipe) _id: string,
     @Param('exceptionId', ParseUUIDPipe) exceptionId: string,
   ) {
-    return this.doctorService.removeException(exceptionId);
+    return this.doctorExceptionService.remove(exceptionId);
   }
 }

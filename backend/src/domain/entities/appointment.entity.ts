@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Doctor } from './doctor.entity';
 import { Patient } from './patient.entity';
+import { AppointmentStatus } from '../types/appointment-status.enum';
 
 @Entity('appointments')
 @Index(['doctor', 'appointmentDate', 'appointmentTime'], { unique: true })
@@ -23,7 +24,7 @@ export class Appointment {
   @Column({ name: 'appointment_time', type: 'time' })
   appointmentTime: string;
 
-  @Column({ length: 20, default: 'agendada' })
+  @Column({ length: 20, default: AppointmentStatus.SCHEDULED })
   status: string;
 
   @Column({ name: 'created_by', length: 100, nullable: true })
@@ -42,4 +43,69 @@ export class Appointment {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  isScheduled(): boolean {
+    return this.status === AppointmentStatus.SCHEDULED;
+  }
+
+  isCancelled(): boolean {
+    return this.status === AppointmentStatus.CANCELLED;
+  }
+
+  isCompleted(): boolean {
+    return this.status === AppointmentStatus.COMPLETED;
+  }
+
+  canBeCancelled(): boolean {
+    return !this.isCancelled() && !this.isCompleted() && this.isInFuture();
+  }
+
+  canBeConfirmed(): boolean {
+    return !this.isCancelled();
+  }
+
+  canBeRescheduled(): boolean {
+    return this.isScheduled() || this.status === AppointmentStatus.CONFIRMED;
+  }
+
+  isInFuture(): boolean {
+    const now = new Date();
+    const appDate = new Date(`${this.appointmentDate}T${this.appointmentTime}`);
+    return appDate > now;
+  }
+
+  isPast(): boolean {
+    const now = new Date();
+    const appDate = new Date(`${this.appointmentDate}T${this.appointmentTime}`);
+    return appDate < now;
+  }
+
+  isOwnedBy(patientId: string): boolean {
+    return (
+      this.patient?.id === patientId ||
+      this.patient?.keycloakId === patientId
+    );
+  }
+
+  belongsToDoctor(doctorId: string): boolean {
+    return this.doctor?.id === doctorId;
+  }
+
+  cancel(): void {
+    this.status = AppointmentStatus.CANCELLED;
+  }
+
+  confirm(): void {
+    this.status = AppointmentStatus.CONFIRMED;
+  }
+
+  complete(): void {
+    this.status = AppointmentStatus.COMPLETED;
+  }
+
+  reschedule(date: string, time: string): void {
+    this.appointmentDate = date;
+    this.appointmentTime = time;
+    this.status = AppointmentStatus.SCHEDULED;
+  }
 }

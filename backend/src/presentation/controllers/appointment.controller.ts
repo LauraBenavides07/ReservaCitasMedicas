@@ -14,31 +14,33 @@ import {
 import { Request } from 'express';
 import type { Response } from 'express';
 import { AppointmentService } from '../../application/services/appointment.service';
+import { AvailabilityService } from '../../application/services/availability.service';
+import { StatsService } from '../../application/services/stats.service';
+import { ExportService } from '../../application/services/export.service';
 import { CreateAppointmentDto } from '../dto/create-appointment.dto';
 import { JwtAuthGuard } from '../../infrastructure/auth/jwt-auth.guard';
 
 @Controller('appointments')
 export class AppointmentController {
-  constructor(private readonly appointmentService: AppointmentService) {}
+  constructor(
+    private readonly appointmentService: AppointmentService,
+    private readonly availabilityService: AvailabilityService,
+    private readonly statsService: StatsService,
+    private readonly exportService: ExportService,
+  ) {}
 
-  /**
-   * REQUISITO 8: Estadisticas Globales
-   */
   @Get('stats')
   async getDashboardStats() {
-    return this.appointmentService.getDashboardStats();
+    return this.statsService.getDashboardStats();
   }
 
-  /**
-   * REQUISITO 5: Exportar citas (Agendador/Médico)
-   */
   @Get('export')
   async exportAppointments(
     @Query('date') date: string,
     @Query('doctorId', ParseUUIDPipe) doctorId: string,
     @Res() res: Response,
   ) {
-    const csv = await this.appointmentService.exportAppointmentsByDateAndDoctor(
+    const csv = await this.exportService.exportAppointmentsByDateAndDoctor(
       date,
       doctorId,
     );
@@ -48,9 +50,6 @@ export class AppointmentController {
     res.send(csv);
   }
 
-  /**
-   * REQUISITO 1: Listar citas (Agendador)
-   */
   @Get()
   async getAppointments(
     @Query('doctorId', ParseUUIDPipe) doctorId: string,
@@ -66,9 +65,6 @@ export class AppointmentController {
     );
   }
 
-  /**
-   * REQUISITO 3: Listar mis citas (Paciente)
-   */
   @UseGuards(JwtAuthGuard)
   @Get('my-appointments')
   async getPatientAppointments(
@@ -81,24 +77,26 @@ export class AppointmentController {
     return appointments;
   }
 
-  /**
-   * REQUISITO 2/3: Crear cita
-   */
   @Post()
   async createAppointment(@Body() createDto: CreateAppointmentDto) {
     return this.appointmentService.create(createDto);
   }
 
-  /**
-   * REQUISITO 3: Cancelar cita (Paciente)
-   */
+  @Get('available-slots')
+  async getAvailableSlots(
+    @Query('doctorId', ParseUUIDPipe) doctorId: string,
+    @Query('date') date: string,
+  ) {
+    return this.availabilityService.getAvailableSlots(doctorId, date);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Patch(':id/cancel')
   async cancelPatientAppointment(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: Request & { user: { id: string } },
+    @Req() req: Request & { user: { id: string; localRole?: string } },
   ) {
-    return this.appointmentService.cancelAppointment(id, req.user.id);
+    return this.appointmentService.cancelAppointment(id, req.user.id, req.user.localRole);
   }
 
   @Patch(':id/confirm')
@@ -106,6 +104,13 @@ export class AppointmentController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.appointmentService.confirmAppointment(id);
+  }
+
+  @Patch(':id/complete')
+  async completeAppointment(
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.appointmentService.completeAppointment(id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -123,29 +128,13 @@ export class AppointmentController {
     );
   }
 
-  /**
-   * REQUISITO 2: Consultar disponibilidad
-   */
-  @Get('available-slots')
-  async getAvailableSlots(
-    @Query('doctorId', ParseUUIDPipe) doctorId: string,
-    @Query('date') date: string,
-  ) {
-    return this.appointmentService.getAvailableSlots(doctorId, date);
+  @Get('patient-by-document/:document')
+  async findPatientByDocument(@Param('document') document: string) {
+    return this.appointmentService.findPatientByDocument(document);
   }
-  /**
-   * Listar TODAS las citas (sin filtrar por médico)
-   */
+
   @Get('all')
   async findAllAppointments() {
     return this.appointmentService.findAll();
-  }
-
-  /**
-   * Buscar paciente por documento
-   */
-  @Get('patient-by-document/:document')
-  async getPatientByDocument(@Param('document') document: string) {
-    return this.appointmentService.findPatientByDocument(document);
   }
 }

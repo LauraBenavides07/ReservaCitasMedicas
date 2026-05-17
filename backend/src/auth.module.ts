@@ -8,6 +8,14 @@ import { User } from './domain/entities/user.entity';
 import { AuthService } from './application/services/auth.service';
 import { AuthController } from './presentation/controllers/auth.controller';
 import { JwtStrategy } from './infrastructure/auth/jwt.strategy';
+import { IPasswordHasher } from './application/abstractions/ipassword-hasher.interface';
+import { BcryptPasswordHasher } from './infrastructure/auth/bcrypt-password-hasher';
+import { IHttpClient } from './application/abstractions/ihttp-client.interface';
+import { AxiosHttpClient } from './infrastructure/auth/axios-http-client';
+import { KeycloakConfig } from './infrastructure/auth/keycloak-config';
+import { KeycloakService } from './infrastructure/auth/keycloak.service';
+import { IPatientRepository } from './application/ports/patient.repository';
+import { TypeOrmPatientRepository } from './infrastructure/persistence/typeorm-patient.repository';
 
 @Module({
   imports: [
@@ -22,8 +30,16 @@ import { JwtStrategy } from './infrastructure/auth/jwt.strategy';
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    KeycloakConfig,
+    KeycloakService,
+    { provide: IPasswordHasher, useClass: BcryptPasswordHasher },
+    { provide: IHttpClient, useClass: AxiosHttpClient },
+    { provide: IPatientRepository, useClass: TypeOrmPatientRepository },
+  ],
   controllers: [AuthController],
-  exports: [AuthService],
+  exports: [AuthService, IPatientRepository],
 })
 export class AuthModule {}

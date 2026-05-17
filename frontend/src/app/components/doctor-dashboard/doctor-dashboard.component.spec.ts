@@ -346,14 +346,13 @@ describe('DoctorDashboardComponent', () => {
   describe('confirmAppointment', () => {
     it('should call confirmAppointment service on confirmation', async () => {
       const Swal = (await import('sweetalert2')).default;
-      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
+      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Pendiente', reason: 'Consulta' };
       vi.spyOn(appointmentService, 'confirmAppointment').mockReturnValue(of({}));
-      vi.spyOn(component, 'loadAppointments').mockImplementation(() => {});
 
       await component.confirmAppointment(apt);
 
       expect(appointmentService.confirmAppointment).toHaveBeenCalledWith('apt1');
-      expect(component.loadAppointments).toHaveBeenCalled();
+      expect(apt.status).toBe('Confirmada');
     });
 
     it('should do nothing if user cancels confirmation', async () => {
@@ -385,11 +384,11 @@ describe('DoctorDashboardComponent', () => {
       const Swal = (await import('sweetalert2')).default;
       const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
       vi.spyOn(appointmentService, 'cancelAppointment').mockReturnValue(of({}));
-      vi.spyOn(component, 'loadAppointments').mockImplementation(() => {});
 
       await component.cancelAppointment(apt);
 
       expect(appointmentService.cancelAppointment).toHaveBeenCalledWith('apt1');
+      expect(apt.status).toBe('Cancelada');
     });
 
     it('should do nothing if user cancels', async () => {
@@ -421,11 +420,11 @@ describe('DoctorDashboardComponent', () => {
       const Swal = (await import('sweetalert2')).default;
       const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
       vi.spyOn(appointmentService, 'completeAppointment').mockReturnValue(of({}));
-      vi.spyOn(component, 'loadAppointments').mockImplementation(() => {});
 
       await component.completeAppointment(apt);
 
       expect(appointmentService.completeAppointment).toHaveBeenCalledWith('apt1');
+      expect(apt.status).toBe('Completada');
     });
 
     it('should do nothing if user cancels', async () => {
@@ -469,7 +468,7 @@ describe('DoctorDashboardComponent', () => {
       expect(component.getStatusClass('Confirmada')).toBe('status-confirmed');
       expect(component.getStatusClass('Pendiente')).toBe('status-pending');
       expect(component.getStatusClass('Completada')).toBe('status-completed');
-      expect(component.getStatusClass('Cancelada')).toBe('status-default');
+      expect(component.getStatusClass('Cancelada')).toBe('status-cancelled');
     });
   });
 });

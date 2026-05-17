@@ -41,7 +41,7 @@ export class AppComponent {
   // Señal que controla la vista actual de la aplicación
   // Posibles valores: 'landing', 'admin-list', 'admin-create', 'admin-config', 
   // 'login', 'register', 'patient-dashboard', 'patient-create', 'doctor-dashboard', 'doctor-patients', 'doctor-history'
-  view = signal<'landing' | 'admin-list' | 'admin-create' | 'admin-config' | 'login' | 'register' | 'patient-dashboard' | 'patient-create' | 'doctor-dashboard' | 'doctor-patients' | 'doctor-history'>('landing');
+  view = signal<'landing' | 'admin-list' | 'admin-create' | 'admin-config' | 'login' | 'register' | 'patient-dashboard' | 'patient-create' | 'doctor-dashboard' | 'doctor-create' | 'doctor-patients' | 'doctor-history'>('landing');
 
   // Estado para el menú móvil
   isMobileMenuOpen = signal(false);

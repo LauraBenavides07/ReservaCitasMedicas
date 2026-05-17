@@ -45,4 +45,43 @@ export class Doctor {
 
   @OneToMany(() => Appointment, (appointment) => appointment.doctor)
   appointments: Appointment[];
+
+  getWorkingDays(): number[] {
+    return this.activeDays
+      ? this.activeDays.split(',').map(Number)
+      : [1, 2, 3, 4, 5];
+  }
+
+  isWorkingDay(dateStr: string): boolean {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const dateObj = new Date(year, month - 1, day);
+    let dayOfWeek = dateObj.getDay();
+    if (dayOfWeek === 0) dayOfWeek = 7;
+    return this.getWorkingDays().includes(dayOfWeek);
+  }
+
+  hasLunchBreak(): boolean {
+    return !!this.lunchStart && !!this.lunchEnd;
+  }
+
+  scheduleStartMinutes(): number {
+    return this._timeToMinutes(this.scheduleStart);
+  }
+
+  scheduleEndMinutes(): number {
+    return this._timeToMinutes(this.scheduleEnd);
+  }
+
+  lunchStartMinutes(): number | null {
+    return this.lunchStart ? this._timeToMinutes(this.lunchStart) : null;
+  }
+
+  lunchEndMinutes(): number | null {
+    return this.lunchEnd ? this._timeToMinutes(this.lunchEnd) : null;
+  }
+
+  private _timeToMinutes(time: string): number {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
 }

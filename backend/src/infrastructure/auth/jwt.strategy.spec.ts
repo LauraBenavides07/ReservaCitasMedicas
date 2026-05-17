@@ -1,8 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { JwtStrategy } from './jwt.strategy';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Patient } from '../../domain/entities/patient.entity';
-import { User } from '../../domain/entities/user.entity';
 import { UnauthorizedException } from '@nestjs/common';
 
 jest.mock('jwks-rsa', () => ({

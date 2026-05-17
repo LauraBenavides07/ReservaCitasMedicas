@@ -97,9 +97,9 @@ describe('DoctorService', () => {
   });
 
   it('should remove an exception', () => {
-    service.removeException('e1').subscribe();
+    service.removeException('doc-1', 'e1').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/doctors/exceptions/e1');
+    const req = httpMock.expectOne('http://localhost:3000/doctors/doc-1/exceptions/e1');
     expect(req.request.method).toBe('DELETE');
     req.flush({});
   });

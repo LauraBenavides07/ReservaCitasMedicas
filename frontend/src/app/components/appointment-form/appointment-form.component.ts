@@ -114,7 +114,29 @@ export class AppointmentFormComponent implements OnInit {
   // Cambio de doctor
   onDoctorChange(): void {
     this.f['time'].setValue('');
+    this.setNextWorkingDay();
     this.loadAvailableSlots();
+  }
+
+  // Preselecciona el próximo día hábil según el médico seleccionado
+  private setNextWorkingDay(): void {
+    const doctorId = this.f['doctorId'].value;
+    const doctor = this.doctors().find(d => d.id === doctorId);
+    if (!doctor) return;
+
+    const today = new Date();
+    const workingDays = doctor.activeDays ? doctor.activeDays.split(',').map(Number) : [1, 2, 3, 4, 5];
+
+    for (let i = 0; i <= 14; i++) {
+      const d = new Date();
+      d.setDate(today.getDate() + i);
+      let dow = d.getDay();
+      if (dow === 0) dow = 7;
+      if (workingDays.includes(dow)) {
+        this.f['date'].setValue(d.toLocaleDateString('en-CA'));
+        return;
+      }
+    }
   }
 
   // Seleccionar doctor
