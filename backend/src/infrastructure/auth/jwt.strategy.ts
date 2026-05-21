@@ -19,16 +19,31 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private userRepository: Repository<User>,
     keycloakConfig: KeycloakConfig,
   ) {
+    const keycloakSecretProvider = passportJwtSecret({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: keycloakConfig.jwksUri,
+    });
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKeyProvider: passportJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: keycloakConfig.jwksUri,
-      }),
-      algorithms: ['RS256'],
+      secretOrKeyProvider: (request, rawJwtToken, done) => {
+        if (rawJwtToken) {
+          const parts = rawJwtToken.split('.');
+          if (parts.length === 3) {
+            try {
+              const header = JSON.parse(Buffer.from(parts[0], 'base64').toString());
+              if (header.alg === 'HS256') {
+                return done(null, process.env.JWT_SECRET || 'PIEDRAZUL_SECRET_KEY');
+              }
+            } catch (e) {}
+          }
+        }
+        return keycloakSecretProvider(request, rawJwtToken, done);
+      },
+      algorithms: ['RS256', 'HS256'],
     });
   }
 
@@ -37,32 +52,34 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Token inválido.');
     }
 
-    const roles = payload.realm_access?.roles || [];
-
     let localId = payload.sub;
-    let localRole: string | undefined;
+    let localRole: string | undefined = (payload as any).role;
 
-    const patient = await this.patientRepository.findOneBy({
-      keycloakId: payload.sub,
-    });
+    const patient = await this.patientRepository.findOneBy([
+      { keycloakId: payload.sub },
+      { id: payload.sub },
+    ]);
     if (patient) {
       localId = patient.id;
       localRole = 'patient';
     } else {
-      const staff = await this.userRepository.findOneBy({
-        keycloakId: payload.sub,
-      });
+      const staff = await this.userRepository.findOneBy([
+        { keycloakId: payload.sub },
+        { id: payload.sub },
+      ]);
       if (staff) {
         localId = staff.id;
         localRole = staff.role;
       }
     }
 
+    const roles = payload.realm_access?.roles || (localRole ? [localRole] : []);
+
     return {
       id: localId,
       keycloakId: payload.sub,
       email: payload.email,
-      document: payload.preferred_username,
+      document: payload.preferred_username || (patient ? patient.document : undefined),
       roles,
       localRole,
     };

@@ -136,7 +136,9 @@ export class AuthService {
     }
   }
 
-  private async localLoginFallback(dto: LoginDto): Promise<never> {
+  private async localLoginFallback(
+    dto: LoginDto,
+  ): Promise<{ access_token: string; user: UserData | null; source: string }> {
     console.warn('Usando BD Local para Login (Fallback)');
 
     let dbUser: DbUser | null = await this.patientRepository.findOne({
@@ -144,11 +146,16 @@ export class AuthService {
       select: ['id', 'firstName', 'lastName', 'password', 'document', 'email'],
     });
 
+    let role = 'patient';
+
     if (!dbUser) {
       dbUser = await this.userRepository.findOne({
         where: { email: dto.login },
         select: ['id', 'firstName', 'lastName', 'password', 'email', 'role'],
       });
+      if (dbUser && 'role' in dbUser) {
+        role = dbUser.role || 'patient';
+      }
     }
 
     if (
@@ -156,9 +163,29 @@ export class AuthService {
       dbUser.password &&
       (await this.passwordHasher.compare(dto.password, dbUser.password))
     ) {
-      throw new InternalServerErrorException(
-        'Error del servidor de autenticación. Intente más tarde.',
-      );
+      const userData: UserData = {
+        id: dbUser.id,
+        email: dbUser.email,
+        firstName: dbUser.firstName,
+        lastName: dbUser.lastName,
+        role: role,
+      };
+
+      if ('document' in dbUser) {
+        userData.document = dbUser.document;
+      }
+
+      const access_token = this.jwtService.sign({
+        sub: dbUser.id,
+        email: dbUser.email,
+        role: role,
+      });
+
+      return {
+        access_token,
+        user: userData,
+        source: 'local',
+      };
     }
     throw new UnauthorizedException('Credenciales inválidas.');
   }

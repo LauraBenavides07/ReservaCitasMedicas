@@ -6,6 +6,6 @@ import { ICsvExporter } from '../../application/abstractions/icsv-exporter.inter
 export class Json2CsvExporter extends ICsvExporter {
   export<T extends Record<string, any>>(data: T[], delimiter: string = ';'): string {
     const parser = new Parser({ delimiter });
-    return '\uFEFF' + parser.parse(data);
+    return `\uFEFFsep=${delimiter}\r\n` + parser.parse(data);
   }
 }

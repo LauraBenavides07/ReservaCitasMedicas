@@ -195,9 +195,10 @@ export class DoctorHistoryComponent implements OnInit {
     
     
     // Generar CSV 
-    let csvContent = "Fecha,Hora,Paciente,Documento,Estado\n";
+    let csvContent = "sep=;\r\nFecha;Hora;Paciente;Documento;Estado\r\n";
     this.filteredAppointments.forEach(a => {
-        csvContent += `${a.date},${a.time},${a.patientName},${a.document},${a.status}\n`;
+        const cleanName = a.patientName ? a.patientName.replace(/"/g, '""') : '';
+        csvContent += `${a.date};${a.time};"${cleanName}";${a.document};${a.status}\r\n`;
     });
     
     const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
