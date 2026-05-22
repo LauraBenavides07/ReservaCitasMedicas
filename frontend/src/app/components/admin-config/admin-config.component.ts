@@ -132,10 +132,21 @@ export class AdminConfigComponent implements OnInit {
     if (data.lunchStart) data.lunchStart = data.lunchStart.substring(0, 5);
     if (data.lunchEnd) data.lunchEnd = data.lunchEnd.substring(0, 5);
 
+    // Validar que la hora fin sea mayor a la hora inicio
+    if (data.scheduleStart && data.scheduleEnd && data.scheduleEnd <= data.scheduleStart) {
+      this.showErrorModal('La hora de fin debe ser mayor a la hora de inicio.');
+      return;
+    }
+
+    // Validar que el fin del descanso sea mayor al inicio del descanso (si ambos están definidos)
+    if (data.lunchStart && data.lunchEnd && data.lunchEnd <= data.lunchStart) {
+      this.showErrorModal('La hora de fin del descanso debe ser mayor a la hora de inicio.');
+      return;
+    }
+
     const doc = this.selectedDoctor();
 
     if (doc) {
-      // Si existe, actualiza el médico existente
       this.doctorService.updateDoctor(doc.id, data).subscribe({
         next: () => {
           this.loadDoctors();
@@ -146,7 +157,6 @@ export class AdminConfigComponent implements OnInit {
         }
       });
     } else {
-      // Si no existe, crea un nuevo médico
       this.doctorService.createDoctor(data).subscribe({
         next: () => {
           this.loadDoctors();
