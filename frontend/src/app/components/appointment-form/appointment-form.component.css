@@ -107,15 +107,20 @@
 
 /* Botón de búsqueda */
 .btn-buscar {
-    background: #e2e8f0;
-    color: #475569;
+    background: #0d2c5b;
+    color: #ffffff;
     border: none;
     padding: 0 1.25rem;
     border-radius: 8px;
-    font-weight: 700;
     cursor: pointer;
-    min-height: 48px;
-    transition: all 0.2s;
+    font-weight: 500;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+
+.btn-buscar:hover {
+    background: #0f3a6b;
 }
 
 .btn-buscar:hover {
