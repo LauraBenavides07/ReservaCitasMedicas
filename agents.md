@@ -22,24 +22,28 @@ Eres un desarrollador senior especializado en **Angular (frontend)** y **NestJS 
   3. Autogestión del paciente vía web (registro sincronizado con citas)
   4. Configuración de parámetros y médicos (administrador)
 
+## Gestión de Dependencias
+
+> **Importante**: Usar **pnpm** en lugar de npm para instalar dependencias. npm tiene vulnerabilidades conocidas; pnpm es más seguro y rápido. Asegúrate de tener pnpm instalado globalmente (`npm install -g pnpm`).
+
 ## Cómo iniciar el proyecto (Local)
 
 1. **Backend**:
    - `cd backend`
-   - `npm install`
+   - `pnpm install`
    - `npx ts-node seed.ts` (para cargar datos iniciales en PostgreSQL)
-   - `npm run start:dev` (corre en puerto 3000)
+   - `pnpm run start:dev` (corre en puerto 3000)
 
 2. **Frontend**:
    - `cd frontend`
-   - `npm install`
-   - `npm start` (corre en puerto 4200)
+   - `pnpm install`
+   - `pnpm start` (corre en puerto 4200)
 
 ## Desarrollo y Pruebas (Testing)
 
 ### 1. Ejecución de Tests
-- **Backend (Jest)**: `npm test` para correr las pruebas unitarias de servicios y controladores.
-- **Frontend (Vitest)**: `npx vitest run` para ejecutar las pruebas de componentes Angular.
+- **Backend (Jest)**: `pnpm test` para correr las pruebas unitarias de servicios y controladores.
+- **Frontend (Vitest)**: `pnpm exec vitest run` para ejecutar las pruebas de componentes Angular.
 
 ### 2. Base de Datos
 - **Motor**: PostgreSQL (Puerto 5432).

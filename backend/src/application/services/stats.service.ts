@@ -14,7 +14,7 @@ export class StatsService {
 
   async getDashboardStats() {
     const allAppointments = await this.appointmentRepository.find({
-      relations: ['doctor'],
+      relations: { doctor: true },
     });
     const allDoctors = await this.doctorRepository.find();
 

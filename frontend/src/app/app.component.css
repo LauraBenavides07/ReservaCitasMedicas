@@ -204,29 +204,10 @@
     background: rgba(239, 68, 68, 0.1);
 }
 
-/* ============================================
-   MAIN CONTENT (CONTENIDO PRINCIPAL)
-   ============================================ */
-.dashboard-main {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    overflow-x: auto;
-}
-
-.dashboard-header {
-    padding: 2rem 3rem 1rem 3rem;
-}
-
-.view-title {
-    margin: 0;
-    color: #1e293b;
-    font-family: 'Playfair Display', 'Georgia', serif;
-    font-weight: 600;
-    font-size: 1.75rem;
-}
-
-.dashboard-content {
+      /* ============================================
+       CONTENIDO PRINCIPAL
+       ============================================ */
+      .dashboard-content {
     flex: 1;
     padding: 1rem 3rem 3rem 3rem;
     width: 100%;

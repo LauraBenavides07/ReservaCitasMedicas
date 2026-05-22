@@ -84,7 +84,7 @@
                                     d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V8h14v11z" />
                                 <circle cx="12" cy="12" r="3" />
                             </svg>
-                            {{ apt.date }} | {{ apt.time }}
+                            {{ formatDate(apt.date) }} | {{ formatTime(apt.time) }}
                         </div>
                     </div>
 
@@ -176,11 +176,11 @@
                     <div class="appointment-meta">
                         <span class="meta-item">
                             <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V8h14v11z"/></svg>
-                            {{ selectedAppointment.date }}
+                            {{ formatDate(selectedAppointment.date) }}
                         </span>
                         <span class="meta-item">
                             <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
-                            {{ selectedAppointment.time }}
+                            {{ formatTime(selectedAppointment.time) }}
                         </span>
                     </div>
                 </div>

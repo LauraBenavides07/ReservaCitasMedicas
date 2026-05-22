@@ -1,0 +1,76 @@
+<div class="audit-container">
+    <div class="audit-header">
+        <h2>Auditoría de Citas</h2>
+    </div>
+
+    <!-- Filtros -->
+    <div class="audit-filters">
+        <div class="filter-group">
+            <label>TIPO DE CAMBIO</label>
+            <select [(ngModel)]="filterChangeType">
+                <option value="">Todos</option>
+                <option *ngFor="let type of changeTypes" [value]="type">{{ type ? getChangeLabel(type) : '' }}</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>ID DE CITA</label>
+            <input type="text" [(ngModel)]="filterAppointmentId" placeholder="UUID de la cita">
+        </div>
+        <button class="btn-filter" (click)="loadHistory()">Filtrar</button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="audit-loading">Cargando auditoría...</div>
+
+    <!-- Tabla de resultados -->
+    <div *ngIf="!loading && history.length > 0" class="audit-table-container">
+        <div class="audit-count">Total de registros: {{ total }}</div>
+        <table class="audit-table">
+            <thead>
+                <tr>
+                    <th>Fecha/Hora</th>
+                    <th>Paciente</th>
+                    <th>Médico</th>
+                    <th>Tipo</th>
+                    <th>Valor Anterior</th>
+                    <th>Valor Nuevo</th>
+                    <th>Responsable</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let entry of history">
+                    <td>{{ formatDateTime(entry.changedAt) }}</td>
+                    <td>{{ entry.patientName || '-' }}</td>
+                    <td>{{ entry.doctorName || '-' }}</td>
+                    <td>
+                        <span class="audit-badge" [class]="'badge-' + entry.changeType.toLowerCase()">
+                            {{ getChangeLabel(entry.changeType) }}
+                        </span>
+                    </td>
+                    <td>
+                        <ng-container *ngIf="entry.changeType === 'RESCHEDULED'">
+                            {{ formatDate(entry.previousDate) }} {{ formatTime(entry.previousTime) }}
+                        </ng-container>
+                        <ng-container *ngIf="entry.changeType !== 'RESCHEDULED'">
+                            {{ entry.previousStatus || '-' }}
+                        </ng-container>
+                    </td>
+                    <td>
+                        <ng-container *ngIf="entry.changeType === 'RESCHEDULED'">
+                            {{ formatDate(entry.newDate) }} {{ formatTime(entry.newTime) }}
+                        </ng-container>
+                        <ng-container *ngIf="entry.changeType !== 'RESCHEDULED'">
+                            {{ entry.newStatus || '-' }}
+                        </ng-container>
+                    </td>
+                    <td>{{ entry.changedBy }}<br><small>{{ getRoleLabel(entry.changedByRole) }}</small></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Empty -->
+    <div *ngIf="!loading && history.length === 0" class="audit-empty">
+        No se encontraron registros de auditoría con los filtros seleccionados.
+    </div>
+</div>

@@ -16,6 +16,8 @@ import { PatientService } from './patient.service';
 import { NotificationService } from './notification.service';
 import { IAppointmentRepository } from '../ports/appointment.repository';
 import { IDoctorRepository } from '../ports/doctor.repository';
+import { IAppointmentHistoryRepository } from '../ports/appointment-history.repository';
+import { AppointmentHistory } from '../../domain/entities/appointment-history.entity';
 
 @Injectable()
 export class AppointmentService {
@@ -28,7 +30,36 @@ export class AppointmentService {
     private availabilityService: AvailabilityService,
     private patientService: PatientService,
     private notificationService: NotificationService,
+    @Inject(IAppointmentHistoryRepository)
+    private historyRepository: IAppointmentHistoryRepository,
   ) {}
+
+  private async saveHistory(params: {
+    appointment: Appointment;
+    changeType: string;
+    previousDate?: string;
+    previousTime?: string;
+    previousStatus?: string;
+    newDate?: string;
+    newTime?: string;
+    newStatus?: string;
+    changedBy: string;
+    changedByRole: string;
+  }): Promise<void> {
+    const history = this.historyRepository.create({
+      appointment: params.appointment,
+      changeType: params.changeType,
+      previousDate: params.previousDate || null,
+      previousTime: params.previousTime || null,
+      previousStatus: params.previousStatus || null,
+      newDate: params.newDate || null,
+      newTime: params.newTime || null,
+      newStatus: params.newStatus || null,
+      changedBy: params.changedBy,
+      changedByRole: params.changedByRole,
+    });
+    await this.historyRepository.save(history);
+  }
 
   async findAllByDoctorAndDate(
     doctorId: string,
@@ -46,7 +77,7 @@ export class AppointmentService {
     const [appointments, total] = await this.appointmentRepository.findAndCount(
       {
         where: whereClause,
-        relations: ['patient', 'doctor'],
+        relations: { patient: true, doctor: true },
         order: {
           appointmentDate: 'DESC',
           appointmentTime: 'ASC',
@@ -120,6 +151,16 @@ export class AppointmentService {
       appointmentTime: saved.appointmentTime,
     });
 
+    await this.saveHistory({
+      appointment: saved,
+      changeType: 'CREATED',
+      newDate: saved.appointmentDate,
+      newTime: saved.appointmentTime,
+      newStatus: saved.status,
+      changedBy: createDto.patientDocument || 'system',
+      changedByRole: 'patient',
+    });
+
     return saved;
   }
 
@@ -134,7 +175,7 @@ export class AppointmentService {
 
     const appointments = await this.appointmentRepository.find({
       where: whereConditions,
-      relations: ['doctor'],
+      relations: { doctor: true },
       order: { appointmentDate: 'DESC', appointmentTime: 'ASC' },
     });
     return appointments;
@@ -147,7 +188,7 @@ export class AppointmentService {
   ) {
     const appointment = await this.appointmentRepository.findOne({
       where: { id: appointmentId },
-      relations: ['patient', 'doctor'],
+      relations: { patient: true, doctor: true },
     });
 
     if (!appointment) {
@@ -168,6 +209,7 @@ export class AppointmentService {
       );
     }
 
+    const previousStatus = appointment.status;
     appointment.cancel();
     const saved = await this.appointmentRepository.save(appointment);
 
@@ -178,6 +220,15 @@ export class AppointmentService {
       doctorName: appointment.doctor.name,
       appointmentDate: saved.appointmentDate,
       appointmentTime: saved.appointmentTime,
+    });
+
+    await this.saveHistory({
+      appointment: saved,
+      changeType: 'CANCELLED',
+      previousStatus,
+      newStatus: saved.status,
+      changedBy: patientId,
+      changedByRole: isStaff ? (localRole || 'staff') : 'patient',
     });
 
     return saved;
@@ -198,8 +249,20 @@ export class AppointmentService {
       );
     }
 
+    const previousStatus = appointment.status;
     appointment.confirm();
-    return this.appointmentRepository.save(appointment);
+    const saved = await this.appointmentRepository.save(appointment);
+
+    await this.saveHistory({
+      appointment: saved,
+      changeType: 'CONFIRMED',
+      previousStatus,
+      newStatus: saved.status,
+      changedBy: 'system',
+      changedByRole: 'staff',
+    });
+
+    return saved;
   }
 
   async completeAppointment(
@@ -221,11 +284,23 @@ export class AppointmentService {
       );
     }
 
+    const previousStatus = appointment.status;
     appointment.complete();
     appointment.observations = observations;
     appointment.diagnosis = diagnosis;
 
-    return this.appointmentRepository.save(appointment);
+    const saved = await this.appointmentRepository.save(appointment);
+
+    await this.saveHistory({
+      appointment: saved,
+      changeType: 'COMPLETED',
+      previousStatus,
+      newStatus: saved.status,
+      changedBy: 'system',
+      changedByRole: 'doctor',
+    });
+
+    return saved;
   }
 
   async reschedule(
@@ -238,7 +313,7 @@ export class AppointmentService {
   ) {
     const appointment = await this.appointmentRepository.findOne({
       where: { id },
-      relations: ['patient', 'doctor'],
+      relations: { patient: true, doctor: true },
     });
 
     if (!appointment) {
@@ -282,6 +357,10 @@ export class AppointmentService {
       date,
     );
 
+    const previousDate = appointment.appointmentDate;
+    const previousTime = appointment.appointmentTime;
+    const previousStatus = appointment.status;
+
     appointment.reschedule(date, time);
     const saved = await this.appointmentRepository.save(appointment);
 
@@ -294,12 +373,25 @@ export class AppointmentService {
       appointmentTime: saved.appointmentTime,
     });
 
+    await this.saveHistory({
+      appointment: saved,
+      changeType: 'RESCHEDULED',
+      previousDate,
+      previousTime,
+      previousStatus,
+      newDate: saved.appointmentDate,
+      newTime: saved.appointmentTime,
+      newStatus: saved.status,
+      changedBy: userId,
+      changedByRole: localRole || 'staff',
+    });
+
     return saved;
   }
 
   async findAll(skip = 0, take = 100) {
     return this.appointmentRepository.find({
-      relations: ['doctor', 'patient'],
+      relations: { doctor: true, patient: true },
       order: { appointmentDate: 'DESC', appointmentTime: 'ASC' },
       skip,
       take,
@@ -312,5 +404,73 @@ export class AppointmentService {
 
   async findPatientByDocument(document: string) {
     return this.patientService.findByDocument(document);
+  }
+
+  async getAppointmentHistory(appointmentId: string) {
+    const history = await this.historyRepository.find({
+      where: { appointment: { id: appointmentId } },
+      relations: { appointment: { doctor: true, patient: true } },
+      order: { changedAt: 'DESC' },
+    });
+
+    return history.map((entry) => ({
+      id: entry.id,
+      appointmentId: entry.appointment.id,
+      changeType: entry.changeType,
+      previousDate: entry.previousDate,
+      previousTime: entry.previousTime,
+      previousStatus: entry.previousStatus,
+      newDate: entry.newDate,
+      newTime: entry.newTime,
+      newStatus: entry.newStatus,
+      changedBy: entry.changedBy,
+      changedByRole: entry.changedByRole,
+      reason: entry.reason,
+      changedAt: entry.changedAt,
+    }));
+  }
+
+  async getAllHistory(filters: {
+    appointmentId?: string;
+    changeType?: string;
+    limit?: number;
+  }) {
+    const where: any = {};
+    if (filters.appointmentId) {
+      where.appointment = { id: filters.appointmentId };
+    }
+    if (filters.changeType) {
+      where.changeType = filters.changeType;
+    }
+
+    const [history, total] = await this.historyRepository.findAndCount({
+      where,
+      relations: { appointment: { doctor: true, patient: true } },
+      order: { changedAt: 'DESC' },
+      take: filters.limit || 50,
+    });
+
+    return {
+      total,
+      history: history.map((entry) => ({
+        id: entry.id,
+        appointmentId: entry.appointment.id,
+        changeType: entry.changeType,
+        previousDate: entry.previousDate,
+        previousTime: entry.previousTime,
+        previousStatus: entry.previousStatus,
+        newDate: entry.newDate,
+        newTime: entry.newTime,
+        newStatus: entry.newStatus,
+        changedBy: entry.changedBy,
+        changedByRole: entry.changedByRole,
+        reason: entry.reason,
+        changedAt: entry.changedAt,
+        doctorName: entry.appointment.doctor?.name,
+        patientName: entry.appointment.patient
+          ? `${entry.appointment.patient.firstName} ${entry.appointment.patient.lastName}`
+          : null,
+      })),
+    };
   }
 }

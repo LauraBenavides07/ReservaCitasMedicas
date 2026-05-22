@@ -13,6 +13,8 @@ import { PatientAppointmentFormComponent } from './components/patient-appointmen
 import { DoctorDashboardComponent } from './components/doctor-dashboard/doctor-dashboard.component';
 import { DoctorPatientsComponent } from './components/doctor-patients/doctor-patients.component';
 import { DoctorHistoryComponent } from './components/doctor-history/doctor-history.component';
+import { AdminAuditComponent } from './components/admin-audit/admin-audit.component';
+import { AppointmentHistoryTimelineComponent } from './components/appointment-history-timeline/appointment-history-timeline.component';
 
 @Component({
   selector: 'app-root',
@@ -29,7 +31,9 @@ import { DoctorHistoryComponent } from './components/doctor-history/doctor-histo
     PatientAppointmentFormComponent,
     DoctorDashboardComponent,
     DoctorPatientsComponent,
-    DoctorHistoryComponent
+    DoctorHistoryComponent,
+    AdminAuditComponent,
+    AppointmentHistoryTimelineComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
@@ -41,7 +45,7 @@ export class AppComponent {
   // Señal que controla la vista actual de la aplicación
   // Posibles valores: 'landing', 'admin-list', 'admin-create', 'admin-config', 
   // 'login', 'register', 'patient-dashboard', 'patient-create', 'doctor-dashboard', 'doctor-patients', 'doctor-history'
-  view = signal<'landing' | 'admin-list' | 'admin-create' | 'admin-config' | 'login' | 'register' | 'patient-dashboard' | 'patient-create' | 'doctor-dashboard' | 'doctor-create' | 'doctor-patients' | 'doctor-history'>('landing');
+  view = signal<'landing' | 'admin-list' | 'admin-create' | 'admin-config' | 'admin-audit' | 'login' | 'register' | 'patient-dashboard' | 'patient-create' | 'doctor-dashboard' | 'doctor-create' | 'doctor-patients' | 'doctor-history' | 'doctor-search'>('landing');
 
   // Estado para el menú móvil
   isMobileMenuOpen = signal(false);

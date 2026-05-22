@@ -101,4 +101,34 @@ export class AppointmentService {
   completeAppointment(id: string, observations?: string, diagnosis?: string): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${id}/complete`, { observations, diagnosis });
   }
+
+  getAppointmentHistory(id: string): Observable<AppointmentHistoryEntry[]> {
+    return this.http.get<AppointmentHistoryEntry[]>(`${this.apiUrl}/${id}/history`);
+  }
+
+  getAllHistory(params?: { appointmentId?: string; changeType?: string; limit?: number }): Observable<{ total: number; history: AppointmentHistoryEntry[] }> {
+    let query = '';
+    if (params?.appointmentId) query += `&appointmentId=${params.appointmentId}`;
+    if (params?.changeType) query += `&changeType=${params.changeType}`;
+    if (params?.limit) query += `&limit=${params.limit}`;
+    return this.http.get<{ total: number; history: AppointmentHistoryEntry[] }>(`${this.apiUrl}/history/all?${query}`);
+  }
+}
+
+export interface AppointmentHistoryEntry {
+  id: string;
+  appointmentId: string;
+  changeType: 'CREATED' | 'RESCHEDULED' | 'CANCELLED' | 'CONFIRMED' | 'COMPLETED';
+  previousDate: string | null;
+  previousTime: string | null;
+  previousStatus: string | null;
+  newDate: string | null;
+  newTime: string | null;
+  newStatus: string | null;
+  changedBy: string;
+  changedByRole: string;
+  reason: string | null;
+  changedAt: string;
+  doctorName?: string;
+  patientName?: string;
 }

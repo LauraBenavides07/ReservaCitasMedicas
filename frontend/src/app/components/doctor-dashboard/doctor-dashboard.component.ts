@@ -157,16 +157,23 @@ export class DoctorDashboardComponent implements OnInit {
 
         this.appointmentService.getAppointments(this.doctorId, this.selectedDate).subscribe({
             next: (res) => {
-                this.appointments = res.appointments.map((a: Appointment) => ({
-                    id: a.id,
-                    patientName: `${a.patient.firstName} ${a.patient.lastName}`,
-                    cc: a.patient.document,
-                    phone: a.patient.phone,
-                    date: a.appointmentDate || a.date,
-                    time: a.appointmentTime ? a.appointmentTime.substring(0, 5) : a.time,
-                    status: this.mapStatus(a.status),
-                    reason: 'Consulta médica'
-                }));
+                this.appointments = res.appointments
+                    .map((a: Appointment) => ({
+                        id: a.id,
+                        patientName: `${a.patient.firstName} ${a.patient.lastName}`,
+                        cc: a.patient.document,
+                        phone: a.patient.phone,
+                        date: a.appointmentDate || a.date,
+                        time: a.appointmentTime ? a.appointmentTime.substring(0, 5) : a.time,
+                        status: this.mapStatus(a.status),
+                        reason: 'Consulta médica'
+                    }))
+                    .sort((a, b) => {
+                        const aActive = a.status === 'Pendiente' || a.status === 'Confirmada' ? 0 : 1;
+                        const bActive = b.status === 'Pendiente' || b.status === 'Confirmada' ? 0 : 1;
+                        if (aActive !== bActive) return aActive - bActive;
+                        return b.date?.localeCompare(a.date) || 0;
+                    });
                 const cacheKey = this.selectedDate ? `cached_dashboard_${this.selectedDate}` : 'cached_dashboard_all';
                 localStorage.setItem(cacheKey, JSON.stringify(this.appointments));
                 this.calculateStats();
@@ -551,6 +558,31 @@ export class DoctorDashboardComponent implements OnInit {
     logout() {
         this.authService.logout();
         window.location.href = '/login';
+    }
+
+    formatDate(dateStr: string): string {
+        if (!dateStr) return '';
+        try {
+            const d = new Date(dateStr + 'T12:00:00');
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+        } catch {
+            return dateStr;
+        }
+    }
+
+    formatTime(timeStr: string): string {
+        if (!timeStr) return '';
+        try {
+            const [h, m] = timeStr.split(':').map(Number);
+            const period = h >= 12 ? 'PM' : 'AM';
+            const hour12 = h % 12 || 12;
+            return `${hour12}:${String(m).padStart(2, '0')} ${period}`;
+        } catch {
+            return timeStr;
+        }
     }
 
     getStatusClass(status: string): string {

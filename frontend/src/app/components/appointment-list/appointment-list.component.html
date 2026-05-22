@@ -61,12 +61,16 @@
     <div class="results-card" *ngIf="hasSearched && !loading && appointments.length > 0">
         <div class="results-header">
             <h3>Citas Programadas ({{ total }})</h3>
+            <button class="btn btn-secondary" (click)="exportCsv()" [disabled]="loading || appointments.length === 0">
+                📥 Exportar a CSV
+            </button>
         </div>
 
         <div class="table-container">
             <table class="styled-table">
                 <thead>
                     <tr>
+                        <th>Fecha</th>
                         <th>Hora</th>
                         <th>Paciente</th>
                         <th>Documento</th>
@@ -76,7 +80,8 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let appt of appointments" class="appointment-row">
-                        <td><strong>{{ appt?.appointmentTime }}</strong></td>
+                        <td><strong>{{ formatDate(appt?.appointmentDate) }}</strong></td>
+                        <td><strong>{{ formatTime(appt?.appointmentTime) }}</strong></td>
                         <td>{{ appt?.patient?.firstName || 'Sin' }} {{ appt?.patient?.lastName || 'Paciente' }}</td>
                         <td>{{ appt?.patient?.document || 'N/A' }}</td>
                         <td>{{ appt?.patient?.phone || 'N/A' }}</td>
@@ -119,11 +124,11 @@
                     <div class="appointment-meta">
                         <span class="meta-item">
                             <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V8h14v11z"/></svg>
-                            {{ selectedAppointment.appointmentDate }}
+                            {{ formatDate(selectedAppointment.appointmentDate) }}
                         </span>
                         <span class="meta-item">
                             <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
-                            {{ selectedAppointment.appointmentTime }}
+                            {{ formatTime(selectedAppointment.appointmentTime) }}
                         </span>
                     </div>
                 </div>

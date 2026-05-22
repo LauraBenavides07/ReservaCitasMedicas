@@ -143,7 +143,7 @@ export class AuthService {
 
     let dbUser: DbUser | null = await this.patientRepository.findOne({
       where: [{ document: dto.login }, { email: dto.login }],
-      select: ['id', 'firstName', 'lastName', 'password', 'document', 'email'],
+      select: { id: true, firstName: true, lastName: true, password: true, document: true, email: true },
     });
 
     let role = 'patient';
@@ -151,7 +151,7 @@ export class AuthService {
     if (!dbUser) {
       dbUser = await this.userRepository.findOne({
         where: { email: dto.login },
-        select: ['id', 'firstName', 'lastName', 'password', 'email', 'role'],
+        select: { id: true, firstName: true, lastName: true, password: true, email: true, role: true },
       });
       if (dbUser && 'role' in dbUser) {
         role = dbUser.role || 'patient';

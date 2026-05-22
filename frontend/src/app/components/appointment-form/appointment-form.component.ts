@@ -175,6 +175,19 @@ export class AppointmentFormComponent implements OnInit {
       this.availableSlots.set([]);
     }
   }
+  
+  formatSlot(slot: string): string {
+    if (!slot) return '';
+    try {
+      const [h, m] = slot.split(':').map(Number);
+      const period = h >= 12 ? 'PM' : 'AM';
+      const hour12 = h % 12 || 12;
+      return `${hour12}:${String(m).padStart(2, '0')} ${period}`;
+    } catch {
+      return slot;
+    }
+  }
+
   // ============================================
 // TOASTS CON SweetAlert2
 // ============================================

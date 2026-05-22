@@ -27,7 +27,7 @@ Accede a la carpeta del servidor e instala las dependencias:
 
 ```bash
 cd backend
-npm install
+pnpm install
 ```
 
 #### Configuración de Keycloak (Autenticación)
@@ -59,15 +59,14 @@ RABBITMQ_URL=amqp://piedrazul:piedrazul_pass@localhost:5672
 PORT=3000
 ```
 
-#### Inicializar Base de Datos (Seed)
 Para tener datos de prueba (médicos y pacientes iniciales), ejecuta:
 ```bash
-npx ts-node seed.ts
+npx ts-node seed.ts  # ⚠️ Este comando reinicia la base de datos (borra datos existentes). Si usas Docker, elimina el volumen o ejecuta `docker-compose down -v` antes si deseas un clean start.
 ```
 
 #### Iniciar el servidor
 ```bash
-npm run start:dev
+pnpm run start:dev
 ```
 El servidor estará disponible en `http://localhost:3000`.
 
@@ -75,12 +74,12 @@ El servidor estará disponible en `http://localhost:3000`.
 Accede a la carpeta de la aplicación cliente e instala las dependencias:
 ```bash
 cd frontend
-npm install
+pnpm install
 ```
 
 #### Iniciar la aplicación
 ```bash
-npm start
+pnpm start
 ```
 La aplicación se abrirá en `http://localhost:4200`.
 
@@ -90,14 +89,14 @@ La aplicación se abrirá en `http://localhost:4200`.
 Ejecutar todos los tests:
 ```bash
 cd backend
-npm test
+pnpm test
 ```
 
 ### Frontend (Vitest)
 Ejecutar todos los tests:
 ```bash
 cd frontend
-npx vitest run
+pnpm exec vitest run
 ```
 
 ## Correos de prueba para microservicio-Notificacines

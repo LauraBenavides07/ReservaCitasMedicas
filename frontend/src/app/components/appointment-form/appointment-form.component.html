@@ -138,7 +138,7 @@
                             <select formControlName="time" [class.input-error]="f['time'].touched && f['time'].invalid">
                                 <option value="">Ver turnos...</option>
                                 <option *ngFor="let slot of availableSlots()" [value]="slot">
-                                    {{ slot }}
+                                    {{ formatSlot(slot) }}
                                 </option>
                             </select>
                             <span class="validation-message" *ngIf="f['time'].touched && f['time'].invalid">Seleccione

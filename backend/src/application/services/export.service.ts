@@ -19,7 +19,7 @@ export class ExportService {
         appointmentDate: date,
         doctor: { id: doctorId },
       },
-      relations: ['patient', 'doctor'],
+      relations: { patient: true, doctor: true },
       order: { appointmentTime: 'ASC' },
     });
 

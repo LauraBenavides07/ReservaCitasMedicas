@@ -241,6 +241,18 @@ export class DoctorHistoryComponent implements OnInit {
       });
   }
 
+  formatTime(timeStr: string): string {
+    if (!timeStr) return '';
+    try {
+      const [h, m] = timeStr.split(':').map(Number);
+      const period = h >= 12 ? 'PM' : 'AM';
+      const hour12 = h % 12 || 12;
+      return `${hour12}:${String(m).padStart(2, '0')} ${period}`;
+    } catch {
+      return timeStr;
+    }
+  }
+
   getStatusClass(status: string): string {
       switch (status.toLowerCase()) {
           case 'confirmada': 

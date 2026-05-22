@@ -147,4 +147,26 @@ export class AppointmentController {
   async findAllAppointments() {
     return this.appointmentService.findAll();
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/history')
+  async getAppointmentHistory(
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.appointmentService.getAppointmentHistory(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('history/all')
+  async getAllHistory(
+    @Query('appointmentId') appointmentId?: string,
+    @Query('changeType') changeType?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.appointmentService.getAllHistory({
+      appointmentId,
+      changeType,
+      limit: limit ? Number(limit) : 50,
+    });
+  }
 }

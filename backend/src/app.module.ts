@@ -8,6 +8,7 @@ import { Appointment } from './domain/entities/appointment.entity';
 import { Config } from './domain/entities/config.entity';
 import { User } from './domain/entities/user.entity';
 import { DoctorException } from './domain/entities/doctor-exception.entity';
+import { AppointmentHistory } from './domain/entities/appointment-history.entity';
 import { ConfigController } from './presentation/controllers/config.controller';
 import { AppointmentController } from './presentation/controllers/appointment.controller';
 import { DoctorController } from './presentation/controllers/doctor.controller';
@@ -28,9 +29,11 @@ import { Json2CsvExporter } from './infrastructure/export/json2csv-exporter';
 import { IAppointmentRepository } from './application/ports/appointment.repository';
 import { IDoctorRepository } from './application/ports/doctor.repository';
 import { IDoctorExceptionRepository } from './application/ports/doctor-exception.repository';
+import { IAppointmentHistoryRepository } from './application/ports/appointment-history.repository';
 import { TypeOrmAppointmentRepository } from './infrastructure/persistence/typeorm-appointment.repository';
 import { TypeOrmDoctorRepository } from './infrastructure/persistence/typeorm-doctor.repository';
 import { TypeOrmDoctorExceptionRepository } from './infrastructure/persistence/typeorm-doctor-exception.repository';
+import { TypeOrmAppointmentHistoryRepository } from './infrastructure/persistence/typeorm-appointment-history.repository';
 
 @Module({
   imports: [
@@ -48,7 +51,7 @@ import { TypeOrmDoctorExceptionRepository } from './infrastructure/persistence/t
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
-        entities: [Doctor, Patient, Appointment, Config, User, DoctorException],
+        entities: [Doctor, Patient, Appointment, Config, User, DoctorException, AppointmentHistory],
         synchronize: true,
         logging: true,
       }),
@@ -60,6 +63,7 @@ import { TypeOrmDoctorExceptionRepository } from './infrastructure/persistence/t
       Config,
       User,
       DoctorException,
+      AppointmentHistory,
     ]),
     AuthModule,
     ScheduleModule.forRoot(),
@@ -83,6 +87,10 @@ import { TypeOrmDoctorExceptionRepository } from './infrastructure/persistence/t
     {
       provide: IDoctorExceptionRepository,
       useClass: TypeOrmDoctorExceptionRepository,
+    },
+    {
+      provide: IAppointmentHistoryRepository,
+      useClass: TypeOrmAppointmentHistoryRepository,
     },
   ],
 })

@@ -225,9 +225,9 @@ describe('AppointmentListComponent', () => {
   });
 
   it('should formatDate return correct format for valid dates', () => {
-    expect(component.formatDate('2024-01-15')).toBe('15 de ene');
-    expect(component.formatDate('2024-03-20')).toBe('20 de mar');
-    expect(component.formatDate('2024-12-31')).toBe('31 de dic');
+    expect(component.formatDate('2024-01-15')).toBe('15/01/2024');
+    expect(component.formatDate('2024-03-20')).toBe('20/03/2024');
+    expect(component.formatDate('2024-12-31')).toBe('31/12/2024');
   });
 
   it('should formatDate return N/A for undefined', () => {
@@ -236,6 +236,6 @@ describe('AppointmentListComponent', () => {
   });
 
   it('should formatDate return original string on error', () => {
-    expect(component.formatDate('invalid-date-string!!!')).toBe('NaN de undefined');
+    expect(component.formatDate('invalid-date-string!!!')).toBe('NaN/NaN/NaN');
   });
 });

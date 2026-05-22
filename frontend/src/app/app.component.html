@@ -66,6 +66,22 @@
             Nueva Cita
           </button>
 
+          <!-- Botón de auditoría (solo visible para administradores) -->
+          <button *ngIf="auth.user()?.role === 'admin'" class="nav-item" (click)="changeView('admin-audit')"
+            [class.active]="view() === 'admin-audit'">
+            <span class="icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </span>
+            Auditoría
+          </button>
+
           <!-- Botón de configuración (solo visible para administradores) -->
           <button *ngIf="auth.user()?.role === 'admin'" class="nav-item" (click)="changeView('admin-config')"
             [class.active]="view() === 'admin-config'">
@@ -127,6 +143,28 @@
               </svg>
             </span>
             Mi Agenda
+          </button>
+
+          <button class="nav-item" (click)="changeView('doctor-search')" [class.active]="view() === 'doctor-search'">
+            <span class="icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            Buscar Citas
+          </button>
+
+          <button class="nav-item" (click)="changeView('doctor-create')" [class.active]="view() === 'doctor-create'">
+            <span class="icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </span>
+            Nueva Cita
           </button>
 
           <button class="nav-item" (click)="changeView('doctor-patients')"
@@ -201,8 +239,10 @@
           <ng-container *ngIf="view() === 'admin-list'">Buscar Citas</ng-container>
           <ng-container *ngIf="view() === 'admin-create' || view() === 'patient-create'">Nueva Cita</ng-container>
           <ng-container *ngIf="view() === 'admin-config'">Configuración</ng-container>
+          <ng-container *ngIf="view() === 'admin-audit'">Auditoría de Citas</ng-container>
           <ng-container *ngIf="view() === 'patient-dashboard'">Mis Citas</ng-container>
-          <ng-container *ngIf="view() === 'doctor-dashboard'">Panel del Médico</ng-container>
+          <ng-container *ngIf="view() === 'doctor-dashboard'">Mi Agenda</ng-container>
+          <ng-container *ngIf="view() === 'doctor-search'">Buscar Citas</ng-container>
           <ng-container *ngIf="view() === 'doctor-create'">Nueva Cita</ng-container>
           <ng-container *ngIf="view() === 'doctor-patients'">Mis Pacientes</ng-container>
           <ng-container *ngIf="view() === 'doctor-history'">Historial Médico</ng-container>
@@ -224,6 +264,11 @@
           <app-admin-config></app-admin-config>
         </div>
 
+        <!-- VISTA DE AUDITORÍA -->
+        <div *ngIf="view() === 'admin-audit'">
+          <app-admin-audit></app-admin-audit>
+        </div>
+
         <!-- VISTAS DE PACIENTE -->
         <div *ngIf="view() === 'patient-dashboard'">
           <app-patient-dashboard (navigate)="changeView($event)"></app-patient-dashboard>
@@ -235,6 +280,9 @@
         <!-- VISTAS DE DOCTOR -->
         <div *ngIf="view() === 'doctor-dashboard'">
           <app-doctor-dashboard (navigate)="changeView($event)"></app-doctor-dashboard>
+        </div>
+        <div *ngIf="view() === 'doctor-search'">
+          <app-appointment-list></app-appointment-list>
         </div>
         <div *ngIf="view() === 'doctor-create'">
           <app-appointment-form></app-appointment-form>

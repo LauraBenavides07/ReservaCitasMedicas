@@ -118,7 +118,7 @@
                 <div class="slots-grid" *ngIf="availableSlots().length > 0">
                     <button class="slot-btn" *ngFor="let slot of availableSlots()" (click)="selectTime(slot)"
                         [class.selected]="selectedTime() === slot">
-                        {{ slot }}
+                        {{ formatSlot(slot) }}
                     </button>
                 </div>
 

@@ -48,7 +48,7 @@ export class AppointmentJobService {
         appointmentDate: tomorrowStr,
         status: AppointmentStatus.SCHEDULED,
       },
-      relations: ['patient', 'doctor'],
+      relations: { patient: true, doctor: true },
     });
 
     for (const app of appointments) {
