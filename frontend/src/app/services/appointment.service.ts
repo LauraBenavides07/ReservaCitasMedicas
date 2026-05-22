@@ -28,27 +28,6 @@ export interface AppointmentResponse {
   total: number;
 }
 
-export interface DashboardStatsFilter {
-  startDate?: string;
-  endDate?: string;
-  doctorId?: string;
-  status?: string;
-}
-
-export interface DashboardStats {
-  stats: {
-    total: number;
-    scheduled: number;
-    confirmed: number;
-    completed: number;
-    cancelled: number;
-    cancellationRate: number;
-  };
-  doctorStats: { name: string; count: number; percentage: number }[];
-  dailyTrend: { date: string; count: number }[];
-  statusDistribution: { status: string; count: number }[];
-}
-
 export interface CreateAppointmentDto {
   patientDocument: string;
   firstName: string;
@@ -107,13 +86,8 @@ export class AppointmentService {
     return this.http.patch(`${this.apiUrl}/${id}/reschedule`, { date, time, doctorId });
   }
 
-  getDashboardStats(filter?: DashboardStatsFilter): Observable<DashboardStats> {
-    const params: any = {};
-    if (filter?.startDate) params.startDate = filter.startDate;
-    if (filter?.endDate) params.endDate = filter.endDate;
-    if (filter?.doctorId) params.doctorId = filter.doctorId;
-    if (filter?.status) params.status = filter.status;
-    return this.http.get<DashboardStats>(`${this.apiUrl}/stats`, { params });
+  getDashboardStats(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/stats`);
   }
 
   getAllAppointments(): Observable<Appointment[]> {

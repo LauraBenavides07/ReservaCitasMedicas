@@ -31,18 +31,8 @@ export class AppointmentController {
   ) {}
 
   @Get('stats')
-  async getDashboardStats(
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
-    @Query('doctorId') doctorId?: string,
-    @Query('status') status?: string,
-  ) {
-    return this.statsService.getDashboardStats({
-      startDate,
-      endDate,
-      doctorId,
-      status,
-    });
+  async getDashboardStats() {
+    return this.statsService.getDashboardStats();
   }
 
   @Get('export')

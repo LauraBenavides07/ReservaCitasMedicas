@@ -1,16 +1,21 @@
+<!-- Contenedor principal de la configuración administrativa -->
 <div class="admin-config-container">
 
+    <!-- Pestañas de navegación -->
     <nav class="tabs">
+        <!-- Pestaña Horarios -->
         <button [class.active]="activeTab() === 'horarios'" (click)="activeTab.set('horarios')" class="tab-btn">
             <span class="icon">⚙️</span> Horarios
         </button>
-        <button [class.active]="activeTab() === 'estadisticas'" (click)="activeTab.set('estadisticas'); loadStats()" class="tab-btn">
+        <!-- Pestaña Estadísticas -->
+        <button [class.active]="activeTab() === 'estadisticas'" (click)="activeTab.set('estadisticas')" class="tab-btn">
             <span class="icon">📊</span> Estadísticas
         </button>
     </nav>
 
     <!-- PESTAÑA HORARIOS -->
     <section *ngIf="activeTab() === 'horarios'" class="tab-content">
+        <!-- Barra de acciones con botones para configuraciones globales y añadir médico -->
         <div class="actions-bar">
             <button class="btn btn-secondary" (click)="showGlobalConfig.set(true)">
                 <span>⚙️</span> Configuración Global
@@ -20,8 +25,10 @@
             </button>
         </div>
 
+        <!-- Lista de tarjetas de médicos -->
         <div class="doctor-cards-list">
             <div class="doctor-card" *ngFor="let doctor of doctors()">
+                <!-- Información principal -->
                 <div class="doc-main-info">
                     <div class="doc-avatar" [ngStyle]="{'background-color': getDoctorColor(doctor.id)}">
                         {{ doctor.name.substring(0,2).toUpperCase() }}
@@ -32,10 +39,12 @@
                     </div>
                 </div>
 
+                <!-- Información intermedia -->
                 <div class="doc-middle-info">
                     <div class="info-block">
                         <span class="label">Horario:</span>
-                        <span class="value">{{ doctor.scheduleStart | slice:0:5 }}–{{ doctor.scheduleEnd | slice:0:5 }}</span>
+                        <span class="value">{{ doctor.scheduleStart | slice:0:5 }}–{{ doctor.scheduleEnd | slice:0:5
+                            }}</span>
                     </div>
                     <div class="info-block">
                         <span class="label">Ventana:</span>
@@ -43,6 +52,7 @@
                     </div>
                 </div>
 
+                <!-- Información derecha -->
                 <div class="doc-right-info">
                     <div class="info-block">
                         <span class="label">Intervalo:</span>
@@ -54,6 +64,7 @@
                     </div>
                 </div>
 
+                <!-- Acción: botón para editar -->
                 <div class="doc-actions">
                     <button class="btn btn-secondary btn-sm" (click)="openExceptions(doctor)">
                         📅 Excepciones
@@ -68,91 +79,10 @@
 
     <!-- PESTAÑA ESTADÍSTICAS -->
     <section *ngIf="activeTab() === 'estadisticas'" class="tab-content">
-
-        <!-- SKELETON LOADING -->
-        <div class="skeleton-wrapper" *ngIf="loadingStats && !stats">
-            <div class="skeleton-grid">
-                <div class="skeleton-card" *ngFor="let _ of [1,2,3,4]">
-                    <div class="skeleton-icon"></div>
-                    <div class="skeleton-lines">
-                        <div class="skeleton-line skeleton-value"></div>
-                        <div class="skeleton-line skeleton-label"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="skeleton-chart">
-                <div class="skeleton-line skeleton-chart-bar"></div>
-            </div>
-        </div>
-
-        <!-- ERROR STATE -->
-        <div class="empty-state" *ngIf="statsError && !loadingStats">
-            <p>{{ statsError }}</p>
-            <button class="btn btn-primary" (click)="loadStats()">Reintentar</button>
-        </div>
-
-        <!-- STATS CONTENT -->
-        <ng-container *ngIf="stats && !loadingStats">
-
-            <!-- FILTERS BAR -->
-            <div class="stats-filters">
-                <div class="quick-ranges">
-                    <button class="range-chip" [class.active]="quickRange === 'today'" (click)="setQuickRange('today')">Hoy</button>
-                    <button class="range-chip" [class.active]="quickRange === 'this-week'" (click)="setQuickRange('this-week')">Esta semana</button>
-                    <button class="range-chip" [class.active]="quickRange === 'this-month'" (click)="setQuickRange('this-month')">Este mes</button>
-                    <button class="range-chip" [class.active]="quickRange === 'last-month'" (click)="setQuickRange('last-month')">Mes pasado</button>
-                    <button class="range-chip" [class.active]="quickRange === 'last-90'" (click)="setQuickRange('last-90')">Últimos 90d</button>
-                    <button class="range-chip" [class.active]="quickRange === 'custom'" (click)="quickRange = 'custom'">Personalizado</button>
-                </div>
-
-                <div class="custom-range" *ngIf="quickRange === 'custom'">
-                    <div class="filter-field">
-                        <label>Desde</label>
-                        <input type="date" [(ngModel)]="filterStartDate">
-                    </div>
-                    <div class="filter-field">
-                        <label>Hasta</label>
-                        <input type="date" [(ngModel)]="filterEndDate">
-                    </div>
-                    <div class="filter-field">
-                        <label>Médico</label>
-                        <select [(ngModel)]="filterDoctorId">
-                            <option value="">Todos</option>
-                            <option *ngFor="let doc of doctors()" [value]="doc.id">{{ doc.name }}</option>
-                        </select>
-                    </div>
-                    <div class="filter-field">
-                        <label>Estado</label>
-                        <select [(ngModel)]="filterStatus">
-                            <option value="">Todos</option>
-                            <option value="agendada">Agendada</option>
-                            <option value="confirmada">Confirmada</option>
-                            <option value="completada">Completada</option>
-                            <option value="cancelada">Cancelada</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-primary" (click)="applyFilter()">Aplicar</button>
-                </div>
-
-                <div class="stats-actions">
-                    <button class="btn btn-secondary" (click)="exportStatsCSV()" title="Exportar a CSV">
-                        📥 Exportar CSV
-                    </button>
-                </div>
-            </div>
-
-            <!-- ALERTA ALTA CANCELACIÓN -->
-            <div class="stats-alert" *ngIf="hasHighCancellation && stats.stats.total > 0">
-                <span class="alert-icon">⚠️</span>
-                <span class="alert-text">
-                    <strong>Alerta:</strong> La tasa de cancelación es del <strong>{{ cancellationRate }}%</strong>, 
-                    superior al 20% recomendado.
-                </span>
-            </div>
-
-            <!-- STATS CARDS -->
+        <!-- Grid de tarjetas con estadísticas generales -->
+        <div class="stats-wrapper">
             <div class="stats-grid">
-                <div class="stat-card" title="Total de citas en el período seleccionado">
+                <div class="stat-card">
                     <div class="stat-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -162,38 +92,25 @@
                         </svg>
                     </div>
                     <div class="stat-body">
-                        <div class="stat-value">{{ stats.stats.total }}</div>
+                        <div class="stat-value">{{ stats.total }}</div>
                         <div class="stat-label">Total Citas</div>
                     </div>
                 </div>
 
-                <div class="stat-card" title="Citas agendadas (pendientes de confirmar)">
+                <div class="stat-card">
                     <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
                             <polyline points="9 11 12 14 22 4"></polyline>
                             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
                         </svg>
                     </div>
                     <div class="stat-body">
-                        <div class="stat-value">{{ stats.stats.scheduled }}</div>
+                        <div class="stat-value">{{ stats.scheduled }}</div>
                         <div class="stat-label">Agendadas</div>
                     </div>
                 </div>
 
-                <div class="stat-card" title="Citas confirmadas (concretadas por el paciente)">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                    </div>
-                    <div class="stat-body">
-                        <div class="stat-value">{{ stats.stats.confirmed }}</div>
-                        <div class="stat-label">Confirmadas</div>
-                    </div>
-                </div>
-
-                <div class="stat-card" title="Citas completadas exitosamente">
+                <div class="stat-card">
                     <div class="stat-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -201,12 +118,12 @@
                         </svg>
                     </div>
                     <div class="stat-body">
-                        <div class="stat-value">{{ stats.stats.completed }}</div>
+                        <div class="stat-value">{{ stats.completed }}</div>
                         <div class="stat-label">Completadas</div>
                     </div>
                 </div>
 
-                <div class="stat-card" title="Citas canceladas por pacientes o administradores">
+                <div class="stat-card">
                     <div class="stat-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -214,94 +131,47 @@
                         </svg>
                     </div>
                     <div class="stat-body">
-                        <div class="stat-value">{{ stats.stats.cancelled }}</div>
+                        <div class="stat-value">{{ stats.cancelled }}</div>
                         <div class="stat-label">Canceladas</div>
                     </div>
                 </div>
-
-                <div class="stat-card" title="Porcentaje de citas canceladas vs total">
-                    <div class="stat-icon stat-icon-danger" [class.high]="hasHighCancellation">
-                        <span class="rate-value">{{ cancellationRate }}%</span>
-                    </div>
-                    <div class="stat-body">
-                        <div class="stat-label stat-label-danger" [class.high]="hasHighCancellation">
-                            {{ hasHighCancellation ? 'Tasa Cancelación (Alta)' : 'Tasa Cancelación' }}
-                        </div>
-                    </div>
-                </div>
             </div>
+        </div>
 
-            <!-- CHARTS ROW -->
-            <div class="charts-row">
-                <div class="card chart-card">
-                    <h3 class="card-title">Tendencia Diaria</h3>
-                    <div class="chart-container">
-                        <canvas #trendChart></canvas>
-                        <div class="chart-empty" *ngIf="stats.dailyTrend.length === 0">
-                            <p>No hay datos de tendencia para este período.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card chart-card">
-                    <h3 class="card-title">Distribución por Estado</h3>
-                    <div class="chart-container chart-container-sm">
-                        <canvas #statusChart></canvas>
-                        <div class="chart-empty" *ngIf="stats.statusDistribution.length === 0">
-                            <p>No hay datos para este período.</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- Tabla de citas por médico -->
+        <div class="card table-card">
+            <h3 class="card-title">Distribución por Médico</h3>
+            <div class="table-responsive">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>MÉDICO</th>
+                            <th>CITAS</th>
+                            <th>PROPORCIÓN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let ds of doctorStats">
+                            <td>{{ ds.name }}</td>
+                            <td>{{ ds.count }}</td>
+                            <td class="proportion-cell">
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" [style.width.%]="ds.percentage"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-
-            <!-- DOCTOR CHART -->
-            <div class="card chart-card chart-card-full">
-                <h3 class="card-title">Citas por Médico</h3>
-                <div class="chart-container chart-container-bar">
-                    <canvas #doctorChart></canvas>
-                    <div class="chart-empty" *ngIf="stats.doctorStats.length === 0">
-                        <p>No hay datos de médicos para este período.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- DOCTOR TABLE -->
-            <div class="card table-card">
-                <h3 class="card-title">Distribución por Médico</h3>
-                <div class="table-responsive">
-                    <table class="styled-table">
-                        <thead>
-                            <tr>
-                                <th>MÉDICO</th>
-                                <th>CITAS</th>
-                                <th>PROPORCIÓN</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let ds of stats.doctorStats">
-                                <td>{{ ds.name }}</td>
-                                <td><strong>{{ ds.count }}</strong></td>
-                                <td class="proportion-cell">
-                                    <div class="progress-bar-container">
-                                        <div class="progress-bar-fill" [style.width.%]="ds.percentage"></div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="table-empty" *ngIf="stats.doctorStats.length === 0">
-                    <p>No hay datos de médicos.</p>
-                </div>
-            </div>
-
-        </ng-container>
+        </div>
     </section>
 
     <!-- Modal Médico -->
     <div *ngIf="showDoctorForm()" class="modal-overlay" (click)="showDoctorForm.set(false)">
         <div class="modal" (click)="$event.stopPropagation()">
-            <h3 class="modal-title">{{ selectedDoctor() ? 'Editar Médico' : 'Añadir Médico' }}</h3>
+            <h3 class="modal-title">
+                {{ selectedDoctor() ? 'Editar Médico' : 'Añadir Médico' }}
+            </h3>
             <form [formGroup]="doctorForm" (ngSubmit)="saveDoctor()" class="form-grid">
                 <div class="form-field">
                     <label for="doctor-name">Nombre Completo <span class="required">*</span></label>
@@ -378,7 +248,8 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" [disabled]="doctorForm.invalid">Guardar Cambios</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="doctorForm.invalid">Guardar
+                        Cambios</button>
                     <button type="button" *ngIf="selectedDoctor()" (click)="deleteDoctor(selectedDoctor()!.id)"
                         class="btn btn-delete">Eliminar Médico</button>
                     <button type="button" (click)="showDoctorForm.set(false)" class="btn btn-cancel">Cancelar</button>
@@ -414,7 +285,8 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" [disabled]="configForm.invalid">Actualizar Reglas</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="configForm.invalid">Actualizar
+                        Reglas</button>
                     <button type="button" (click)="showGlobalConfig.set(false)" class="btn btn-cancel">Cerrar</button>
                 </div>
             </form>
@@ -435,7 +307,8 @@
                 </div>
             </div>
 
-            <p *ngIf="exceptions().length === 0" class="text-muted" style="margin-bottom: 1.5rem;">No hay excepciones registradas.</p>
+            <p *ngIf="exceptions().length === 0" class="text-muted" style="margin-bottom: 1.5rem;">No hay excepciones
+                registradas.</p>
 
             <h4 class="card-title">Añadir Nueva Excepción</h4>
             <form [formGroup]="exceptionForm" (ngSubmit)="addException()" class="form-grid">
@@ -457,7 +330,8 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" [disabled]="exceptionForm.invalid">Bloquear Día</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="exceptionForm.invalid">Bloquear
+                        Día</button>
                     <button type="button" (click)="showExceptionForm.set(false)" class="btn btn-cancel">Cerrar</button>
                 </div>
             </form>
