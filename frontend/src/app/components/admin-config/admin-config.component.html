@@ -219,12 +219,18 @@
                         </small>
                     </div>
                     <div class="form-field">
-                        <label for="doctor-workingDays">Días (1-7) <span class="required">*</span></label>
-                        <input id="doctor-workingDays" formControlName="activeDays" placeholder="Ej: 1,2,3,4,5"
-                            [class.field-invalid]="doctorForm.get('activeDays')?.invalid && doctorForm.get('activeDays')?.touched" />
-                        <small class="field-error" *ngIf="doctorForm.get('activeDays')?.invalid && doctorForm.get('activeDays')?.touched">
-                            Los días laborales son obligatorios
+                        <label>Días Laborales <span class="required">*</span></label>
+                        <div class="day-checklist">
+                            <button type="button" *ngFor="let day of dayList"
+                                class="day-chip" [class.day-selected]="isDaySelected(day.value)"
+                                (click)="toggleDay(day.value)">
+                                {{ day.label }}
+                            </button>
+                        </div>
+                        <small class="field-error" *ngIf="selectedDays.length === 0">
+                            Selecciona al menos un día laboral
                         </small>
+                        <input type="hidden" formControlName="activeDays" />
                     </div>
                 </div>
 

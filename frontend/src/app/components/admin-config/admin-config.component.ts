@@ -34,6 +34,32 @@ export class AdminConfigComponent implements OnInit {
     'Nutrición',
   ];
 
+  // Días de la semana para checklist
+  dayList = [
+    { value: '1', label: 'Lun' },
+    { value: '2', label: 'Mar' },
+    { value: '3', label: 'Mié' },
+    { value: '4', label: 'Jue' },
+    { value: '5', label: 'Vie' },
+    { value: '6', label: 'Sáb' },
+    { value: '7', label: 'Dom' },
+  ];
+  selectedDays: string[] = ['1', '2', '3', '4', '5'];
+
+  toggleDay(day: string): void {
+    const idx = this.selectedDays.indexOf(day);
+    if (idx >= 0) {
+      this.selectedDays.splice(idx, 1);
+    } else {
+      this.selectedDays.push(day);
+    }
+    this.doctorForm.patchValue({ activeDays: this.selectedDays.join(',') });
+  }
+
+  isDaySelected(day: string): boolean {
+    return this.selectedDays.indexOf(day) >= 0;
+  }
+
   // Formularios reactivos
   doctorForm: FormGroup;
   configForm: FormGroup;
@@ -103,13 +129,11 @@ export class AdminConfigComponent implements OnInit {
   // Abre el formulario para crear o editar un médico
   openDoctorForm(doctor?: Doctor): void {
     if (doctor) {
-      // Si se recibe un médico, se está editando
       this.selectedDoctor.set(doctor);
       this.doctorForm.patchValue(doctor);
+      this.syncDaysFromForm(doctor.activeDays || '1,2,3,4,5');
     } else {
-      // Si no se recibe médico, se está creando uno nuevo
       this.selectedDoctor.set(null);
-      // Resetea formulario con valores por defecto
       this.doctorForm.reset({
         scheduleStart: '08:00',
         scheduleEnd: '18:00',
@@ -118,8 +142,13 @@ export class AdminConfigComponent implements OnInit {
         lunchStart: null,
         lunchEnd: null
       });
+      this.syncDaysFromForm('1,2,3,4,5');
     }
     this.showDoctorForm.set(true);
+  }
+
+  private syncDaysFromForm(daysStr: string): void {
+    this.selectedDays = daysStr ? daysStr.split(',').filter(d => d.trim()) : [];
   }
 
   // Guarda los datos del médico (crea o actualiza)
@@ -141,6 +170,12 @@ export class AdminConfigComponent implements OnInit {
     // Validar que el fin del descanso sea mayor al inicio del descanso (si ambos están definidos)
     if (data.lunchStart && data.lunchEnd && data.lunchEnd <= data.lunchStart) {
       this.showErrorModal('La hora de fin del descanso debe ser mayor a la hora de inicio.');
+      return;
+    }
+
+    // Validar que al menos un día esté seleccionado
+    if (this.selectedDays.length === 0) {
+      this.showErrorModal('Debes seleccionar al menos un día laboral.');
       return;
     }
 

@@ -450,6 +450,47 @@ textarea {
     display: block;
 }
 
+/* Checklist de días laborales */
+.day-checklist {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.day-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 0.4rem 0.7rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    color: #64748b;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.day-chip:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.day-selected {
+    background: #0d2c5b;
+    color: white;
+    border-color: #0d2c5b;
+}
+
+.day-selected:hover {
+    background: #1e3f6f;
+    border-color: #1e3f6f;
+    color: white;
+}
+
 /* Fila responsiva del formulario */
 .form-row-responsive {
     display: grid;
