@@ -1,15 +1,4 @@
 <div class="search-container">
-    <!-- Botones de vista -->
-    <div class="view-buttons">
-        <button class="btn-view" [class.active]="viewMode === 'all'" (click)="loadAllAppointments()">
-            Ver todas las citas
-        </button>
-        <button class="btn-view" [class.active]="viewMode === 'filter'" (click)="onSearch()"
-            [disabled]="!selectedDoctorId || !selectedDate">
-            Filtrar por médico y fecha
-        </button>
-    </div>
-
     <!-- Barra de búsqueda -->
     <div class="search-bar">
         <!-- Selector de médico -->
@@ -36,6 +25,17 @@
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
             {{ loading ? 'Buscando' : 'Buscar' }}
+        </button>
+    </div>
+
+    <!-- Botones de vista -->
+    <div class="view-buttons">
+        <button class="btn-view" [class.active]="viewMode === 'all'" (click)="loadAllAppointments()">
+            Ver todas las citas
+        </button>
+        <button class="btn-view" [class.active]="viewMode === 'filter'" (click)="onSearch()"
+            [disabled]="!selectedDoctorId || !selectedDate">
+            Filtrar por médico y fecha
         </button>
     </div>
 
