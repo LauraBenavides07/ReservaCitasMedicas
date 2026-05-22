@@ -88,8 +88,8 @@ export class AdminConfigComponent implements OnInit {
 
     // Inicialización del formulario de configuración global
     this.configForm = this.fb.group({
-      minAdvanceHours: [2, Validators.required],
-      appointmentWindowDays: [15, Validators.required]
+      minAdvanceHours: [2, [Validators.required, Validators.min(1)]],
+      appointmentWindowDays: [15, [Validators.required, Validators.min(1)]]
     });
 
     // Inicialización del formulario de excepciones
