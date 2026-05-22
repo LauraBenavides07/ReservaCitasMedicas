@@ -193,11 +193,18 @@
     border: none;
     color: #ef4444;
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 6px;
     display: flex;
     align-items: center;
+    gap: 0.5rem;
     transition: background 0.2s;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.logout-label {
+    display: inline;
 }
 
 .btn-logout-icon:hover {
