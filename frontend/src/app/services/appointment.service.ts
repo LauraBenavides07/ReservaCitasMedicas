@@ -19,6 +19,8 @@ export interface Appointment {
   status: string;
   patient: Patient;
   doctor?: Doctor;
+  observations?: string;
+  diagnosis?: string;
 }
 
 export interface AppointmentResponse {
@@ -80,8 +82,8 @@ export class AppointmentService {
     return this.http.patch(`${this.apiUrl}/${id}/confirm`, {});
   }
 
-  rescheduleAppointment(id: string, date: string, time: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${id}/reschedule`, { date, time });
+  rescheduleAppointment(id: string, date: string, time: string, doctorId?: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}/reschedule`, { date, time, doctorId });
   }
 
   getDashboardStats(): Observable<any> {
@@ -96,7 +98,7 @@ export class AppointmentService {
     return this.http.get<any>(`${this.apiUrl}/patient-by-document/${document}`);
   }
 
-  completeAppointment(id: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${id}/complete`, {});
+  completeAppointment(id: string, observations?: string, diagnosis?: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}/complete`, { observations, diagnosis });
   }
 }

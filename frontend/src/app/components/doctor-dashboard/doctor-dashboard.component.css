@@ -81,8 +81,6 @@
     cursor: pointer;
 }
 
-
-
 /* ============================================
    STATS
    ============================================ */
@@ -380,43 +378,43 @@
     justify-content: center;
 }
 
-.btn-action.primary {
-    background-color: #e0f2fe;
-    color: #0284c7;
+.btn-primary.btn-action-fixed {
+    background-color: #3e7ba6 !important;
+    color: white !important;
+    border: none !important;
 }
 
-.btn-action.primary:hover {
-    background-color: #bae6fd;
+.btn-primary.btn-action-fixed:hover {
+    background-color: #2d5d80 !important;
 }
 
-.btn-action.complete {
-    background-color: #05903f;
-    color: white;
-    border: none;
+.btn-success.btn-action-fixed {
+    background-color: #10b981 !important;
+    color: white !important;
+    border: none !important;
 }
 
-.btn-action.complete:hover {
-    background-color: #00a846;
+.btn-success.btn-action-fixed:hover {
+    background-color: #059669 !important;
 }
 
-.btn-action.danger {
-    background-color: #fee2e2;
-    color: #dc2626;
+.btn-outline.btn-action-fixed {
+    background-color: #ef4444 !important;
+    color: white !important;
+    border: none !important;
 }
 
-.btn-action.danger:hover {
-    background-color: #fecaca;
+.btn-outline.btn-action-fixed:hover {
+    background-color: #dc2626 !important;
 }
 
 /*  NUEVO: Forzar mismo tamaño para Completar y Cancelar */
-.btn-action.complete,
-.btn-action.danger {
+.btn-success.btn-action-fixed,
+.btn-outline.btn-action-fixed {
     width: 100%;
     min-width: 130px;
-    /* Ancho base idéntico */
     padding: 0.6rem 1rem;
     flex: 1;
-    /* Crecen proporcionalmente si hay espacio */
 }
 
 /* ============================================
@@ -609,4 +607,666 @@
     padding: 1.5rem !important;
 }
 
+/* ============================================
+   MODALS & FORMS (Consolidated)
+   ============================================ */
 
+/* Button Consistency */
+.btn-action-fixed {
+    min-width: 110px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+    font-size: 0.9rem;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Premium Modal */
+.completion-modal {
+    max-width: 680px !important;
+    /* Ancho ligeramente mayor para evitar que se vea al borde */
+    border-radius: 20px !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Modal Header */
+.modal-header {
+    padding: 1.25rem 1.75rem;
+    /* Padding lateral aumentado ligeramente */
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.modal-close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #64748b;
+    cursor: pointer;
+}
+
+/* Modal Body */
+.modal-body {
+    padding: 1.5rem 1.75rem;
+    /* Padding lateral aumentado para dar aire */
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-height: 65vh;
+    overflow-y: auto;
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+/* Modal Footer */
+.modal-footer,
+.modal-footer-modern {
+    padding: 1.25rem 1.75rem;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.modal-footer-modern {
+    align-items: center;
+    gap: 1.5rem;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* FORM ELEMENTS */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #475569;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.form-input,
+.form-textarea {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    border-color: #3e7ba6;
+}
+
+.form-input-modern,
+.form-textarea-modern {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background-color: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.form-input-modern:focus,
+.form-textarea-modern:focus {
+    background-color: #ffffff;
+    border-color: #3e7ba6;
+    box-shadow: 0 0 0 4px rgba(62, 123, 166, 0.1);
+    outline: none;
+}
+
+.form-input-mini {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    background-color: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #1e293b;
+}
+
+.form-select-modern {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    background-color: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #1e293b;
+}
+
+.reschedule-form select,
+.reschedule-form input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.reschedule-form select:focus,
+.reschedule-form input:focus {
+    outline: none;
+    border-color: #3e7ba6;
+}
+
+.form-label-mini {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 0.4rem;
+}
+
+/* Buttons */
+.btn-cancel {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    background-color: #f1f5f9;
+    color: #475569;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-save {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    background-color: #3e7ba6;
+    color: white;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-text-only {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-text-only:hover {
+    color: #1e293b;
+}
+
+/* Botón sólido sin degradado, alineado con tus colores */
+.btn-confirm-gradient {
+    background-color: #0d2c5b;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 6px -1px rgba(13, 44, 91, 0.2);
+}
+
+.btn-confirm-gradient:hover:not(:disabled) {
+    background-color: #153b7a;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 10px -2px rgba(13, 44, 91, 0.25);
+}
+
+.btn-confirm-gradient:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #cbd5e1;
+}
+
+/* Grid layouts */
+.form-row,
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-grid-modern {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    width: 100%;
+    min-width: 0;
+}
+
+/* Reschedule Section */
+.reschedule-section {
+    margin-top: 1.5rem;
+    padding: 1.2rem;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.reschedule-section.active {
+    background-color: #f0f7ff;
+    border-color: #3e7ba6;
+}
+
+.reschedule-form {
+    margin-top: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.reschedule-container {
+    position: relative;
+    z-index: 5;
+    margin-top: 0.25rem;
+}
+
+.toggle-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 0.3rem;
+    position: relative;
+    z-index: 10;
+    padding: 0;
+}
+
+.toggle-switch {
+    width: 44px;
+    height: 22px;
+    flex-shrink: 0;
+    background-color: #cbd5e1;
+    border-radius: 100px;
+    position: relative;
+    transition: background-color 0.3s;
+}
+
+.toggle-switch.active {
+    background-color: #2563eb;
+}
+
+.toggle-knob {
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-switch.active .toggle-knob {
+    transform: translateX(22px);
+}
+
+.toggle-label {
+    font-weight: 600;
+    color: #1e3a6a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.toggle-icon {
+    color: #3e7ba6;
+}
+
+.reschedule-box-modern {
+    background-color: #f0f7ff;
+    padding: 1.25rem;
+    border-radius: 14px;
+    border: 1px solid #bfdbfe;
+    animation: fadeIn 0.3s ease;
+    width: 100%;
+    min-width: 0;
+}
+
+/* Checkbox Styles */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    user-select: none;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 24px;
+    width: 24px;
+    background-color: #cbd5e1;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.checkbox-container:hover input~.checkmark {
+    background-color: #94a3b8;
+}
+
+.checkbox-container input:checked~.checkmark {
+    background-color: #3e7ba6;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-container input:checked~.checkmark:after {
+    display: block;
+}
+
+.checkbox-container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.checkbox-label {
+    font-weight: 600;
+    color: #1e293b;
+    cursor: pointer;
+}
+
+/* Modal Sections */
+.patient-summary {
+    background-color: #f8fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #3e7ba6;
+}
+
+.patient-summary p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #475569;
+}
+
+.modal-divider {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 0.5rem 0;
+}
+
+.modal-divider-modern {
+    margin: 0.25rem 0;
+    border: 0;
+    border-top: 1px solid #f1f5f9;
+}
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0 !important;
+    gap: 0 !important;
+}
+
+.char-count {
+    align-self: flex-start;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 0.35rem;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+/* Premium Patient Card Overlay */
+.patient-card-modern {
+    background: linear-gradient(135deg, #eff6ff 0%, #e0f2fe 100%);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid #3e7ba6;
+}
+
+.patient-avatar-badge {
+    width: 56px;
+    height: 56px;
+    background-color: #3b82f6;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+}
+
+.avatar-icon {
+    width: 32px;
+    height: 32px;
+}
+
+.patient-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.label-mini {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.patient-name-large {
+    margin: 0.1rem 0;
+    font-size: 1.25rem;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.appointment-meta {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.25rem;
+}
+
+.meta-item {
+    font-size: 0.85rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Slots */
+.slots-grid-modern {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    width: 100%;
+}
+
+@media (max-width: 480px) {
+    .slots-grid-modern {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.slot-btn-modern {
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    padding: 0.6rem 0.25rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.slot-btn-modern:hover {
+    border-color: #3e7ba6;
+    color: #3e7ba6;
+}
+
+.slot-btn-modern.active {
+    background-color: #eff6ff;
+    border-color: #3e7ba6;
+    color: #3e7ba6;
+    box-shadow: 0 0 0 2px rgba(62, 123, 166, 0.1);
+}
+
+.no-slots-msg {
+    grid-column: span 4;
+    font-size: 0.8rem;
+    color: #64748b;
+    text-align: center;
+    padding: 0.5rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== QUITAR SCROLL HORIZONTAL ===== */
+html,
+body,
+.doctor-view-container,
+.modal-content,
+.modal-body,
+.completion-modal {
+    overflow-x: hidden;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-grid-modern {
+        grid-template-columns: 1fr;
+    }
+
+    .slots-grid-modern {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* En móvil se vuelve más compacto pero mantiene el aire */
+    .modal-header,
+    .modal-body,
+    .modal-footer-modern {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+}

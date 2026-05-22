@@ -135,7 +135,7 @@ export class DoctorHistoryComponent implements OnInit {
                 status: a.status === 'agendada' && new Date(`${actualDate}T${actualTime}`) < now ? 'No asistió' : a.status,
                 monthStr: !isNaN(dateObj.getMonth()) ? monthNames[dateObj.getMonth()] : '---',
                 dayStr: !isNaN(dateObj.getDate()) ? dateObj.getDate().toString().padStart(2, '0') : '--',
-                observation: localStorage.getItem(`observation_${a.patient.document}`) || 'Paciente atendido satisfactoriamente. (Generado automáticamente)'
+                observation: a.observations || 'Sin observaciones registradas.'
             };
         });
         

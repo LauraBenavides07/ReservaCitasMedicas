@@ -41,6 +41,15 @@ export class AppointmentListComponent implements OnInit {
   // Indica si ya se hizo una búsqueda
   hasSearched: boolean = false;
 
+  // Rescheduling state
+  isRescheduleModalOpen: boolean = false;
+  selectedAppointment: Appointment | null = null;
+  newRescheduleDate: string = '';
+  newRescheduleTime: string = '';
+  availableSlots: string[] = [];
+  isLoadingSlots: boolean = false;
+  rescheduleDoctorId: string = '';
+
   constructor(
     private appointmentService: AppointmentService,
     private doctorService: DoctorService,
@@ -245,4 +254,82 @@ onSearch(): void {
     });
   }
 
+  openRescheduleModal(appt: Appointment): void {
+    this.selectedAppointment = appt;
+    this.newRescheduleDate = appt.appointmentDate || this.selectedDate;
+    this.newRescheduleTime = '';
+    this.rescheduleDoctorId = appt.doctor?.id || '';
+    this.isRescheduleModalOpen = true;
+    this.loadAvailableSlots();
+  }
+
+  closeRescheduleModal(): void {
+    this.isRescheduleModalOpen = false;
+    this.selectedAppointment = null;
+  }
+
+  loadAvailableSlots(): void {
+    const doctorId = this.rescheduleDoctorId;
+    if (!doctorId || !this.newRescheduleDate) return;
+
+    this.isLoadingSlots = true;
+    this.appointmentService.getAvailableSlots(doctorId, this.newRescheduleDate).subscribe({
+      next: (slots) => {
+        this.availableSlots = slots;
+        this.isLoadingSlots = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error loading slots:', err);
+        this.availableSlots = [];
+        this.isLoadingSlots = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  selectSlot(slot: string): void {
+    this.newRescheduleTime = slot;
+    this.cdr.detectChanges();
+  }
+
+  confirmReschedule(): void {
+    if (!this.selectedAppointment || !this.newRescheduleDate || !this.newRescheduleTime) return;
+
+    Swal.fire({
+      title: 'Confirmar Reagendamiento',
+      text: `¿Estás seguro de reagendar la cita para el ${this.newRescheduleDate} a las ${this.newRescheduleTime}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, reagendar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3e7ba6',
+      customClass: {
+        popup: 'custom-popup'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.appointmentService.rescheduleAppointment(
+          this.selectedAppointment!.id,
+          this.newRescheduleDate,
+          this.newRescheduleTime,
+          this.rescheduleDoctorId
+        ).subscribe({
+          next: () => {
+            this.closeRescheduleModal();
+            Swal.fire('¡Éxito!', 'La cita ha sido reagendada.', 'success');
+            if (this.viewMode === 'all') {
+              this.loadAllAppointments();
+            } else {
+              this.loadAppointments();
+            }
+          },
+          error: (err) => {
+            console.error('Error rescheduling:', err);
+            Swal.fire('Error', 'No se pudo reagendar la cita. Es posible que el horario ya no esté disponible.', 'error');
+          }
+        });
+      }
+    });
+  }
 }

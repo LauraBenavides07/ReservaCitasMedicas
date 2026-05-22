@@ -221,6 +221,24 @@
     background: #2d5d80;
 }
 
+/* Botón Nueva Cita Específico */
+.btn-patient-new {
+    background-color: #1e3a6a !important;
+    color: #ffffff !important;
+    padding: 0.6rem 2rem !important;
+    font-size: 1.2rem !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 6px 12px -2px rgba(30, 58, 106, 0.3), 0 3px 6px -3px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn-patient-new:hover {
+    background-color: #0d2c5b !important;
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: 0 10px 15px -3px rgba(30, 58, 106, 0.4) !important;
+}
+
 /* Botón de cancelar */
 .btn-cancel-red {
     background: #c2410c;

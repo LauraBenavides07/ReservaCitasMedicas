@@ -81,10 +81,10 @@
                         <div class="time-badge">
                             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
                                 <path
-                                    d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
-                                <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+                                    d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V8h14v11z" />
+                                <circle cx="12" cy="12" r="3" />
                             </svg>
-                            {{ apt.time }}
+                            {{ apt.date }} | {{ apt.time }}
                         </div>
                     </div>
 
@@ -129,12 +129,18 @@
 
                         <!-- Action Buttons -->
                         <div class="apt-actions">
-                            <button *ngIf="apt.status === 'Pendiente'" class="btn-action primary"
-                                (click)="confirmAppointment(apt)">Confirmar</button>
-                            <button *ngIf="apt.status === 'Confirmada'" class="btn-action complete"
-                                (click)="completeAppointment(apt)">Completar</button>
-                            <button *ngIf="apt.status !== 'Cancelada' && apt.status !== 'Completada'"
-                                class="btn-action danger" (click)="cancelAppointment(apt)">Cancelar</button>
+                                        <button *ngIf="apt.status === 'Pendiente'" class="btn btn-primary btn-action-fixed"
+                                            (click)="confirmAppointment(apt)">
+                                            Confirmar
+                                        </button>
+                                        <button *ngIf="apt.status === 'Confirmada'" class="btn btn-success btn-action-fixed"
+                                            (click)="completeAppointment(apt)">
+                                            Completar
+                                        </button>
+                                        <button *ngIf="apt.status === 'Pendiente' || apt.status === 'Confirmada'"
+                                            class="btn btn-outline btn-action-fixed" (click)="cancelAppointment(apt)">
+                                            Cancelar
+                                        </button>
                         </div>
                     </div>
                 </div>
@@ -147,4 +153,123 @@
             </div>
         </section>
     </div>
+</div>
+
+<!-- Modal de Completar Cita -->
+<div *ngIf="isCompletionModalOpen" class="modal-overlay">
+    <div class="modal-content completion-modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Finalizar Atención Médica</h2>
+            <button class="modal-close-btn" (click)="closeCompletionModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- Tarjeta de Paciente Premium -->
+            <div class="patient-card-modern" *ngIf="selectedAppointment">
+                <div class="patient-avatar-badge">
+                    <svg viewBox="0 0 24 24" class="avatar-icon">
+                        <path fill="white" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+                <div class="patient-details">
+                    <span class="label-mini">Paciente</span>
+                    <h3 class="patient-name-large">{{ selectedAppointment.patientName }}</h3>
+                    <div class="appointment-meta">
+                        <span class="meta-item">
+                            <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V8h14v11z"/></svg>
+                            {{ selectedAppointment.date }}
+                        </span>
+                        <span class="meta-item">
+                            <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+                            {{ selectedAppointment.time }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-group">
+                    <label class="form-label">
+                        <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        DIAGNÓSTICO
+                    </label>
+                    <input type="text" class="form-input-modern" [(ngModel)]="appointmentDiagnosis" 
+                        placeholder="Ej: Gripe común, Hipertensión controlada...">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        OBSERVACIONES Y RECOMENDACIONES
+                    </label>
+                    <textarea class="form-textarea-modern" [(ngModel)]="appointmentObservations" rows="4"
+                        placeholder="Detalles de la consulta, medicamentos recetados..."></textarea>
+                    <span class="char-count">{{ getObservationsLength() }} caracteres</span>
+                </div>
+            </div>
+
+            <hr class="modal-divider-modern">
+
+            <div class="reschedule-container">
+                <div class="toggle-wrapper" (click)="shouldReschedule = !shouldReschedule; onRescheduleToggle()">
+                    <div class="toggle-switch" [class.active]="shouldReschedule">
+                        <div class="toggle-knob"></div>
+                    </div>
+                    <span class="toggle-label">
+                        <svg viewBox="0 0 24 24" width="16" height="16" class="toggle-icon"><path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V8h14v11z"/></svg>
+                        Agendar cita de seguimiento
+                    </span>
+                </div>
+
+                <div class="reschedule-box-modern" *ngIf="shouldReschedule">
+                    <div class="form-grid-modern">
+                        <div class="form-group">
+                            <label class="form-label-mini">
+                                <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                Médico Tratante
+                            </label>
+                            <select class="form-select-modern" [(ngModel)]="rescheduleDoctorId" (change)="loadAvailableSlots()">
+                                <option *ngFor="let doc of doctors" [value]="doc.id">
+                                    Dr(a). {{ doc.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label-mini">
+                                <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V8h14v11z"/></svg>
+                                Fecha sugerida
+                            </label>
+                            <input type="date" class="form-input-mini" [(ngModel)]="rescheduleDate" (change)="loadAvailableSlots()">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mt-3">
+                        <label class="form-label-mini">
+                            <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+                            Horario disponible
+                        </label>
+                        
+                        <div class="slots-grid-modern">
+                            <button *ngFor="let slot of availableSlots" 
+                                class="slot-btn-modern" 
+                                [class.active]="rescheduleTime === slot"
+                                (click)="selectSlot(slot)">
+                                {{ slot }}
+                            </button>
+                            <div *ngIf="availableSlots.length === 0" class="no-slots-msg">
+                                {{ isReschedulingLoading ? 'Cargando agenda...' : 'No hay turnos disponibles para esta fecha.' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer-modern">
+            <button class="btn-text-only" (click)="closeCompletionModal()">Cancelar</button>
+            <button class="btn-confirm-gradient" (click)="confirmCompletion()" 
+                [disabled]="shouldReschedule && (!rescheduleDate || !rescheduleTime)">
+                Confirmar y Completar
+            </button>
+        </div>
+   </div>
 </div>

@@ -173,7 +173,13 @@ describe('PatientAppointmentFormComponent', () => {
     component.selectedTime.set('10:00');
 
     const navigateSpy = vi.spyOn(component.navigate, 'emit');
-    vi.spyOn(appointmentService, 'createAppointment').mockReturnValue(of({}));
+    vi.spyOn(appointmentService, 'createAppointment').mockReturnValue(of({
+      id: 'apt1',
+      time: '10:00',
+      date: '2024-01-15',
+      status: 'agendada',
+      patient: { firstName: 'Juan', lastName: 'Pérez', document: '12345678', phone: '987654321' }
+    } as any));
 
     component.confirmAppointment();
 

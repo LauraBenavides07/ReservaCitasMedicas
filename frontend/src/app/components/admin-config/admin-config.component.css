@@ -301,12 +301,15 @@ textarea {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE / Edge antiguo */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE / Edge antiguo */
 }
 
 .table-responsive::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
+    /* Chrome, Safari, Opera */
 }
 
 /* Título de la tarjeta/tabla */
@@ -391,12 +394,15 @@ textarea {
     padding: 1.5rem;
     overflow-y: auto;
     box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.1);
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE / Edge antiguo */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE / Edge antiguo */
 }
 
 .modal::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
+    /* Chrome, Safari, Opera */
 }
 
 /* Título del modal */
@@ -720,6 +726,7 @@ textarea {
         font-size: 0.6rem;
     }
 }
+
 /* ============================================
     SWEETALERT2
    ============================================ */

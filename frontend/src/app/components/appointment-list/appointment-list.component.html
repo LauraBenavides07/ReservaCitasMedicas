@@ -85,9 +85,97 @@
                                 {{ appt?.status || 'desconocido' }}
                             </span>
                         </td>
+                        <td>
+                            <button *ngIf="appt?.status === 'agendada' || appt?.status === 'confirmada'" 
+                                    class="btn-reschedule-mini" (click)="openRescheduleModal(appt)">
+                                Reagendar
+                            </button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<!-- Modal de Reagendamiento -->
+<div *ngIf="isRescheduleModalOpen" class="modal-overlay" (click)="closeRescheduleModal()">
+    <div class="modal-content completion-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">Reagendar Cita</h2>
+            <button class="modal-close-btn" (click)="closeRescheduleModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- Tarjeta de Paciente Premium -->
+            <div class="patient-card-modern" *ngIf="selectedAppointment">
+                <div class="patient-avatar-badge">
+                    <svg viewBox="0 0 24 24" class="avatar-icon">
+                        <path fill="white" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+                <div class="patient-details">
+                    <span class="label-mini">Paciente</span>
+                    <h3 class="patient-name-large">{{ selectedAppointment.patient?.firstName }} {{ selectedAppointment.patient?.lastName }}</h3>
+                    <div class="appointment-meta">
+                        <span class="meta-item">
+                            <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V8h14v11z"/></svg>
+                            {{ selectedAppointment.appointmentDate }}
+                        </span>
+                        <span class="meta-item">
+                            <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+                            {{ selectedAppointment.appointmentTime }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reschedule-box-modern">
+                <div class="form-grid-modern">
+                    <div class="form-group">
+                        <label class="form-label-mini">
+                            <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                            Médico / Terapista
+                        </label>
+                        <select class="form-select-modern" [(ngModel)]="rescheduleDoctorId" (change)="loadAvailableSlots()">
+                            <option *ngFor="let doc of doctors" [value]="doc.id">
+                                Dr(a). {{ doc.name }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label-mini">
+                            <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V8h14v11z"/></svg>
+                            Nueva Fecha
+                        </label>
+                        <input type="date" class="form-input-mini" [(ngModel)]="newRescheduleDate" (change)="loadAvailableSlots()">
+                    </div>
+                </div>
+                
+                <div class="form-group mt-3">
+                    <label class="form-label-mini">
+                        <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+                        Horarios Disponibles
+                    </label>
+                    
+                    <div class="slots-grid-modern">
+                        <button *ngFor="let slot of availableSlots" 
+                            class="slot-btn-modern" 
+                            [class.active]="newRescheduleTime === slot"
+                            (click)="selectSlot(slot)">
+                            {{ slot }}
+                        </button>
+                        <div *ngIf="availableSlots.length === 0" class="no-slots-msg">
+                            {{ isLoadingSlots ? 'Cargando agenda...' : 'No hay turnos disponibles para esta fecha.' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer-modern">
+            <button class="btn-text-only" (click)="closeRescheduleModal()">Cancelar</button>
+            <button class="btn-confirm-gradient" (click)="confirmReschedule()" [disabled]="!newRescheduleDate || !newRescheduleTime">
+                Confirmar Reagendamiento
+            </button>
+        </div>
+    </div>
+</div>

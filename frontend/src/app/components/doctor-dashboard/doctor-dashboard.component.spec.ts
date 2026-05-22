@@ -18,7 +18,7 @@ describe('DoctorDashboardComponent', () => {
   let component: DoctorDashboardComponent;
   let fixture: ComponentFixture<DoctorDashboardComponent>;
   let appointmentService: AppointmentService;
-  let authService: AuthService;
+  let authService: any;
   let doctorService: DoctorService;
 
   const mockUser = { firstName: 'Carlos', lastName: 'Médina', role: 'doctor' as const };
@@ -57,15 +57,17 @@ describe('DoctorDashboardComponent', () => {
 
   beforeEach(async () => {
     localStorage.clear();
+    const authServiceMock = {
+      user: vi.fn().mockReturnValue(mockUser),
+      logout: vi.fn()
+    };
+
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, DoctorDashboardComponent],
       providers: [
         {
           provide: AuthService,
-          useValue: {
-            user: vi.fn().mockReturnValue(mockUser),
-            logout: vi.fn()
-          }
+          useValue: authServiceMock
         }
       ]
     }).compileComponents();
@@ -73,7 +75,7 @@ describe('DoctorDashboardComponent', () => {
     fixture = TestBed.createComponent(DoctorDashboardComponent);
     component = fixture.componentInstance;
     appointmentService = TestBed.inject(AppointmentService);
-    authService = TestBed.inject(AuthService);
+    authService = TestBed.inject(AuthService) as any;
     doctorService = TestBed.inject(DoctorService);
   });
 
@@ -120,7 +122,7 @@ describe('DoctorDashboardComponent', () => {
 
     it('should fallback to first doctor if no name match', () => {
       const userNoMatch = { firstName: 'Nobody', lastName: 'Unknown', role: 'doctor' as const };
-      (authService.user as ReturnType<typeof vi.fn>).mockReturnValue(userNoMatch);
+      authService.user.mockReturnValue(userNoMatch);
       vi.spyOn(doctorService, 'getDoctors').mockReturnValue(of(mockDoctors));
       vi.spyOn(appointmentService, 'getAppointments').mockReturnValue(of(mockAppointmentResponse));
 
@@ -141,7 +143,7 @@ describe('DoctorDashboardComponent', () => {
     });
 
     it('should do nothing if no user', () => {
-      (authService.user as ReturnType<typeof vi.fn>).mockReturnValue(null);
+      authService.user.mockReturnValue(null);
       const doctorSpy = vi.spyOn(doctorService, 'getDoctors');
 
       component.ngOnInit();
@@ -196,7 +198,7 @@ describe('DoctorDashboardComponent', () => {
     it('should handle error and show error modal', async () => {
       component.doctorId = mockDoctorId;
       vi.spyOn(appointmentService, 'getAppointments').mockReturnValue(throwError(() => new Error('API Error')));
-      const Swal = (await import('sweetalert2')).default;
+      const Swal = (await import('sweetalert2')).default as any;
 
       component.loadAppointments();
 
@@ -259,10 +261,10 @@ describe('DoctorDashboardComponent', () => {
   describe('calculateStats', () => {
     it('should calculate stats correctly', () => {
       component.appointments = [
-        { id: '1', patientName: 'A', cc: '1', phone: '1', time: '09:00', status: 'Confirmada', reason: 'Consulta' },
-        { id: '2', patientName: 'B', cc: '2', phone: '2', time: '10:00', status: 'Pendiente', reason: 'Consulta' },
-        { id: '3', patientName: 'C', cc: '3', phone: '3', time: '11:00', status: 'Completada', reason: 'Consulta' },
-        { id: '4', patientName: 'D', cc: '4', phone: '4', time: '12:00', status: 'Cancelada', reason: 'Consulta' }
+        { id: '1', patientName: 'A', cc: '1', phone: '1', date: '2024-01-15', time: '09:00', status: 'Confirmada', reason: 'Consulta' },
+        { id: '2', patientName: 'B', cc: '2', phone: '2', date: '2024-01-15', time: '10:00', status: 'Pendiente', reason: 'Consulta' },
+        { id: '3', patientName: 'C', cc: '3', phone: '3', date: '2024-01-15', time: '11:00', status: 'Completada', reason: 'Consulta' },
+        { id: '4', patientName: 'D', cc: '4', phone: '4', date: '2024-01-15', time: '12:00', status: 'Cancelada', reason: 'Consulta' }
       ];
 
       component.calculateStats();
@@ -276,9 +278,9 @@ describe('DoctorDashboardComponent', () => {
 
   describe('exportToCSV', () => {
     it('should show warning if no date selected', async () => {
-      const Swal = (await import('sweetalert2')).default;
+      const Swal = (await import('sweetalert2')).default as any;
       component.selectedDate = '';
-      component.appointments = [{ id: '1', patientName: 'A', cc: '1', phone: '1', time: '09:00', status: 'Confirmada', reason: 'Consulta' }];
+      component.appointments = [{ id: '1', patientName: 'A', cc: '1', phone: '1', date: '2024-01-15', time: '09:00', status: 'Confirmada', reason: 'Consulta médica' }];
 
       component.exportToCSV();
 
@@ -288,7 +290,7 @@ describe('DoctorDashboardComponent', () => {
     });
 
     it('should show info if no appointments', async () => {
-      const Swal = (await import('sweetalert2')).default;
+      const Swal = (await import('sweetalert2')).default as any;
       component.selectedDate = '2024-01-15';
       component.appointments = [];
 
@@ -302,7 +304,7 @@ describe('DoctorDashboardComponent', () => {
     it('should export CSV successfully', () => {
       component.selectedDate = '2024-01-15';
       component.doctorId = mockDoctorId;
-      component.appointments = [{ id: '1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Confirmada', reason: 'Consulta médica' }];
+      component.appointments = [{ id: '1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', date: '2024-01-15', time: '09:00', status: 'Confirmada', reason: 'Consulta médica' }];
 
       const mockBlob = new Blob(['csv'], { type: 'text/csv' });
       vi.spyOn(appointmentService, 'exportAppointments').mockReturnValue(of(mockBlob));
@@ -328,10 +330,10 @@ describe('DoctorDashboardComponent', () => {
     });
 
     it('should handle export error', async () => {
-      const Swal = (await import('sweetalert2')).default;
+      const Swal = (await import('sweetalert2')).default as any;
       component.selectedDate = '2024-01-15';
       component.doctorId = mockDoctorId;
-      component.appointments = [{ id: '1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Confirmada', reason: 'Consulta médica' }];
+      component.appointments = [{ id: '1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', date: '2024-01-15', time: '09:00', status: 'Confirmada', reason: 'Consulta médica' }];
 
       vi.spyOn(appointmentService, 'exportAppointments').mockReturnValue(throwError(() => new Error('Export error')));
 
@@ -345,8 +347,8 @@ describe('DoctorDashboardComponent', () => {
 
   describe('confirmAppointment', () => {
     it('should call confirmAppointment service on confirmation', async () => {
-      const Swal = (await import('sweetalert2')).default;
-      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Pendiente', reason: 'Consulta' };
+      const Swal = (await import('sweetalert2')).default as any;
+      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', date: '2024-01-15', time: '09:00', status: 'Pendiente', reason: 'Consulta' };
       vi.spyOn(appointmentService, 'confirmAppointment').mockReturnValue(of({}));
 
       await component.confirmAppointment(apt);
@@ -356,9 +358,9 @@ describe('DoctorDashboardComponent', () => {
     });
 
     it('should do nothing if user cancels confirmation', async () => {
-      const Swal = (await import('sweetalert2')).default;
+      const Swal = (await import('sweetalert2')).default as any;
       Swal.fire.mockResolvedValueOnce({ isConfirmed: false, isDenied: false, isDismissed: true });
-      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
+      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', date: '2024-01-15', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
       const confirmSpy = vi.spyOn(appointmentService, 'confirmAppointment');
 
       await component.confirmAppointment(apt);
@@ -367,8 +369,8 @@ describe('DoctorDashboardComponent', () => {
     });
 
     it('should handle confirmAppointment error', async () => {
-      const Swal = (await import('sweetalert2')).default;
-      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
+      const Swal = (await import('sweetalert2')).default as any;
+      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', date: '2024-01-15', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
       vi.spyOn(appointmentService, 'confirmAppointment').mockReturnValue(throwError(() => new Error('Error')));
 
       await component.confirmAppointment(apt);
@@ -381,8 +383,8 @@ describe('DoctorDashboardComponent', () => {
 
   describe('cancelAppointment', () => {
     it('should call cancelAppointment service on confirmation', async () => {
-      const Swal = (await import('sweetalert2')).default;
-      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
+      const Swal = (await import('sweetalert2')).default as any;
+      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', date: '2024-01-15', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
       vi.spyOn(appointmentService, 'cancelAppointment').mockReturnValue(of({}));
 
       await component.cancelAppointment(apt);
@@ -392,9 +394,9 @@ describe('DoctorDashboardComponent', () => {
     });
 
     it('should do nothing if user cancels', async () => {
-      const Swal = (await import('sweetalert2')).default;
+      const Swal = (await import('sweetalert2')).default as any;
       Swal.fire.mockResolvedValueOnce({ isConfirmed: false, isDenied: false, isDismissed: true });
-      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
+      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', date: '2024-01-15', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
       const cancelSpy = vi.spyOn(appointmentService, 'cancelAppointment');
 
       await component.cancelAppointment(apt);
@@ -403,8 +405,8 @@ describe('DoctorDashboardComponent', () => {
     });
 
     it('should handle cancelAppointment error', async () => {
-      const Swal = (await import('sweetalert2')).default;
-      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
+      const Swal = (await import('sweetalert2')).default as any;
+      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', date: '2024-01-15', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
       vi.spyOn(appointmentService, 'cancelAppointment').mockReturnValue(throwError(() => new Error('Error')));
 
       await component.cancelAppointment(apt);
@@ -416,41 +418,32 @@ describe('DoctorDashboardComponent', () => {
   });
 
   describe('completeAppointment', () => {
-    it('should call completeAppointment service on confirmation', async () => {
-      const Swal = (await import('sweetalert2')).default;
-      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
-      vi.spyOn(appointmentService, 'completeAppointment').mockReturnValue(of({}));
+    it('should open the completion modal when completeAppointment is called', () => {
+      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', date: '2024-01-15', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
+      component.doctorId = mockDoctorId;
 
-      await component.completeAppointment(apt);
+      component.completeAppointment(apt);
 
-      expect(appointmentService.completeAppointment).toHaveBeenCalledWith('apt1');
-      expect(apt.status).toBe('Completada');
+      expect(component.selectedAppointment).toBe(apt);
+      expect(component.isCompletionModalOpen).toBe(true);
+      expect(component.appointmentObservations).toBe('');
+      expect(component.appointmentDiagnosis).toBe('');
+      expect(component.rescheduleDoctorId).toBe(mockDoctorId);
     });
 
-    it('should do nothing if user cancels', async () => {
-      const Swal = (await import('sweetalert2')).default;
-      Swal.fire.mockResolvedValueOnce({ isConfirmed: false, isDenied: false, isDismissed: true });
-      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
-      const completeSpy = vi.spyOn(appointmentService, 'completeAppointment');
 
-      await component.completeAppointment(apt);
 
-      expect(completeSpy).not.toHaveBeenCalled();
-    });
-
-    it('should update local state on completeAppointment error', async () => {
-      const Swal = (await import('sweetalert2')).default;
-      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
-      component.appointments = [apt];
-      component.selectedDate = '';
+    it('should show an error modal when confirmCompletion fails', async () => {
+      const Swal = (await import('sweetalert2')).default as any;
+      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', date: '2024-01-15', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
+      component.selectedAppointment = apt;
       vi.spyOn(appointmentService, 'completeAppointment').mockReturnValue(throwError(() => new Error('Error')));
 
-      await component.completeAppointment(apt);
+      await component.confirmCompletion();
 
-      expect(apt.status).toBe('Completada');
-      expect(component.totalAppointments).toBe(1);
+      expect(apt.status).toBe('Confirmada');
       expect(Swal.fire).toHaveBeenCalledWith(
-        expect.objectContaining({ icon: 'success', title: 'Cita completada' })
+        expect.objectContaining({ icon: 'error', title: 'Error' })
       );
     });
   });

@@ -80,7 +80,6 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     width: 100%;
     box-sizing: border-box;
-    /* padding no desborda el ancho */
 }
 
 .search-field {
@@ -121,7 +120,6 @@
     box-shadow: 0 0 0 3px rgba(30, 58, 106, 0.1);
 }
 
-/* Flecha personalizada para selects */
 .search-field select {
     appearance: none;
     -webkit-appearance: none;
@@ -131,13 +129,11 @@
     background-size: 1rem;
 }
 
-/* Campo de fecha con ancho fijo en desktop */
 .search-field.date-field {
     max-width: 250px;
     flex: none;
 }
 
-/* Botón de búsqueda */
 .btn-search {
     background: #1e3a6a;
     color: #ffffff;
@@ -154,7 +150,6 @@
     transition: background 0.2s;
     white-space: nowrap;
     flex-shrink: 0;
-    /* nunca se encoge */
 }
 
 .btn-search:hover:not(:disabled) {
@@ -197,7 +192,6 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     width: 100%;
     box-sizing: border-box;
-    /* padding no desborda el ancho */
 }
 
 .results-header {
@@ -217,14 +211,11 @@
     overflow-x: auto;
     width: 100%;
     scrollbar-width: none;
-    /* Firefox */
     -ms-overflow-style: none;
-    /* IE / Edge */
 }
 
 .table-container::-webkit-scrollbar {
     display: none;
-    /* Chrome, Safari, Opera */
 }
 
 .styled-table {
@@ -259,7 +250,6 @@
     cursor: pointer;
 }
 
-/* Badges de estado */
 .badge {
     display: inline-block;
     padding: 0.25rem 0.7rem;
@@ -302,13 +292,11 @@
    RESPONSIVE - SOLO PARA MÓVIL
    ============================================ */
 
-/* Móvil (ancho máximo 768px) */
 @media (max-width: 768px) {
     .search-container {
         gap: 1.5rem;
     }
 
-    /* Barra de búsqueda vertical en móvil */
     .search-bar {
         flex-direction: column;
         align-items: stretch;
@@ -316,12 +304,10 @@
         padding: 1rem;
     }
 
-    /* El campo de fecha ya no tiene ancho fijo */
     .search-field.date-field {
         max-width: 100%;
     }
 
-    /* Botón de búsqueda ancho completo en móvil */
     .btn-search {
         justify-content: center;
         width: 100%;
@@ -330,7 +316,6 @@
         min-height: 44px;
     }
 
-    /* Botones de vista apilados en móvil muy pequeño */
     .view-buttons {
         flex-direction: column;
         gap: 0.75rem;
@@ -343,7 +328,6 @@
         font-size: 0.85rem;
     }
 
-    /* Resultados */
     .results-card {
         padding: 1rem;
     }
@@ -364,7 +348,6 @@
     }
 }
 
-/* Móvil muy pequeño (ancho máximo 480px) */
 @media (max-width: 480px) {
     .search-bar {
         padding: 0.875rem;
@@ -400,11 +383,9 @@
     }
 }
 
-/* Desktop (ancho mínimo 1024px) */
 @media (min-width: 1024px) {
     .search-container {
         gap: 1.5rem;
-
     }
 
     .view-buttons {
@@ -435,6 +416,281 @@
         max-width: 220px;
     }
 }
+
+/* ============================================
+   MODALS (Rescheduling)
+   ============================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 1rem;
+}
+
+.modal-content.completion-modal {
+    background: white;
+    border-radius: 16px;
+    width: 95%;
+    max-width: 500px;
+    max-height: 85vh;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    flex-shrink: 0;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.modal-close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    color: #94a3b8;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.25rem;
+}
+
+.modal-body {
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    max-height: calc(85vh - 120px);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.patient-card-modern {
+    background: linear-gradient(135deg, #eff6ff 0%, #e0f2fe 100%);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid #3e7ba6;
+}
+
+.patient-avatar-badge {
+    width: 44px;
+    height: 44px;
+    background-color: #3b82f6;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.avatar-icon {
+    width: 26px;
+    height: 26px;
+}
+
+.patient-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.label-mini {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.patient-name-large {
+    margin: 0;
+    font-size: 1rem;
+    color: #1e293b;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.appointment-meta {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.15rem;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    font-size: 0.75rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.reschedule-box-modern {
+    background-color: #f0f7ff;
+    padding: 0.85rem;
+    border-radius: 12px;
+    border: 1px solid #bfdbfe;
+}
+
+.form-grid-modern {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+.form-label-mini {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 0.25rem;
+}
+
+.form-select-modern,
+.form-input-mini {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    background-color: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #1e293b;
+}
+
+.slots-grid-modern {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+}
+
+.slot-btn-modern {
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    padding: 0.4rem 0.2rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.slot-btn-modern:hover {
+    border-color: #3e7ba6;
+    color: #3e7ba6;
+}
+
+.slot-btn-modern.active {
+    background-color: #eff6ff;
+    border-color: #3e7ba6;
+    color: #3e7ba6;
+    box-shadow: 0 0 0 2px rgba(62, 123, 166, 0.1);
+}
+
+.no-slots-msg {
+    grid-column: span 3;
+    font-size: 0.8rem;
+    color: #64748b;
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.modal-footer-modern {
+    padding: 0.85rem 1.25rem;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
+    background: #f8fafc;
+    flex-shrink: 0;
+}
+
+.btn-text-only {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+}
+
+/* CAMBIADO: Botón sólido sin degradado */
+.btn-confirm-gradient {
+    background-color: #1e3a6a;
+    /* Color sólido azul oscuro */
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-confirm-gradient:hover:not(:disabled) {
+    background-color: #152e4d;
+    /* Oscurece al pasar el mouse */
+    transform: translateY(-1px);
+}
+
+.btn-confirm-gradient:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #cbd5e1;
+    /* Gris cuando está deshabilitado */
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.btn-reschedule-mini {
+    background-color: #1e3a6a;
+    color: #ffffff;
+    border: none;
+    padding: 0.45rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-reschedule-mini:hover {
+    background-color: #0d2c5b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
 /* ============================================
    ESTILOS PARA SWEETALERT2
    ============================================ */
@@ -470,4 +726,35 @@
 
 .swal2-confirm.custom-success-btn:hover {
     background-color: #059669 !important;
+}
+
+@media (max-width: 480px) {
+    .modal-content.completion-modal {
+        width: 98%;
+        max-width: 420px;
+        max-height: 90vh;
+        border-radius: 14px;
+    }
+
+    .modal-body {
+        padding: 0.85rem;
+        gap: 0.7rem;
+        max-height: calc(90vh - 100px);
+    }
+
+    .form-grid-modern {
+        grid-template-columns: 1fr;
+    }
+
+    .slots-grid-modern {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .no-slots-msg {
+        grid-column: span 2;
+    }
+
+    .appointment-meta {
+        gap: 0.5rem;
+    }
 }

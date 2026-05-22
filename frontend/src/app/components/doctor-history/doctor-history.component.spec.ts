@@ -17,7 +17,7 @@ describe('DoctorHistoryComponent', () => {
   let component: DoctorHistoryComponent;
   let fixture: ComponentFixture<DoctorHistoryComponent>;
   let appointmentService: AppointmentService;
-  let authService: AuthService;
+  let authService: any;
   let doctorService: DoctorService;
 
   const mockUser = { firstName: 'Carlos', lastName: 'Médina', role: 'doctor' as const };
@@ -69,7 +69,7 @@ describe('DoctorHistoryComponent', () => {
     fixture = TestBed.createComponent(DoctorHistoryComponent);
     component = fixture.componentInstance;
     appointmentService = TestBed.inject(AppointmentService);
-    authService = TestBed.inject(AuthService);
+    authService = TestBed.inject(AuthService) as any;
     doctorService = TestBed.inject(DoctorService);
   });
 
@@ -113,7 +113,7 @@ describe('DoctorHistoryComponent', () => {
 
     it('should fallback to first doctor if no name match', () => {
       const userNoMatch = { firstName: 'Nobody', lastName: 'Unknown', role: 'doctor' as const };
-      (authService.user as ReturnType<typeof vi.fn>).mockReturnValue(userNoMatch);
+      authService.user.mockReturnValue(userNoMatch);
       vi.spyOn(doctorService, 'getDoctors').mockReturnValue(of(mockDoctors));
       vi.spyOn(appointmentService, 'getAllAppointments').mockReturnValue(of([]));
 
@@ -134,7 +134,7 @@ describe('DoctorHistoryComponent', () => {
     });
 
     it('should do nothing if no user', () => {
-      (authService.user as ReturnType<typeof vi.fn>).mockReturnValue(null);
+      authService.user.mockReturnValue(null);
       component.ngOnInit();
       expect(component.isLoading).toBe(false);
     });

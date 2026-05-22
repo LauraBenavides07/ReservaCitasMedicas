@@ -18,6 +18,7 @@ export interface DisplayAppointment {
     patientName: string;
     cc: string;
     phone: string;
+    date: string;
     time: string;
     status: 'Confirmada' | 'Pendiente' | 'Completada' | 'Cancelada' | string;
     reason: string;
@@ -56,6 +57,22 @@ export class DoctorDashboardComponent implements OnInit {
         private doctorService: DoctorService,
         private datePipe: DatePipe
     ) { }
+    
+    doctors: any[] = [];
+    rescheduleDoctorId: string = '';
+
+    // Modal state for completion
+    isCompletionModalOpen = false;
+    selectedAppointment: DisplayAppointment | null = null;
+    appointmentObservations = '';
+    appointmentDiagnosis = '';
+    shouldReschedule = false;
+
+    // Rescheduling state
+    rescheduleDate = '';
+    rescheduleTime = '';
+    availableSlots: string[] = [];
+    isReschedulingLoading = false;
 
     ngOnInit() {
         const user = this.authService.user();
@@ -82,6 +99,7 @@ export class DoctorDashboardComponent implements OnInit {
             // Buscar el ID real del doctor en la base de datos de doctores
             this.doctorService.getDoctors().subscribe({
                 next: (doctors) => {
+                    this.doctors = doctors;
                     const matchedDoctor = doctors.find(d => 
                         d.name.toLowerCase().includes(user.firstName.toLowerCase()) || 
                         d.name.toLowerCase().includes(user.lastName.toLowerCase())
@@ -144,6 +162,7 @@ export class DoctorDashboardComponent implements OnInit {
                     patientName: `${a.patient.firstName} ${a.patient.lastName}`,
                     cc: a.patient.document,
                     phone: a.patient.phone,
+                    date: a.appointmentDate || a.date,
                     time: a.appointmentTime ? a.appointmentTime.substring(0, 5) : a.time,
                     status: this.mapStatus(a.status),
                     reason: 'Consulta médica'
@@ -379,54 +398,137 @@ export class DoctorDashboardComponent implements OnInit {
     }
 
     completeAppointment(apt: DisplayAppointment): void {
-        Swal.fire({
-            title: 'Completar cita',
-            html: `¿Desea marcar la cita con <strong>${apt.patientName}</strong> como <strong>completada</strong>?`,
-            icon: 'question',
-            showCancelButton: true,
-            customClass: {
-                popup: 'custom-popup',
-                title: 'custom-title',
-                htmlContainer: 'custom-html',
-                confirmButton: 'custom-confirm-btn',
-                cancelButton: 'custom-cancel-btn'
+        this.selectedAppointment = apt;
+        this.appointmentObservations = '';
+        this.appointmentDiagnosis = '';
+        this.shouldReschedule = false;
+        this.rescheduleDate = '';
+        this.rescheduleTime = '';
+        this.rescheduleDoctorId = this.doctorId;
+        this.isCompletionModalOpen = true;
+    }
+
+    closeCompletionModal(): void {
+        this.isCompletionModalOpen = false;
+        this.selectedAppointment = null;
+    }
+
+    onRescheduleToggle(): void {
+        if (this.shouldReschedule && !this.rescheduleDate) {
+            // Set default date to tomorrow if rescheduling is enabled
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            this.rescheduleDate = tomorrow.toISOString().split('T')[0];
+            this.loadAvailableSlots();
+        }
+    }
+
+    selectSlot(slot: string): void {
+        this.rescheduleTime = slot;
+    }
+
+    getObservationsLength(): number {
+        return this.appointmentObservations ? this.appointmentObservations.length : 0;
+    }
+
+    loadAvailableSlots(): void {
+        const docId = this.rescheduleDoctorId || this.doctorId;
+        if (!docId || !this.rescheduleDate) return;
+
+        this.isReschedulingLoading = true;
+        this.appointmentService.getAvailableSlots(docId, this.rescheduleDate).subscribe({
+            next: (slots) => {
+                this.availableSlots = slots;
+                this.isReschedulingLoading = false;
             },
-            confirmButtonText: 'Sí, completar',
-            cancelButtonText: 'Cancelar'
-        }).then((result: any) => {
-            if (result.isConfirmed) {
-                this.appointmentService.completeAppointment(apt.id).subscribe({
-                    next: () => {
-                        apt.status = 'Completada';
-                        this.calculateStats();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Cita completada',
-                            text: `La cita con ${apt.patientName} ha sido marcada como completada.`,
-                            customClass: {
-                                popup: 'custom-popup',
-                                title: 'custom-title',
-                                confirmButton: 'custom-success-btn'
-                            },
-                            confirmButtonText: 'Aceptar'
-                        });
+            error: (err) => {
+                console.error('Error loading slots:', err);
+                this.availableSlots = [];
+                this.isReschedulingLoading = false;
+            }
+        });
+    }
+
+    confirmCompletion(): void {
+        if (!this.selectedAppointment) return;
+
+        const apt = this.selectedAppointment;
+        
+        // Use standard completion logic
+        this.appointmentService.completeAppointment(
+            apt.id, 
+            this.appointmentObservations, 
+            this.appointmentDiagnosis
+        ).subscribe({
+            next: () => {
+                apt.status = 'Completada';
+                this.calculateStats();
+                
+                if (this.shouldReschedule && this.rescheduleDate && this.rescheduleTime) {
+                    this.performReschedule(apt);
+                } else {
+                    this.closeCompletionModal();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cita completada',
+                        text: `La cita con ${apt.patientName} ha sido marcada como completada.`,
+                        customClass: {
+                            popup: 'custom-popup',
+                            title: 'custom-title',
+                            confirmButton: 'custom-success-btn'
+                        },
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            },
+            error: (err: any) => {
+                console.error('Error al completar la cita:', err);
+                this.showErrorModal('Error', 'No se pudo completar la cita. Intente de nuevo.');
+            }
+        });
+    }
+
+    private performReschedule(apt: DisplayAppointment): void {
+        const createDto = {
+            patientDocument: apt.cc,
+            firstName: apt.patientName.split(' ')[0],
+            lastName: apt.patientName.split(' ').slice(1).join(' '),
+            phone: apt.phone,
+            gender: 'M', // Generic, would be better to have it from patient info
+            doctorId: this.rescheduleDoctorId,
+            date: this.rescheduleDate,
+            time: this.rescheduleTime
+        };
+
+        this.appointmentService.createAppointment(createDto).subscribe({
+            next: (newApt) => {
+                this.closeCompletionModal();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Cita completada y reagendada',
+                    text: `La cita ha sido completada y se ha programado una nueva para el ${this.rescheduleDate} a las ${this.rescheduleTime}.`,
+                    customClass: {
+                        popup: 'custom-popup',
+                        title: 'custom-title',
+                        confirmButton: 'custom-success-btn'
                     },
-                    error: (err: Error) => {
-                        console.error('Error al completar la cita:', err);
-                        apt.status = 'Completada';
-                        this.calculateStats();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Cita completada',
-                            text: `La cita con ${apt.patientName} ha sido marcada como completada.`,
-                            customClass: {
-                                popup: 'custom-popup',
-                                title: 'custom-title',
-                                confirmButton: 'custom-success-btn'
-                            },
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
+                    confirmButtonText: 'Aceptar'
+                });
+                this.loadAppointments(); // Refresh list to show new appointment if in current view
+            },
+            error: (err) => {
+                console.error('Error al reagendar:', err);
+                this.closeCompletionModal();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Cita completada, pero fallo el reagendamiento',
+                    text: 'La cita se marcó como completada pero no se pudo crear la nueva cita. Por favor, intente agendarla manualmente.',
+                    customClass: {
+                        popup: 'custom-popup',
+                        title: 'custom-title',
+                        confirmButton: 'custom-confirm-btn'
+                    },
+                    confirmButtonText: 'Aceptar'
                 });
             }
         });

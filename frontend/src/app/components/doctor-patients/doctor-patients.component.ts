@@ -12,6 +12,7 @@ interface PatientDisplay {
   lastName: string;
   phone: string;
   lastVisit?: string;
+  nextVisit?: string;
   totalVisits: number;
   avatarColor: string;
   diagnosis?: string;
@@ -116,9 +117,11 @@ export class DoctorPatientsComponent implements OnInit {
         // Filtrar citas del doctor actual
         const doctorApts = appointments.filter(a => a.doctor?.id === this.doctorId);
         
-        // Extraer pacientes únicos
+        // Use all appointments to find next visit with this doctor
+        const now = new Date();
+        const todayStr = now.toISOString().split('T')[0];
         const patientMap = new Map<string, PatientDisplay>();
-        
+
         doctorApts.forEach(apt => {
           const doc = apt.patient.document;
           if (!patientMap.has(doc)) {
@@ -129,8 +132,8 @@ export class DoctorPatientsComponent implements OnInit {
               phone: apt.patient.phone,
               totalVisits: 0,
               avatarColor: '',
-              diagnosis: localStorage.getItem(`diagnosis_${doc}`) || 'Evaluado en la última visita',
-              observation: localStorage.getItem(`observation_${doc}`) || 'Paciente atendido satisfactoriamente. (Generado automáticamente)',
+              diagnosis: 'Sin diagnóstico previo',
+              observation: 'Sin observaciones previas',
               isEditingDiagnosis: false,
               isEditingObservation: false,
               hasConfirmedAppointment: false
@@ -138,23 +141,40 @@ export class DoctorPatientsComponent implements OnInit {
           }
           
           const p = patientMap.get(doc)!;
-          p.totalVisits += 1;
           
-          if (apt.status === 'confirmada') {
-              p.hasConfirmedAppointment = true;
-          }
-          
-          // Actualizar última visita si esta cita es más reciente y ya pasó/completó
-          if (apt.status === 'completada' || apt.status === 'Confirmada') {
-            if (!p.lastVisit || new Date(apt.appointmentDate!) > new Date(p.lastVisit)) {
-              p.lastVisit = apt.appointmentDate;
+          // Increment visits only if it's with this doctor
+          if (apt.doctor?.id === this.doctorId) {
+            p.totalVisits += 1;
+            
+            if (apt.status === 'confirmada' || apt.status === 'agendada') {
+                p.hasConfirmedAppointment = true;
+            }
+
+            const aptDateValue = apt.appointmentDate || apt.date;
+            
+            // Proxima cita: earliest future appointment with THIS doctor
+            if (apt.status === 'agendada' || apt.status === 'confirmada') {
+              if (aptDateValue && aptDateValue >= todayStr) {
+                if (!p.nextVisit || aptDateValue < p.nextVisit) {
+                  p.nextVisit = aptDateValue;
+                }
+              }
+            }
+            
+            // Last visit: latest past/completada appointment with THIS doctor
+            if (apt.status === 'completada' || (apt.status === 'confirmada' && aptDateValue && aptDateValue < todayStr)) {
+              if (!p.lastVisit || aptDateValue! > p.lastVisit) {
+                p.lastVisit = aptDateValue;
+                if (apt.diagnosis) p.diagnosis = apt.diagnosis;
+                if (apt.observations) p.observation = apt.observations;
+              }
             }
           }
         });
         
-        this.patients = Array.from(patientMap.values()).map((p, index) => {
+        this.patients = Array.from(patientMap.values());
+        this.patients.forEach((p, index) => {
             p.avatarColor = this.colors[index % this.colors.length];
-            return p;
         });
         
         localStorage.setItem('cached_patients_data', JSON.stringify(this.patients));
