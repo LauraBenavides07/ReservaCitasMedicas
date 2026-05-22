@@ -1,5 +1,4 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { AppointmentStatus } from '../../domain/types/appointment-status.enum';
 import { IAppointmentRepository } from '../ports/appointment.repository';
 import { IDoctorRepository } from '../ports/doctor.repository';
@@ -20,16 +19,9 @@ export interface DashboardStats {
     cancelled: number;
     cancellationRate: number;
   };
-  comparison: {
-    totalChange: number;
-    scheduledChange: number;
-    completedChange: number;
-    cancelledChange: number;
-  };
   doctorStats: { name: string; count: number; percentage: number }[];
   dailyTrend: { date: string; count: number }[];
   statusDistribution: { status: string; count: number }[];
-  patientRecurrence: { newPatients: number; returningPatients: number };
 }
 
 @Injectable()
@@ -44,22 +36,26 @@ export class StatsService {
   async getDashboardStats(filter: StatsFilter = {}): Promise<DashboardStats> {
     const allDoctors = await this.doctorRepository.find();
 
-    const currentWhere: any = {};
-    if (filter.doctorId) currentWhere.doctor = { id: filter.doctorId };
-    if (filter.status) currentWhere.status = filter.status;
-    if (filter.startDate && filter.endDate) {
-      currentWhere.appointmentDate = Between(filter.startDate, filter.endDate);
-    } else if (filter.startDate) {
-      currentWhere.appointmentDate = MoreThanOrEqual(filter.startDate);
-    } else if (filter.endDate) {
-      currentWhere.appointmentDate = LessThanOrEqual(filter.endDate);
-    }
+    const where: any = {};
+    if (filter.doctorId) where.doctor = { id: filter.doctorId };
+    if (filter.status) where.status = filter.status;
 
-    const allAppointments = await this.appointmentRepository.find({
-      where: currentWhere,
-      relations: { doctor: true, patient: true },
+    let allAppointments = await this.appointmentRepository.find({
+      where,
+      relations: { doctor: true },
       order: { appointmentDate: 'ASC' },
     });
+
+    if (filter.startDate) {
+      allAppointments = allAppointments.filter(
+        (a) => a.appointmentDate >= filter.startDate!,
+      );
+    }
+    if (filter.endDate) {
+      allAppointments = allAppointments.filter(
+        (a) => a.appointmentDate <= filter.endDate!,
+      );
+    }
 
     const total = allAppointments.length;
     let scheduled = 0;
@@ -81,11 +77,8 @@ export class StatsService {
       else if (app.status === AppointmentStatus.COMPLETED) completed++;
       else if (app.status === AppointmentStatus.CANCELLED) cancelled++;
 
-      const day = app.appointmentDate;
-      dailyMap[day] = (dailyMap[day] || 0) + 1;
-
-      const statusKey = app.status;
-      statusMap[statusKey] = (statusMap[statusKey] || 0) + 1;
+      dailyMap[app.appointmentDate] = (dailyMap[app.appointmentDate] || 0) + 1;
+      statusMap[app.status] = (statusMap[app.status] || 0) + 1;
 
       if (app.doctor && doctorCounts[app.doctor.id]) {
         doctorCounts[app.doctor.id].count++;
@@ -108,76 +101,6 @@ export class StatsService {
       }))
       .sort((a, b) => b.count - a.count);
 
-    // Patient recurrence: count patients whose first appointment (ever) is within the filter range
-    const patientIds = new Set<string>();
-    const patientFirstEver = new Map<string, string>();
-    allAppointments.forEach((app) => {
-      if (app.patient?.id) {
-        patientIds.add(app.patient.id);
-        const existing = patientFirstEver.get(app.patient.id);
-        if (!existing || app.appointmentDate < existing) {
-          patientFirstEver.set(app.patient.id, app.appointmentDate);
-        }
-      }
-    });
-
-    let newPatients = 0;
-    if (filter.startDate) {
-      for (const firstDate of patientFirstEver.values()) {
-        if (firstDate >= filter.startDate) newPatients++;
-      }
-    }
-    const returningPatients = patientIds.size - newPatients;
-
-    // Comparison vs previous period — lightweight query (no relations)
-    let comparison = {
-      totalChange: 0,
-      scheduledChange: 0,
-      completedChange: 0,
-      cancelledChange: 0,
-    };
-
-    if (filter.startDate && filter.endDate) {
-      const rangeMs =
-        new Date(filter.endDate).getTime() -
-        new Date(filter.startDate).getTime();
-      const prevEnd = new Date(
-        new Date(filter.startDate).getTime() - 1,
-      ).toISOString().split('T')[0];
-      const prevStart = new Date(
-        new Date(filter.startDate).getTime() - rangeMs,
-      ).toISOString().split('T')[0];
-
-      const prevWhere: any = {};
-      if (filter.doctorId) prevWhere.doctor = { id: filter.doctorId };
-      if (filter.status) prevWhere.status = filter.status;
-      prevWhere.appointmentDate = Between(prevStart, prevEnd);
-
-      const prevAppointments = await this.appointmentRepository.find({
-        where: prevWhere,
-      });
-
-      let pTotal = 0;
-      let pScheduled = 0;
-      let pConfirmed = 0;
-      let pCompleted = 0;
-      let pCancelled = 0;
-      prevAppointments.forEach((app) => {
-        pTotal++;
-        if (app.status === AppointmentStatus.SCHEDULED) pScheduled++;
-        else if (app.status === AppointmentStatus.CONFIRMED) pConfirmed++;
-        else if (app.status === AppointmentStatus.COMPLETED) pCompleted++;
-        else if (app.status === AppointmentStatus.CANCELLED) pCancelled++;
-      });
-
-      comparison = {
-        totalChange: this.percentageChange(total, pTotal),
-        scheduledChange: this.percentageChange(scheduled + confirmed, pScheduled + pConfirmed),
-        completedChange: this.percentageChange(completed, pCompleted),
-        cancelledChange: this.percentageChange(cancelled, pCancelled),
-      };
-    }
-
     return {
       stats: {
         total,
@@ -187,19 +110,9 @@ export class StatsService {
         cancelled,
         cancellationRate: total > 0 ? Math.round((cancelled / total) * 100) : 0,
       },
-      comparison,
       doctorStats,
       dailyTrend,
       statusDistribution,
-      patientRecurrence: {
-        newPatients: Math.max(0, newPatients),
-        returningPatients: Math.max(0, returningPatients),
-      },
     };
-  }
-
-  private percentageChange(current: number, previous: number): number {
-    if (previous === 0) return current > 0 ? 100 : 0;
-    return Math.round(((current - previous) / previous) * 100);
   }
 }

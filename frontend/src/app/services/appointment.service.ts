@@ -44,16 +44,9 @@ export interface DashboardStats {
     cancelled: number;
     cancellationRate: number;
   };
-  comparison: {
-    totalChange: number;
-    scheduledChange: number;
-    completedChange: number;
-    cancelledChange: number;
-  };
   doctorStats: { name: string; count: number; percentage: number }[];
   dailyTrend: { date: string; count: number }[];
   statusDistribution: { status: string; count: number }[];
-  patientRecurrence: { newPatients: number; returningPatients: number };
 }
 
 export interface CreateAppointmentDto {

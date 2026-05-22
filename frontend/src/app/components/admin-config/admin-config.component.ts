@@ -83,22 +83,6 @@ export class AdminConfigComponent implements OnInit, AfterViewInit {
     return this.stats !== null && this.stats.stats.total === 0;
   }
 
-  get comparisonArrow(): string {
-    return '';
-  }
-
-  trendUp(val: number): boolean {
-    return val > 0;
-  }
-
-  trendDown(val: number): boolean {
-    return val < 0;
-  }
-
-  absVal(val: number): number {
-    return Math.abs(val);
-  }
-
   constructor(
     private fb: FormBuilder,
     private doctorService: DoctorService,
@@ -165,7 +149,6 @@ export class AdminConfigComponent implements OnInit, AfterViewInit {
     if (this.filterDoctorId) filter.doctorId = this.filterDoctorId;
     if (this.filterStatus) filter.status = this.filterStatus;
 
-    // Compute date range based on quick selection
     const now = new Date();
     let start: Date;
     let end: Date = now;
@@ -173,7 +156,6 @@ export class AdminConfigComponent implements OnInit, AfterViewInit {
     switch (this.quickRange) {
       case 'today':
         start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
         break;
       case 'this-week': {
         const dayOfWeek = now.getDay();
@@ -192,9 +174,8 @@ export class AdminConfigComponent implements OnInit, AfterViewInit {
         start = new Date(now.getFullYear(), now.getMonth() - 3, 1);
         break;
       case 'custom':
-        if (this.filterStartDate) start = new Date(this.filterStartDate);
-        else start = new Date(now.getFullYear(), now.getMonth(), 1);
-        if (this.filterEndDate) end = new Date(this.filterEndDate);
+        start = this.filterStartDate ? new Date(this.filterStartDate) : new Date(now.getFullYear(), now.getMonth(), 1);
+        end = this.filterEndDate ? new Date(this.filterEndDate) : new Date();
         break;
       default:
         start = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -211,7 +192,7 @@ export class AdminConfigComponent implements OnInit, AfterViewInit {
       next: (data) => {
         this.stats = data;
         this.loadingStats = false;
-        setTimeout(() => this.createCharts(), 100);
+        setTimeout(() => this.createCharts(), 50);
       },
       error: (err) => {
         console.error('Error loading stats:', err);
@@ -255,9 +236,6 @@ export class AdminConfigComponent implements OnInit, AfterViewInit {
     this.stats.statusDistribution.forEach(s => {
       rows.push(`${s.status},${s.count}`);
     });
-    rows.push('');
-    rows.push(`Pacientes Nuevos,${this.stats.patientRecurrence.newPatients}`);
-    rows.push(`Pacientes Recurrentes,${this.stats.patientRecurrence.returningPatients}`);
 
     const csv = rows.join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });

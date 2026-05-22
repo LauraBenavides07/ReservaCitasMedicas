@@ -164,11 +164,6 @@
                     <div class="stat-body">
                         <div class="stat-value">{{ stats.stats.total }}</div>
                         <div class="stat-label">Total Citas</div>
-                        <div class="stat-comparison" *ngIf="stats.comparison.totalChange !== 0"
-                            [class.up]="trendUp(stats.comparison.totalChange)"
-                            [class.down]="trendDown(stats.comparison.totalChange)">
-                            {{ trendUp(stats.comparison.totalChange) ? '↑' : '↓' }} {{ absVal(stats.comparison.totalChange) }}%
-                        </div>
                     </div>
                 </div>
 
@@ -182,11 +177,6 @@
                     <div class="stat-body">
                         <div class="stat-value">{{ stats.stats.scheduled }}</div>
                         <div class="stat-label">Agendadas</div>
-                        <div class="stat-comparison" *ngIf="stats.comparison.scheduledChange !== 0"
-                            [class.up]="trendUp(stats.comparison.scheduledChange)"
-                            [class.down]="trendDown(stats.comparison.scheduledChange)">
-                            {{ trendUp(stats.comparison.scheduledChange) ? '↑' : '↓' }} {{ absVal(stats.comparison.scheduledChange) }}%
-                        </div>
                     </div>
                 </div>
 
@@ -213,11 +203,6 @@
                     <div class="stat-body">
                         <div class="stat-value">{{ stats.stats.completed }}</div>
                         <div class="stat-label">Completadas</div>
-                        <div class="stat-comparison" *ngIf="stats.comparison.completedChange !== 0"
-                            [class.up]="trendUp(stats.comparison.completedChange)"
-                            [class.down]="trendDown(stats.comparison.completedChange)">
-                            {{ trendUp(stats.comparison.completedChange) ? '↑' : '↓' }} {{ absVal(stats.comparison.completedChange) }}%
-                        </div>
                     </div>
                 </div>
 
@@ -231,11 +216,6 @@
                     <div class="stat-body">
                         <div class="stat-value">{{ stats.stats.cancelled }}</div>
                         <div class="stat-label">Canceladas</div>
-                        <div class="stat-comparison" *ngIf="stats.comparison.cancelledChange !== 0"
-                            [class.up]="!trendUp(stats.comparison.cancelledChange)"
-                            [class.down]="!trendDown(stats.comparison.cancelledChange)">
-                            {{ trendDown(stats.comparison.cancelledChange) ? '↓' : '↑' }} {{ absVal(stats.comparison.cancelledChange) }}%
-                        </div>
                     </div>
                 </div>
 
@@ -285,57 +265,33 @@
                 </div>
             </div>
 
-            <!-- TABLES ROW -->
-            <div class="tables-row">
-                <!-- Doctor Table -->
-                <div class="card table-card">
-                    <h3 class="card-title">Distribución por Médico</h3>
-                    <div class="table-responsive">
-                        <table class="styled-table">
-                            <thead>
-                                <tr>
-                                    <th>MÉDICO</th>
-                                    <th>CITAS</th>
-                                    <th>PROPORCIÓN</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let ds of stats.doctorStats">
-                                    <td>{{ ds.name }}</td>
-                                    <td><strong>{{ ds.count }}</strong></td>
-                                    <td class="proportion-cell">
-                                        <div class="progress-bar-container">
-                                            <div class="progress-bar-fill" [style.width.%]="ds.percentage"></div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="table-empty" *ngIf="stats.doctorStats.length === 0">
-                        <p>No hay datos de médicos.</p>
-                    </div>
+            <!-- DOCTOR TABLE -->
+            <div class="card table-card">
+                <h3 class="card-title">Distribución por Médico</h3>
+                <div class="table-responsive">
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th>MÉDICO</th>
+                                <th>CITAS</th>
+                                <th>PROPORCIÓN</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let ds of stats.doctorStats">
+                                <td>{{ ds.name }}</td>
+                                <td><strong>{{ ds.count }}</strong></td>
+                                <td class="proportion-cell">
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" [style.width.%]="ds.percentage"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-
-                <!-- Patient Recurrence -->
-                <div class="card table-card">
-                    <h3 class="card-title">Pacientes</h3>
-                    <div class="patient-recurrence">
-                        <div class="recurrence-item">
-                            <span class="recurrence-value">{{ stats.patientRecurrence.newPatients }}</span>
-                            <span class="recurrence-label">Nuevos</span>
-                            <span class="recurrence-badge badge-new">Nuevo</span>
-                        </div>
-                        <div class="recurrence-item">
-                            <span class="recurrence-value">{{ stats.patientRecurrence.returningPatients }}</span>
-                            <span class="recurrence-label">Recurrentes</span>
-                            <span class="recurrence-badge badge-return">Recurrente</span>
-                        </div>
-                        <div class="recurrence-total">
-                            <span class="recurrence-value">{{ stats.patientRecurrence.newPatients + stats.patientRecurrence.returningPatients }}</span>
-                            <span class="recurrence-label">Total Pacientes</span>
-                        </div>
-                    </div>
+                <div class="table-empty" *ngIf="stats.doctorStats.length === 0">
+                    <p>No hay datos de médicos.</p>
                 </div>
             </div>
 
