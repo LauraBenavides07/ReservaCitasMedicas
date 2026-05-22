@@ -419,6 +419,37 @@ textarea {
     gap: 1rem;
 }
 
+/* Asterisco de campos obligatorios */
+.required {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+/* Borde rojo en campos inválidos */
+.field-invalid {
+    border-color: #dc2626 !important;
+}
+
+.field-invalid:focus {
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15) !important;
+}
+
+/* Mensaje de error */
+.field-error {
+    color: #dc2626;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Hint de formato */
+.field-hint {
+    color: #94a3b8;
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
+    display: block;
+}
+
 /* Fila responsiva del formulario */
 .form-row-responsive {
     display: grid;

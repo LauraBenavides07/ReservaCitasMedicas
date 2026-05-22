@@ -175,3 +175,7 @@ button,
   background-color: var(--soft-background);
   color: var(--text-dark);
 }
+
+.swal-zindex-fix {
+  z-index: 100000 !important;
+}

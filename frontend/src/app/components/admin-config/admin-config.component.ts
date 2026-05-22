@@ -233,7 +233,8 @@ export class AdminConfigComponent implements OnInit {
       customClass: {
         popup: 'custom-popup',
         title: 'custom-title',
-        confirmButton: 'custom-success-btn'
+        confirmButton: 'custom-success-btn',
+        container: 'swal-zindex-fix'
       },
       confirmButtonText: 'Aceptar',
       showConfirmButton: true,
@@ -250,7 +251,8 @@ export class AdminConfigComponent implements OnInit {
       customClass: {
         popup: 'custom-popup',
         title: 'custom-title',
-        confirmButton: 'custom-confirm-btn'
+        confirmButton: 'custom-confirm-btn',
+        container: 'swal-zindex-fix'
       },
       confirmButtonText: 'Entendido'
     });
