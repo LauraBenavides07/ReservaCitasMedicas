@@ -482,7 +482,8 @@ export class DoctorDashboardComponent implements OnInit {
                         title: 'Cita completada',
                         text: `La cita con ${apt.patientName} ha sido marcada como completada.`,
                         customClass: {
-                            popup: 'swal-zindex-fix'
+                            container: 'swal-zindex-fix',
+                popup: 'swal-zindex-fix'
                         },
                         confirmButtonText: 'Aceptar'
                     });
@@ -515,7 +516,8 @@ export class DoctorDashboardComponent implements OnInit {
                     title: 'Cita completada y reagendada',
                     text: `La cita ha sido completada y se ha programado una nueva para el ${this.rescheduleDate} a las ${this.rescheduleTime}.`,
                     customClass: {
-                        popup: 'swal-zindex-fix'
+                        container: 'swal-zindex-fix',
+                popup: 'swal-zindex-fix'
                     },
                     confirmButtonText: 'Aceptar'
                 });
@@ -529,7 +531,8 @@ export class DoctorDashboardComponent implements OnInit {
                     title: 'Cita completada, pero fallo el reagendamiento',
                     text: 'La cita se marcó como completada pero no se pudo crear la nueva cita. Por favor, intente agendarla manualmente.',
                     customClass: {
-                        popup: 'swal-zindex-fix'
+                        container: 'swal-zindex-fix',
+                popup: 'swal-zindex-fix'
                     },
                     confirmButtonText: 'Aceptar'
                 });
@@ -543,6 +546,7 @@ export class DoctorDashboardComponent implements OnInit {
             title: title,
             text: message,
             customClass: {
+                container: 'swal-zindex-fix',
                 popup: 'swal-zindex-fix'
             },
             confirmButtonText: 'Entendido'

@@ -318,7 +318,8 @@ onSearch(): void {
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#3e7ba6',
       customClass: {
-        popup: 'swal-zindex-fix'
+                container: 'swal-zindex-fix',
+                popup: 'swal-zindex-fix'
       }
     }).then((result) => {
       if (result.isConfirmed) {
