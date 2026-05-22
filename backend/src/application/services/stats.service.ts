@@ -1,4 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
+import { Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { AppointmentStatus } from '../../domain/types/appointment-status.enum';
 import { IAppointmentRepository } from '../ports/appointment.repository';
 import { IDoctorRepository } from '../ports/doctor.repository';
@@ -43,32 +44,22 @@ export class StatsService {
   async getDashboardStats(filter: StatsFilter = {}): Promise<DashboardStats> {
     const allDoctors = await this.doctorRepository.find();
 
-    const where: any = {};
-    if (filter.doctorId) {
-      where.doctor = { id: filter.doctorId };
+    const currentWhere: any = {};
+    if (filter.doctorId) currentWhere.doctor = { id: filter.doctorId };
+    if (filter.status) currentWhere.status = filter.status;
+    if (filter.startDate && filter.endDate) {
+      currentWhere.appointmentDate = Between(filter.startDate, filter.endDate);
+    } else if (filter.startDate) {
+      currentWhere.appointmentDate = MoreThanOrEqual(filter.startDate);
+    } else if (filter.endDate) {
+      currentWhere.appointmentDate = LessThanOrEqual(filter.endDate);
     }
 
-    let allAppointments = await this.appointmentRepository.find({
-      where,
+    const allAppointments = await this.appointmentRepository.find({
+      where: currentWhere,
       relations: { doctor: true, patient: true },
       order: { appointmentDate: 'ASC' },
     });
-
-    if (filter.startDate) {
-      allAppointments = allAppointments.filter(
-        (a) => a.appointmentDate >= filter.startDate!,
-      );
-    }
-    if (filter.endDate) {
-      allAppointments = allAppointments.filter(
-        (a) => a.appointmentDate <= filter.endDate!,
-      );
-    }
-    if (filter.status) {
-      allAppointments = allAppointments.filter(
-        (a) => a.status === filter.status,
-      );
-    }
 
     const total = allAppointments.length;
     let scheduled = 0;
@@ -83,8 +74,6 @@ export class StatsService {
 
     const dailyMap: Record<string, number> = {};
     const statusMap: Record<string, number> = {};
-    const patientIds = new Set<string>();
-    const patientFirstAppt = new Map<string, Date>();
 
     allAppointments.forEach((app) => {
       if (app.status === AppointmentStatus.SCHEDULED) scheduled++;
@@ -101,14 +90,6 @@ export class StatsService {
       if (app.doctor && doctorCounts[app.doctor.id]) {
         doctorCounts[app.doctor.id].count++;
       }
-
-      if (app.patient?.id) {
-        patientIds.add(app.patient.id);
-        const existing = patientFirstAppt.get(app.patient.id);
-        if (!existing || new Date(app.createdAt) < existing) {
-          patientFirstAppt.set(app.patient.id, new Date(app.createdAt));
-        }
-      }
     });
 
     const dailyTrend = Object.entries(dailyMap)
@@ -119,17 +100,6 @@ export class StatsService {
       ([status, count]) => ({ status, count }),
     );
 
-    const filterStart = filter.startDate;
-    const newPatients = filterStart
-      ? allAppointments.filter((a) => {
-          const firstDate = a.patient?.id
-            ? patientFirstAppt.get(a.patient.id)
-            : null;
-          return firstDate && firstDate >= new Date(filterStart);
-        }).length
-      : 0;
-    const returningPatients = patientIds.size - newPatients;
-
     const doctorStats = Object.values(doctorCounts)
       .map((d) => ({
         name: d.name,
@@ -138,7 +108,28 @@ export class StatsService {
       }))
       .sort((a, b) => b.count - a.count);
 
-    // Comparison vs previous period
+    // Patient recurrence: count patients whose first appointment (ever) is within the filter range
+    const patientIds = new Set<string>();
+    const patientFirstEver = new Map<string, string>();
+    allAppointments.forEach((app) => {
+      if (app.patient?.id) {
+        patientIds.add(app.patient.id);
+        const existing = patientFirstEver.get(app.patient.id);
+        if (!existing || app.appointmentDate < existing) {
+          patientFirstEver.set(app.patient.id, app.appointmentDate);
+        }
+      }
+    });
+
+    let newPatients = 0;
+    if (filter.startDate) {
+      for (const firstDate of patientFirstEver.values()) {
+        if (firstDate >= filter.startDate) newPatients++;
+      }
+    }
+    const returningPatients = patientIds.size - newPatients;
+
+    // Comparison vs previous period — lightweight query (no relations)
     let comparison = {
       totalChange: 0,
       scheduledChange: 0,
@@ -157,26 +148,34 @@ export class StatsService {
         new Date(filter.startDate).getTime() - rangeMs,
       ).toISOString().split('T')[0];
 
-      const prevFilter = { ...filter, startDate: prevStart, endDate: prevEnd };
-      const prevStats = await this.getDashboardStats(prevFilter);
+      const prevWhere: any = {};
+      if (filter.doctorId) prevWhere.doctor = { id: filter.doctorId };
+      if (filter.status) prevWhere.status = filter.status;
+      prevWhere.appointmentDate = Between(prevStart, prevEnd);
+
+      const prevAppointments = await this.appointmentRepository.find({
+        where: prevWhere,
+        select: { status: true },
+      });
+
+      let pTotal = 0;
+      let pScheduled = 0;
+      let pConfirmed = 0;
+      let pCompleted = 0;
+      let pCancelled = 0;
+      prevAppointments.forEach((app) => {
+        pTotal++;
+        if (app.status === AppointmentStatus.SCHEDULED) pScheduled++;
+        else if (app.status === AppointmentStatus.CONFIRMED) pConfirmed++;
+        else if (app.status === AppointmentStatus.COMPLETED) pCompleted++;
+        else if (app.status === AppointmentStatus.CANCELLED) pCancelled++;
+      });
 
       comparison = {
-        totalChange: this.percentageChange(
-          total,
-          prevStats.stats.total,
-        ),
-        scheduledChange: this.percentageChange(
-          scheduled + confirmed,
-          prevStats.stats.scheduled + prevStats.stats.confirmed,
-        ),
-        completedChange: this.percentageChange(
-          completed,
-          prevStats.stats.completed,
-        ),
-        cancelledChange: this.percentageChange(
-          cancelled,
-          prevStats.stats.cancelled,
-        ),
+        totalChange: this.percentageChange(total, pTotal),
+        scheduledChange: this.percentageChange(scheduled + confirmed, pScheduled + pConfirmed),
+        completedChange: this.percentageChange(completed, pCompleted),
+        cancelledChange: this.percentageChange(cancelled, pCancelled),
       };
     }
 
