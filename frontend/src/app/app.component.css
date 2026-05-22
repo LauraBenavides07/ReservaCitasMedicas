@@ -147,11 +147,18 @@
 
 .sidebar-user {
     display: flex;
-    align-items: center;
-    gap: 0.8rem;
+    flex-direction: column;
+    gap: 0.5rem;
     padding: 1rem 0.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     margin-top: 1rem;
+}
+
+.user-info-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    width: 100%;
 }
 
 .user-avatar {
@@ -297,6 +304,16 @@
         border-top: none;
         margin-top: 0;
         padding: 0;
+        flex-direction: row;
+        gap: 0;
+    }
+
+    .sidebar-user .btn-logout-icon {
+        display: none;
+    }
+
+    .sidebar-user .user-info-row {
+        gap: 0;
     }
 
     .user-details {

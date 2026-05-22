@@ -212,13 +212,16 @@
           </svg>
         </button>
 
-        <!-- Avatar con inicial del nombre -->
-        <div class="user-avatar">{{ auth.user()?.firstName?.[0] || 'U' }}</div>
-        <div class="user-details">
-          <span class="user-name">{{ auth.user()?.firstName }} {{ auth.user()?.lastName }}</span>
-          <span class="user-role">{{ auth.user()?.role === 'admin' ? 'Administrador' : (auth.user()?.role === 'doctor' ?
-            'Médico' : (auth.user()?.role === 'patient' ? 'Paciente' : 'Agendador')) }}</span>
+        <div class="user-info-row">
+          <!-- Avatar con inicial del nombre -->
+          <div class="user-avatar">{{ auth.user()?.firstName?.[0] || 'U' }}</div>
+          <div class="user-details">
+            <span class="user-name">{{ auth.user()?.firstName }} {{ auth.user()?.lastName }}</span>
+            <span class="user-role">{{ auth.user()?.role === 'admin' ? 'Administrador' : (auth.user()?.role === 'doctor' ?
+              'Médico' : (auth.user()?.role === 'patient' ? 'Paciente' : 'Agendador')) }}</span>
+          </div>
         </div>
+
         <!-- Botón para cerrar sesión -->
         <button class="btn-logout-icon" (click)="logout()" title="Cerrar sesión">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
