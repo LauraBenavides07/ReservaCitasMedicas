@@ -36,9 +36,11 @@ export class AppointmentService {
     skip = 0,
     take = 100,
   ) {
-    const whereClause: FindOptionsWhere<Appointment> = { doctor: { id: doctorId } };
+    const whereClause: FindOptionsWhere<Appointment> = {
+      doctor: { id: doctorId },
+    };
     if (date && date.trim() !== '') {
-        whereClause.appointmentDate = date;
+      whereClause.appointmentDate = date;
     }
 
     const [appointments, total] = await this.appointmentRepository.findAndCount(
@@ -67,9 +69,19 @@ export class AppointmentService {
       );
     }
 
-    await this.availabilityService.validateTimeWindow(createDto.date, createDto.time);
-    await this.availabilityService.validateDoctorException(doctor.id, createDto.date);
-    await this.availabilityService.assertSlotAvailable(doctor.id, createDto.date, createDto.time);
+    await this.availabilityService.validateTimeWindow(
+      createDto.date,
+      createDto.time,
+    );
+    await this.availabilityService.validateDoctorException(
+      doctor.id,
+      createDto.date,
+    );
+    await this.availabilityService.assertSlotAvailable(
+      doctor.id,
+      createDto.date,
+      createDto.time,
+    );
 
     const patient = await this.patientService.findByDocumentOrCreate({
       document: createDto.patientDocument,
@@ -128,7 +140,11 @@ export class AppointmentService {
     return appointments;
   }
 
-  async cancelAppointment(appointmentId: string, patientId: string, localRole?: string) {
+  async cancelAppointment(
+    appointmentId: string,
+    patientId: string,
+    localRole?: string,
+  ) {
     const appointment = await this.appointmentRepository.findOne({
       where: { id: appointmentId },
       relations: ['patient', 'doctor'],
@@ -138,7 +154,8 @@ export class AppointmentService {
       throw new NotFoundException('Cita no encontrada.');
     }
 
-    const isStaff = localRole && ['admin', 'doctor', 'staff'].includes(localRole);
+    const isStaff =
+      localRole && ['admin', 'doctor', 'staff'].includes(localRole);
     if (!isStaff && !appointment.isOwnedBy(patientId)) {
       throw new UnauthorizedException(
         'No tienes permiso para cancelar esta cita.',
@@ -146,7 +163,9 @@ export class AppointmentService {
     }
 
     if (!appointment.canBeCancelled()) {
-      throw new BadRequestException('No se puede cancelar una cita pasada o ya finalizada.');
+      throw new BadRequestException(
+        'No se puede cancelar una cita pasada o ya finalizada.',
+      );
     }
 
     appointment.cancel();
@@ -166,7 +185,7 @@ export class AppointmentService {
 
   async confirmAppointment(appointmentId: string) {
     const appointment = await this.appointmentRepository.findOne({
-      where: { id: appointmentId }
+      where: { id: appointmentId },
     });
 
     if (!appointment) {
@@ -174,14 +193,20 @@ export class AppointmentService {
     }
 
     if (appointment.isCancelled()) {
-      throw new BadRequestException('No se puede confirmar una cita cancelada.');
+      throw new BadRequestException(
+        'No se puede confirmar una cita cancelada.',
+      );
     }
 
     appointment.confirm();
     return this.appointmentRepository.save(appointment);
   }
 
-  async completeAppointment(appointmentId: string) {
+  async completeAppointment(
+    appointmentId: string,
+    observations?: string,
+    diagnosis?: string,
+  ) {
     const appointment = await this.appointmentRepository.findOne({
       where: { id: appointmentId },
     });
@@ -191,14 +216,26 @@ export class AppointmentService {
     }
 
     if (appointment.isCancelled()) {
-      throw new BadRequestException('No se puede completar una cita cancelada.');
+      throw new BadRequestException(
+        'No se puede completar una cita cancelada.',
+      );
     }
 
     appointment.complete();
+    appointment.observations = observations;
+    appointment.diagnosis = diagnosis;
+
     return this.appointmentRepository.save(appointment);
   }
 
-  async reschedule(id: string, patientId: string, date: string, time: string) {
+  async reschedule(
+    id: string,
+    userId: string,
+    date: string,
+    time: string,
+    localRole?: string,
+    doctorId?: string,
+  ) {
     const appointment = await this.appointmentRepository.findOne({
       where: { id },
       relations: ['patient', 'doctor'],
@@ -208,21 +245,42 @@ export class AppointmentService {
       throw new NotFoundException('Cita no encontrada.');
     }
 
-    if (!appointment.isOwnedBy(patientId)) {
+    // Restricción: Solo médicos, administradores y agendadores pueden reagendar
+    const isStaff =
+      localRole &&
+      ['admin', 'doctor', 'staff'].includes(localRole.toLowerCase());
+
+    if (!isStaff) {
       throw new UnauthorizedException(
-        'No tienes permiso para modificar esta cita.',
+        'Los pacientes no tienen permiso para reagendar citas.',
       );
     }
 
+    let targetDoctorId = appointment.doctor.id;
+    let targetDoctor = appointment.doctor;
+
+    if (doctorId && doctorId !== appointment.doctor.id) {
+      const newDoctor = await this.doctorRepository.findOneBy({ id: doctorId });
+      if (!newDoctor) {
+        throw new NotFoundException(`Doctor con ID ${doctorId} no encontrado`);
+      }
+      targetDoctorId = newDoctor.id;
+      targetDoctor = newDoctor;
+      appointment.doctor = newDoctor;
+    }
+
     await this.availabilityService.assertSlotAvailable(
-      appointment.doctor.id,
+      targetDoctorId,
       date,
       time,
       id,
     );
 
     await this.availabilityService.validateTimeWindow(date, time);
-    await this.availabilityService.validateDoctorException(appointment.doctor.id, date);
+    await this.availabilityService.validateDoctorException(
+      targetDoctorId,
+      date,
+    );
 
     appointment.reschedule(date, time);
     const saved = await this.appointmentRepository.save(appointment);
@@ -231,7 +289,7 @@ export class AppointmentService {
       appointmentId: saved.id,
       patientName: `${appointment.patient.firstName} ${appointment.patient.lastName}`,
       patientPhone: appointment.patient.phone,
-      doctorName: appointment.doctor.name,
+      doctorName: targetDoctor.name,
       appointmentDate: saved.appointmentDate,
       appointmentTime: saved.appointmentTime,
     });

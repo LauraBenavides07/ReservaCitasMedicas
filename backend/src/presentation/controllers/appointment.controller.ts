@@ -18,6 +18,7 @@ import { AvailabilityService } from '../../application/services/availability.ser
 import { StatsService } from '../../application/services/stats.service';
 import { ExportService } from '../../application/services/export.service';
 import { CreateAppointmentDto } from '../dto/create-appointment.dto';
+import { CompleteAppointmentDto } from '../dto/complete-appointment.dto';
 import { JwtAuthGuard } from '../../infrastructure/auth/jwt-auth.guard';
 
 @Controller('appointments')
@@ -96,35 +97,44 @@ export class AppointmentController {
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req: Request & { user: { id: string; localRole?: string } },
   ) {
-    return this.appointmentService.cancelAppointment(id, req.user.id, req.user.localRole);
+    return this.appointmentService.cancelAppointment(
+      id,
+      req.user.id,
+      req.user.localRole,
+    );
   }
 
   @Patch(':id/confirm')
-  async confirmAppointment(
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
+  async confirmAppointment(@Param('id', ParseUUIDPipe) id: string) {
     return this.appointmentService.confirmAppointment(id);
   }
 
   @Patch(':id/complete')
   async completeAppointment(
     @Param('id', ParseUUIDPipe) id: string,
+    @Body() completeDto: CompleteAppointmentDto,
   ) {
-    return this.appointmentService.completeAppointment(id);
+    return this.appointmentService.completeAppointment(
+      id,
+      completeDto.observations,
+      completeDto.diagnosis,
+    );
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id/reschedule')
-  async reschedulePatientAppointment(
+  async rescheduleAppointment(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: Request & { user: { id: string } },
-    @Body() body: { date: string; time: string },
+    @Req() req: Request & { user: { id: string; localRole?: string } },
+    @Body() body: { date: string; time: string; doctorId?: string },
   ) {
     return this.appointmentService.reschedule(
       id,
       req.user.id,
       body.date,
       body.time,
+      req.user.localRole,
+      body.doctorId,
     );
   }
 

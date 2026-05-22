@@ -20,7 +20,9 @@ import { TypeOrmDoctorExceptionRepository } from '../src/infrastructure/persiste
 async function cleanDatabase(module: TestingModule) {
   const dataSource = module.get<DataSource>(getDataSourceToken());
   const queryRunner = dataSource.createQueryRunner();
-  await queryRunner.query('TRUNCATE TABLE appointments, doctor_exceptions, patients, doctors, configs, users CASCADE');
+  await queryRunner.query(
+    'TRUNCATE TABLE appointments, doctor_exceptions, patients, doctors, configs, users CASCADE',
+  );
   await queryRunner.release();
 }
 
@@ -49,14 +51,25 @@ describe('Doctor Integration', () => {
           synchronize: true,
           logging: false,
         }),
-        TypeOrmModule.forFeature([Doctor, Appointment, DoctorException, Patient]),
+        TypeOrmModule.forFeature([
+          Doctor,
+          Appointment,
+          DoctorException,
+          Patient,
+        ]),
       ],
       providers: [
         DoctorService,
         DoctorExceptionService,
-        { provide: IAppointmentRepository, useClass: TypeOrmAppointmentRepository },
+        {
+          provide: IAppointmentRepository,
+          useClass: TypeOrmAppointmentRepository,
+        },
         { provide: IDoctorRepository, useClass: TypeOrmDoctorRepository },
-        { provide: IDoctorExceptionRepository, useClass: TypeOrmDoctorExceptionRepository },
+        {
+          provide: IDoctorExceptionRepository,
+          useClass: TypeOrmDoctorExceptionRepository,
+        },
       ],
     }).compile();
 
@@ -136,7 +149,9 @@ describe('Doctor Integration', () => {
 
     describe('update', () => {
       it('debería actualizar un doctor existente', async () => {
-        const result = await doctorService.update(doctorId, { specialty: 'Cirugía General' });
+        const result = await doctorService.update(doctorId, {
+          specialty: 'Cirugía General',
+        });
 
         expect(result.specialty).toBe('Cirugía General');
 
@@ -146,7 +161,9 @@ describe('Doctor Integration', () => {
 
       it('debería lanzar NotFoundException si el doctor no existe', async () => {
         await expect(
-          doctorService.update('00000000-0000-0000-0000-000000000000', { name: 'No existe' }),
+          doctorService.update('00000000-0000-0000-0000-000000000000', {
+            name: 'No existe',
+          }),
         ).rejects.toThrow(NotFoundException);
       });
     });
@@ -174,7 +191,9 @@ describe('Doctor Integration', () => {
           status: 'agendada',
         });
 
-        await expect(doctorService.remove(doctorId)).rejects.toThrow(BadRequestException);
+        await expect(doctorService.remove(doctorId)).rejects.toThrow(
+          BadRequestException,
+        );
       });
     });
   });
@@ -206,7 +225,11 @@ describe('Doctor Integration', () => {
 
     it('removeException debería eliminar una excepción', async () => {
       const excRepo = module.get(getRepositoryToken(DoctorException));
-      const exc = await excRepo.save({ doctorId, date: '2026-12-25', reason: 'Navidad' });
+      const exc = await excRepo.save({
+        doctorId,
+        date: '2026-12-25',
+        reason: 'Navidad',
+      });
 
       await exceptionService.remove(exc.id);
       const deleted = await excRepo.findOneBy({ id: exc.id });

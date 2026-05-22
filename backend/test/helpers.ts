@@ -44,18 +44,25 @@ export async function seedTestData(app: INestApplication): Promise<TestSeed> {
 export async function cleanDatabase(app: INestApplication): Promise<void> {
   const dataSource = app.get<DataSource>(getDataSourceToken());
   const queryRunner = dataSource.createQueryRunner();
-  await queryRunner.query('TRUNCATE TABLE appointments, doctor_exceptions, patients, doctors, configs, users CASCADE');
+  await queryRunner.query(
+    'TRUNCATE TABLE appointments, doctor_exceptions, patients, doctors, configs, users CASCADE',
+  );
   await queryRunner.release();
 }
 
-export function generateTestToken(app: INestApplication, payload?: Record<string, unknown>): string {
+export function generateTestToken(
+  app: INestApplication,
+  payload?: Record<string, unknown>,
+): string {
   const jwtService = app.get(JwtService);
-  return jwtService.sign(payload || {
-    sub: 'test-user-id',
-    email: 'test@test.com',
-    preferred_username: '12345',
-    realm_access: { roles: ['patient'] },
-  });
+  return jwtService.sign(
+    payload || {
+      sub: 'test-user-id',
+      email: 'test@test.com',
+      preferred_username: '12345',
+      realm_access: { roles: ['patient'] },
+    },
+  );
 }
 
 export function tomorrow(): string {

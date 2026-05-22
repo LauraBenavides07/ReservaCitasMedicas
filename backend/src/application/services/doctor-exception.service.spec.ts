@@ -22,7 +22,10 @@ describe('DoctorExceptionService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DoctorExceptionService,
-        { provide: IDoctorExceptionRepository, useValue: mockExceptionRepository },
+        {
+          provide: IDoctorExceptionRepository,
+          useValue: mockExceptionRepository,
+        },
         { provide: IDoctorRepository, useValue: mockDoctorRepository },
       ],
     }).compile();
@@ -46,12 +49,16 @@ describe('DoctorExceptionService', () => {
   });
 
   it('debería obtener excepciones de un médico', async () => {
-    mockExceptionRepository.find.mockResolvedValue([{ id: 'e1', doctorId: '1' }]);
+    mockExceptionRepository.find.mockResolvedValue([
+      { id: 'e1', doctorId: '1' },
+    ]);
     const result = await service.findByDoctor('1');
     expect(result).toHaveLength(1);
-    expect(mockExceptionRepository.find).toHaveBeenCalledWith(expect.objectContaining({
-      where: { doctorId: '1' }
-    }));
+    expect(mockExceptionRepository.find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { doctorId: '1' },
+      }),
+    );
   });
 
   it('debería eliminar una excepción', async () => {

@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException, NotFoundException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  Inject,
+} from '@nestjs/common';
 import { Doctor } from '../../domain/entities/doctor.entity';
 import { ConfigService } from './config.service';
 import { timeToMinutes, minutesToTime } from '../utils/time.utils';
@@ -90,7 +95,8 @@ export class AvailabilityService {
 
     const now = new Date();
     const appointmentDate = new Date(`${date}T${time}`);
-    const diffHours = (appointmentDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const diffHours =
+      (appointmentDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 
     if (diffHours < minAdvanceHours) {
       throw new BadRequestException(
@@ -127,12 +133,18 @@ export class AvailabilityService {
   ): Promise<boolean> {
     if (excludeId) {
       const existing = await this.appointmentRepository.findOne({
-        where: { doctor: { id: doctorId }, appointmentDate: date, appointmentTime: time },
+        where: {
+          doctor: { id: doctorId },
+          appointmentDate: date,
+          appointmentTime: time,
+        },
       });
       return !existing || existing.id === excludeId;
     }
     const existing = await this.appointmentRepository.findOneBy({
-      doctor: { id: doctorId }, appointmentDate: date, appointmentTime: time,
+      doctor: { id: doctorId },
+      appointmentDate: date,
+      appointmentTime: time,
     });
     return !existing;
   }
@@ -143,9 +155,16 @@ export class AvailabilityService {
     time: string,
     excludeId?: string,
   ): Promise<void> {
-    const available = await this.isSlotAvailable(doctorId, date, time, excludeId);
+    const available = await this.isSlotAvailable(
+      doctorId,
+      date,
+      time,
+      excludeId,
+    );
     if (!available) {
-      throw new BadRequestException('El horario ya está ocupado para este médico.');
+      throw new BadRequestException(
+        'El horario ya está ocupado para este médico.',
+      );
     }
   }
 }

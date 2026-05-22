@@ -34,9 +34,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
           const parts = rawJwtToken.split('.');
           if (parts.length === 3) {
             try {
-              const header = JSON.parse(Buffer.from(parts[0], 'base64').toString());
+              const header = JSON.parse(
+                Buffer.from(parts[0], 'base64').toString(),
+              );
               if (header.alg === 'HS256') {
-                return done(null, process.env.JWT_SECRET || 'PIEDRAZUL_SECRET_KEY');
+                return done(
+                  null,
+                  process.env.JWT_SECRET || 'PIEDRAZUL_SECRET_KEY',
+                );
               }
             } catch (e) {}
           }
@@ -79,7 +84,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       id: localId,
       keycloakId: payload.sub,
       email: payload.email,
-      document: payload.preferred_username || (patient ? patient.document : undefined),
+      document:
+        payload.preferred_username || (patient ? patient.document : undefined),
       roles,
       localRole,
     };

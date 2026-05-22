@@ -11,7 +11,10 @@ describe('Config Entity', () => {
     expect(config).toBeDefined();
     expect(config.id).toBe('c1');
     expect(config.key).toBe('appointment_settings');
-    expect(config.value).toEqual({ minAdvanceHours: 2, appointmentWindowDays: 15 });
+    expect(config.value).toEqual({
+      minAdvanceHours: 2,
+      appointmentWindowDays: 15,
+    });
     expect(config.description).toBe('Configuración de ventanas de tiempo');
   });
 

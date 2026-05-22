@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsOptional,
-  IsNumber,
-  Min,
-  Matches,
-} from 'class-validator';
+import { IsString, IsOptional, IsNumber, Min, Matches } from 'class-validator';
 
 export class UpdateDoctorDto {
   @IsString()
@@ -16,7 +10,9 @@ export class UpdateDoctorDto {
   specialty?: string;
 
   @IsString()
-  @Matches(/^\d{2}:\d{2}$/, { message: 'scheduleStart debe tener formato HH:mm' })
+  @Matches(/^\d{2}:\d{2}$/, {
+    message: 'scheduleStart debe tener formato HH:mm',
+  })
   @IsOptional()
   scheduleStart?: string;
 

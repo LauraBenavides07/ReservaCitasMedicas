@@ -53,7 +53,14 @@ import { TypeOrmDoctorExceptionRepository } from './infrastructure/persistence/t
         logging: true,
       }),
     }),
-    TypeOrmModule.forFeature([Doctor, Patient, Appointment, Config, User, DoctorException]),
+    TypeOrmModule.forFeature([
+      Doctor,
+      Patient,
+      Appointment,
+      Config,
+      User,
+      DoctorException,
+    ]),
     AuthModule,
     ScheduleModule.forRoot(),
     NotificationsClientModule,
@@ -73,7 +80,10 @@ import { TypeOrmDoctorExceptionRepository } from './infrastructure/persistence/t
     { provide: ICsvExporter, useClass: Json2CsvExporter },
     { provide: IAppointmentRepository, useClass: TypeOrmAppointmentRepository },
     { provide: IDoctorRepository, useClass: TypeOrmDoctorRepository },
-    { provide: IDoctorExceptionRepository, useClass: TypeOrmDoctorExceptionRepository },
+    {
+      provide: IDoctorExceptionRepository,
+      useClass: TypeOrmDoctorExceptionRepository,
+    },
   ],
 })
 export class AppModule {}

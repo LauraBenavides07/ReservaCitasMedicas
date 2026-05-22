@@ -9,7 +9,9 @@ import { Config } from '../src/domain/entities/config.entity';
 async function cleanDatabase(module: TestingModule) {
   const dataSource = module.get<DataSource>(getDataSourceToken());
   const queryRunner = dataSource.createQueryRunner();
-  await queryRunner.query('TRUNCATE TABLE appointments, doctor_exceptions, patients, doctors, configs, users CASCADE');
+  await queryRunner.query(
+    'TRUNCATE TABLE appointments, doctor_exceptions, patients, doctors, configs, users CASCADE',
+  );
   await queryRunner.release();
 }
 

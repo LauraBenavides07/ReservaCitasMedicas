@@ -9,7 +9,9 @@ export class TypeOrmPatientRepository extends IPatientRepository {
   constructor(
     @InjectRepository(Patient)
     private readonly repo: Repository<Patient>,
-  ) { super(); }
+  ) {
+    super();
+  }
 
   async findOneBy(where: any): Promise<Patient | null> {
     return this.repo.findOneBy(where);

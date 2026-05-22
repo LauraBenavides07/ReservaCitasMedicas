@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotificationsClientModule, NOTIFICATION_SERVICE } from './notifications-client.module';
+import {
+  NotificationsClientModule,
+  NOTIFICATION_SERVICE,
+} from './notifications-client.module';
 import { ConfigModule } from '@nestjs/config';
 
 describe('NotificationsClientModule', () => {

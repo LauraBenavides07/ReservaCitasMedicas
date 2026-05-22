@@ -15,10 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 import { IPasswordHasher } from '../abstractions/ipassword-hasher.interface';
 import { KeycloakService } from '../../infrastructure/auth/keycloak.service';
 import { IPatientRepository } from '../ports/patient.repository';
-import {
-  UserData,
-  DbUser,
-} from '../../domain/types/keycloak.types';
+import { UserData, DbUser } from '../../domain/types/keycloak.types';
 
 @Injectable()
 export class AuthService {
@@ -70,9 +67,12 @@ export class AuthService {
     dto: LoginDto,
   ): Promise<{ access_token: string; user: UserData | null; source: string }> {
     try {
-      const tokenResponse = await this.keycloakService.login(dto.password, dto.login);
+      const tokenResponse = await this.keycloakService.login(
+        dto.password,
+        dto.login,
+      );
       const accessToken = tokenResponse.access_token;
-      const decodedToken = this.jwtService.decode(accessToken) as any;
+      const decodedToken = this.jwtService.decode(accessToken);
       const keycloakSub = decodedToken?.sub;
 
       let userData: UserData | null = null;

@@ -36,9 +36,13 @@ describe('AuthController', () => {
   describe('register', () => {
     it('debería llamar a authService.register', async () => {
       const dto: RegisterDto = { document: '123' } as any;
-      const mockResponse = { access_token: 'tk', user: { id: 'p1' }, source: 'keycloak' };
+      const mockResponse = {
+        access_token: 'tk',
+        user: { id: 'p1' },
+        source: 'keycloak',
+      };
       mockAuthService.register.mockResolvedValue(mockResponse);
-      
+
       const result = await controller.register(dto);
       expect(result.access_token).toBe('tk');
       expect(service.register).toHaveBeenCalledWith(dto);

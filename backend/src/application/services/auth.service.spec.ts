@@ -6,7 +6,11 @@ import { Patient } from '../../domain/entities/patient.entity';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from '../../presentation/dto/login.dto';
 import { RegisterDto } from '../../presentation/dto/register.dto';
-import { UnauthorizedException, ConflictException, InternalServerErrorException } from '@nestjs/common';
+import {
+  UnauthorizedException,
+  ConflictException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { IPasswordHasher } from '../abstractions/ipassword-hasher.interface';
 import { KeycloakService } from '../../infrastructure/auth/keycloak.service';
 import { IPatientRepository } from '../ports/patient.repository';
@@ -56,8 +60,13 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('debería hacer login exitoso vía Keycloak para paciente', async () => {
-      mockKeycloakService.login.mockResolvedValue({ access_token: 'mock-keycloak-token' });
-      mockJwtService.decode.mockReturnValue({ sub: 'kc-sub-123', preferred_username: 'doc-123' });
+      mockKeycloakService.login.mockResolvedValue({
+        access_token: 'mock-keycloak-token',
+      });
+      mockJwtService.decode.mockReturnValue({
+        sub: 'kc-sub-123',
+        preferred_username: 'doc-123',
+      });
 
       mockPatientRepository.findOneBy.mockResolvedValue({
         id: 'patient-1',
@@ -77,7 +86,10 @@ describe('AuthService', () => {
 
     it('debería hacer lazy identity linking si keycloakId es null', async () => {
       mockKeycloakService.login.mockResolvedValue({ access_token: 'token' });
-      mockJwtService.decode.mockReturnValue({ sub: 'kc-sub-456', preferred_username: 'doc-456' });
+      mockJwtService.decode.mockReturnValue({
+        sub: 'kc-sub-456',
+        preferred_username: 'doc-456',
+      });
 
       mockPatientRepository.findOneBy.mockResolvedValue({
         id: 'patient-2',
@@ -90,13 +102,16 @@ describe('AuthService', () => {
 
       await service.login({ login: 'doc-456', password: 'pass456' });
       expect(mockPatientRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({ keycloakId: 'kc-sub-456' })
+        expect.objectContaining({ keycloakId: 'kc-sub-456' }),
       );
     });
 
     it('debería hacer login exitoso para staff/user', async () => {
       mockKeycloakService.login.mockResolvedValue({ access_token: 'token' });
-      mockJwtService.decode.mockReturnValue({ sub: 'kc-sub-staff', preferred_username: 'staff@test.com' });
+      mockJwtService.decode.mockReturnValue({
+        sub: 'kc-sub-staff',
+        preferred_username: 'staff@test.com',
+      });
 
       mockPatientRepository.findOneBy.mockResolvedValue(null);
       mockUserRepository.findOneBy.mockResolvedValue({
@@ -108,7 +123,10 @@ describe('AuthService', () => {
         role: 'admin',
       });
 
-      const result = await service.login({ login: 'staff@test.com', password: 'pass' });
+      const result = await service.login({
+        login: 'staff@test.com',
+        password: 'pass',
+      });
       expect(result.user?.role).toBe('admin');
     });
 
@@ -125,9 +143,12 @@ describe('AuthService', () => {
     });
 
     it('debería hacer fallback a local si Keycloak falla', async () => {
-      mockKeycloakService.login.mockRejectedValue(new Error('Keycloak not reachable'));
+      mockKeycloakService.login.mockRejectedValue(
+        new Error('Keycloak not reachable'),
+      );
 
       mockPasswordHasher.compare.mockResolvedValue(true);
+      mockJwtService.sign.mockReturnValue('mock-local-token');
 
       mockPatientRepository.findOne.mockResolvedValue({
         id: 'p1',
@@ -138,8 +159,14 @@ describe('AuthService', () => {
         email: 'j@example.com',
       });
 
-      await expect(service.login({ login: 'doc-fallback', password: 'pass' }))
-        .rejects.toThrow(InternalServerErrorException);
+      const result = await service.login({
+        login: 'doc-fallback',
+        password: 'pass',
+      });
+
+      expect(result.source).toBe('local');
+      expect(result.access_token).toBe('mock-local-token');
+      expect(result.user?.id).toBe('p1');
     });
   });
 
@@ -147,19 +174,34 @@ describe('AuthService', () => {
     it('debería registrar un nuevo paciente exitosamente', async () => {
       mockPatientRepository.findOneBy.mockResolvedValue(null);
       mockPasswordHasher.hash.mockResolvedValue('hashed-pass');
-      mockPatientRepository.create.mockReturnValue({ id: 'p1', document: 'new-doc' });
-      mockPatientRepository.save.mockResolvedValue({ id: 'p1', document: 'new-doc' });
+      mockPatientRepository.create.mockReturnValue({
+        id: 'p1',
+        document: 'new-doc',
+      });
+      mockPatientRepository.save.mockResolvedValue({
+        id: 'p1',
+        document: 'new-doc',
+      });
 
       mockKeycloakService.createUser.mockResolvedValue(undefined);
-      mockKeycloakService.login.mockResolvedValue({ access_token: 'user-token' });
+      mockKeycloakService.login.mockResolvedValue({
+        access_token: 'user-token',
+      });
 
-      mockJwtService.decode.mockReturnValue({ sub: 'kc-sub-new', preferred_username: 'new-doc' });
+      mockJwtService.decode.mockReturnValue({
+        sub: 'kc-sub-new',
+        preferred_username: 'new-doc',
+      });
 
       mockPatientRepository.findOneBy
         .mockResolvedValueOnce(null)
         .mockResolvedValueOnce({
-          id: 'p1', document: 'new-doc', firstName: 'Nuevo',
-          lastName: 'Paciente', email: 'nuevo@test.com', keycloakId: null,
+          id: 'p1',
+          document: 'new-doc',
+          firstName: 'Nuevo',
+          lastName: 'Paciente',
+          email: 'nuevo@test.com',
+          keycloakId: null,
         });
 
       const dto: RegisterDto = {
@@ -178,7 +220,10 @@ describe('AuthService', () => {
     });
 
     it('debería lanzar ConflictException si el documento ya existe', async () => {
-      mockPatientRepository.findOneBy.mockResolvedValue({ id: 'p1', document: 'existing' });
+      mockPatientRepository.findOneBy.mockResolvedValue({
+        id: 'p1',
+        document: 'existing',
+      });
 
       await expect(
         service.register({
@@ -196,7 +241,12 @@ describe('AuthService', () => {
   describe('getPatientByDocument', () => {
     it('debería retornar paciente si existe', async () => {
       mockPatientRepository.findOne.mockResolvedValue({
-        id: 'p1', firstName: 'Juan', lastName: 'Pérez', document: '123', phone: '300', gender: 'M',
+        id: 'p1',
+        firstName: 'Juan',
+        lastName: 'Pérez',
+        document: '123',
+        phone: '300',
+        gender: 'M',
       });
       const result = await service.getPatientByDocument('123');
       expect(result.firstName).toBe('Juan');
@@ -204,7 +254,9 @@ describe('AuthService', () => {
 
     it('debería lanzar error si no existe', async () => {
       mockPatientRepository.findOne.mockResolvedValue(null);
-      await expect(service.getPatientByDocument('000')).rejects.toThrow(UnauthorizedException);
+      await expect(service.getPatientByDocument('000')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 });

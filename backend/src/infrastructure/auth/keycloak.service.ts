@@ -12,7 +12,10 @@ export class KeycloakService {
     private readonly config: KeycloakConfig,
   ) {}
 
-  async login(password: string, username: string): Promise<KeycloakTokenResponse> {
+  async login(
+    password: string,
+    username: string,
+  ): Promise<KeycloakTokenResponse> {
     const params = new URLSearchParams();
     params.append('client_id', this.config.clientId);
     params.append('grant_type', 'password');
@@ -48,7 +51,10 @@ export class KeycloakService {
           { type: 'password', value: data.password, temporary: false },
         ],
       },
-      { Authorization: `Bearer ${adminToken}`, 'Content-Type': 'application/json' },
+      {
+        Authorization: `Bearer ${adminToken}`,
+        'Content-Type': 'application/json',
+      },
     );
 
     this.logger.log(`Usuario ${data.username} sincronizado con Keycloak`);

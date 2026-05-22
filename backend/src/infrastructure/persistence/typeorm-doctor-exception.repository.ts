@@ -9,7 +9,9 @@ export class TypeOrmDoctorExceptionRepository extends IDoctorExceptionRepository
   constructor(
     @InjectRepository(DoctorException)
     private readonly repo: Repository<DoctorException>,
-  ) { super(); }
+  ) {
+    super();
+  }
 
   async findOneBy(where: any): Promise<DoctorException | null> {
     return this.repo.findOneBy(where);

@@ -26,7 +26,10 @@ describe('DoctorService', () => {
       providers: [
         DoctorService,
         { provide: IDoctorRepository, useValue: mockDoctorRepository },
-        { provide: IAppointmentRepository, useValue: mockAppointmentRepository },
+        {
+          provide: IAppointmentRepository,
+          useValue: mockAppointmentRepository,
+        },
       ],
     }).compile();
 
@@ -44,7 +47,9 @@ describe('DoctorService', () => {
 
   describe('findAll', () => {
     it('debería retornar una lista de médicos', async () => {
-      mockDoctorRepository.find.mockResolvedValue([{ id: '1', name: 'Dr. Test' }]);
+      mockDoctorRepository.find.mockResolvedValue([
+        { id: '1', name: 'Dr. Test' },
+      ]);
       const result = await service.findAll();
       expect(result).toHaveLength(1);
     });
@@ -52,7 +57,10 @@ describe('DoctorService', () => {
 
   describe('findOne', () => {
     it('debería retornar un médico si existe', async () => {
-      mockDoctorRepository.findOneBy.mockResolvedValue({ id: '1', name: 'Dr. Test' });
+      mockDoctorRepository.findOneBy.mockResolvedValue({
+        id: '1',
+        name: 'Dr. Test',
+      });
       const result = await service.findOne('1');
       expect(result.id).toBe('1');
     });
@@ -77,9 +85,15 @@ describe('DoctorService', () => {
 
   describe('update', () => {
     it('debería actualizar los datos de un médico', async () => {
-      mockDoctorRepository.findOneBy.mockResolvedValueOnce({ id: '1', name: 'Dr. Old' });
+      mockDoctorRepository.findOneBy.mockResolvedValueOnce({
+        id: '1',
+        name: 'Dr. Old',
+      });
       mockDoctorRepository.update.mockResolvedValue({});
-      mockDoctorRepository.findOneBy.mockResolvedValueOnce({ id: '1', name: 'Dr. New' });
+      mockDoctorRepository.findOneBy.mockResolvedValueOnce({
+        id: '1',
+        name: 'Dr. New',
+      });
 
       const result = await service.update('1', { name: 'Dr. New' });
       expect(result.name).toBe('Dr. New');

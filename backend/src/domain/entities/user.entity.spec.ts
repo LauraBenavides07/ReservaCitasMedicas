@@ -17,7 +17,6 @@ describe('User Entity', () => {
     expect(user.lastName).toBe('Sistema');
   });
 
-
   it('debería aceptar keycloakId nullable', () => {
     const user = new User();
     expect(user.keycloakId).toBeUndefined();

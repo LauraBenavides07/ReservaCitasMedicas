@@ -33,7 +33,9 @@ describe('DoctorController', () => {
 
     controller = module.get<DoctorController>(DoctorController);
     doctorService = module.get<DoctorService>(DoctorService);
-    exceptionService = module.get<DoctorExceptionService>(DoctorExceptionService);
+    exceptionService = module.get<DoctorExceptionService>(
+      DoctorExceptionService,
+    );
   });
 
   it('debería estar definido', () => {
@@ -75,7 +77,10 @@ describe('DoctorController', () => {
     it('addException debería llamar a exceptionService.add', async () => {
       const data = { date: '2026-05-10' };
       await controller.addException('d1', data);
-      expect(exceptionService.add).toHaveBeenCalledWith({ ...data, doctorId: 'd1' });
+      expect(exceptionService.add).toHaveBeenCalledWith({
+        ...data,
+        doctorId: 'd1',
+      });
     });
 
     it('getExceptions debería llamar a exceptionService.findByDoctor', async () => {

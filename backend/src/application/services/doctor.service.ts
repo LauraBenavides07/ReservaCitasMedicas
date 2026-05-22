@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException, BadRequestException, Inject, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Inject,
+  Logger,
+} from '@nestjs/common';
 import { Doctor } from '../../domain/entities/doctor.entity';
 import { IDoctorRepository } from '../ports/doctor.repository';
 import { IAppointmentRepository } from '../ports/appointment.repository';
@@ -54,7 +60,9 @@ export class DoctorService {
       where: { doctor: { id } },
     });
     if (count > 0) {
-      throw new BadRequestException('No se puede eliminar un médico con citas agendadas');
+      throw new BadRequestException(
+        'No se puede eliminar un médico con citas agendadas',
+      );
     }
 
     return this.doctorRepository.remove(doctor);

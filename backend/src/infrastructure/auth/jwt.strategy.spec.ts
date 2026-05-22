@@ -39,7 +39,7 @@ describe('JwtStrategy', () => {
         sub: 'uuid-1',
         email: 'test@test.com',
         preferred_username: '123',
-        realm_access: { roles: ['patient'] }
+        realm_access: { roles: ['patient'] },
       };
       mockPatientRepository.findOneBy.mockResolvedValue({ id: 'local-p1' });
 
@@ -53,7 +53,7 @@ describe('JwtStrategy', () => {
         sub: 'uuid-2',
         email: 'admin@test.com',
         preferred_username: 'admin@test.com',
-        realm_access: { roles: ['admin'] }
+        realm_access: { roles: ['admin'] },
       };
       mockPatientRepository.findOneBy.mockResolvedValue(null);
       mockUserRepository.findOneBy.mockResolvedValue({ id: 'local-s1' });
@@ -68,7 +68,7 @@ describe('JwtStrategy', () => {
         sub: 'uuid-unknown',
         email: 'unknown@test.com',
         preferred_username: 'unknown',
-        realm_access: { roles: [] }
+        realm_access: { roles: [] },
       };
       mockPatientRepository.findOneBy.mockResolvedValue(null);
       mockUserRepository.findOneBy.mockResolvedValue(null);
@@ -78,19 +78,21 @@ describe('JwtStrategy', () => {
     });
 
     it('debería manejar roles vacíos', async () => {
-        const payload = {
-            sub: 'uuid-1',
-            preferred_username: 'user',
-            realm_access: null
-        };
-        mockPatientRepository.findOneBy.mockResolvedValue(null);
-        mockUserRepository.findOneBy.mockResolvedValue(null);
-        const result = await strategy.validate(payload as any);
-        expect(result.roles).toEqual([]);
+      const payload = {
+        sub: 'uuid-1',
+        preferred_username: 'user',
+        realm_access: null,
+      };
+      mockPatientRepository.findOneBy.mockResolvedValue(null);
+      mockUserRepository.findOneBy.mockResolvedValue(null);
+      const result = await strategy.validate(payload as any);
+      expect(result.roles).toEqual([]);
     });
 
     it('debería lanzar UnauthorizedException si no hay payload', async () => {
-      await expect(strategy.validate(null as any)).rejects.toThrow(UnauthorizedException);
+      await expect(strategy.validate(null as any)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 });

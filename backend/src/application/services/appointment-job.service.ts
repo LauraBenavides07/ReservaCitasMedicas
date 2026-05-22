@@ -44,7 +44,10 @@ export class AppointmentJobService {
     const tomorrowStr = `${year}-${month}-${day}`;
 
     const appointments = await this.appointmentRepository.find({
-      where: { appointmentDate: tomorrowStr, status: AppointmentStatus.SCHEDULED },
+      where: {
+        appointmentDate: tomorrowStr,
+        status: AppointmentStatus.SCHEDULED,
+      },
       relations: ['patient', 'doctor'],
     });
 

@@ -38,6 +38,12 @@ export class Appointment {
   @JoinColumn({ name: 'patient_id' })
   patient: Patient;
 
+  @Column({ type: 'text', nullable: true })
+  observations?: string;
+
+  @Column({ type: 'text', nullable: true })
+  diagnosis?: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
@@ -82,8 +88,7 @@ export class Appointment {
 
   isOwnedBy(patientId: string): boolean {
     return (
-      this.patient?.id === patientId ||
-      this.patient?.keycloakId === patientId
+      this.patient?.id === patientId || this.patient?.keycloakId === patientId
     );
   }
 

@@ -9,7 +9,9 @@ export class TypeOrmDoctorRepository extends IDoctorRepository {
   constructor(
     @InjectRepository(Doctor)
     private readonly repo: Repository<Doctor>,
-  ) { super(); }
+  ) {
+    super();
+  }
 
   async find(options?: any): Promise<Doctor[]> {
     return this.repo.find(options);

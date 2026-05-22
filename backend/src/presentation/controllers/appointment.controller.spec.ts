@@ -48,9 +48,9 @@ describe('AppointmentController', () => {
         { provide: ExportService, useValue: mockExportService },
       ],
     })
-    .overrideGuard(JwtAuthGuard)
-    .useValue(mockJwtAuthGuard)
-    .compile();
+      .overrideGuard(JwtAuthGuard)
+      .useValue(mockJwtAuthGuard)
+      .compile();
 
     controller = module.get<AppointmentController>(AppointmentController);
     appointmentService = module.get<AppointmentService>(AppointmentService);
@@ -65,7 +65,9 @@ describe('AppointmentController', () => {
 
   describe('Estadísticas y Dashboard', () => {
     it('getDashboardStats debería llamar a StatsService', async () => {
-      mockStatsService.getDashboardStats.mockResolvedValue({ stats: { total: 10 } });
+      mockStatsService.getDashboardStats.mockResolvedValue({
+        stats: { total: 10 },
+      });
       const result = await controller.getDashboardStats();
       expect(result.stats.total).toBe(10);
     });
@@ -79,7 +81,9 @@ describe('AppointmentController', () => {
         send: jest.fn(),
       } as unknown as Response;
 
-      mockExportService.exportAppointmentsByDateAndDoctor.mockResolvedValue('csv-data');
+      mockExportService.exportAppointmentsByDateAndDoctor.mockResolvedValue(
+        'csv-data',
+      );
 
       await controller.exportAppointments('2026-05-10', 'd-123', mockRes);
 
@@ -94,7 +98,10 @@ describe('AppointmentController', () => {
       mockAppointmentService.findAllByPatient.mockResolvedValue([]);
 
       await controller.getPatientAppointments(mockReq);
-      expect(appointmentService.findAllByPatient).toHaveBeenCalledWith('p1', '123');
+      expect(appointmentService.findAllByPatient).toHaveBeenCalledWith(
+        'p1',
+        '123',
+      );
     });
   });
 
@@ -112,7 +119,12 @@ describe('AppointmentController', () => {
 
     it('getAppointments debería llamar al servicio', async () => {
       await controller.getAppointments('d1', '2026-10-10');
-      expect(appointmentService.findAllByDoctorAndDate).toHaveBeenCalledWith('d1', '2026-10-10', 0, 100);
+      expect(appointmentService.findAllByDoctorAndDate).toHaveBeenCalledWith(
+        'd1',
+        '2026-10-10',
+        0,
+        100,
+      );
     });
 
     it('createAppointment debería llamar al servicio', async () => {

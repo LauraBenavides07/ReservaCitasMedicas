@@ -42,7 +42,9 @@ describe('ConfigService', () => {
     });
 
     it('no debería crear la configuración si ya existe', async () => {
-      mockConfigRepository.findOne.mockResolvedValue({ key: 'appointment_rules' });
+      mockConfigRepository.findOne.mockResolvedValue({
+        key: 'appointment_rules',
+      });
       await service.onModuleInit();
       expect(mockConfigRepository.save).not.toHaveBeenCalled();
     });
@@ -51,7 +53,7 @@ describe('ConfigService', () => {
   describe('getConfig', () => {
     it('debería retornar la configuración', async () => {
       mockConfigRepository.findOne.mockResolvedValue({
-        value: { minAdvanceHours: 2 }
+        value: { minAdvanceHours: 2 },
       });
       const result = await service.getConfig();
       expect(result?.minAdvanceHours).toBe(2);
@@ -60,14 +62,16 @@ describe('ConfigService', () => {
 
   describe('updateConfig', () => {
     it('debería actualizar la configuración', async () => {
-      mockConfigRepository.findOne.mockResolvedValue({ key: 'appointment_rules' });
+      mockConfigRepository.findOne.mockResolvedValue({
+        key: 'appointment_rules',
+      });
       const newData = { minAdvanceHours: 4, appointmentWindowDays: 20 };
-      
+
       await service.updateConfig(newData);
-      
+
       expect(mockConfigRepository.update).toHaveBeenCalledWith(
         { key: 'appointment_rules' },
-        { value: newData }
+        { value: newData },
       );
     });
   });

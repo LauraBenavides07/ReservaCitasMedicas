@@ -32,7 +32,9 @@ export class ConfigService implements OnModuleInit {
     const config = await this.configRepository.findOne({
       where: { key: 'appointment_rules' },
     });
-    return config?.value ? { ...DEFAULT_CONFIG, ...config.value } : { ...DEFAULT_CONFIG };
+    return config?.value
+      ? { ...DEFAULT_CONFIG, ...config.value }
+      : { ...DEFAULT_CONFIG };
   }
 
   async updateConfig(data: Partial<GlobalConfig>): Promise<GlobalConfig> {

@@ -9,7 +9,9 @@ export class TypeOrmAppointmentRepository extends IAppointmentRepository {
   constructor(
     @InjectRepository(Appointment)
     private readonly repo: Repository<Appointment>,
-  ) { super(); }
+  ) {
+    super();
+  }
 
   async findAndCount(options?: any): Promise<[Appointment[], number]> {
     return this.repo.findAndCount(options);

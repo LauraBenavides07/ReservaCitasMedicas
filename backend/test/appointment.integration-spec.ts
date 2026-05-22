@@ -25,12 +25,18 @@ import { TypeOrmAppointmentRepository } from '../src/infrastructure/persistence/
 import { TypeOrmDoctorRepository } from '../src/infrastructure/persistence/typeorm-doctor.repository';
 import { TypeOrmDoctorExceptionRepository } from '../src/infrastructure/persistence/typeorm-doctor-exception.repository';
 import { TypeOrmPatientRepository } from '../src/infrastructure/persistence/typeorm-patient.repository';
-import { ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 
 async function cleanDatabase(module: TestingModule) {
   const dataSource = module.get<DataSource>(getDataSourceToken());
   const queryRunner = dataSource.createQueryRunner();
-  await queryRunner.query('TRUNCATE TABLE appointments, doctor_exceptions, patients, doctors, configs, users CASCADE');
+  await queryRunner.query(
+    'TRUNCATE TABLE appointments, doctor_exceptions, patients, doctors, configs, users CASCADE',
+  );
   await queryRunner.release();
 }
 
@@ -84,7 +90,12 @@ describe('Appointment Integration', () => {
     process.env.DB_DATABASE = 'piedrazul_test';
 
     const mockCsvExporter = {
-      export: jest.fn().mockImplementation((data) => '\uFEFF' + data.map(r => Object.values(r).join(';')).join('\n')),
+      export: jest
+        .fn()
+        .mockImplementation(
+          (data) =>
+            '\uFEFF' + data.map((r) => Object.values(r).join(';')).join('\n'),
+        ),
     };
 
     module = await Test.createTestingModule({
@@ -100,7 +111,13 @@ describe('Appointment Integration', () => {
           synchronize: true,
           logging: false,
         }),
-        TypeOrmModule.forFeature([Appointment, Patient, Doctor, DoctorException, Config]),
+        TypeOrmModule.forFeature([
+          Appointment,
+          Patient,
+          Doctor,
+          DoctorException,
+          Config,
+        ]),
       ],
       providers: [
         AppointmentService,
@@ -112,9 +129,15 @@ describe('Appointment Integration', () => {
         ConfigService,
         { provide: NOTIFICATION_SERVICE, useValue: { emit: jest.fn() } },
         { provide: ICsvExporter, useValue: mockCsvExporter },
-        { provide: IAppointmentRepository, useClass: TypeOrmAppointmentRepository },
+        {
+          provide: IAppointmentRepository,
+          useClass: TypeOrmAppointmentRepository,
+        },
         { provide: IDoctorRepository, useClass: TypeOrmDoctorRepository },
-        { provide: IDoctorExceptionRepository, useClass: TypeOrmDoctorExceptionRepository },
+        {
+          provide: IDoctorExceptionRepository,
+          useClass: TypeOrmDoctorExceptionRepository,
+        },
         { provide: IPatientRepository, useClass: TypeOrmPatientRepository },
       ],
     }).compile();
@@ -157,7 +180,10 @@ describe('Appointment Integration', () => {
   describe('AvailabilityService.getAvailableSlots', () => {
     it('debería retornar slots disponibles para el doctor en una fecha laborable', async () => {
       const testDate = tomorrow();
-      const slots = await availabilityService.getAvailableSlots(doctorId, testDate);
+      const slots = await availabilityService.getAvailableSlots(
+        doctorId,
+        testDate,
+      );
 
       expect(Array.isArray(slots)).toBe(true);
       expect(slots.length).toBeGreaterThan(0);
@@ -167,14 +193,24 @@ describe('Appointment Integration', () => {
     it('debería excluir slots ocupados', async () => {
       const testDate = tomorrow();
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
       await appointmentRepo.save({
-        appointmentDate: testDate, appointmentTime: '10:00',
-        doctor: { id: doctorId }, patient, status: 'agendada',
+        appointmentDate: testDate,
+        appointmentTime: '10:00',
+        doctor: { id: doctorId },
+        patient,
+        status: 'agendada',
       });
 
-      const slots = await availabilityService.getAvailableSlots(doctorId, testDate);
+      const slots = await availabilityService.getAvailableSlots(
+        doctorId,
+        testDate,
+      );
       expect(slots.includes('10:00')).toBe(false);
     });
   });
@@ -182,8 +218,11 @@ describe('Appointment Integration', () => {
   describe('AppointmentService.create', () => {
     it('debería crear una cita con paciente existente', async () => {
       const patient = await patientRepo.save({
-        document: '12345678', firstName: 'Juan', lastName: 'Pérez',
-        phone: '3001112233', gender: 'M',
+        document: '12345678',
+        firstName: 'Juan',
+        lastName: 'Pérez',
+        phone: '3001112233',
+        gender: 'M',
       });
 
       const testDate = tomorrow();
@@ -232,17 +271,27 @@ describe('Appointment Integration', () => {
       const testTime = futureTime();
 
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
       await appointmentRepo.save({
-        appointmentDate: testDate, appointmentTime: testTime,
-        doctor: { id: doctorId }, patient, status: 'agendada',
+        appointmentDate: testDate,
+        appointmentTime: testTime,
+        doctor: { id: doctorId },
+        patient,
+        status: 'agendada',
       });
 
       await expect(
         appointmentService.create({
           patientDocument: '22222222',
-          firstName: 'C', lastName: 'D', phone: '301', gender: 'F',
+          firstName: 'C',
+          lastName: 'D',
+          phone: '301',
+          gender: 'F',
           doctorId,
           date: testDate,
           time: testTime,
@@ -255,20 +304,33 @@ describe('Appointment Integration', () => {
     it('debería retornar citas filtradas por doctor y fecha', async () => {
       const testDate = tomorrow();
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
       await appointmentRepo.save({
-        appointmentDate: testDate, appointmentTime: '10:00',
-        doctor: { id: doctorId }, patient, status: 'agendada',
+        appointmentDate: testDate,
+        appointmentTime: '10:00',
+        doctor: { id: doctorId },
+        patient,
+        status: 'agendada',
       });
 
-      const result = await appointmentService.findAllByDoctorAndDate(doctorId, testDate);
+      const result = await appointmentService.findAllByDoctorAndDate(
+        doctorId,
+        testDate,
+      );
       expect(result.appointments.length).toBe(1);
       expect(result.total).toBe(1);
     });
 
     it('debería retornar lista vacía si no hay citas', async () => {
-      const result = await appointmentService.findAllByDoctorAndDate(doctorId, tomorrow());
+      const result = await appointmentService.findAllByDoctorAndDate(
+        doctorId,
+        tomorrow(),
+      );
       expect(result.appointments).toEqual([]);
       expect(result.total).toBe(0);
     });
@@ -277,11 +339,18 @@ describe('Appointment Integration', () => {
   describe('AppointmentService.findAll', () => {
     it('debería retornar todas las citas', async () => {
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
       await appointmentRepo.save({
-        appointmentDate: tomorrow(), appointmentTime: '10:00',
-        doctor: { id: doctorId }, patient, status: 'agendada',
+        appointmentDate: tomorrow(),
+        appointmentTime: '10:00',
+        doctor: { id: doctorId },
+        patient,
+        status: 'agendada',
       });
 
       const appointments = await appointmentService.findAll();
@@ -300,11 +369,18 @@ describe('Appointment Integration', () => {
   describe('AppointmentService.confirmAppointment', () => {
     it('debería confirmar una cita agendada', async () => {
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
       const appt = await appointmentRepo.save({
-        appointmentDate: tomorrow(), appointmentTime: '10:00',
-        doctor: { id: doctorId }, patient, status: 'agendada',
+        appointmentDate: tomorrow(),
+        appointmentTime: '10:00',
+        doctor: { id: doctorId },
+        patient,
+        status: 'agendada',
       });
 
       const result = await appointmentService.confirmAppointment(appt.id);
@@ -313,7 +389,9 @@ describe('Appointment Integration', () => {
 
     it('debería lanzar NotFoundException si la cita no existe', async () => {
       await expect(
-        appointmentService.confirmAppointment('00000000-0000-0000-0000-000000000000'),
+        appointmentService.confirmAppointment(
+          '00000000-0000-0000-0000-000000000000',
+        ),
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -321,11 +399,15 @@ describe('Appointment Integration', () => {
   describe('AppointmentService.findPatientByDocument', () => {
     it('debería encontrar un paciente por documento', async () => {
       await patientRepo.save({
-        document: '12345678', firstName: 'Juan', lastName: 'Pérez',
-        phone: '3001112233', gender: 'M',
+        document: '12345678',
+        firstName: 'Juan',
+        lastName: 'Pérez',
+        phone: '3001112233',
+        gender: 'M',
       });
 
-      const patient = await appointmentService.findPatientByDocument('12345678');
+      const patient =
+        await appointmentService.findPatientByDocument('12345678');
       expect(patient.firstName).toBe('Juan');
     });
 
@@ -339,13 +421,20 @@ describe('Appointment Integration', () => {
   describe('AppointmentService.create - reglas de validación', () => {
     it('debería lanzar BadRequestException si la hora es muy cercana (minAdvanceHours)', async () => {
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
 
       await expect(
         appointmentService.create({
           patientDocument: '11111111',
-          firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+          firstName: 'A',
+          lastName: 'B',
+          phone: '300',
+          gender: 'M',
           doctorId,
           date: today(),
           time: nearFutureTime(),
@@ -355,13 +444,20 @@ describe('Appointment Integration', () => {
 
     it('debería lanzar BadRequestException si la fecha excede el máximo de días', async () => {
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
 
       await expect(
         appointmentService.create({
           patientDocument: '11111111',
-          firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+          firstName: 'A',
+          lastName: 'B',
+          phone: '300',
+          gender: 'M',
           doctorId,
           date: daysFromNow(20),
           time: '10:00',
@@ -374,13 +470,20 @@ describe('Appointment Integration', () => {
       await excRepo.save({ doctorId, date: tomorrow(), reason: 'Feriado' });
 
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
 
       await expect(
         appointmentService.create({
           patientDocument: '11111111',
-          firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+          firstName: 'A',
+          lastName: 'B',
+          phone: '300',
+          gender: 'M',
           doctorId,
           date: tomorrow(),
           time: futureTime(),
@@ -392,11 +495,18 @@ describe('Appointment Integration', () => {
   describe('AppointmentService.findAllByPatient', () => {
     it('debería retornar citas del paciente por ID', async () => {
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
       await appointmentRepo.save({
-        appointmentDate: tomorrow(), appointmentTime: '10:00',
-        doctor: { id: doctorId }, patient, status: 'agendada',
+        appointmentDate: tomorrow(),
+        appointmentTime: '10:00',
+        doctor: { id: doctorId },
+        patient,
+        status: 'agendada',
       });
 
       const result = await appointmentService.findAllByPatient(patient.id);
@@ -405,14 +515,24 @@ describe('Appointment Integration', () => {
 
     it('debería retornar citas del paciente por documento', async () => {
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
       await appointmentRepo.save({
-        appointmentDate: tomorrow(), appointmentTime: '10:00',
-        doctor: { id: doctorId }, patient, status: 'agendada',
+        appointmentDate: tomorrow(),
+        appointmentTime: '10:00',
+        doctor: { id: doctorId },
+        patient,
+        status: 'agendada',
       });
 
-      const result = await appointmentService.findAllByPatient('00000000-0000-0000-0000-000000000000', '11111111');
+      const result = await appointmentService.findAllByPatient(
+        '00000000-0000-0000-0000-000000000000',
+        '11111111',
+      );
       expect(result.length).toBe(1);
     });
   });
@@ -423,16 +543,26 @@ describe('Appointment Integration', () => {
 
     beforeEach(async () => {
       patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
       appt = await appointmentRepo.save({
-        appointmentDate: daysFromNow(5), appointmentTime: '10:00',
-        doctor: { id: doctorId }, patient, status: 'agendada',
+        appointmentDate: daysFromNow(5),
+        appointmentTime: '10:00',
+        doctor: { id: doctorId },
+        patient,
+        status: 'agendada',
       });
     });
 
     it('debería cancelar la cita del propio paciente', async () => {
-      const result = await appointmentService.cancelAppointment(appt.id, patient.id);
+      const result = await appointmentService.cancelAppointment(
+        appt.id,
+        patient.id,
+      );
       expect(result.status).toBe('cancelada');
     });
 
@@ -444,7 +574,10 @@ describe('Appointment Integration', () => {
 
     it('debería lanzar NotFoundException si la cita no existe', async () => {
       await expect(
-        appointmentService.cancelAppointment('00000000-0000-0000-0000-000000000000', patient.id),
+        appointmentService.cancelAppointment(
+          '00000000-0000-0000-0000-000000000000',
+          patient.id,
+        ),
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -455,11 +588,18 @@ describe('Appointment Integration', () => {
 
     beforeEach(async () => {
       patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
       appt = await appointmentRepo.save({
-        appointmentDate: daysFromNow(5), appointmentTime: '10:00',
-        doctor: { id: doctorId }, patient, status: 'agendada',
+        appointmentDate: daysFromNow(5),
+        appointmentTime: '10:00',
+        doctor: { id: doctorId },
+        patient,
+        status: 'agendada',
       });
     });
 
@@ -467,7 +607,12 @@ describe('Appointment Integration', () => {
       const newDate = daysFromNow(6);
       const newTime = '11:00';
 
-      const result = await appointmentService.reschedule(appt.id, patient.id, newDate, newTime);
+      const result = await appointmentService.reschedule(
+        appt.id,
+        patient.id,
+        newDate,
+        newTime,
+      );
       expect(result.appointmentDate).toBe(newDate);
       expect(result.appointmentTime).toBe(newTime);
       expect(result.status).toBe('agendada');
@@ -475,27 +620,49 @@ describe('Appointment Integration', () => {
 
     it('debería lanzar ConflictException si el nuevo horario está ocupado', async () => {
       const anotherPatient = await patientRepo.save({
-        document: '22222222', firstName: 'C', lastName: 'D', phone: '301', gender: 'F',
+        document: '22222222',
+        firstName: 'C',
+        lastName: 'D',
+        phone: '301',
+        gender: 'F',
       });
       await appointmentRepo.save({
-        appointmentDate: daysFromNow(6), appointmentTime: '11:00',
-        doctor: { id: doctorId }, patient: anotherPatient, status: 'agendada',
+        appointmentDate: daysFromNow(6),
+        appointmentTime: '11:00',
+        doctor: { id: doctorId },
+        patient: anotherPatient,
+        status: 'agendada',
       });
 
       await expect(
-        appointmentService.reschedule(appt.id, patient.id, daysFromNow(6), '11:00'),
+        appointmentService.reschedule(
+          appt.id,
+          patient.id,
+          daysFromNow(6),
+          '11:00',
+        ),
       ).rejects.toThrow(ConflictException);
     });
 
     it('debería lanzar UnauthorizedException si otro paciente intenta reagendar', async () => {
       await expect(
-        appointmentService.reschedule(appt.id, 'other-patient-id', daysFromNow(6), '11:00'),
+        appointmentService.reschedule(
+          appt.id,
+          'other-patient-id',
+          daysFromNow(6),
+          '11:00',
+        ),
       ).rejects.toThrow('No tienes permiso');
     });
 
     it('debería lanzar BadRequestException si la nueva fecha es muy cercana', async () => {
       await expect(
-        appointmentService.reschedule(appt.id, patient.id, today(), nearFutureTime()),
+        appointmentService.reschedule(
+          appt.id,
+          patient.id,
+          today(),
+          nearFutureTime(),
+        ),
       ).rejects.toThrow(BadRequestException);
     });
   });
@@ -503,23 +670,35 @@ describe('Appointment Integration', () => {
   describe('ExportService.exportAppointmentsByDateAndDoctor', () => {
     it('debería exportar citas como CSV', async () => {
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'Juan', lastName: 'Pérez',
-        phone: '3001112233', gender: 'M',
+        document: '11111111',
+        firstName: 'Juan',
+        lastName: 'Pérez',
+        phone: '3001112233',
+        gender: 'M',
       });
       const testDate = daysFromNow(5);
       await appointmentRepo.save({
-        appointmentDate: testDate, appointmentTime: '10:00',
-        doctor: { id: doctorId }, patient, status: 'agendada',
+        appointmentDate: testDate,
+        appointmentTime: '10:00',
+        doctor: { id: doctorId },
+        patient,
+        status: 'agendada',
       });
 
-      const csv = await exportService.exportAppointmentsByDateAndDoctor(testDate, doctorId);
+      const csv = await exportService.exportAppointmentsByDateAndDoctor(
+        testDate,
+        doctorId,
+      );
       expect(csv).toContain('Juan');
       expect(csv).toContain('10:00');
     });
 
     it('debería lanzar NotFoundException si no hay citas para esa fecha', async () => {
       await expect(
-        exportService.exportAppointmentsByDateAndDoctor(daysFromNow(10), doctorId),
+        exportService.exportAppointmentsByDateAndDoctor(
+          daysFromNow(10),
+          doctorId,
+        ),
       ).rejects.toThrow(NotFoundException);
     });
   });

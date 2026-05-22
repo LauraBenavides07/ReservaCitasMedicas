@@ -19,7 +19,6 @@ describe('Appointment Entity', () => {
     expect(appointment.createdBy).toBe('admin');
   });
 
-
   it('debería aceptar relaciones con Doctor y Patient', () => {
     const doctor = new Doctor();
     doctor.id = 'd1';

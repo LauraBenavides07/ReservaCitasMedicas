@@ -19,13 +19,25 @@ jest.mock('passport-jwt', () => ({
 }));
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  INestApplication,
+  ValidationPipe,
+  CanActivate,
+  ExecutionContext,
+} from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { JwtAuthGuard } from '../src/infrastructure/auth/jwt-auth.guard';
 import { NOTIFICATION_SERVICE } from '../src/infrastructure/messaging/notifications-client.module';
-import { seedTestData, cleanDatabase, tomorrow, futureTime, TestSeed, daysFromNow } from './helpers';
+import {
+  seedTestData,
+  cleanDatabase,
+  tomorrow,
+  futureTime,
+  TestSeed,
+  daysFromNow,
+} from './helpers';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Doctor } from '../src/domain/entities/doctor.entity';
@@ -147,7 +159,11 @@ describe('Piedrazul API (e2e)', () => {
 
     it('DELETE /doctors/:id debería fallar si tiene citas', async () => {
       const patient = await patientRepo.save({
-        document: '99999999', firstName: 'P', lastName: 'T', phone: '300', gender: 'M',
+        document: '99999999',
+        firstName: 'P',
+        lastName: 'T',
+        phone: '300',
+        gender: 'M',
       });
       await appointmentRepo.save({
         appointmentDate: tomorrow(),
@@ -171,8 +187,14 @@ describe('Piedrazul API (e2e)', () => {
       });
 
       it('GET /doctors/:id/exceptions debería listar excepciones', async () => {
-        const excRepo = app.get<Repository<DoctorException>>(getRepositoryToken(DoctorException));
-        await excRepo.save({ doctorId: seed.doctor.id, date: '2026-12-25', reason: 'Navidad' });
+        const excRepo = app.get<Repository<DoctorException>>(
+          getRepositoryToken(DoctorException),
+        );
+        await excRepo.save({
+          doctorId: seed.doctor.id,
+          date: '2026-12-25',
+          reason: 'Navidad',
+        });
 
         const res = await request(app.getHttpServer())
           .get(`/doctors/${seed.doctor.id}/exceptions`)
@@ -183,8 +205,14 @@ describe('Piedrazul API (e2e)', () => {
       });
 
       it('DELETE /doctors/:id/exceptions/:excId debería eliminar excepción', async () => {
-        const excRepo = app.get<Repository<DoctorException>>(getRepositoryToken(DoctorException));
-        const exc = await excRepo.save({ doctorId: seed.doctor.id, date: '2026-12-25', reason: 'Navidad' });
+        const excRepo = app.get<Repository<DoctorException>>(
+          getRepositoryToken(DoctorException),
+        );
+        const exc = await excRepo.save({
+          doctorId: seed.doctor.id,
+          date: '2026-12-25',
+          reason: 'Navidad',
+        });
 
         await request(app.getHttpServer())
           .delete(`/doctors/${seed.doctor.id}/exceptions/${exc.id}`)
@@ -197,7 +225,9 @@ describe('Piedrazul API (e2e)', () => {
     it('GET /available-slots debería retornar horarios disponibles', async () => {
       const testDate = tomorrow();
       const res = await request(app.getHttpServer())
-        .get(`/appointments/available-slots?doctorId=${seed.doctor.id}&date=${testDate}`)
+        .get(
+          `/appointments/available-slots?doctorId=${seed.doctor.id}&date=${testDate}`,
+        )
         .expect(200);
 
       expect(Array.isArray(res.body)).toBe(true);
@@ -233,18 +263,28 @@ describe('Piedrazul API (e2e)', () => {
       const testTime = futureTime();
 
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
       await appointmentRepo.save({
-        appointmentDate: testDate, appointmentTime: testTime,
-        doctor: seed.doctor, patient, status: 'agendada',
+        appointmentDate: testDate,
+        appointmentTime: testTime,
+        doctor: seed.doctor,
+        patient,
+        status: 'agendada',
       });
 
       await request(app.getHttpServer())
         .post('/appointments')
         .send({
           patientDocument: '22222222',
-          firstName: 'C', lastName: 'D', phone: '301', gender: 'F',
+          firstName: 'C',
+          lastName: 'D',
+          phone: '301',
+          gender: 'F',
           doctorId: seed.doctor.id,
           date: testDate,
           time: testTime,
@@ -255,11 +295,18 @@ describe('Piedrazul API (e2e)', () => {
     it('GET /appointments debería listar citas por doctor', async () => {
       const testDate = tomorrow();
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
       await appointmentRepo.save({
-        appointmentDate: testDate, appointmentTime: '10:00',
-        doctor: seed.doctor, patient, status: 'agendada',
+        appointmentDate: testDate,
+        appointmentTime: '10:00',
+        doctor: seed.doctor,
+        patient,
+        status: 'agendada',
       });
 
       const res = await request(app.getHttpServer())
@@ -312,11 +359,18 @@ describe('Piedrazul API (e2e)', () => {
 
     it('PATCH /appointments/:id/confirm debería confirmar una cita', async () => {
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'A', lastName: 'B', phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'A',
+        lastName: 'B',
+        phone: '300',
+        gender: 'M',
       });
       const appt = await appointmentRepo.save({
-        appointmentDate: tomorrow(), appointmentTime: '10:00',
-        doctor: seed.doctor, patient, status: 'agendada',
+        appointmentDate: tomorrow(),
+        appointmentTime: '10:00',
+        doctor: seed.doctor,
+        patient,
+        status: 'agendada',
       });
 
       const res = await request(app.getHttpServer())
@@ -352,15 +406,21 @@ describe('Piedrazul API (e2e)', () => {
     beforeEach(async () => {
       await patientRepo.save({
         id: AUTH_PATIENT_ID,
-        document: '12345', firstName: 'Autenticado', lastName: 'Paciente',
-        phone: '300', gender: 'M',
+        document: '12345',
+        firstName: 'Autenticado',
+        lastName: 'Paciente',
+        phone: '300',
+        gender: 'M',
       });
     });
 
     it('GET /appointments/my-appointments debería retornar citas del paciente', async () => {
       const appt = await appointmentRepo.save({
-        appointmentDate: daysFromNow(5), appointmentTime: '10:00',
-        doctor: seed.doctor, patient: { id: AUTH_PATIENT_ID } as Patient, status: 'agendada',
+        appointmentDate: daysFromNow(5),
+        appointmentTime: '10:00',
+        doctor: seed.doctor,
+        patient: { id: AUTH_PATIENT_ID } as Patient,
+        status: 'agendada',
       });
 
       const res = await request(app.getHttpServer())
@@ -374,8 +434,11 @@ describe('Piedrazul API (e2e)', () => {
 
     it('PATCH /appointments/:id/cancel debería cancelar la cita del paciente', async () => {
       const appt = await appointmentRepo.save({
-        appointmentDate: daysFromNow(5), appointmentTime: '10:00',
-        doctor: seed.doctor, patient: { id: AUTH_PATIENT_ID } as Patient, status: 'agendada',
+        appointmentDate: daysFromNow(5),
+        appointmentTime: '10:00',
+        doctor: seed.doctor,
+        patient: { id: AUTH_PATIENT_ID } as Patient,
+        status: 'agendada',
       });
 
       const res = await request(app.getHttpServer())
@@ -387,8 +450,11 @@ describe('Piedrazul API (e2e)', () => {
 
     it('PATCH /appointments/:id/reschedule debería reagendar la cita', async () => {
       const appt = await appointmentRepo.save({
-        appointmentDate: daysFromNow(5), appointmentTime: '10:00',
-        doctor: seed.doctor, patient: { id: AUTH_PATIENT_ID } as Patient, status: 'agendada',
+        appointmentDate: daysFromNow(5),
+        appointmentTime: '10:00',
+        doctor: seed.doctor,
+        patient: { id: AUTH_PATIENT_ID } as Patient,
+        status: 'agendada',
       });
 
       const newDate = daysFromNow(6);
@@ -404,15 +470,26 @@ describe('Piedrazul API (e2e)', () => {
 
   describe('Citas - reglas de validación', () => {
     it('POST /appointments debería fallar si el médico tiene excepción ese día', async () => {
-      const excRepo = app.get<Repository<DoctorException>>(getRepositoryToken(DoctorException));
-      await excRepo.save({ doctorId: seed.doctor.id, date: tomorrow(), reason: 'Feriado' });
+      const excRepo = app.get<Repository<DoctorException>>(
+        getRepositoryToken(DoctorException),
+      );
+      await excRepo.save({
+        doctorId: seed.doctor.id,
+        date: tomorrow(),
+        reason: 'Feriado',
+      });
 
       await request(app.getHttpServer())
         .post('/appointments')
         .send({
-          patientDocument: '11111111', firstName: 'A', lastName: 'B',
-          phone: '300', gender: 'M',
-          doctorId: seed.doctor.id, date: tomorrow(), time: futureTime(),
+          patientDocument: '11111111',
+          firstName: 'A',
+          lastName: 'B',
+          phone: '300',
+          gender: 'M',
+          doctorId: seed.doctor.id,
+          date: tomorrow(),
+          time: futureTime(),
         })
         .expect(400);
     });
@@ -421,13 +498,19 @@ describe('Piedrazul API (e2e)', () => {
   describe('Exportar citas CSV', () => {
     it('GET /appointments/export debería retornar CSV', async () => {
       const patient = await patientRepo.save({
-        document: '11111111', firstName: 'Juan', lastName: 'Pérez',
-        phone: '300', gender: 'M',
+        document: '11111111',
+        firstName: 'Juan',
+        lastName: 'Pérez',
+        phone: '300',
+        gender: 'M',
       });
       const testDate = daysFromNow(5);
       await appointmentRepo.save({
-        appointmentDate: testDate, appointmentTime: '10:00',
-        doctor: seed.doctor, patient, status: 'agendada',
+        appointmentDate: testDate,
+        appointmentTime: '10:00',
+        doctor: seed.doctor,
+        patient,
+        status: 'agendada',
       });
 
       const res = await request(app.getHttpServer())
