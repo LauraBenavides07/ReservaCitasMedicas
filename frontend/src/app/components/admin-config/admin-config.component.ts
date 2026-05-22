@@ -156,6 +156,7 @@ export class AdminConfigComponent implements OnInit, AfterViewInit {
   // ============================================
 
   loadStats(): void {
+    this.stats = null;
     this.loadingStats = true;
     this.statsError = '';
     this.destroyCharts();

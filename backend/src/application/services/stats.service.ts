@@ -155,7 +155,6 @@ export class StatsService {
 
       const prevAppointments = await this.appointmentRepository.find({
         where: prevWhere,
-        select: { status: true },
       });
 
       let pTotal = 0;
