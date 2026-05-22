@@ -268,12 +268,20 @@
 
             <form [formGroup]="configForm" (ngSubmit)="saveConfig()" class="form-grid">
                 <div class="form-field">
-                    <label for="config-minAdvance">Antelación Mínima (Horas)</label>
-                    <input id="config-minAdvance" type="number" formControlName="minAdvanceHours" />
+                    <label for="config-minAdvance">Antelación Mínima (Horas) <span class="required">*</span></label>
+                    <input id="config-minAdvance" type="number" formControlName="minAdvanceHours"
+                        [class.field-invalid]="configForm.get('minAdvanceHours')?.invalid && configForm.get('minAdvanceHours')?.touched" />
+                    <small class="field-error" *ngIf="configForm.get('minAdvanceHours')?.invalid && configForm.get('minAdvanceHours')?.touched">
+                        Valor requerido
+                    </small>
                 </div>
                 <div class="form-field">
-                    <label for="config-window">Ventana de Citas (Días)</label>
-                    <input id="config-window" type="number" formControlName="appointmentWindowDays" />
+                    <label for="config-window">Ventana de Citas (Días) <span class="required">*</span></label>
+                    <input id="config-window" type="number" formControlName="appointmentWindowDays"
+                        [class.field-invalid]="configForm.get('appointmentWindowDays')?.invalid && configForm.get('appointmentWindowDays')?.touched" />
+                    <small class="field-error" *ngIf="configForm.get('appointmentWindowDays')?.invalid && configForm.get('appointmentWindowDays')?.touched">
+                        Valor requerido
+                    </small>
                 </div>
 
                 <div class="modal-actions">
@@ -305,12 +313,20 @@
             <h4 class="card-title">Añadir Nueva Excepción</h4>
             <form [formGroup]="exceptionForm" (ngSubmit)="addException()" class="form-grid">
                 <div class="form-field">
-                    <label>Fecha</label>
-                    <input type="date" formControlName="date" />
+                    <label>Fecha <span class="required">*</span></label>
+                    <input type="date" formControlName="date"
+                        [class.field-invalid]="exceptionForm.get('date')?.invalid && exceptionForm.get('date')?.touched" />
+                    <small class="field-error" *ngIf="exceptionForm.get('date')?.invalid && exceptionForm.get('date')?.touched">
+                        La fecha es obligatoria
+                    </small>
                 </div>
                 <div class="form-field">
-                    <label>Motivo</label>
-                    <input type="text" formControlName="reason" placeholder="Ej: Vacaciones" />
+                    <label>Motivo <span class="required">*</span></label>
+                    <input type="text" formControlName="reason" placeholder="Ej: Vacaciones"
+                        [class.field-invalid]="exceptionForm.get('reason')?.invalid && exceptionForm.get('reason')?.touched" />
+                    <small class="field-error" *ngIf="exceptionForm.get('reason')?.invalid && exceptionForm.get('reason')?.touched">
+                        El motivo es obligatorio
+                    </small>
                 </div>
 
                 <div class="modal-actions">
