@@ -73,6 +73,8 @@ export class DoctorDashboardComponent implements OnInit {
     rescheduleTime = '';
     availableSlots: string[] = [];
     isReschedulingLoading = false;
+    touchedRescheduleDate = false;
+    touchedRescheduleTime = false;
 
     ngOnInit() {
         const user = this.authService.user();
@@ -480,9 +482,7 @@ export class DoctorDashboardComponent implements OnInit {
                         title: 'Cita completada',
                         text: `La cita con ${apt.patientName} ha sido marcada como completada.`,
                         customClass: {
-                            popup: 'custom-popup',
-                            title: 'custom-title',
-                            confirmButton: 'custom-success-btn'
+                            popup: 'swal-zindex-fix'
                         },
                         confirmButtonText: 'Aceptar'
                     });
@@ -515,9 +515,7 @@ export class DoctorDashboardComponent implements OnInit {
                     title: 'Cita completada y reagendada',
                     text: `La cita ha sido completada y se ha programado una nueva para el ${this.rescheduleDate} a las ${this.rescheduleTime}.`,
                     customClass: {
-                        popup: 'custom-popup',
-                        title: 'custom-title',
-                        confirmButton: 'custom-success-btn'
+                        popup: 'swal-zindex-fix'
                     },
                     confirmButtonText: 'Aceptar'
                 });
@@ -531,9 +529,7 @@ export class DoctorDashboardComponent implements OnInit {
                     title: 'Cita completada, pero fallo el reagendamiento',
                     text: 'La cita se marcó como completada pero no se pudo crear la nueva cita. Por favor, intente agendarla manualmente.',
                     customClass: {
-                        popup: 'custom-popup',
-                        title: 'custom-title',
-                        confirmButton: 'custom-confirm-btn'
+                        popup: 'swal-zindex-fix'
                     },
                     confirmButtonText: 'Aceptar'
                 });
@@ -547,9 +543,7 @@ export class DoctorDashboardComponent implements OnInit {
             title: title,
             text: message,
             customClass: {
-                popup: 'custom-popup',
-                title: 'custom-title',
-                confirmButton: 'custom-confirm-btn'
+                popup: 'swal-zindex-fix'
             },
             confirmButtonText: 'Entendido'
         });

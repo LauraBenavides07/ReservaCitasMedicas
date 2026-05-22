@@ -49,6 +49,8 @@ export class AppointmentListComponent implements OnInit {
   availableSlots: string[] = [];
   isLoadingSlots: boolean = false;
   rescheduleDoctorId: string = '';
+  touchedRescheduleDate: boolean = false;
+  touchedRescheduleTime: boolean = false;
 
   constructor(
     private appointmentService: AppointmentService,
@@ -316,7 +318,7 @@ onSearch(): void {
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#3e7ba6',
       customClass: {
-        popup: 'custom-popup'
+        popup: 'swal-zindex-fix'
       }
     }).then((result) => {
       if (result.isConfirmed) {
@@ -328,7 +330,12 @@ onSearch(): void {
         ).subscribe({
           next: () => {
             this.closeRescheduleModal();
-            Swal.fire('¡Éxito!', 'La cita ha sido reagendada.', 'success');
+            Swal.fire({
+              icon: 'success',
+              title: '¡Éxito!',
+              text: 'La cita ha sido reagendada.',
+              customClass: { popup: 'swal-zindex-fix' }
+            });
             if (this.viewMode === 'all') {
               this.loadAllAppointments();
             } else {
@@ -337,7 +344,12 @@ onSearch(): void {
           },
           error: (err) => {
             console.error('Error rescheduling:', err);
-            Swal.fire('Error', 'No se pudo reagendar la cita. Es posible que el horario ya no esté disponible.', 'error');
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo reagendar la cita. Es posible que el horario ya no esté disponible.',
+              customClass: { popup: 'swal-zindex-fix' }
+            });
           }
         });
       }

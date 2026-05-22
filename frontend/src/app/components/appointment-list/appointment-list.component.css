@@ -763,3 +763,24 @@
         gap: 0.5rem;
     }
 }
+
+/* Validación de formularios */
+.required-star {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+.field-invalid {
+    border-color: #dc2626 !important;
+}
+
+.field-invalid:focus {
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15) !important;
+}
+
+.field-error {
+    color: #dc2626;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    display: block;
+}
