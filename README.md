@@ -27,7 +27,7 @@ Accede a la carpeta del servidor e instala las dependencias:
 
 ```bash
 cd backend
-npm install
+pnpm install
 ```
 
 #### Configuración de Keycloak (Autenticación)

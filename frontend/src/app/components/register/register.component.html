@@ -27,16 +27,16 @@
                 <!-- Fila de nombres y apellidos (2 columnas) -->
                 <div class="form-row">
                     <div class="form-field">
-                        <label>NOMBRES *</label>
-                        <input type="text" formControlName="firstName" placeholder="Juan"
+                        <label for="reg-firstName">NOMBRES *</label>
+                        <input type="text" id="reg-firstName" formControlName="firstName" placeholder="Juan"
                             [class.input-error]="f['firstName'].invalid && f['firstName'].touched">
                         <div *ngIf="f['firstName'].invalid && f['firstName'].touched" class="error-message">
                             Por favor escriba sus nombres.
                         </div>
                     </div>
                     <div class="form-field">
-                        <label>APELLIDOS *</label>
-                        <input type="text" formControlName="lastName" placeholder="Perez"
+                        <label for="reg-lastName">APELLIDOS *</label>
+                        <input type="text" id="reg-lastName" formControlName="lastName" placeholder="Perez"
                             [class.input-error]="f['lastName'].invalid && f['lastName'].touched">
                         <div *ngIf="f['lastName'].invalid && f['lastName'].touched" class="error-message">
                             Por favor escriba sus apellidos.
@@ -47,8 +47,8 @@
                 <!-- Fila de documento y teléfono (2 columnas) -->
                 <div class="form-row">
                     <div class="form-field">
-                        <label>CÉDULA *</label>
-                        <input type="text" formControlName="document" placeholder="Número de cédula"
+                        <label for="reg-document">CÉDULA *</label>
+                        <input type="text" id="reg-document" formControlName="document" placeholder="Número de cédula"
                             [class.input-error]="f['document'].invalid && f['document'].touched">
                         <div *ngIf="f['document'].invalid && f['document'].touched" class="error-message">
                             <span *ngIf="f['document'].errors?.['required']">El documento es obligatorio.</span>
@@ -57,8 +57,8 @@
                         </div>
                     </div>
                     <div class="form-field">
-                        <label>TELÉFONO *</label>
-                        <input type="tel" formControlName="phone" placeholder="Número de celular"
+                        <label for="reg-phone">TELÉFONO *</label>
+                        <input type="tel" id="reg-phone" formControlName="phone" placeholder="Número de celular"
                             [class.input-error]="f['phone'].invalid && f['phone'].touched">
                         <div *ngIf="f['phone'].invalid && f['phone'].touched" class="error-message">
                             <span *ngIf="f['phone'].errors?.['required']">El teléfono es obligatorio.</span>
@@ -70,16 +70,16 @@
                 <!-- Fila de correo y género (2 columnas) -->
                 <div class="form-row">
                     <div class="form-field">
-                        <label>CORREO ELECTRÓNICO</label>
-                        <input type="email" formControlName="email" placeholder="correo@ejemplo.com"
+                        <label for="reg-email">CORREO ELECTRÓNICO</label>
+                        <input type="email" id="reg-email" formControlName="email" placeholder="correo@ejemplo.com"
                             [class.input-error]="f['email'].invalid && f['email'].touched">
                         <div *ngIf="f['email'].invalid && f['email'].touched" class="error-message">
                             Por favor ingrese un correo válido.
                         </div>
                     </div>
                     <div class="form-field">
-                        <label>GÉNERO *</label>
-                        <select formControlName="gender"
+                        <label for="reg-gender">GÉNERO *</label>
+                        <select id="reg-gender" formControlName="gender"
                             [class.input-error]="f['gender'].invalid && f['gender'].touched">
                             <option value="">Seleccione</option>
                             <option value="M">Masculino</option>
@@ -94,9 +94,9 @@
 
                 <!-- Campo de contraseña -->
                 <div class="form-field">
-                    <label>CONTRASEÑA *</label>
+                    <label for="reg-password">CONTRASEÑA *</label>
                     <div class="password-field-wrapper">
-                        <input [type]="showPassword() ? 'text' : 'password'" formControlName="password"
+                        <input [type]="showPassword() ? 'text' : 'password'" id="reg-password" formControlName="password"
                             placeholder="Mínimo 8 caracteres"
                             [class.input-error]="f['password'].invalid && f['password'].touched">
                     </div>

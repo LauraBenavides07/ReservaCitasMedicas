@@ -28,10 +28,10 @@
 
                     <!-- Documento -->
                     <div class="form-field full-width">
-                        <label>DOCUMENTO DE IDENTIDAD *</label>
+                        <label for="doc-input">DOCUMENTO DE IDENTIDAD *</label>
 
                         <div class="input-with-button">
-                            <input type="text" formControlName="patientDocument" placeholder="Ej: 12345678"
+                            <input type="text" id="doc-input" formControlName="patientDocument" placeholder="Ej: 12345678"
                                 [class.input-error]="f['patientDocument'].touched && f['patientDocument'].errors">
 
                             <!-- Botón con lógica de búsqueda -->
@@ -66,16 +66,16 @@
                     <!-- Celular y género -->
                     <div class="form-row">
                         <div class="form-field">
-                            <label>CELULAR *</label>
-                            <input type="tel" formControlName="phone" placeholder="300 000 0000"
+                            <label for="phone-input">CELULAR *</label>
+                            <input type="tel" id="phone-input" formControlName="phone" placeholder="300 000 0000"
                                 [class.input-error]="f['phone'].touched && f['phone'].invalid">
                             <span class="validation-message"
                                 *ngIf="f['phone'].touched && f['phone'].invalid">Obligatorio</span>
                         </div>
 
                         <div class="form-field">
-                            <label>GÉNERO *</label>
-                            <select formControlName="gender"
+                            <label for="gender-input">GÉNERO *</label>
+                            <select id="gender-input" formControlName="gender"
                                 [class.input-error]="f['gender'].touched && f['gender'].invalid">
                                 <option value="">Seleccionar...</option>
                                 <option value="M">Masculino</option>
@@ -89,8 +89,8 @@
 
                     <!-- Correo -->
                     <div class="form-field full-width">
-                        <label>CORREO ELECTRÓNICO</label>
-                        <input type="email" formControlName="email" placeholder="paciente@ejemplo.com"
+                        <label for="email-input">CORREO ELECTRÓNICO</label>
+                        <input type="email" id="email-input" formControlName="email" placeholder="paciente@ejemplo.com"
                             [class.input-error]="f['email'].touched && f['email'].invalid">
                         <span class="validation-message" *ngIf="f['email'].touched && f['email'].invalid">Correo
                             inválido</span>
@@ -132,8 +132,8 @@
 
                     <div class="form-row">
                         <div class="form-field">
-                            <label>DÍA DE CITA *</label>
-                            <input type="date" formControlName="date" (change)="onDateChange()" [min]="today"
+                            <label for="date-input">DÍA DE CITA *</label>
+                            <input type="date" id="date-input" formControlName="date" (change)="onDateChange()" [min]="today"
                                 [class.input-error]="f['date'].touched && f['date'].invalid">
                             <span class="validation-message"
                                 *ngIf="f['date'].touched && f['date'].invalid">Obligatorio</span>
@@ -143,8 +143,8 @@
                         </div>
 
                         <div class="form-field">
-                            <label>HORARIO *</label>
-                            <select formControlName="time"
+                            <label for="time-input">HORARIO *</label>
+                            <select id="time-input" formControlName="time"
                                 [class.input-error]="f['time'].touched && f['time'].invalid">
                                 <option value="">Ver turnos...</option>
                                 <option *ngFor="let slot of availableSlots()" [value]="slot">

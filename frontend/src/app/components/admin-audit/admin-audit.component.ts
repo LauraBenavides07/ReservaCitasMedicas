@@ -164,6 +164,18 @@ export class AdminAuditComponent implements OnInit {
     }
   }
 
+  getResponsibleDisplay(changedBy: string, role: string): string {
+    if (!changedBy) return '-';
+    if (role === 'patient' && changedBy.includes('@')) {
+      const local = changedBy.split('@')[0];
+      return `Paciente: ${local}`;
+    }
+    if (changedBy.includes('@')) {
+      return changedBy.split('@')[0];
+    }
+    return changedBy;
+  }
+
   getRoleLabel(role: string): string {
     const labels: Record<string, string> = {
       admin: 'Administrador',
