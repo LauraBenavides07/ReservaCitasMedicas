@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { AppointmentService, Appointment } from '../../services/appointment.service';
 import { DoctorService } from '../../services/doctor.service';
+import { ButtonComponent } from '../../shared/atoms/button/button.component';
 
 interface PatientDisplay {
   document: string;
@@ -25,7 +26,7 @@ interface PatientDisplay {
 @Component({
   selector: 'app-doctor-patients',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [ButtonComponent, CommonModule, RouterModule, FormsModule],
   templateUrl: './doctor-patients.component.html',
   styleUrls: ['./doctor-patients.component.css']
 })

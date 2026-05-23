@@ -105,26 +105,9 @@
     flex: 1;
 }
 
-/* Botón de búsqueda */
-.btn-buscar {
-    background: #0d2c5b;
-    color: #ffffff;
-    border: none;
-    padding: 0 1.25rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 0.85rem;
-    white-space: nowrap;
-    transition: background 0.2s;
-}
 
 .btn-buscar:hover {
     background: #0f3a6b;
-}
-
-.btn-buscar:hover {
-    background: #cbd5e1;
 }
 
 /* Base mobile: 1 columna para inputs divididos */
@@ -319,11 +302,6 @@
         min-height: 52px;
     }
 
-    .btn-buscar {
-        min-height: 52px;
-        padding: 0 1.5rem;
-    }
-
     .doctors-grid {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 1.25rem;
@@ -387,11 +365,6 @@
         font-size: 1.05rem;
         min-height: 56px;
     }
-
-    .btn-buscar {
-        min-height: 56px;
-        font-size: 1rem;
-    }
 }
 
 /* Ajustes para móvil vertical muy pequeño (ancho máximo 340px) */
@@ -415,12 +388,6 @@
         padding: 0.65rem 0.75rem;
         font-size: 0.85rem;
         min-height: 40px;
-    }
-
-    .btn-buscar {
-        min-height: 40px;
-        padding: 0 0.75rem;
-        font-size: 0.85rem;
     }
 
     .form-field label {

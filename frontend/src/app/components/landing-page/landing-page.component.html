@@ -18,12 +18,12 @@
 
   <!-- Botones de acción para versión escritorio -->
   <div class="nav-actions">
-    <button class="btn-outline-light" (click)="navigate.emit('login')">
+    <app-button variant="secondary" (clicked)="navigate.emit('login')">
       Iniciar sesión
-    </button>
-    <button class="btn-primary-light btn-nav" (click)="navigate.emit('register')">
+    </app-button>
+    <app-button variant="primary" (clicked)="navigate.emit('register')">
       Registrate
-    </button>
+    </app-button>
   </div>
 
   <!-- Botón para abrir/cerrar menú en dispositivos móviles -->
@@ -55,12 +55,12 @@
         <a href="#medicos" (click)="scrollTo('medicos', $event); toggleMenu()">Medicos</a>
       </nav>
       <div class="mobile-nav-actions">
-        <button class="btn-outline-light" (click)="navigate.emit('login'); toggleMenu()">
+        <app-button variant="secondary" [fullWidth]="true" (clicked)="navigate.emit('login'); toggleMenu()">
           Iniciar sesión
-        </button>
-        <button class="btn-primary-light" (click)="navigate.emit('register'); toggleMenu()">
+        </app-button>
+        <app-button variant="primary" [fullWidth]="true" (clicked)="navigate.emit('register'); toggleMenu()">
           Registrate
-        </button>
+        </app-button>
       </div>
     </div>
   </div>
@@ -189,9 +189,9 @@
             <span>Disponible</span>
           </div>
         </div>
-        <button class="specialist-btn" (click)="navigate.emit('login')">
+        <app-button variant="secondary" size="sm" (clicked)="navigate.emit('login')">
           Agendar cita
-        </button>
+        </app-button>
       </div>
 
       <div *ngIf="doctors().length === 0" class="loading-specialists">

@@ -2,7 +2,7 @@
 <div class="auth-overlay">
     <div class="auth-card">
         <!-- Botón para cerrar el modal -->
-        <button class="btn-close" (click)="navigate.emit('landing')" aria-label="Cerrar">×</button>
+        <app-button variant="secondary" size="sm" (clicked)="navigate.emit('landing')" ariaLabel="Cerrar">×</app-button>
         <!-- Encabezado del modal con logo y título -->
         <div class="auth-header">
             <div class="header-content">
@@ -123,9 +123,9 @@
                 </div>
 
                 <!-- Botón de envío del formulario -->
-                <button type="submit" class="btn btn-primary btn-full" [disabled]="isLoading()">
+                <app-button type="submit" variant="primary" [fullWidth]="true" [disabled]="isLoading()" (clicked)="onSubmit()">
                     {{ isLoading() ? 'Creando cuenta...' : 'Crear cuenta' }}
-                </button>
+                </app-button>
             </form>
         </div>
     </div>

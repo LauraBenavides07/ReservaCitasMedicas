@@ -1,12 +1,18 @@
 <div class="appointment-form-wrapper">
 
+    <!-- Banner de anticipación -->
+    <div class="alert alert-info">
+        <strong>ℹ️ Información importante:</strong> Las citas deben agendarse con <strong>mínimo {{ minAdvanceHours }} horas de anticipación</strong>
+        y <strong>máximo {{ maxAppointmentDays }} días de anticipación</strong>.
+    </div>
+
     <!-- Mensajes de estado (arriba para visibilidad inmediata en móvil) -->
     <div *ngIf="successMessage()" class="alert alert-success">
-        ✅ {{ successMessage() }}
+         {{ successMessage() }}
     </div>
 
     <div *ngIf="errorMessage()" class="alert alert-error">
-        ❌ {{ errorMessage() }}
+         {{ errorMessage() }}
     </div>
 
     <!-- Formulario principal -->
@@ -29,7 +35,7 @@
                                 [class.input-error]="f['patientDocument'].touched && f['patientDocument'].errors">
 
                             <!-- Botón con lógica de búsqueda -->
-                            <button type="button" class="btn-buscar" (click)="searchPatient()">🔍 Buscar</button>
+                            <app-button variant="secondary" size="sm" (clicked)="searchPatient()">🔍 Buscar</app-button>
                         </div>
                         <span class="validation-message"
                             *ngIf="f['patientDocument'].touched && f['patientDocument'].invalid">
@@ -131,11 +137,15 @@
                                 [class.input-error]="f['date'].touched && f['date'].invalid">
                             <span class="validation-message"
                                 *ngIf="f['date'].touched && f['date'].invalid">Obligatorio</span>
+                            <span class="validation-message" *ngIf="f['date'].value && isDateDisabled(f['date'].value)">
+                                {{ getDisabledDateReason(f['date'].value) }}
+                            </span>
                         </div>
 
                         <div class="form-field">
                             <label>HORARIO *</label>
-                            <select formControlName="time" [class.input-error]="f['time'].touched && f['time'].invalid">
+                            <select formControlName="time"
+                                [class.input-error]="f['time'].touched && f['time'].invalid">
                                 <option value="">Ver turnos...</option>
                                 <option *ngFor="let slot of availableSlots()" [value]="slot">
                                     {{ formatSlot(slot) }}
@@ -147,18 +157,15 @@
                     </div>
 
                     <!-- Mensaje si no hay horarios -->
-                    <div *ngIf="availableSlots().length === 0 && f['date'].value" class="alert alert-error">
-                        No hay turnos disponibles para esta fecha.
-                    </div>
+                    <!-- Ya manejado por errorMessage() arriba -->
 
                 </div>
 
                 <!-- Botón de envío -->
                 <div class="form-actions mt-1.5rem">
-                    <button type="submit" class="btn btn-primary full-width"
-                        [disabled]="appointmentForm.invalid || isSubmitting()">
-                        {{ isSubmitting() ? 'Procesando...' : 'Confirmar Cita Médica' }}
-                    </button>
+                    <app-button type="submit" variant="primary" [fullWidth]="true" [disabled]="appointmentForm.invalid || isSubmitting()" (clicked)="onSubmit()">
+                         {{ isSubmitting() ? 'Procesando...' : 'Confirmar Cita Médica' }}
+                    </app-button>
                 </div>
 
             </div>

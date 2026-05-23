@@ -475,31 +475,11 @@
     word-break: break-word;
 }
 
-.btn-link {
-    background: transparent;
-    border: none;
-    color: #1a3972;
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-}
 
 .btn-link:hover {
     text-decoration: underline;
 }
 
-.btn-primary {
-    background: #1a3972;
-    color: #ffffff;
-    border: none;
-    padding: 0.875rem 1.25rem;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    width: 100%;
-}
 
 .btn-primary:hover:not(:disabled) {
     background: #0d2c5b;

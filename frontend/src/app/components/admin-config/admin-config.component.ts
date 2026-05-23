@@ -5,10 +5,12 @@ import { DoctorService, Doctor } from '../../services/doctor.service';
 import { ConfigService, GlobalConfig } from '../../services/config.service';
 import { AppointmentService } from '../../services/appointment.service';
 import Swal from 'sweetalert2';
+import { ButtonComponent } from '../../shared/atoms/button/button.component';
+
 @Component({
   selector: 'app-admin-config',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [ButtonComponent,CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './admin-config.component.html',
   styleUrls: ['./admin-config.component.css']
 })

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { AppointmentService } from '../../services/appointment.service';
 import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
+import { ButtonComponent } from '../../shared/atoms/button/button.component';
 
 @Component({
   selector: 'app-patient-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [ButtonComponent, CommonModule],
   templateUrl: './patient-dashboard.component.html',
   styleUrls: ['./patient-dashboard.component.css']
 })

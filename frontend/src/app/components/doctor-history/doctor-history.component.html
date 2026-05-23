@@ -4,9 +4,9 @@
         <div class="header-title">
             <p>Consulte el historial completo de sus citas realizadas</p>
         </div>
-        <button class="btn btn-secondary" (click)="exportCSV()">
+        <app-button variant="secondary" (clicked)="exportCSV()">
             📥 Exportar a CSV
-        </button>
+        </app-button>
     </header>
 
     <div class="content-body">
@@ -85,9 +85,7 @@
                 <input type="text" class="search-input" placeholder="Buscar paciente o motivo..." [(ngModel)]="searchTerm"
                     (keyup.enter)="onSearchChange()">
             </div>
-            <button class="btn-search" (click)="onSearchChange()">
-                Buscar
-            </button>
+            <app-button variant="primary" (clicked)="onSearchChange()">Buscar</app-button>
         </div>
 
         <!-- Loading state -->

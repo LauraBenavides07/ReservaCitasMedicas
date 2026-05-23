@@ -151,16 +151,6 @@
     box-sizing: border-box;
 }
 
-.btn-search {
-    background-color: #0d2c5b;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 0 1.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
 
 /* ============================================
    ESTADOS (Loading / Empty)
@@ -410,42 +400,6 @@
     width: 100%;
 }
 
-.btn-modify {
-    background: #0d2c5b;
-    color: white;
-    border: none;
-    padding: 0.5rem;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    transition: all 0.2s;
-    width: 100%;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-}
-
-.btn-history {
-    background: white;
-    color: #294d67;
-    border: 1px solid #294d67;
-    padding: 0.5rem;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    transition: all 0.2s;
-    width: 100%;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-}
-
 .btn-history:hover {
     background-color: #f1f5f9 !important;
 }
@@ -537,25 +491,6 @@
     margin-top: 1rem;
 }
 
-.btn-cancel {
-    background: white;
-    border: 1px solid #cbd5e1;
-    color: #475569;
-    padding: 0.6rem 1.2rem;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.btn-save {
-    background: #1e6bf0;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-}
 
 /* ============================================
    RESPONSIVE BREAKPOINTS

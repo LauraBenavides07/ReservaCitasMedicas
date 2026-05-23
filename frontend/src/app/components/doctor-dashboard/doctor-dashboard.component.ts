@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -6,12 +6,8 @@ import { AppointmentService, Appointment } from '../../services/appointment.serv
 import { AuthService } from '../../services/auth.service';
 import { DoctorService } from '../../services/doctor.service';
 import Swal from 'sweetalert2';
+import { ButtonComponent } from '../../shared/atoms/button/button.component';
 
-interface HttpError {
-    error?: {message?: string;};
-    message?: string;
-    status?: number;
-}
 
 export interface DisplayAppointment {
     id: string;
@@ -27,7 +23,7 @@ export interface DisplayAppointment {
 @Component({
     selector: 'app-doctor-dashboard',
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule],
+    imports: [ButtonComponent, CommonModule, FormsModule, RouterModule],
     providers: [DatePipe],
     templateUrl: './doctor-dashboard.component.html',
     styleUrls: ['./doctor-dashboard.component.css']
@@ -55,7 +51,8 @@ export class DoctorDashboardComponent implements OnInit {
         private appointmentService: AppointmentService,
         private authService: AuthService,
         private doctorService: DoctorService,
-        private datePipe: DatePipe
+        private datePipe: DatePipe,
+        private cdr: ChangeDetectorRef 
     ) { }
     
     doctors: any[] = [];
@@ -127,6 +124,23 @@ export class DoctorDashboardComponent implements OnInit {
                 }
             });
         }
+        window.addEventListener('appointment-created', () => {
+        console.log('Evento recibido, recargando citas...');
+        this.loadAppointments();
+        });
+
+        window.addEventListener('appointment-updated', () => {
+            this.loadAppointments();
+        });    
+    }
+    
+    trackById(index: number, apt: DisplayAppointment): string {
+        return apt.id;
+    }
+
+    ngOnDestroy(): void {
+        window.removeEventListener('appointment-created', () => {});
+        window.removeEventListener('appointment-updated', () => {});
     }
 
     updateDisplayDate(date: Date | null) {
@@ -179,12 +193,16 @@ export class DoctorDashboardComponent implements OnInit {
                 const cacheKey = this.selectedDate ? `cached_dashboard_${this.selectedDate}` : 'cached_dashboard_all';
                 localStorage.setItem(cacheKey, JSON.stringify(this.appointments));
                 this.calculateStats();
+                
+                // Forzar detección de cambios después de cargar
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error('Error al cargar citas:', err);
                 this.appointments = [];
                 this.calculateStats();
                 this.showErrorModal('Error al cargar citas', 'No se pudieron cargar las citas. Por favor, intenta nuevamente.');
+                this.cdr.detectChanges();
             }
         });
     }
@@ -212,6 +230,7 @@ export class DoctorDashboardComponent implements OnInit {
             icon: 'warning',
             title: 'Fecha requerida',
             text: 'Por favor, selecciona una fecha antes de exportar las citas.',
+            toast: true,
             customClass: {
                 popup: 'custom-popup',
                 title: 'custom-title',
@@ -226,6 +245,7 @@ export class DoctorDashboardComponent implements OnInit {
             icon: 'info',
             title: 'Sin datos para exportar',
             text: 'No hay citas programadas en el rango seleccionado.',
+            toast: true,
             customClass: {
                 popup: 'custom-popup',
                 title: 'custom-title',
@@ -301,112 +321,94 @@ export class DoctorDashboardComponent implements OnInit {
         }
     });
 }
+    private updateAppointmentStatus(aptId: string, newStatus: string): void {
+        const appointment = this.appointments.find(a => a.id === aptId);
+        if (appointment) {
+            appointment.status = newStatus;
+            this.calculateStats();
+            // Forzar la detección de cambios inmediatamente
+            this.cdr.detectChanges();
+            // También forzar un pequeño delay para asegurar la actualización
+            setTimeout(() => {
+                this.cdr.detectChanges();
+            }, 50);
+        }
+    }
 
     confirmAppointment(apt: DisplayAppointment): void {
-        Swal.fire({
-            title: 'Confirmar cita',
-            html: `¿Está seguro de que desea <strong>confirmar</strong> la cita con <strong>${apt.patientName}</strong>?`,
-            icon: 'question',
-            showCancelButton: true,
-            customClass: {
-                popup: 'custom-popup',
-                title: 'custom-title',
-                htmlContainer: 'custom-html',
-                confirmButton: 'custom-success-btn',
-                cancelButton: 'custom-cancel-btn'
-            },
-            confirmButtonText: 'Sí, confirmar',
-            cancelButtonText: 'Cancelar'
-        }).then((result: any) => {
-            if (result.isConfirmed) {
-                this.appointmentService.confirmAppointment(apt.id).subscribe({
-                    next: () => {
-                        apt.status = 'Confirmada';
-                        this.calculateStats();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Cita confirmada',
-                            text: `La cita con ${apt.patientName} ha sido confirmada exitosamente.`,
-                            customClass: {
-                                popup: 'custom-popup',
-                                title: 'custom-title',
-                                confirmButton: 'custom-success-btn'
-                            },
-                            confirmButtonText: 'Aceptar'
-                        });
-                    },
-                    error: (err: Error) => {
-                        console.error('Error al confirmar la cita:', err);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'No se pudo confirmar la cita',
-                            text: 'Ocurrió un problema. Por favor, intenta nuevamente.',
-                            customClass: {
-                                popup: 'custom-popup',
-                                title: 'custom-title',
-                                confirmButton: 'custom-confirm-btn'
-                            },
-                            confirmButtonText: 'Entendido'
-                        });
-                    }
-                });
-            }
-        });
-    }
+    Swal.fire({
+        title: 'Confirmando cita...',
+        text: 'Por favor espera',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); },
+        customClass: { popup: 'custom-popup', title: 'custom-title' }
+    });
 
+    this.appointmentService.confirmAppointment(apt.id).subscribe({
+        next: () => {
+            // Usar el método auxiliar
+            this.updateAppointmentStatus(apt.id, 'Confirmada');
+            
+            Swal.close();
+            this.showSuccessToast(`Cita de ${apt.patientName} confirmada`);
+            
+            // Forzar una segunda detección después del toast
+            setTimeout(() => {
+                this.cdr.detectChanges();
+            }, 100);
+        },
+        error: () => {
+            Swal.close();
+            this.showErrorToast('No se pudo confirmar la cita');
+            this.cdr.detectChanges();
+        }
+    });
+}
     cancelAppointment(apt: DisplayAppointment): void {
-        Swal.fire({
-            title: 'Cancelar cita',
-            html: `¿Está seguro de que desea <strong>cancelar</strong> la cita con <strong>${apt.patientName}</strong>?<br><small>Esta acción no se puede revertir.</small>`,
-            icon: 'warning',
-            showCancelButton: true,
-            customClass: {
-                popup: 'custom-popup',
-                title: 'custom-title',
-                htmlContainer: 'custom-html',
-                confirmButton: 'custom-danger-btn',
-                cancelButton: 'custom-cancel-btn'
-            },
-            confirmButtonText: 'Sí, cancelar cita',
-            cancelButtonText: 'No, mantener'
-        }).then((result: any) => {
-            if (result.isConfirmed) {
-                this.appointmentService.cancelAppointment(apt.id).subscribe({
-                    next: () => {
-                        apt.status = 'Cancelada';
-                        this.calculateStats();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Cita cancelada',
-                            text: `La cita con ${apt.patientName} ha sido cancelada.`,
-                            customClass: {
-                                popup: 'custom-popup',
-                                title: 'custom-title',
-                                confirmButton: 'custom-success-btn'
-                            },
-                            confirmButtonText: 'Aceptar'
-                        });
-                    },
-                    error: (err: Error) => {
-                        console.error('Error al cancelar la cita:', err);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'No se pudo cancelar la cita',
-                            text: 'Ocurrió un problema. Por favor, intenta nuevamente.',
-                            customClass: {
-                                popup: 'custom-popup',
-                                title: 'custom-title',
-                                confirmButton: 'custom-confirm-btn'
-                            },
-                            confirmButtonText: 'Entendido'
-                        });
-                    }
-                });
-            }
-        });
-    }
+    Swal.fire({
+        title: 'Cancelar cita',
+        text: `¿Estás seguro de cancelar la cita con ${apt.patientName}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'No, mantener',
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
+        customClass: { popup: 'custom-popup', title: 'custom-title' }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Cancelando cita...',
+                text: 'Por favor espera',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); },
+                customClass: { popup: 'custom-popup', title: 'custom-title' }
+            });
+
+            this.appointmentService.cancelAppointment(apt.id).subscribe({
+                next: () => {
+                    // Usar el método auxiliar
+                    this.updateAppointmentStatus(apt.id, 'Cancelada');
+                    
+                    Swal.close();
+                    this.showSuccessToast(`Cita de ${apt.patientName} cancelada`);
+                    
+                    setTimeout(() => {
+                        this.cdr.detectChanges();
+                    }, 100);
+                },
+                error: () => {
+                    Swal.close();
+                    this.showErrorToast('No se pudo cancelar la cita');
+                    this.cdr.detectChanges();
+                }
+            });
+        }
+    });
+}
 
     completeAppointment(apt: DisplayAppointment): void {
+        // Abrir el modal HTML (NO SweetAlert)
         this.selectedAppointment = apt;
         this.appointmentObservations = '';
         this.appointmentDiagnosis = '';
@@ -414,6 +416,7 @@ export class DoctorDashboardComponent implements OnInit {
         this.rescheduleDate = '';
         this.rescheduleTime = '';
         this.rescheduleDoctorId = this.doctorId;
+        this.availableSlots = [];
         this.isCompletionModalOpen = true;
     }
 
@@ -459,42 +462,48 @@ export class DoctorDashboardComponent implements OnInit {
     }
 
     confirmCompletion(): void {
-        if (!this.selectedAppointment) return;
+    if (!this.selectedAppointment) return;
 
-        const apt = this.selectedAppointment;
-        
-        // Use standard completion logic
-        this.appointmentService.completeAppointment(
-            apt.id, 
-            this.appointmentObservations, 
-            this.appointmentDiagnosis
-        ).subscribe({
-            next: () => {
-                apt.status = 'Completada';
-                this.calculateStats();
+    const apt = this.selectedAppointment;
+    
+    Swal.fire({
+        title: 'Completando cita...',
+        text: 'Por favor espera',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); },
+        customClass: { popup: 'custom-popup', title: 'custom-title' }
+    });
+
+    this.appointmentService.completeAppointment(
+        apt.id, 
+        this.appointmentObservations, 
+        this.appointmentDiagnosis
+    ).subscribe({
+        next: () => {
+            // Usar el método auxiliar
+            this.updateAppointmentStatus(apt.id, 'Completada');
+            
+            if (this.shouldReschedule && this.rescheduleDate && this.rescheduleTime) {
+                this.performReschedule(apt);
+            } else {
+                Swal.close();
+                this.closeCompletionModal();
+                this.showSuccessToast(`Cita de ${apt.patientName} completada`);
                 
-                if (this.shouldReschedule && this.rescheduleDate && this.rescheduleTime) {
-                    this.performReschedule(apt);
-                } else {
-                    this.closeCompletionModal();
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Cita completada',
-                        text: `La cita con ${apt.patientName} ha sido marcada como completada.`,
-                        customClass: {
-                            container: 'swal-zindex-fix',
-                popup: 'swal-zindex-fix'
-                        },
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
-            },
-            error: (err: any) => {
-                console.error('Error al completar la cita:', err);
-                this.showErrorModal('Error', 'No se pudo completar la cita. Intente de nuevo.');
+                setTimeout(() => {
+                    this.cdr.detectChanges();
+                }, 100);
             }
-        });
-    }
+        },
+        error: (err: any) => {
+            console.error('Error al completar la cita:', err);
+            Swal.close();
+            this.closeCompletionModal();
+            this.showErrorToast('No se pudo completar la cita');
+            this.cdr.detectChanges();
+        }
+    });
+}
 
     private performReschedule(apt: DisplayAppointment): void {
         const createDto = {
@@ -553,6 +562,45 @@ export class DoctorDashboardComponent implements OnInit {
         });
     }
 
+    private showSuccessToast(message: string): void {
+        Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: message,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            background: '#10b981',
+            color: 'white',
+            customClass: {
+                popup: 'custom-toast'
+            }
+        });
+    }
+
+    private showErrorToast(message: string): void {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: message,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true,
+            background: '#ef4444',
+            color: 'white',
+            customClass: {
+                popup: 'custom-toast'
+            }
+        });
+    }
+    // ============================================
+    // MÉTODOS AUXILIARES
+    // ============================================
+
     logout() {
         this.authService.logout();
         window.location.href = '/login';
@@ -592,4 +640,7 @@ export class DoctorDashboardComponent implements OnInit {
             default: return 'status-default';
         }
     }
+
+    
 }
+

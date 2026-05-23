@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { AppointmentService, Appointment } from '../../services/appointment.service';
 import { DoctorService } from '../../services/doctor.service';
 import Swal from 'sweetalert2';
+import { ButtonComponent } from '../../shared/atoms/button/button.component';
 
 interface HistoryDisplay {
   id: string;
@@ -22,7 +23,7 @@ interface HistoryDisplay {
 @Component({
   selector: 'app-doctor-history',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [ButtonComponent, CommonModule, RouterModule, FormsModule],
   templateUrl: './doctor-history.component.html',
   styleUrls: ['./doctor-history.component.css']
 })

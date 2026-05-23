@@ -2,12 +2,13 @@
 import { Component, EventEmitter, Output, OnInit, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DoctorService, Doctor } from '../../services/doctor.service';
+import { ButtonComponent } from '../../shared/atoms/button/button.component';
 
 
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [ButtonComponent, CommonModule],
   templateUrl: './landing-page.component.html',
   styleUrls: ['./landing-page.component.css']
 })

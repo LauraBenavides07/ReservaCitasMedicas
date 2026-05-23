@@ -1,0 +1,18 @@
+<button
+  [type]="type"
+  [disabled]="disabled || loading"
+  [ngClass]="buttonClasses"
+  [attr.aria-label]="accessibilityLabel"
+  [attr.aria-busy]="loading"
+  (click)="onClick()">
+
+  <!-- Spinner cuando está cargando -->
+  <span *ngIf="loading" class="btn-spinner" aria-hidden="true">
+    <span class="spinner-ring"></span>
+  </span>
+
+  <!-- Contenido del botón -->
+  <span class="btn-content">
+    <ng-content></ng-content>
+  </span>
+</button>

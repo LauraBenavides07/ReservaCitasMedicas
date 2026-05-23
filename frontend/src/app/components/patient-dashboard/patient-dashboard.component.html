@@ -8,9 +8,9 @@
 
         <div class="card-header">
             <h3 class="card-title">Mis citas</h3>
-            <button class="btn btn-primary btn-patient-new" (click)="goToNuevaCita()">
+            <app-button variant="primary" (clicked)="goToNuevaCita()">
                 + Nueva cita
-            </button>
+            </app-button>
         </div>
 
         <div *ngIf="appointments().length === 0" class="empty-state">
@@ -49,10 +49,9 @@
 
                     <td class="actions-cell" data-label="ACCIONES">
                         <div class="actions-container">
-                            <button *ngIf="app.status === 'agendada'" class="btn btn-cancel-red btn-sm"
-                                (click)="cancel(app.id)">
+                            <app-button *ngIf="app.status === 'agendada'" variant="danger" size="sm" (clicked)="cancel(app.id)">
                                 Cancelar
-                            </button>
+                            </app-button>
                         </div>
                     </td>
                 </tr>

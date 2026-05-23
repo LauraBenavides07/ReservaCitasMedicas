@@ -27,22 +27,6 @@
     width: 100%;
 }
 
-.btn-view {
-    background: transparent;
-    border: 2px solid #1e3a6a;
-    color: #1e3a6a;
-    padding: 0.7rem 1.6rem;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
 .btn-view.active {
     background: #1e3a6a;
     color: white;
@@ -132,24 +116,6 @@
 .search-field.date-field {
     max-width: 250px;
     flex: none;
-}
-
-.btn-search {
-    background: #1e3a6a;
-    color: #ffffff;
-    border: none;
-    padding: 0 1.5rem;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    height: 44px;
-    transition: background 0.2s;
-    white-space: nowrap;
-    flex-shrink: 0;
 }
 
 .btn-search:hover:not(:disabled) {
@@ -373,12 +339,6 @@
     .btn-search {
         font-size: 0.85rem;
         min-height: 42px;
-    }
-
-    .btn-view {
-        font-size: 0.8rem;
-        padding: 0.5rem 0.8rem;
-        min-height: 40px;
     }
 
     .styled-table th,
@@ -636,29 +596,6 @@
     flex-shrink: 0;
 }
 
-.btn-text-only {
-    background: transparent;
-    border: none;
-    color: #64748b;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 0.85rem;
-    padding: 0.5rem 0.75rem;
-}
-
-/* CAMBIADO: Botón sólido sin degradado */
-.btn-confirm-gradient {
-    background-color: #1e3a6a;
-    /* Color sólido azul oscuro */
-    color: white;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s;
-}
 
 .btn-confirm-gradient:hover:not(:disabled) {
     background-color: #152e4d;
@@ -675,19 +612,6 @@
 
 .mt-3 {
     margin-top: 1rem;
-}
-
-.btn-reschedule-mini {
-    background-color: #1e3a6a;
-    color: #ffffff;
-    border: none;
-    padding: 0.45rem 1rem;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn-reschedule-mini:hover {

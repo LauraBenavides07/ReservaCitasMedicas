@@ -135,6 +135,20 @@ export class AppointmentService {
     } catch (error: unknown) {
       const pgError = error as { code?: string };
       if (pgError?.code === '23505') {
+        // Race condition: intentar recuperar la cita que se creó
+        const existingAppointment = await this.appointmentRepository.findOneBy({
+          doctor: { id: doctor.id },
+          appointmentDate: createDto.date,
+          appointmentTime: createDto.time,
+        });
+
+        if (existingAppointment) {
+          // La cita existe - probablemente fue creada por otra petición en paralelo
+          // Retornar la cita existente en lugar de error
+          return existingAppointment;
+        }
+
+        // Si no existe, entonces sí fue un conflicto real
         throw new ConflictException(
           'El horario ya está ocupado para este médico.',
         );

@@ -506,23 +506,12 @@ textarea {
     margin-top: 1.5rem;
 }
 
-/* Botón de eliminar */
-.btn-delete {
-    background-color: #fff1f0;
-    color: var(--danger-color);
-    border: 1px solid var(--danger-color);
-}
 
 .btn-delete:hover {
     background-color: var(--danger-color);
     color: white;
 }
 
-/* Botón de cancelar */
-.btn-cancel {
-    background: transparent;
-    color: var(--text-muted);
-}
 
 /* ============================================
    RESPONSIVE BREAKPOINTS
@@ -550,10 +539,6 @@ textarea {
 
     .modal-actions {
         grid-template-columns: 1fr 1fr;
-    }
-
-    .btn-delete {
-        grid-column: span 2;
     }
 
     .tabs {
@@ -585,10 +570,6 @@ textarea {
         justify-content: flex-end;
     }
 
-    .btn-delete {
-        margin-right: auto;
-        grid-column: auto;
-    }
 
     .tabs {
         gap: 1rem;
@@ -669,10 +650,6 @@ textarea {
 
     .label {
         min-width: 70px;
-    }
-
-    .btn-edit-dark {
-        width: auto;
     }
 
     .tabs {

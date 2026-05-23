@@ -77,7 +77,7 @@
                 <input type="text" class="search-input" placeholder="Buscar por nombre, documento o teléfono..."
                     [(ngModel)]="searchTerm" (keyup.enter)="onSearchChange()">
             </div>
-            <button class="btn-search" (click)="onSearchChange()">Buscar</button>
+            <app-button variant="primary" (clicked)="onSearchChange()">Buscar</app-button>
         </div>
 
         <!-- Loading state -->
@@ -224,8 +224,8 @@
 
         <!-- Footer Actions -->
         <div class="modal-footer">
-            <button class="btn-cancel" (click)="closeModal()">Cancelar</button>
-            <button class="btn-save" (click)="saveModalData()">Guardar Cambios</button>
+            <app-button variant="secondary" (clicked)="closeModal()">Cancelar</app-button>
+            <app-button variant="primary" (clicked)="saveModalData()">Guardar Cambios</app-button>
         </div>
     </div>
 </div>

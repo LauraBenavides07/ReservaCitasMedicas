@@ -65,8 +65,8 @@ export class AppointmentService {
   getAvailableSlots(doctorId: string, date: string): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/available-slots?doctorId=${doctorId}&date=${date}`);
   }
-
   createAppointment(appointment: CreateAppointmentDto): Observable<Appointment> {
+    console.log('Enviando cita al backend:', JSON.stringify(appointment, null, 2));
     return this.http.post<Appointment>(this.apiUrl, appointment);
   }
 

@@ -71,7 +71,7 @@
         <ng-container *ngIf="step() === 2">
             <div class="card-header space-between">
                 <h3 class="step-title">Selecciona una fecha</h3>
-                <button class="btn-link" (click)="goToStep(1)">← Cambiar</button>
+                <app-button variant="secondary" size="sm" (clicked)="goToStep(1)">← Cambiar</app-button>
             </div>
             <div class="card-body">
                 <!-- Banner con información del médico seleccionado -->
@@ -108,7 +108,7 @@
         <ng-container *ngIf="step() === 3">
             <div class="card-header space-between">
                 <h3 class="step-title">Elige franja horaria</h3>
-                <button class="btn-link" (click)="goToStep(2)">← Cambiar</button>
+                <app-button variant="secondary" size="sm" (clicked)="goToStep(2)">← Cambiar</app-button>
             </div>
             <div class="card-body">
                 <div class="selected-context-banner">
@@ -132,7 +132,7 @@
         <ng-container *ngIf="step() === 4">
             <div class="card-header space-between">
                 <h3 class="step-title">Confirmar cita</h3>
-                <button class="btn-link" (click)="goToStep(3)" *ngIf="!isSubmitting()">← Cambiar</button>
+                <app-button variant="secondary" size="sm" (clicked)="goToStep(3)" *ngIf="!isSubmitting()">← Cambiar</app-button>
             </div>
             <div class="card-body">
                 <div class="summary-banner">
@@ -158,10 +158,9 @@
                 <div *ngIf="successMessage()" class="alert alert-success">{{ successMessage() }}</div>
 
                 <div class="form-actions">
-                    <button class="btn btn-primary full-width" (click)="confirmAppointment()"
-                        [disabled]="isSubmitting() || successMessage() !== ''">
+                    <app-button variant="primary" [fullWidth]="true" (clicked)="confirmAppointment()" [disabled]="isSubmitting() || successMessage() !== ''">
                         {{ isSubmitting() ? 'Procesando...' : '✓ Confirmar cita' }}
-                    </button>
+                    </app-button>
                 </div>
             </div>
         </ng-container>

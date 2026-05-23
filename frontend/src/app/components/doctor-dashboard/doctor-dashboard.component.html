@@ -8,11 +8,11 @@
             <!-- Date Filter -->
             <div class="date-filter-wrapper">
                 <input type="date" class="date-input" [ngModel]="selectedDate" (ngModelChange)="onDateChange($event)" />
-                <button class="btn-search" (click)="onSearchByDate()">Buscar</button>
+                <app-button variant="primary" (clicked)="onSearchByDate()">Buscar</app-button>
             </div>
-            <button class="btn btn-secondary" (click)="exportToCSV()">
-                📥 Exportar a CSV
-            </button>
+            <app-button variant="secondary" (clicked)="exportToCSV()">
+            📥 Exportar a CSV
+            </app-button>
         </div>
     </header>
 
@@ -76,7 +76,7 @@
             <h2 class="section-title">Pacientes del Día</h2>
 
             <div class="patient-cards-container">
-                <div *ngFor="let apt of appointments" class="patient-card" [ngClass]="getStatusClass(apt.status)">
+                <div *ngFor="let apt of appointments; trackBy: trackById" class="patient-card" [ngClass]="getStatusClass(apt.status)">
                     <div class="card-left">
                         <div class="time-badge">
                             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
@@ -129,19 +129,16 @@
 
                         <!-- Action Buttons -->
                         <div class="apt-actions">
-                                        <button *ngIf="apt.status === 'Pendiente'" class="btn btn-primary btn-action-fixed"
-                                            (click)="confirmAppointment(apt)">
-                                            Confirmar
-                                        </button>
-                                        <button *ngIf="apt.status === 'Confirmada'" class="btn btn-success btn-action-fixed"
-                                            (click)="completeAppointment(apt)">
-                                            Completar
-                                        </button>
-                                        <button *ngIf="apt.status === 'Pendiente' || apt.status === 'Confirmada'"
-                                            class="btn btn-outline btn-action-fixed" (click)="cancelAppointment(apt)">
-                                            Cancelar
-                                        </button>
-                        </div>
+                            <app-button *ngIf="apt.status === 'Pendiente'" variant="primary" size="sm" (clicked)="confirmAppointment(apt)">
+                                Confirmar
+                            </app-button>
+                            <app-button *ngIf="apt.status === 'Confirmada'" variant="success" size="sm" (clicked)="completeAppointment(apt)">
+                                Completar
+                            </app-button>
+                            <app-button *ngIf="apt.status === 'Pendiente' || apt.status === 'Confirmada'" variant="danger" size="sm" (clicked)="cancelAppointment(apt)">
+                                Cancelar
+                            </app-button>
+                            </div>
                     </div>
                 </div>
 
@@ -269,11 +266,10 @@
         </div>
 
         <div class="modal-footer-modern">
-            <button class="btn-text-only" (click)="closeCompletionModal()">Cancelar</button>
-            <button class="btn-confirm-gradient" (click)="confirmCompletion()" 
-                [disabled]="shouldReschedule && (!rescheduleDate || !rescheduleTime)">
+            <app-button variant="secondary" (clicked)="closeCompletionModal()">Cancelar</app-button>
+            <app-button variant="primary" (clicked)="confirmCompletion()" [disabled]="shouldReschedule && (!rescheduleDate || !rescheduleTime)">
                 Confirmar y Completar
-            </button>
+            </app-button>
         </div>
    </div>
 </div>

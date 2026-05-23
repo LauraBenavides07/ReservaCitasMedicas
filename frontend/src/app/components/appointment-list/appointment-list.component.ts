@@ -7,11 +7,12 @@ import Swal from 'sweetalert2';
 // Servicios y modelos
 import { AppointmentService, Appointment, AppointmentResponse } from '../../services/appointment.service';
 import { DoctorService, Doctor } from '../../services/doctor.service';
+import { ButtonComponent } from '../../shared/atoms/button/button.component';
 
 @Component({
   selector: 'app-appointment-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [ButtonComponent, CommonModule, FormsModule],
   templateUrl: './appointment-list.component.html',
   styleUrls: ['./appointment-list.component.css']
 })
@@ -156,7 +157,7 @@ export class AppointmentListComponent implements OnInit {
     // Cargar TODAS las citas
   loadAllAppointments(): void {
   this.loading = true;
-  this.viewMode = 'all';  // Cambia a modo 'all'
+  this.viewMode = 'all';
   this.hasSearched = true;
   
   this.appointmentService.getAllAppointments()
@@ -166,8 +167,23 @@ export class AppointmentListComponent implements OnInit {
     }))
     .subscribe({
       next: (data) => {
-        this.appointments = data;
-        this.total = data.length;
+        // ORDENAR: De más reciente a más antigua 
+        this.appointments = data.sort((a, b) => {
+          // Primero ordenar por fecha (descendente)
+          const dateA = a.appointmentDate || a.date;
+          const dateB = b.appointmentDate || b.date;
+          
+          if (dateA !== dateB) {
+            return dateB.localeCompare(dateA); // Más reciente primero
+          }
+          
+          // Si misma fecha, ordenar por hora (descendente)
+          const timeA = a.appointmentTime || a.time;
+          const timeB = b.appointmentTime || b.time;
+          return timeB.localeCompare(timeA);
+        });
+        
+        this.total = this.appointments.length;
       },
       error: (err) => console.error('Error loading all appointments:', err)
     });

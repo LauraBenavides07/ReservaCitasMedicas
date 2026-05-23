@@ -9,7 +9,7 @@ import { Logger } from '@nestjs/common';
 const logger = new Logger('Bootstrap');
 
 async function bootstrap() {
-  console.log('🚀 Usando RABBITMQ_URL:', process.env.RABBITMQ_URL || 'amqp://guest:guest@localhost:5672 (FALLBACK)');
+  console.log('Usando RABBITMQ_URL:', process.env.RABBITMQ_URL || 'amqp://guest:guest@localhost:5672 (FALLBACK)');
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {

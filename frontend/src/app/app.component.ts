@@ -15,11 +15,13 @@ import { DoctorPatientsComponent } from './components/doctor-patients/doctor-pat
 import { DoctorHistoryComponent } from './components/doctor-history/doctor-history.component';
 import { AdminAuditComponent } from './components/admin-audit/admin-audit.component';
 import { AppointmentHistoryTimelineComponent } from './components/appointment-history-timeline/appointment-history-timeline.component';
+import { ButtonComponent } from './shared/atoms/button/button.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
+    ButtonComponent,
     CommonModule,
     AppointmentListComponent,
     AppointmentFormComponent,

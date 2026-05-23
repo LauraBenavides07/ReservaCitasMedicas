@@ -56,30 +56,12 @@
     border-color: var(--primary-color);
 }
 
-.btn-search {
-    background-color: #0d2c5b;
-    color: white;
-    border: none;
-    border-radius: var(--radius);
-    padding: 0.5rem 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
+
 
 .btn-search:hover {
     background-color: #426180;
 }
 
-.btn-clear {
-    background-color: #e6eef2;
-    color: #0d2c5b;
-    border: 1px solid #0d2c5b;
-    border-radius: var(--radius);
-    padding: 0.5rem 1rem;
-    font-weight: 600;
-    cursor: pointer;
-}
 
 /* ============================================
    STATS
@@ -363,22 +345,7 @@
     border-top: 1px solid var(--soft-background);
 }
 
-.btn-action {
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-primary.btn-action-fixed {
+.btn-primary {
     background-color: #3e7ba6 !important;
     color: white !important;
     border: none !important;
@@ -388,7 +355,7 @@
     background-color: #2d5d80 !important;
 }
 
-.btn-success.btn-action-fixed {
+.btn-success {
     background-color: #10b981 !important;
     color: white !important;
     border: none !important;
@@ -398,7 +365,7 @@
     background-color: #059669 !important;
 }
 
-.btn-outline.btn-action-fixed {
+.btn-outline {
     background-color: #ef4444 !important;
     color: white !important;
     border: none !important;
@@ -409,8 +376,8 @@
 }
 
 /*  NUEVO: Forzar mismo tamaño para Completar y Cancelar */
-.btn-success.btn-action-fixed,
-.btn-outline.btn-action-fixed {
+.btn-success,
+.btn-outline {
     width: 100%;
     min-width: 130px;
     padding: 0.6rem 1rem;
@@ -611,17 +578,6 @@
    MODALS & FORMS (Consolidated)
    ============================================ */
 
-/* Button Consistency */
-.btn-action-fixed {
-    min-width: 110px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 1rem;
-    font-size: 0.9rem;
-}
-
 /* Modal Overlay */
 .modal-overlay {
     position: fixed;
@@ -815,57 +771,17 @@
     margin-bottom: 0.4rem;
 }
 
-/* Buttons */
-.btn-cancel {
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    background-color: #f1f5f9;
-    color: #475569;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.btn-save {
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    background-color: #3e7ba6;
-    color: white;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-}
 
 .btn-save:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
-.btn-text-only {
-    background: transparent;
-    border: none;
-    color: #64748b;
-    font-weight: 600;
-    cursor: pointer;
-    transition: color 0.2s;
-}
 
 .btn-text-only:hover {
     color: #1e293b;
 }
 
-/* Botón sólido sin degradado, alineado con tus colores */
-.btn-confirm-gradient {
-    background-color: #0d2c5b;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 6px -1px rgba(13, 44, 91, 0.2);
-}
 
 .btn-confirm-gradient:hover:not(:disabled) {
     background-color: #153b7a;
@@ -1290,4 +1206,28 @@ body,
     font-size: 0.75rem;
     margin-top: 0.25rem;
     display: block;
+}
+
+/* ============================================
+   TOASTS ESTÉTICOS
+   ============================================ */
+
+.swal2-popup.custom-toast {
+    border-radius: 12px !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.02) !important;
+}
+
+.swal2-popup.custom-toast .swal2-title {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.swal2-popup.custom-toast .swal2-html-container {
+    font-size: 0.8rem !important;
+}
+
+.swal2-popup.custom-toast .swal2-timer-progress-bar {
+    background: rgba(255, 255, 255, 0.3) !important;
 }

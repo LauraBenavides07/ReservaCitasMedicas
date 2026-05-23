@@ -27,7 +27,7 @@ Accede a la carpeta del servidor e instala las dependencias:
 
 ```bash
 cd backend
-pnpm install
+npm install
 ```
 
 #### Configuración de Keycloak (Autenticación)
@@ -61,7 +61,7 @@ PORT=3000
 
 Para tener datos de prueba (médicos y pacientes iniciales), ejecuta:
 ```bash
-npx ts-node seed.ts  # ⚠️ Este comando reinicia la base de datos (borra datos existentes). Si usas Docker, elimina el volumen o ejecuta `docker-compose down -v` antes si deseas un clean start.
+npx ts-node seed.ts  #  Este comando reinicia la base de datos (borra datos existentes). Si usas Docker, elimina el volumen o ejecuta `docker-compose down -v` antes si deseas un clean start.
 ```
 
 #### Iniciar el servidor

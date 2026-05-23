@@ -17,12 +17,12 @@
     <section *ngIf="activeTab() === 'horarios'" class="tab-content">
         <!-- Barra de acciones con botones para configuraciones globales y añadir médico -->
         <div class="actions-bar">
-            <button class="btn btn-secondary" (click)="showGlobalConfig.set(true)">
+            <app-button variant="secondary" (clicked)="showGlobalConfig.set(true)">
                 <span>⚙️</span> Configuración Global
-            </button>
-            <button class="btn btn-primary" (click)="openDoctorForm()">
+            </app-button>
+            <app-button variant="primary" (clicked)="openDoctorForm()">
                 <span>+</span> Añadir Médico
-            </button>
+            </app-button>
         </div>
 
         <!-- Lista de tarjetas de médicos -->
@@ -66,12 +66,12 @@
 
                 <!-- Acción: botón para editar -->
                 <div class="doc-actions">
-                    <button class="btn btn-secondary btn-sm" (click)="openExceptions(doctor)">
+                    <app-button variant="secondary" size="sm" (clicked)="openExceptions(doctor)">
                         📅 Excepciones
-                    </button>
-                    <button class="btn btn-primary btn-edit-dark" (click)="openDoctorForm(doctor)">
+                    </app-button>
+                    <app-button variant="primary" size="sm" (clicked)="openDoctorForm(doctor)">
                         ✏️ Editar
-                    </button>
+                    </app-button>
                 </div>
             </div>
         </div>
@@ -248,11 +248,9 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" [disabled]="doctorForm.invalid">Guardar
-                        Cambios</button>
-                    <button type="button" *ngIf="selectedDoctor()" (click)="deleteDoctor(selectedDoctor()!.id)"
-                        class="btn btn-delete">Eliminar Médico</button>
-                    <button type="button" (click)="showDoctorForm.set(false)" class="btn btn-cancel">Cancelar</button>
+                <app-button type="submit" variant="primary" [disabled]="doctorForm.invalid" (clicked)="saveDoctor()">Guardar Cambios</app-button>
+                <app-button *ngIf="selectedDoctor()" variant="danger" (clicked)="deleteDoctor(selectedDoctor()!.id)">Eliminar Médico</app-button>
+                <app-button variant="secondary" (clicked)="showDoctorForm.set(false)">Cancelar</app-button>
                 </div>
             </form>
         </div>
@@ -285,9 +283,9 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" [disabled]="configForm.invalid">Actualizar
-                        Reglas</button>
-                    <button type="button" (click)="showGlobalConfig.set(false)" class="btn btn-cancel">Cerrar</button>
+                    <app-button type="submit" variant="primary" [disabled]="doctorForm.invalid" (clicked)="saveDoctor()">Guardar Cambios</app-button>
+                    <app-button *ngIf="selectedDoctor()" variant="danger" (clicked)="deleteDoctor(selectedDoctor()!.id)">Eliminar Médico</app-button>
+                    <app-button variant="secondary" (clicked)="showDoctorForm.set(false)">Cancelar</app-button>
                 </div>
             </form>
         </div>
@@ -330,9 +328,8 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" [disabled]="exceptionForm.invalid">Bloquear
-                        Día</button>
-                    <button type="button" (click)="showExceptionForm.set(false)" class="btn btn-cancel">Cerrar</button>
+                    <app-button type="submit" variant="primary" [disabled]="exceptionForm.invalid" (clicked)="addException()">Bloquear Día</app-button>
+                    <app-button variant="secondary" (clicked)="showExceptionForm.set(false)">Cerrar</app-button>
                 </div>
             </form>
         </div>

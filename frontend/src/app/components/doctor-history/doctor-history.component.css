@@ -187,19 +187,6 @@
     margin: 0;
 }
 
-.btn-export {
-    background-color: #0d2c5b;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    /* equivalent to var(--radius-md) */
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
 
 /* ============================================
    SEARCH BAR — ancho completo en móvil
@@ -235,16 +222,6 @@
     box-sizing: border-box;
 }
 
-.btn-search {
-    background-color: #0d2c5b;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 0 1.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
 
 /* ============================================
    LOADING & EMPTY STATES

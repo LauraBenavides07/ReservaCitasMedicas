@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AppointmentService, CreateAppointmentDto } from '../../services/appointment.service';
 import { DoctorService, Doctor } from '../../services/doctor.service';
 import { AuthService } from '../../services/auth.service';
+import { ButtonComponent } from '../../shared/atoms/button/button.component';
 
 // Interfaz para representar una fecha en la interfaz de usuario
 interface UIDate {
@@ -16,7 +17,7 @@ interface UIDate {
 @Component({
   selector: 'app-patient-appointment-form',     // Selector HTML para usar el componente
   standalone: true,                            // Componente independiente
-  imports: [CommonModule],                     // Módulos importados
+  imports: [ButtonComponent, CommonModule],                     // Módulos importados
   templateUrl: './patient-appointment-form.component.html',  // Plantilla HTML
   styleUrls: ['./patient-appointment-form.component.css']    // Estilos CSS
 })
