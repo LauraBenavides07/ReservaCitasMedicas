@@ -103,10 +103,10 @@
 </div>
 
 <!-- Modal de Reagendamiento -->
-<div *ngIf="isRescheduleModalOpen" class="modal-overlay" (click)="closeRescheduleModal()">
-    <div class="modal-content completion-modal" (click)="$event.stopPropagation()">
+<div *ngIf="isRescheduleModalOpen" class="modal-overlay" (click)="closeRescheduleModal()" (keydown.escape)="closeRescheduleModal()">
+    <div class="modal-content completion-modal" role="dialog" aria-modal="true" aria-labelledby="reschedule-modal-title" (click)="$event.stopPropagation()">
         <div class="modal-header">
-            <h2 class="modal-title">Reagendar Cita</h2>
+            <h2 id="reschedule-modal-title" class="modal-title">Reagendar Cita</h2>
             <button class="modal-close-btn" (click)="closeRescheduleModal()">&times;</button>
         </div>
         <div class="modal-body">

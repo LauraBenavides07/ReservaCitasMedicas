@@ -153,10 +153,10 @@
 </div>
 
 <!-- Modal de Completar Cita -->
-<div *ngIf="isCompletionModalOpen" class="modal-overlay">
-    <div class="modal-content completion-modal">
+<div *ngIf="isCompletionModalOpen" class="modal-overlay" (keydown.escape)="closeCompletionModal()">
+    <div class="modal-content completion-modal" role="dialog" aria-modal="true" aria-labelledby="complete-modal-title">
         <div class="modal-header">
-            <h2 class="modal-title">Finalizar Atención Médica</h2>
+            <h2 id="complete-modal-title" class="modal-title">Finalizar Atención Médica</h2>
             <button class="modal-close-btn" (click)="closeCompletionModal()">&times;</button>
         </div>
         <div class="modal-body">

@@ -111,7 +111,7 @@
 
                 <!-- Lista de doctores -->
                 <div class="doctors-grid">
-                    <div class="doctor-box" *ngFor="let doctor of doctors()"
+                    <button type="button" class="doctor-box" *ngFor="let doctor of doctors()"
                         [class.selected]="f['doctorId'].value === doctor.id" (click)="selectDoctor(doctor.id)">
 
                         <div class="doctor-avatar" [ngStyle]="{'background-color': getDoctorColor(doctor.id)}">
@@ -122,7 +122,7 @@
                             <h4>Dr(a). {{ doctor.name }}</h4>
                             <p class="specialty">{{ doctor.specialty }}</p>
                         </div>
-                    </div>
+                    </button>
                 </div>
 
                 <!-- Sección de agendamiento -->

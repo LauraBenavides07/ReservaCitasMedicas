@@ -167,9 +167,9 @@
     </section>
 
     <!-- Modal Médico -->
-    <div *ngIf="showDoctorForm()" class="modal-overlay" (click)="showDoctorForm.set(false)">
-        <div class="modal" (click)="$event.stopPropagation()">
-            <h3 class="modal-title">
+    <div *ngIf="showDoctorForm()" class="modal-overlay" (click)="showDoctorForm.set(false)" (keydown.escape)="showDoctorForm.set(false)">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="doctor-modal-title" (click)="$event.stopPropagation()">
+            <h3 id="doctor-modal-title" class="modal-title">
                 {{ selectedDoctor() ? 'Editar Médico' : 'Añadir Médico' }}
             </h3>
             <form [formGroup]="doctorForm" (ngSubmit)="saveDoctor()" class="form-grid">
@@ -257,9 +257,9 @@
     </div>
 
     <!-- Modal Configuración Global -->
-    <div *ngIf="showGlobalConfig()" class="modal-overlay" (click)="showGlobalConfig.set(false)">
-        <div class="modal" (click)="$event.stopPropagation()">
-            <h3 class="modal-title">Reglas Globales</h3>
+    <div *ngIf="showGlobalConfig()" class="modal-overlay" (click)="showGlobalConfig.set(false)" (keydown.escape)="showGlobalConfig.set(false)">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="config-modal-title" (click)="$event.stopPropagation()">
+            <h3 id="config-modal-title" class="modal-title">Reglas Globales</h3>
             <p class="text-muted" style="margin-bottom: 1.5rem;">
                 Configura los parámetros generales para todos los médicos del sistema.
             </p>
@@ -292,9 +292,9 @@
     </div>
 
     <!-- Modal Excepciones -->
-    <div *ngIf="showExceptionForm()" class="modal-overlay" (click)="showExceptionForm.set(false)">
-        <div class="modal" (click)="$event.stopPropagation()">
-            <h3 class="modal-title">Días No Laborables - Dr(a). {{ selectedDoctor()?.name }}</h3>
+    <div *ngIf="showExceptionForm()" class="modal-overlay" (click)="showExceptionForm.set(false)" (keydown.escape)="showExceptionForm.set(false)">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exceptions-modal-title" (click)="$event.stopPropagation()">
+            <h3 id="exceptions-modal-title" class="modal-title">Días No Laborables - Dr(a). {{ selectedDoctor()?.name }}</h3>
 
             <div class="exceptions-list" *ngIf="exceptions().length > 0" style="margin-bottom: 1.5rem;">
                 <div class="exception-item" *ngFor="let ex of exceptions()"

@@ -200,11 +200,11 @@
 </div>
 
 <!-- Edit Modal Overlay -->
-<div *ngIf="isEditingModalOpen" class="modal-overlay">
-    <div class="modal-content">
+<div *ngIf="isEditingModalOpen" class="modal-overlay" (keydown.escape)="closeModal()">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="edit-patient-modal-title">
         <!-- Header -->
         <div class="modal-header">
-            <h2 class="modal-title">Modificar Información Médica</h2>
+            <h2 id="edit-patient-modal-title" class="modal-title">Modificar Información Médica</h2>
             <button class="modal-close-btn" (click)="closeModal()">&times;</button>
         </div>
 

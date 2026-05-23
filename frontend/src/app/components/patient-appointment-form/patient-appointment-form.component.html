@@ -4,27 +4,27 @@
     <!-- Stepper Navigation: Indicador visual del progreso -->
     <div class="stepper">
         <!-- Paso 1: Médico -->
-        <div class="step" [class.active]="step() === 1" [class.completed]="step() > 1" (click)="goToStep(1)">
+        <button type="button" class="step" [class.active]="step() === 1" [class.completed]="step() > 1" (click)="goToStep(1)">
             <div class="step-circle" *ngIf="step() <= 1">1</div>
             <div class="step-circle checked" *ngIf="step() > 1">✓</div>
             <span class="step-label">Médico</span>
-        </div>
+        </button>
         <div class="step-divider">›</div>
 
         <!-- Paso 2: Fecha -->
-        <div class="step" [class.active]="step() === 2" [class.completed]="step() > 2" (click)="goToStep(2)">
+        <button type="button" class="step" [class.active]="step() === 2" [class.completed]="step() > 2" (click)="goToStep(2)">
             <div class="step-circle" *ngIf="step() <= 2">2</div>
             <div class="step-circle checked" *ngIf="step() > 2">✓</div>
             <span class="step-label">Fecha</span>
-        </div>
+        </button>
         <div class="step-divider">›</div>
 
         <!-- Paso 3: Hora -->
-        <div class="step" [class.active]="step() === 3" [class.completed]="step() > 3" (click)="goToStep(3)">
+        <button type="button" class="step" [class.active]="step() === 3" [class.completed]="step() > 3" (click)="goToStep(3)">
             <div class="step-circle" *ngIf="step() <= 3">3</div>
             <div class="step-circle checked" *ngIf="step() > 3">✓</div>
             <span class="step-label">Hora</span>
-        </div>
+        </button>
         <div class="step-divider">›</div>
 
         <!-- Paso 4: Confirmar -->
@@ -44,7 +44,7 @@
             </div>
             <div class="card-body">
                 <div class="doctors-grid">
-                    <div class="doctor-box" *ngFor="let doctor of doctors()" (click)="selectDoctor(doctor)">
+                    <button type="button" class="doctor-box" *ngFor="let doctor of doctors()" (click)="selectDoctor(doctor)">
                         <div class="doctor-avatar" [ngStyle]="{'background-color': getDoctorColor(doctor.id)}">
                             {{ doctor.name.substring(0,2).toUpperCase() }}
                         </div>
@@ -62,7 +62,7 @@
                             </p>
                             <p class="schedule-days">{{ formatDays(doctor.activeDays) }}</p>
                         </div>
-                    </div>
+                    </button>
                 </div>
             </div>
         </ng-container>
@@ -81,17 +81,17 @@
 
                 <!-- VERSIÓN DESKTOP: Carrusel horizontal -->
                 <div class="dates-carousel desktop-view">
-                    <div class="date-box" *ngFor="let d of availableDates()" (click)="selectDate(d)"
+                    <button type="button" class="date-box" *ngFor="let d of availableDates()" (click)="selectDate(d)"
                         [class.selected]="selectedDate() === d">
                         <span class="day-name">{{ d.dayName }}</span>
                         <span class="day-num">{{ d.dayNum }}</span>
                         <span class="month-name">{{ d.monthName }}</span>
-                    </div>
+                    </button>
                 </div>
 
                 <!-- VERSIÓN MÓVIL/TABLET: Grid vertical -->
                 <div class="dates-grid mobile-view">
-                    <div class="date-item" *ngFor="let d of availableDates()" (click)="selectDate(d)"
+                    <button type="button" class="date-item" *ngFor="let d of availableDates()" (click)="selectDate(d)"
                         [class.selected]="selectedDate() === d">
                         <div class="date-info">
                             <span class="date-day">{{ d.dayName }}</span>
@@ -99,7 +99,7 @@
                             <span class="date-month">{{ d.monthName }}</span>
                         </div>
                         <div class="date-arrow">→</div>
-                    </div>
+                    </button>
                 </div>
             </div>
         </ng-container>
