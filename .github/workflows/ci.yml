@@ -7,10 +7,12 @@ on:
   push:
     branches:
       - main
+      - develop
       - 'release/**'
   pull_request:
     branches:
       - main
+      - develop
       - 'release/**'
 
 jobs:
@@ -29,28 +31,37 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v5
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Install Dependencies
-        run: npm ci --legacy-peer-deps
+        run: pnpm install
 
       - name: Run Linter
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Run Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Run Unit Tests
-        run: npm run test
+        run: pnpm run test:cov
 
-      # Opcional: Ejecutar pruebas e2e
-      # - name: Run E2E Tests
-      #   run: npm run test:e2e
+      - name: Upload Coverage (Backend)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-coverage-${{ matrix.node-version }}
+          path: backend/coverage/
+          retention-days: 7
 
   frontend-ci:
     name: Frontend CI
@@ -67,18 +78,31 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v5
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Install Dependencies
-        run: npm ci --legacy-peer-deps 
+        run: pnpm install
 
       - name: Run Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Run Unit Tests
-        run: npm run test -- --watch=false
+        run: pnpm run test:coverage
+
+      - name: Upload Coverage (Frontend)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-coverage-${{ matrix.node-version }}
+          path: frontend/coverage/
+          retention-days: 7
