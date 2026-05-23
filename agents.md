@@ -62,6 +62,47 @@ Eres un desarrollador senior especializado en **Angular (frontend)** y **NestJS 
 - **Semántica**: Uso de etiquetas HTML5 correctas.
 - **Layout**: Uso de Flexbox/Grid para adaptabilidad sin scroll horizontal innecesario.
 
+## Modales `<dialog>` — Regla crítica
+
+Los `<dialog>` nativos de HTML usan el **top layer** del navegador, que está por encima de **cualquier** `z-index` de CSS. SweetAlert2, aunque tenga `z-index: 100000`, se renderiza **detrás** del backdrop del `<dialog>` y queda invisible/inaccesible.
+
+**Siempre que necesites mostrar un SweetAlert2 (o cualquier elemento fuera del `<dialog>`):**
+1. Cierra el `<dialog>` ANTES de mostrar el Swal
+2. Guarda en variables locales los datos necesarios antes de cerrar
+3. Si el usuario cancela, reabre el `<dialog>` con los datos guardados
+
+**Ejemplo correcto — confirmación de eliminación:**
+```typescript
+eliminar(id: string): void {
+  const datos = this.selectedItem;       // 1. guardar antes de cerrar
+  this.closeDialog();                     // 2. cerrar el <dialog>
+
+  Swal.fire({...}).then(result => {
+    if (result.isConfirmed) {
+      this.service.delete(id).subscribe({
+        next: () => Swal.fire({ icon: 'success', ... }),
+        error: (err) => Swal.fire({ icon: 'error', text: err.message })
+      });
+    } else {
+      this.openDialog(datos);             // 3. reabrir si cancela
+    }
+  });
+}
+```
+
+**Ejemplo correcto — errores de validación/API dentro del modal:**
+En lugar de SweetAlert2, usa un **mensaje inline** dentro del `<dialog>`:
+```typescript
+// .ts
+errorMessage = signal<string | null>(null);
+this.errorMessage.set('El campo es obligatorio');
+
+// .html
+<div *ngIf="errorMessage()" class="inline-error">{{ errorMessage() }}</div>
+```
+
+El patrón es: **no mezclar top-layer (`<dialog>`) con DOM normal (Swal, alerts).** Siempre cierra el diálogo antes de mostrar algo fuera de él.
+
 ## Flujo de Trabajo para el Agente
 
 ### Antes de escribir código
