@@ -34,6 +34,12 @@ export class Patient {
   @Column({ name: 'birth_date', type: 'date', nullable: true })
   birthDate: string;
 
+  @Column({ type: 'text', nullable: true })
+  diagnosis?: string;
+
+  @Column({ type: 'text', nullable: true })
+  observations?: string;
+
   @Column({ length: 100, nullable: true })
   email: string;
 

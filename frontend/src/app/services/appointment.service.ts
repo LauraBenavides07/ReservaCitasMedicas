@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Doctor } from './doctor.service';
 
 export interface Patient {
+  id?: string;
   firstName: string;
   lastName: string;
   document: string;
@@ -104,6 +105,12 @@ export class AppointmentService {
 
   getAppointmentHistory(id: string): Observable<AppointmentHistoryEntry[]> {
     return this.http.get<AppointmentHistoryEntry[]>(`${this.apiUrl}/${id}/history`);
+  }
+
+  private patientsApiUrl = 'http://localhost:3000/patients';
+
+  updatePatientMedicalInfo(patientId: string, data: { diagnosis?: string; observations?: string }): Observable<any> {
+    return this.http.patch(`${this.patientsApiUrl}/${patientId}/medical-info`, data);
   }
 
   getAllHistory(params?: { appointmentId?: string; changeType?: string; limit?: number }): Observable<{ total: number; history: AppointmentHistoryEntry[] }> {

@@ -1,6 +1,6 @@
 <div class="dashboard-container">
 
-    <div *ngIf="isLoading()" class="loading-state">
+    <div *ngIf="isLoading()" class="loading-state" role="status">
         <div class="spinner"></div>
     </div>
 
@@ -28,7 +28,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let app of appointments()" [class.cancelled]="app.status === 'cancelada'">
+                <tr *ngFor="let app of appointments(); trackBy: trackById" [class.cancelled]="app.status === 'cancelada'">
 
                     <td data-label="FECHA">
                         <strong>{{ formatDate(app.appointmentDate) }}</strong>

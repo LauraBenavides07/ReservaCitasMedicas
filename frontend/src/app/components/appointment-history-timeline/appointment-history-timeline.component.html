@@ -3,7 +3,7 @@
         <h3>Historial de Cambios</h3>
     </div>
 
-    <div *ngIf="loading" class="timeline-loading">Cargando historial...</div>
+    <div *ngIf="loading" class="timeline-loading" role="status">Cargando historial...</div>
     <div *ngIf="error" class="timeline-error">{{ error }}</div>
 
     <div *ngIf="!loading && !error && history.length === 0" class="timeline-empty">

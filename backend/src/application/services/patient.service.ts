@@ -53,4 +53,14 @@ export class PatientService {
     }
     return patient;
   }
+
+  async updateMedicalInfo(
+    id: string,
+    data: { diagnosis?: string; observations?: string },
+  ): Promise<Patient> {
+    const patient = await this.findOne(id);
+    if (data.diagnosis !== undefined) patient.diagnosis = data.diagnosis;
+    if (data.observations !== undefined) patient.observations = data.observations;
+    return this.patientRepository.save(patient);
+  }
 }

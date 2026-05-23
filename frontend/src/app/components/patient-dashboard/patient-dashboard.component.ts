@@ -26,6 +26,10 @@ export class PatientDashboardComponent implements OnInit {
     this.loadAppointments();
   }
 
+  trackById(index: number, app: any): string {
+    return app.id;
+  }
+
   loadAppointments(): void {
     this.isLoading.set(true);
 

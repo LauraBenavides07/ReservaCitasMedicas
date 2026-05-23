@@ -35,6 +35,7 @@ export class AppointmentController {
     return this.statsService.getDashboardStats();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('export')
   async exportAppointments(
     @Query('date') date: string,
@@ -78,6 +79,7 @@ export class AppointmentController {
     return appointments;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async createAppointment(@Body() createDto: CreateAppointmentDto) {
     return this.appointmentService.create(createDto);
@@ -104,11 +106,13 @@ export class AppointmentController {
     );
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id/confirm')
   async confirmAppointment(@Param('id', ParseUUIDPipe) id: string) {
     return this.appointmentService.confirmAppointment(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id/complete')
   async completeAppointment(
     @Param('id', ParseUUIDPipe) id: string,
@@ -143,6 +147,7 @@ export class AppointmentController {
     return this.appointmentService.findPatientByDocument(document);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('all')
   async findAllAppointments() {
     return this.appointmentService.findAll();

@@ -7,12 +7,14 @@ import {
   Patch,
   Delete,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { DoctorService } from '../../application/services/doctor.service';
 import { DoctorExceptionService } from '../../application/services/doctor-exception.service';
 import { CreateDoctorDto } from '../dto/create-doctor.dto';
 import { UpdateDoctorDto } from '../dto/update-doctor.dto';
 import { CreateExceptionDto } from '../dto/create-exception.dto';
+import { JwtAuthGuard } from '../../infrastructure/auth/jwt-auth.guard';
 
 @Controller('doctors')
 export class DoctorController {
@@ -31,11 +33,13 @@ export class DoctorController {
     return this.doctorService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async createDoctor(@Body() data: CreateDoctorDto) {
     return this.doctorService.create(data);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async updateDoctor(
     @Param('id', ParseUUIDPipe) id: string,
@@ -44,11 +48,13 @@ export class DoctorController {
     return this.doctorService.update(id, data);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async deleteDoctor(@Param('id', ParseUUIDPipe) id: string) {
     return this.doctorService.remove(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post(':id/exceptions')
   async addException(
     @Param('id', ParseUUIDPipe) id: string,
@@ -62,6 +68,7 @@ export class DoctorController {
     return this.doctorExceptionService.findByDoctor(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id/exceptions/:exceptionId')
   async removeException(
     @Param('id', ParseUUIDPipe) _id: string,

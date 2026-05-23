@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
@@ -43,7 +43,7 @@ export class AppointmentListComponent implements OnInit {
   hasSearched: boolean = false;
 
   // Rescheduling state
-  isRescheduleModalOpen: boolean = false;
+  @ViewChild('rescheduleModal') rescheduleModal!: ElementRef<HTMLDialogElement>;
   selectedAppointment: Appointment | null = null;
   newRescheduleDate: string = '';
   newRescheduleTime: string = '';
@@ -52,6 +52,10 @@ export class AppointmentListComponent implements OnInit {
   rescheduleDoctorId: string = '';
   touchedRescheduleDate: boolean = false;
   touchedRescheduleTime: boolean = false;
+
+  trackById(index: number, appt: Appointment): string {
+    return appt.id;
+  }
 
   constructor(
     private appointmentService: AppointmentService,
@@ -288,13 +292,28 @@ onSearch(): void {
     this.newRescheduleDate = appt.appointmentDate || this.selectedDate;
     this.newRescheduleTime = '';
     this.rescheduleDoctorId = appt.doctor?.id || '';
-    this.isRescheduleModalOpen = true;
     this.loadAvailableSlots();
+    this.rescheduleModal.nativeElement.showModal();
   }
 
   closeRescheduleModal(): void {
-    this.isRescheduleModalOpen = false;
+    this.rescheduleModal.nativeElement.close();
+  }
+
+  onRescheduleModalClose(): void {
     this.selectedAppointment = null;
+    this.newRescheduleDate = '';
+    this.newRescheduleTime = '';
+    this.availableSlots = [];
+    this.rescheduleDoctorId = '';
+    this.touchedRescheduleDate = false;
+    this.touchedRescheduleTime = false;
+  }
+
+  onDialogClick(event: MouseEvent, dialog: HTMLDialogElement): void {
+    if (event.target === dialog) {
+      dialog.close();
+    }
   }
 
   loadAvailableSlots(): void {

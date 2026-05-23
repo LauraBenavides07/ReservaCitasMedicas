@@ -113,6 +113,10 @@ export class AdminAuditComponent implements OnInit {
     });
   }
 
+  trackById(index: number, entry: AppointmentHistoryEntry): string {
+    return entry.id;
+  }
+
   getChangeLabel(type: string): string {
     const labels: Record<string, string> = {
       CREATED: '➕ Creada',

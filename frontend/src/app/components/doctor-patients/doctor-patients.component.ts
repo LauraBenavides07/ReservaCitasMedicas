@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -8,6 +8,7 @@ import { DoctorService } from '../../services/doctor.service';
 import { ButtonComponent } from '../../shared/atoms/button/button.component';
 
 interface PatientDisplay {
+  id: string;
   document: string;
   firstName: string;
   lastName: string;
@@ -48,7 +49,7 @@ export class DoctorPatientsComponent implements OnInit {
   estables: number = 0;
 
   // Modal State
-  isEditingModalOpen: boolean = false;
+  @ViewChild('editModal') editModal!: ElementRef<HTMLDialogElement>;
   editingPatient: PatientDisplay | null = null;
   tempDiagnosis: string = '';
   tempObservation: string = '';
@@ -127,6 +128,7 @@ export class DoctorPatientsComponent implements OnInit {
           const doc = apt.patient.document;
           if (!patientMap.has(doc)) {
             patientMap.set(doc, {
+              id: (apt.patient as any).id || '',
               document: apt.patient.document,
               firstName: apt.patient.firstName,
               lastName: apt.patient.lastName,
@@ -230,23 +232,55 @@ export class DoctorPatientsComponent implements OnInit {
       this.editingPatient = patient;
       this.tempDiagnosis = patient.diagnosis || '';
       this.tempObservation = patient.observation || '';
-      this.isEditingModalOpen = true;
+      this.editModal.nativeElement.showModal();
   }
 
   closeModal() {
-      this.isEditingModalOpen = false;
+      this.editModal.nativeElement.close();
+  }
+
+  onEditModalClose() {
       this.editingPatient = null;
+  }
+
+  onDialogClick(event: MouseEvent, dialog: HTMLDialogElement): void {
+    if (event.target === dialog) {
+      dialog.close();
+    }
   }
 
   saveModalData() {
       if (this.editingPatient) {
           this.editingPatient.diagnosis = this.tempDiagnosis;
           this.editingPatient.observation = this.tempObservation;
-          localStorage.setItem(`diagnosis_${this.editingPatient.document}`, this.tempDiagnosis);
-          localStorage.setItem(`observation_${this.editingPatient.document}`, this.tempObservation);
-          localStorage.setItem('cached_patients_data', JSON.stringify(this.patients));
+
+          if (this.editingPatient.id) {
+            this.appointmentService.updatePatientMedicalInfo(this.editingPatient.id, {
+              diagnosis: this.tempDiagnosis,
+              observations: this.tempObservation
+            }).subscribe({
+              next: () => {
+                localStorage.setItem(`diagnosis_${this.editingPatient!.document}`, this.tempDiagnosis);
+                localStorage.setItem(`observation_${this.editingPatient!.document}`, this.tempObservation);
+                localStorage.setItem('cached_patients_data', JSON.stringify(this.patients));
+                this.closeModal();
+              },
+              error: () => {
+                localStorage.setItem(`diagnosis_${this.editingPatient!.document}`, this.tempDiagnosis);
+                localStorage.setItem(`observation_${this.editingPatient!.document}`, this.tempObservation);
+                localStorage.setItem('cached_patients_data', JSON.stringify(this.patients));
+                this.closeModal();
+              }
+            });
+          } else {
+            localStorage.setItem(`diagnosis_${this.editingPatient.document}`, this.tempDiagnosis);
+            localStorage.setItem(`observation_${this.editingPatient.document}`, this.tempObservation);
+            localStorage.setItem('cached_patients_data', JSON.stringify(this.patients));
+            this.closeModal();
+          }
+      } else {
+        this.closeModal();
       }
-      this.closeModal();
   }
 
   logout() {

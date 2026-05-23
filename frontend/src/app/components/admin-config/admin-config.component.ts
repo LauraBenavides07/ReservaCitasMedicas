@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DoctorService, Doctor } from '../../services/doctor.service';
@@ -18,13 +18,15 @@ export class AdminConfigComponent implements OnInit {
   // Señales para estado reactivo del componente
   activeTab = signal<'horarios' | 'estadisticas'>('horarios');
   doctors = signal<Doctor[]>([]);
-  showDoctorForm = signal(false);
-  showGlobalConfig = signal(false);
   selectedDoctor = signal<Doctor | null>(null);
+
+  // Referencias a dialogs
+  @ViewChild('doctorModal') doctorModal!: ElementRef<HTMLDialogElement>;
+  @ViewChild('configModal') configModal!: ElementRef<HTMLDialogElement>;
+  @ViewChild('exceptionsModal') exceptionsModal!: ElementRef<HTMLDialogElement>;
 
   // Excepciones del médico seleccionado
   exceptions = signal<any[]>([]);
-  showExceptionForm = signal(false);
   exceptionForm: FormGroup;
 
   // Lista de especialidades predefinidas
@@ -58,6 +60,46 @@ export class AdminConfigComponent implements OnInit {
     this.doctorForm.patchValue({ activeDays: this.selectedDays.join(',') });
   }
 
+  closeDoctorModal(): void {
+    this.doctorModal.nativeElement.close();
+  }
+
+  onDoctorModalClose(): void {
+    this.selectedDoctor.set(null);
+  }
+
+  openConfigModal(): void {
+    this.configModal.nativeElement.showModal();
+  }
+
+  closeConfigModal(): void {
+    this.configModal.nativeElement.close();
+  }
+
+  onConfigModalClose(): void {
+  }
+
+  openExceptions(doctor: Doctor): void {
+    this.selectedDoctor.set(doctor);
+    this.loadExceptions(doctor.id);
+    this.exceptionsModal.nativeElement.showModal();
+  }
+
+  closeExceptionsModal(): void {
+    this.exceptionsModal.nativeElement.close();
+  }
+
+  onExceptionsModalClose(): void {
+    this.selectedDoctor.set(null);
+    this.exceptionForm.reset();
+  }
+
+  onDialogClick(event: MouseEvent, dialog: HTMLDialogElement): void {
+    if (event.target === dialog) {
+      dialog.close();
+    }
+  }
+
   isDaySelected(day: string): boolean {
     return this.selectedDays.indexOf(day) >= 0;
   }
@@ -69,6 +111,7 @@ export class AdminConfigComponent implements OnInit {
   // Datos de estadísticas
   stats = { total: 0, scheduled: 0, completed: 0, cancelled: 0 };
   doctorStats: any[] = [];
+  showDoctorForm = signal<boolean>(false);
 
   constructor(
     private fb: FormBuilder,
@@ -187,7 +230,7 @@ export class AdminConfigComponent implements OnInit {
       this.doctorService.updateDoctor(doc.id, data).subscribe({
         next: () => {
           this.loadDoctors();
-          this.showDoctorForm.set(false);
+          this.closeDoctorModal();
         },
         error: (err) => {
           this.showErrorModal(err.error?.message || 'Error al actualizar el médico.');
@@ -197,7 +240,7 @@ export class AdminConfigComponent implements OnInit {
       this.doctorService.createDoctor(data).subscribe({
         next: () => {
           this.loadDoctors();
-          this.showDoctorForm.set(false);
+          this.closeDoctorModal();
         },
         error: (err) => {
           this.showErrorModal(err.error?.message || 'Error al crear el médico.');
@@ -219,12 +262,6 @@ export class AdminConfigComponent implements OnInit {
   }
 
   // --- Gestión de Excepciones ---
-
-  openExceptions(doctor: Doctor): void {
-    this.selectedDoctor.set(doctor);
-    this.loadExceptions(doctor.id);
-    this.showExceptionForm.set(true);
-  }
 
   loadExceptions(doctorId: string): void {
     this.doctorService.getExceptions(doctorId).subscribe(data => {
@@ -253,8 +290,13 @@ export class AdminConfigComponent implements OnInit {
 
   // Guarda la configuración global
   saveConfig(): void {
-    this.configService.updateConfig(this.configForm.value).subscribe(() => {
-      this.showGlobalConfig.set(false);
+    this.configService.updateConfig(this.configForm.value).subscribe({
+      next: () => {
+        this.closeConfigModal();
+      },
+      error: (err) => {
+        this.showErrorModal(err.error?.message || 'Error al guardar la configuración.');
+      }
     });
   }
 

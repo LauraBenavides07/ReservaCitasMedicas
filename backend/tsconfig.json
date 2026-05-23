@@ -17,9 +17,11 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": false,
+    "rootDir": ".",
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false
-  }
+  },
+  "include": ["src/**/*.ts"]
 }

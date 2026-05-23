@@ -3,7 +3,7 @@
 
   <!-- Logo que redirige al inicio -->
   <a href="#" class="logo">
-    <img src="img/logo.png" alt="Piedrazul Logo" class="logo-img">
+    <img src="img/logo.png" alt="Piedrazul Logo" class="logo-img" width="50" height="50" loading="lazy">
     <div class="logo-text">
       <span class="brand">Piedrazul</span>
       <span class="sub-brand">CENTRO MÉDICO</span>
@@ -107,7 +107,7 @@
           <!-- Slide 1 -->
           <div class="carousel-slide">
             <div class="carousel-card">
-              <img src="img/agendacita.png" alt="Agendar cita" class="carousel-img">
+              <img src="img/agendacita.png" alt="Agendar cita" class="carousel-img" width="800" height="400" loading="lazy">
               <div class="carousel-overlay"></div>
               <div class="carousel-caption">
                 <h3>Agenda tu cita fácilmente</h3>
@@ -119,7 +119,7 @@
           <!-- Slide 2 -->
           <div class="carousel-slide">
             <div class="carousel-card">
-              <img src="img/piedrazul.png" alt="Piedrazul Logo" class="carousel-img">
+              <img src="img/piedrazul.png" alt="Piedrazul Logo" class="carousel-img" width="800" height="400" loading="lazy">
               <div class="carousel-overlay"></div>
               <div class="carousel-caption">
                 <h3>Especialistas capacitados</h3>
@@ -131,7 +131,7 @@
           <!-- Slide 3 -->
           <div class="carousel-slide">
             <div class="carousel-card">
-              <img src="img/terapianeutral.png" alt="Medicina alternativa" class="carousel-img">
+              <img src="img/terapianeutral.png" alt="Medicina alternativa" class="carousel-img" width="800" height="400" loading="lazy">
               <div class="carousel-overlay"></div>
               <div class="carousel-caption">
                 <h3>Medicina alternativa</h3>
@@ -194,7 +194,7 @@
         </app-button>
       </div>
 
-      <div *ngIf="doctors().length === 0" class="loading-specialists">
+      <div *ngIf="doctors().length === 0" class="loading-specialists" role="status">
         <div class="loading-spinner"></div>
         <p>Cargando especialistas...</p>
       </div>

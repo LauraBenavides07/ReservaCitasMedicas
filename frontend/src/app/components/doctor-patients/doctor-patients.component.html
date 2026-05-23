@@ -81,7 +81,7 @@
         </div>
 
         <!-- Loading state -->
-        <div *ngIf="isLoading" class="loading-state">
+        <div *ngIf="isLoading" class="loading-state" role="status">
             <p>Cargando pacientes...</p>
         </div>
 
@@ -199,33 +199,31 @@
     </div>
 </div>
 
-<!-- Edit Modal Overlay -->
-<div *ngIf="isEditingModalOpen" class="modal-overlay" (keydown.escape)="closeModal()">
-    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="edit-patient-modal-title">
-        <!-- Header -->
-        <div class="modal-header">
-            <h2 id="edit-patient-modal-title" class="modal-title">Modificar Información Médica</h2>
-            <button class="modal-close-btn" (click)="closeModal()">&times;</button>
+<!-- Edit Modal -->
+<dialog #editModal class="modal-content" aria-labelledby="edit-patient-modal-title" (close)="onEditModalClose()" (click)="onDialogClick($event, editModal)">
+    <!-- Header -->
+    <div class="modal-header">
+        <h2 id="edit-patient-modal-title" class="modal-title">Modificar Información Médica</h2>
+        <button class="modal-close-btn" (click)="closeModal()">&times;</button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+        <div>
+            <label class="form-label">Diagnóstico Principal</label>
+            <input type="text" class="form-input" [(ngModel)]="tempDiagnosis" placeholder="Ej. Lumbalgia crónica">
         </div>
 
-        <!-- Body -->
-        <div class="modal-body">
-            <div>
-                <label class="form-label">Diagnóstico Principal</label>
-                <input type="text" class="form-input" [(ngModel)]="tempDiagnosis" placeholder="Ej. Lumbalgia crónica">
-            </div>
-
-            <div>
-                <label class="form-label">Observación General</label>
-                <textarea class="form-textarea" [(ngModel)]="tempObservation" rows="4"
-                    placeholder="Ingrese detalles o recomendaciones..."></textarea>
-            </div>
-        </div>
-
-        <!-- Footer Actions -->
-        <div class="modal-footer">
-            <app-button variant="secondary" (clicked)="closeModal()">Cancelar</app-button>
-            <app-button variant="primary" (clicked)="saveModalData()">Guardar Cambios</app-button>
+        <div>
+            <label class="form-label">Observación General</label>
+            <textarea class="form-textarea" [(ngModel)]="tempObservation" rows="4"
+                placeholder="Ingrese detalles o recomendaciones..."></textarea>
         </div>
     </div>
-</div>
+
+    <!-- Footer Actions -->
+    <div class="modal-footer">
+        <app-button variant="secondary" (clicked)="closeModal()">Cancelar</app-button>
+        <app-button variant="primary" (clicked)="saveModalData()">Guardar Cambios</app-button>
+    </div>
+</dialog>

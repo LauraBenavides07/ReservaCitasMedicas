@@ -385,31 +385,30 @@
 /* ============================================
    MODALS (Rescheduling)
    ============================================ */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(4px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-    padding: 1rem;
-}
-
-.modal-content.completion-modal {
+dialog.modal-content.completion-modal {
     background: white;
     border-radius: 16px;
     width: 95%;
     max-width: 500px;
     max-height: 85vh;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    display: flex;
     flex-direction: column;
     overflow: hidden;
+    border: none;
+    padding: 0;
+}
+
+dialog.modal-content.completion-modal[open] {
+    display: flex;
+}
+
+dialog.modal-content.completion-modal:not([open]) {
+    display: none;
+}
+
+dialog::backdrop {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
 }
 
 .modal-header {

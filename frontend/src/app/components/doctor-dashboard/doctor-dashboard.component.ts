@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -59,7 +59,7 @@ export class DoctorDashboardComponent implements OnInit {
     rescheduleDoctorId: string = '';
 
     // Modal state for completion
-    isCompletionModalOpen = false;
+    @ViewChild('completionModal') completionModal!: ElementRef<HTMLDialogElement>;
     selectedAppointment: DisplayAppointment | null = null;
     appointmentObservations = '';
     appointmentDiagnosis = '';
@@ -408,7 +408,6 @@ export class DoctorDashboardComponent implements OnInit {
 }
 
     completeAppointment(apt: DisplayAppointment): void {
-        // Abrir el modal HTML (NO SweetAlert)
         this.selectedAppointment = apt;
         this.appointmentObservations = '';
         this.appointmentDiagnosis = '';
@@ -417,12 +416,21 @@ export class DoctorDashboardComponent implements OnInit {
         this.rescheduleTime = '';
         this.rescheduleDoctorId = this.doctorId;
         this.availableSlots = [];
-        this.isCompletionModalOpen = true;
+        this.completionModal.nativeElement.showModal();
     }
 
     closeCompletionModal(): void {
-        this.isCompletionModalOpen = false;
+        this.completionModal.nativeElement.close();
+    }
+
+    onCompletionModalClose(): void {
         this.selectedAppointment = null;
+    }
+
+    onDialogClick(event: MouseEvent, dialog: HTMLDialogElement): void {
+        if (event.target === dialog) {
+            dialog.close();
+        }
     }
 
     onRescheduleToggle(): void {

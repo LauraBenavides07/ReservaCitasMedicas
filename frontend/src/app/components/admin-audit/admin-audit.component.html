@@ -43,7 +43,7 @@
     </div>
 
     <!-- Estado de error -->
-    <div *ngIf="error && !loading" class="error-state">
+    <div *ngIf="error && !loading" class="error-state" role="alert">
         <span class="error-icon">⚠️</span>
         <p>{{ error }}</p>
         <button class="btn-primary" (click)="loadHistory()">Reintentar</button>
@@ -70,7 +70,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let entry of history">
+                    <tr *ngFor="let entry of history; trackBy: trackById">
                         <td class="date-cell">{{ formatDateTime(entry.changedAt) }}</td>
                         <td class="patient-cell">
                             <strong>{{ entry.patientName || '-' }}</strong>

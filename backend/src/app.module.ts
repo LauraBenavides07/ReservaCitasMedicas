@@ -12,6 +12,7 @@ import { AppointmentHistory } from './domain/entities/appointment-history.entity
 import { ConfigController } from './presentation/controllers/config.controller';
 import { AppointmentController } from './presentation/controllers/appointment.controller';
 import { DoctorController } from './presentation/controllers/doctor.controller';
+import { PatientController } from './presentation/controllers/patient.controller';
 import { AppointmentService } from './application/services/appointment.service';
 import { AvailabilityService } from './application/services/availability.service';
 import { StatsService } from './application/services/stats.service';
@@ -69,7 +70,7 @@ import { TypeOrmAppointmentHistoryRepository } from './infrastructure/persistenc
     ScheduleModule.forRoot(),
     NotificationsClientModule,
   ],
-  controllers: [AppointmentController, DoctorController, ConfigController],
+  controllers: [AppointmentController, DoctorController, ConfigController, PatientController],
   providers: [
     AppointmentService,
     AvailabilityService,

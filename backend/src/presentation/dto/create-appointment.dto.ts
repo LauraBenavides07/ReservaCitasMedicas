@@ -5,6 +5,7 @@ import {
   IsUUID,
   IsOptional,
   IsEmail,
+  IsIn,
 } from 'class-validator';
 
 export class CreateAppointmentDto {
@@ -26,6 +27,7 @@ export class CreateAppointmentDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsIn(['M', 'F', 'O'])
   gender: string;
 
   @IsDateString()

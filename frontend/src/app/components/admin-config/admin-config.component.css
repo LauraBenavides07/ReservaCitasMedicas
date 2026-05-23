@@ -368,41 +368,28 @@ textarea {
    MODALS (VENTANAS MODALES)
    ============================================ */
 
-/* Capa de fondo del modal */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(31, 31, 31, 0.7);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    z-index: 9999;
-    padding: 0;
-}
-
-/* Contenedor del modal (sale desde abajo en móvil) */
-.modal {
+/* Modal dialog */
+dialog.modal {
     background: white;
     width: 100%;
+    max-width: 500px;
     max-height: 85vh;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+    border-radius: 20px;
     padding: 1.5rem;
     overflow-y: auto;
     box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.1);
+    border: none;
     scrollbar-width: none;
-    /* Firefox */
     -ms-overflow-style: none;
-    /* IE / Edge antiguo */
 }
 
-.modal::-webkit-scrollbar {
+dialog.modal::-webkit-scrollbar {
     display: none;
-    /* Chrome, Safari, Opera */
+}
+
+dialog::backdrop {
+    background: rgba(31, 31, 31, 0.7);
+    backdrop-filter: blur(8px);
 }
 
 /* Título del modal */
