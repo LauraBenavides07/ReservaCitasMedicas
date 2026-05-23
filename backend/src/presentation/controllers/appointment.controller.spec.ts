@@ -6,6 +6,7 @@ import { StatsService } from '../../application/services/stats.service';
 import { ExportService } from '../../application/services/export.service';
 import { JwtAuthGuard } from '../../infrastructure/auth/jwt-auth.guard';
 import { Response } from 'express';
+import { CreateAppointmentDto } from '../dto/create-appointment.dto';
 
 describe('AppointmentController', () => {
   let controller: AppointmentController;
@@ -128,14 +129,15 @@ describe('AppointmentController', () => {
     });
 
     it('createAppointment debería llamar al servicio', async () => {
-      const dto = { doctorId: 'd1' } as any;
+      const dto = { doctorId: 'd1' } as CreateAppointmentDto;
       await controller.createAppointment(dto);
-      expect(appointmentService.create).toHaveBeenCalledWith(dto);
+      expect(appointmentService.create).toHaveBeenCalledWith(expect.any(dto));
     });
 
     it('confirmAppointment debería llamar al servicio', async () => {
-      await controller.confirmAppointment('a1');
-      expect(appointmentService.confirmAppointment).toHaveBeenCalledWith('a1');
+      const appointmentId = 'a1';
+      await controller.confirmAppointment(appointmentId);
+      expect(appointmentService.confirmAppointment).toHaveBeenCalledWith(appointmentId);
     });
   });
 });

@@ -44,32 +44,37 @@ describe('DoctorController', () => {
 
   describe('CRUD Básico', () => {
     it('getDoctors debería llamar a findAll', async () => {
-      mockDoctorService.findAll.mockResolvedValue([]);
+      const spy = jest.spyOn(doctorService, 'findAll');
+      spy.mockResolvedValue([]);
       await controller.getDoctors();
-      expect(doctorService.findAll).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalled();
     });
 
     it('getDoctor debería llamar a findOne', async () => {
-      mockDoctorService.findOne.mockResolvedValue({ id: '1' });
+      const spy = jest.spyOn(doctorService, 'findOne');
+      spy.mockResolvedValue({ id: '1' });
       await controller.getDoctor('uuid-123');
-      expect(doctorService.findOne).toHaveBeenCalledWith('uuid-123');
+      expect(spy).toHaveBeenCalledWith('uuid-123');
     });
 
     it('createDoctor debería llamar a create', async () => {
+      const spy = jest.spyOn(doctorService, 'create');
       const data = { name: 'Dr. X' };
       await controller.createDoctor(data);
-      expect(doctorService.create).toHaveBeenCalledWith(data);
+      expect(spy).toHaveBeenCalledWith(data);
     });
 
     it('updateDoctor debería llamar a update', async () => {
+      const spy = jest.spyOn(doctorService, 'update');
       const data = { name: 'Dr. Y' };
       await controller.updateDoctor('uuid-123', data);
-      expect(doctorService.update).toHaveBeenCalledWith('uuid-123', data);
+      expect(spy).toHaveBeenCalledWith('uuid-123', data);
     });
 
     it('deleteDoctor debería llamar a remove', async () => {
+      const spy = jest.spyOn(doctorService, 'remove');
       await controller.deleteDoctor('uuid-123');
-      expect(doctorService.remove).toHaveBeenCalledWith('uuid-123');
+      expect(spy).toHaveBeenCalledWith('uuid-123');
     });
   });
 

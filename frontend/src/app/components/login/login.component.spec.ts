@@ -6,7 +6,7 @@ import { LoginComponent } from './login.component';
 import { AuthService } from '../../services/auth.service';
 
 vi.mock('sweetalert2', () => ({
-  default: { fire: vi.fn().mockResolvedValue({ isConfirmed: true }) },
+  default: { fire: vi.fn().mockResolvedValue({ isConfirmed: true }) , close: vi.fn(), showLoading: vi.fn() },
 }));
 
 describe('LoginComponent', () => {

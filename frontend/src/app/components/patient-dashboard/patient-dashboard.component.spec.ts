@@ -9,7 +9,7 @@ import { AuthService } from '../../services/auth.service';
 vi.mock('sweetalert2', () => ({
   default: {
     fire: vi.fn().mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false })
-  }
+  , close: vi.fn(), showLoading: vi.fn() }
 }));
 
 describe('PatientDashboardComponent', () => {

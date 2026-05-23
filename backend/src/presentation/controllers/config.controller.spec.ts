@@ -28,17 +28,19 @@ describe('ConfigController', () => {
 
   it('debería obtener la configuración', async () => {
     const mockCfg = { minAdvanceHours: 2 };
-    mockConfigService.getConfig.mockResolvedValue(mockCfg);
+    const spy = jest.spyOn(service, 'getConfig');
+    spy.mockResolvedValue(mockCfg);
     const result = await controller.getConfig();
     expect(result).toEqual(mockCfg);
-    expect(service.getConfig).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalled();
   });
 
   it('debería actualizar la configuración', async () => {
     const mockCfg = { minAdvanceHours: 4 };
-    mockConfigService.updateConfig.mockResolvedValue(mockCfg);
+    const spy = jest.spyOn(service, 'updateConfig');
+    spy.mockResolvedValue(mockCfg);
     const result = await controller.updateConfig(mockCfg as any);
     expect(result).toEqual(mockCfg);
-    expect(service.updateConfig).toHaveBeenCalledWith(mockCfg);
+    expect(spy).toHaveBeenCalledWith(mockCfg);
   });
 });

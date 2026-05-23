@@ -87,7 +87,10 @@ describe('Appointment Integration', () => {
         .fn()
         .mockImplementation(
           (data) =>
-            '\uFEFF' + data.map((r) => Object.values(r).join(';')).join('\n'),
+            '\uFEFF' +
+            (data as Array<Record<string, unknown>>)
+              .map((r) => Object.values(r).join(';'))
+              .join('\n'),
         ),
     };
 

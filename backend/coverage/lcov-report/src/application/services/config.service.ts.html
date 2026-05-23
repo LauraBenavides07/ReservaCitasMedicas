@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>19/19</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75% </span>
+                <span class="strong">80% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>6/8</span>
+                <span class='fraction'>8/10</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>16/16</span>
+                <span class='fraction'>17/17</span>
             </div>
         
             
@@ -116,18 +116,19 @@
 <a name='L51'></a><a href='#L51'>51</a>
 <a name='L52'></a><a href='#L52'>52</a>
 <a name='L53'></a><a href='#L53'>53</a>
-<a name='L54'></a><a href='#L54'>54</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<a name='L54'></a><a href='#L54'>54</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
@@ -146,9 +147,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -156,12 +154,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -173,11 +173,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Config } from '../../domain/entities/config.entity';
+import { GlobalConfig } from '../../domain/types/global-config.type';
 &nbsp;
-export class GlobalConfig {
-  minAdvanceHours: number;
-  appointmentWindowDays: number;
-}
+const DEFAULT_CONFIG: GlobalConfig = {
+  minAdvanceHours: 2,
+  appointmentWindowDays: 15,
+};
 &nbsp;
 @Injectable()
 export class ConfigService implements OnModuleInit {
@@ -193,30 +194,29 @@ export class ConfigService implements OnModuleInit {
     if (!existing) {
       await this.configRepository.save({
         key: 'appointment_rules',
-        value: {
-          minAdvanceHours: 2,
-          appointmentWindowDays: 15,
-        },
+        value: { ...DEFAULT_CONFIG },
       });
     }
   }
 &nbsp;
-  async getConfig(): Promise&lt;GlobalConfig | undefined&gt; {
+  async getConfig(): Promise&lt;GlobalConfig&gt; {
     const config = await this.configRepository.findOne({
       where: { key: 'appointment_rules' },
     });
-    return config?.value as GlobalConfig | undefined;
+    return config?.value
+      ? { ...DEFAULT_CONFIG, ...config.value }
+      : { ...DEFAULT_CONFIG };
   }
 &nbsp;
-  async updateConfig(data: GlobalConfig): Promise&lt;GlobalConfig | undefined&gt; {
+  async updateConfig(data: Partial&lt;GlobalConfig&gt;): Promise&lt;GlobalConfig&gt; {
     const existing = await this.configRepository.findOne({
       where: { key: 'appointment_rules' },
     });
     <span class="missing-if-branch" title="else path not taken" >E</span>if (existing) {
+      const merged = { ...existing.value, ...data };
       await this.configRepository.update(
         { key: 'appointment_rules' },
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        { value: data as any },
+        { value: merged },
       );
     }
     return this.getConfig();
@@ -229,7 +229,7 @@ export class ConfigService implements OnModuleInit {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-16T22:12:49.064Z
+                at 2026-05-23T19:25:14.043Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

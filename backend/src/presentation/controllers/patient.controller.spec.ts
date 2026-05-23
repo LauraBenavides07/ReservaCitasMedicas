@@ -42,26 +42,28 @@ describe('PatientController', () => {
         diagnosis: 'Hipertensión',
         observations: 'Control mensual',
       };
-      mockPatientService.updateMedicalInfo.mockResolvedValue({
+      const spy = jest.spyOn(patientService, 'updateMedicalInfo');
+      spy.mockResolvedValue({
         id: 'p1',
         ...dto,
       });
 
       const result = await controller.updateMedicalInfo('p1', dto);
 
-      expect(patientService.updateMedicalInfo).toHaveBeenCalledWith('p1', dto);
+      expect(spy).toHaveBeenCalledWith('p1', dto);
       expect(result.id).toBe('p1');
       expect(result.diagnosis).toBe('Hipertensión');
     });
 
     it('debería funcionar con body vacío', async () => {
-      mockPatientService.updateMedicalInfo.mockResolvedValue({
+      const spy = jest.spyOn(patientService, 'updateMedicalInfo');
+      spy.mockResolvedValue({
         id: 'p1',
       });
 
       const result = await controller.updateMedicalInfo('p1', {});
 
-      expect(patientService.updateMedicalInfo).toHaveBeenCalledWith('p1', {});
+      expect(spy).toHaveBeenCalledWith('p1', {});
       expect(result.id).toBe('p1');
     });
   });

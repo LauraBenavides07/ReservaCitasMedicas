@@ -78,8 +78,13 @@ const AUTH_PATIENT_ID = '11111111-1111-4111-8111-111111111111';
 
 class MockAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
-    const req = context.switchToHttp().getRequest();
-    req.user = { id: AUTH_PATIENT_ID, document: '12345', roles: ['patient'] };
+    const req = context.switchToHttp().getRequest() as any;
+    const user = {
+      id: AUTH_PATIENT_ID,
+      document: '12345',
+      roles: ['patient'],
+    };
+    (req as { user?: typeof user }).user = user;
     return true;
   }
 }

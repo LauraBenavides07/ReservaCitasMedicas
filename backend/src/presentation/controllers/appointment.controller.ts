@@ -21,6 +21,12 @@ import { CreateAppointmentDto } from '../dto/create-appointment.dto';
 import { CompleteAppointmentDto } from '../dto/complete-appointment.dto';
 import { JwtAuthGuard } from '../../infrastructure/auth/jwt-auth.guard';
 
+export interface AppointmentResponse {
+  id: string;
+  status: string;
+  [key: string]: any;
+}
+
 @Controller('appointments')
 export class AppointmentController {
   constructor(
@@ -81,7 +87,9 @@ export class AppointmentController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async createAppointment(@Body() createDto: CreateAppointmentDto) {
+  async createAppointment(
+    @Body() createDto: CreateAppointmentDto,
+  ): Promise<AppointmentResponse> {
     return this.appointmentService.create(createDto);
   }
 

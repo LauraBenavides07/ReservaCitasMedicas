@@ -41,22 +41,24 @@ describe('AuthController', () => {
         user: { id: 'p1' },
         source: 'keycloak',
       };
-      mockAuthService.register.mockResolvedValue(mockResponse);
+      const spy = jest.spyOn(service, 'register');
+      spy.mockResolvedValue(mockResponse);
 
       const result = await controller.register(dto);
       expect(result.access_token).toBe('tk');
-      expect(service.register).toHaveBeenCalledWith(dto);
+      expect(spy).toHaveBeenCalledWith(dto);
     });
   });
 
   describe('login', () => {
     it('debería llamar a authService.login', async () => {
       const dto: LoginDto = { login: '123', password: 'pwd' };
-      mockAuthService.login.mockResolvedValue({ access_token: 'tk' });
+      const spy = jest.spyOn(service, 'login');
+      spy.mockResolvedValue({ access_token: 'tk' });
 
       const result = await controller.login(dto);
       expect(result.access_token).toBe('tk');
-      expect(service.login).toHaveBeenCalledWith(dto);
+      expect(spy).toHaveBeenCalledWith(dto);
     });
   });
 
