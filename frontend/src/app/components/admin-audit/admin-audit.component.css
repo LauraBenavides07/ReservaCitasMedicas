@@ -1,25 +1,51 @@
+/* ============================================
+   AUDIT CONTAINER
+   ============================================ */
 .audit-container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
+    padding: 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
 }
 
+/* ============================================
+   HEADER
+   ============================================ */
 .audit-header {
     margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e2e8f0;
 }
 
 .audit-header h2 {
     margin: 0;
     color: #1e293b;
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: 700;
 }
 
-.audit-filters {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-end;
+.audit-description {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+/* ============================================
+   FILTERS PANEL - EN UNA SOLA FILA
+   ============================================ */
+.audit-filters-panel {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 1.25rem;
     margin-bottom: 1.5rem;
+    border: 1px solid #e2e8f0;
+}
+
+.filters-row {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;  /* ← Cambia de flex-end a flex-start */
     flex-wrap: wrap;
 }
 
@@ -27,6 +53,23 @@
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+    justify-content: flex-end;  /* ← Alinea el contenido hacia abajo */
+    min-height: 80px;  
+    width: 400px;     
+}
+
+/* El grupo del botón no necesita tanta altura */
+.filter-actions {
+    display: flex;
+    align-items: center;     
+    justify-content: center; 
+    margin-bottom: 0;       
+    align-self: center;
+}
+
+.filter-group:nth-child(2) {
+    flex: 2;                 /* ← Ocupa el doble de espacio */
+    width: 400px;  
 }
 
 .filter-group label {
@@ -44,86 +87,234 @@
     font-size: 0.9rem;
     background: white;
     min-height: 42px;
-    min-width: 200px;
+    min-width: 100px;
 }
 
-.btn-filter {
-    background-color: #0d2c5b;
+
+.input-with-help {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.input-with-help input {
+    flex: 1;
+}
+
+.help-btn {
+    background: #e2e8f0;
+    border: none;
+    width: 42px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.help-btn:hover {
+    background: #cbd5e1;
+}
+
+.input-hint {
+    display: block;
+    font-size: 0.65rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
+}
+
+
+
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+.btn-success {
+    background: #10b981;
     color: white;
     border: none;
-    padding: 0.6rem 1.5rem;
-    border-radius: 6px;
+    padding: 0.6rem 1.25rem;
+    border-radius: 10px;
     font-weight: 600;
     cursor: pointer;
-    min-height: 42px;
-    font-size: 0.9rem;
+    transition: all 0.2s;
+    font-size: 0.85rem;
 }
 
-.btn-filter:hover {
-    background-color: #1e3f6f;
+.btn-success:hover {
+    background: #059669;
 }
 
-.audit-loading {
+.btn-export {
+    background: transparent;
+    border: 1px solid #10b981;
+    color: #10b981;
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-export:hover {
+    background: #10b981;
+    color: white;
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+.loading-state {
     text-align: center;
-    padding: 2rem;
-    color: #64748b;
+    padding: 3rem;
+    background: #f8fafc;
+    border-radius: 16px;
 }
 
-.audit-count {
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #1e3a6a;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   ERROR STATE
+   ============================================ */
+.error-state {
+    text-align: center;
+    padding: 3rem;
+    background: #fef2f2;
+    border-radius: 16px;
+    color: #dc2626;
+}
+
+.error-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* ============================================
+   RESULTS HEADER
+   ============================================ */
+.audit-results {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.results-count {
     font-size: 0.85rem;
     color: #64748b;
-    margin-bottom: 0.75rem;
 }
 
-.audit-table-container {
+.results-count strong {
+    color: #1e3a6a;
+    font-size: 1rem;
+}
+
+/* ============================================
+   TABLE
+   ============================================ */
+.table-wrapper {
     overflow-x: auto;
-    width: 100%;
 }
 
 .audit-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 700px;
+    min-width: 800px;
 }
 
 .audit-table th,
 .audit-table td {
-    padding: 0.7rem 0.85rem;
+    padding: 0.85rem 1rem;
     text-align: left;
     border-bottom: 1px solid #f1f5f9;
     font-size: 0.85rem;
 }
 
 .audit-table th {
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    color: #94a3b8;
+    color: #64748b;
     text-transform: uppercase;
-    background: transparent;
+    background: #fafafa;
 }
 
 .audit-table tbody tr:hover {
     background-color: #f8fafc;
 }
 
-.audit-badge {
+/* Table cells */
+.date-cell {
+    font-family: monospace;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.patient-cell strong {
+    color: #1e293b;
+}
+
+.id-hint {
+    display: block;
+    font-size: 0.65rem;
+    color: #94a3b8;
+    margin-top: 0.2rem;
+}
+
+.old-value {
+    color: #dc2626;
+    font-size: 0.8rem;
+}
+
+.new-value {
+    color: #10b981;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.responsible-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.responsible-name {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.responsible-cell small {
+    font-size: 0.65rem;
+    color: #94a3b8;
+}
+
+/* Badges */
+.badge {
     font-size: 0.7rem;
     font-weight: 600;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    text-transform: uppercase;
-}
-
-.audit-table td small {
-    color: #94a3b8;
-    font-size: 0.7rem;
-}
-
-.audit-empty {
-    text-align: center;
-    padding: 3rem;
-    color: #64748b;
-    font-size: 0.95rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    display: inline-block;
 }
 
 .badge-created { background: #dbeafe; color: #1d4ed8; }
@@ -132,15 +323,58 @@
 .badge-confirmed { background: #d1fae5; color: #059669; }
 .badge-completed { background: #e0e7ff; color: #4338ca; }
 
-@media (max-width: 600px) {
-    .audit-filters {
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: #f8fafc;
+    border-radius: 16px;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    margin: 0 0 0.5rem 0;
+    color: #1e293b;
+}
+
+.empty-state p {
+    color: #64748b;
+    margin-bottom: 1rem;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .filters-row {
         flex-direction: column;
         align-items: stretch;
     }
-
-    .filter-group select,
-    .filter-group input {
-        min-width: unset;
+    
+    .filter-group {
         width: 100%;
+    }
+    
+    .filter-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    min-width: 120px;
+    }
+    
+    .filter-actions button {
+        width: 100%;
+    }
+    
+    .results-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
     }
 }

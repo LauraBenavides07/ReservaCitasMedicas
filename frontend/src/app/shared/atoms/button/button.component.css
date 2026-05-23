@@ -268,18 +268,38 @@
    BOTÓN DE BÚSQUEDA (variante especial)
    ============================================ */
 .app-button.btn-search {
-  background: #1e3a6a;
-  color: #ffffff;
+  background: linear-gradient(135deg, #1e3a6a 0%, #0d2c5b 100%);
+  color: white;
   border: none;
-  padding: 0 1.5rem;
-  border-radius: 8px;
+  padding: 0.6rem 1.5rem;
+  border-radius: 10px;
   font-weight: 600;
-  min-height: 44px;
+  font-size: 0.9rem;
+  min-width: 100px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .app-button.btn-search:hover:not(.btn-disabled) {
-  background: #152e4d;
+  background: linear-gradient(135deg, #0d2c5b 0%, #081d3a 100%);
   transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.app-button.btn-search:active:not(.btn-disabled) {
+  transform: translateY(0);
+}
+
+.app-button.btn-search.btn-disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 /* ============================================
