@@ -5,18 +5,22 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  Check,
+  Index,
 } from 'typeorm';
 import { Appointment } from './appointment.entity';
 
 @Entity('doctors')
+@Check(`LENGTH("name") <= 100`)
+@Check(`LENGTH("specialty") <= 100`)
 export class Doctor {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 100 })
+  @Column()
   name: string;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ nullable: true })
   specialty: string;
 
   @Column({ name: 'schedule_start', type: 'time', default: '08:00' })
@@ -34,22 +38,21 @@ export class Doctor {
   @Column({ name: 'lunch_end', type: 'time', nullable: true })
   lunchEnd: string;
 
-  @Column({ name: 'active_days', length: 50, default: '1,2,3,4,5' })
-  activeDays: string;
+  @Index({ type: 'gin' })
+  @Column('int', { name: 'active_days', array: true, default: [1, 2, 3, 4, 5] })
+  activeDays: number[];
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
 
   @OneToMany(() => Appointment, (appointment) => appointment.doctor)
   appointments: Appointment[];
 
   getWorkingDays(): number[] {
-    return this.activeDays
-      ? this.activeDays.split(',').map(Number)
-      : [1, 2, 3, 4, 5];
+    return this.activeDays ?? [1, 2, 3, 4, 5];
   }
 
   isWorkingDay(dateStr: string): boolean {

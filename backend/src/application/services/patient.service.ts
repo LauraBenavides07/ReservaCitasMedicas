@@ -22,14 +22,15 @@ export class PatientService {
     firstName: string;
     lastName: string;
     phone: string;
-    gender: string;
+    gender?: string;
   }): Promise<Patient> {
     let patient = await this.patientRepository.findOneBy({
       document: data.document,
     });
     if (!patient) {
       try {
-        patient = this.patientRepository.create(data);
+        const patientData = { ...data, gender: data.gender || 'O' };
+        patient = this.patientRepository.create(patientData);
         await this.patientRepository.save(patient);
       } catch (error: unknown) {
         const pgError = error as { code?: string };

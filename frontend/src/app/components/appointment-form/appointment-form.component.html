@@ -163,7 +163,7 @@
 
                 <!-- Botón de envío -->
                 <div class="form-actions mt-1.5rem">
-                    <app-button type="submit" variant="primary" [fullWidth]="true" [disabled]="appointmentForm.invalid || isSubmitting()" (clicked)="onSubmit()">
+                    <app-button type="submit" variant="primary" [fullWidth]="true" [disabled]="appointmentForm.invalid || isSubmitting()">
                          {{ isSubmitting() ? 'Procesando...' : 'Confirmar Cita Médica' }}
                     </app-button>
                 </div>

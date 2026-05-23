@@ -161,7 +161,7 @@ export class AppointmentFormComponent implements OnInit {
     if (!doctor) return;
 
     const today = new Date();
-    const workingDays = doctor.activeDays ? doctor.activeDays.split(',').map(Number) : [1, 2, 3, 4, 5];
+    const workingDays = doctor.activeDays ?? [1, 2, 3, 4, 5];
 
     for (let i = 0; i <= 14; i++) {
       const d = new Date();
@@ -191,8 +191,7 @@ export class AppointmentFormComponent implements OnInit {
     if (doctor && doctor.activeDays) {
       let dow = selectedDate.getDay();
       if (dow === 0) dow = 7;
-      const workingDays = doctor.activeDays.split(',').map(Number);
-      if (!workingDays.includes(dow)) {
+      if (!doctor.activeDays.includes(dow)) {
         return true; // Día no laboral para este médico
       }
     }
@@ -229,8 +228,7 @@ export class AppointmentFormComponent implements OnInit {
     if (doctor && doctor.activeDays) {
       let dow = selectedDate.getDay();
       if (dow === 0) dow = 7;
-      const workingDays = doctor.activeDays.split(',').map(Number);
-      if (!workingDays.includes(dow)) {
+      if (!doctor.activeDays.includes(dow)) {
         const dayNames: Record<number, string> = { 
           1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 
           4: 'Jueves', 5: 'Viernes', 6: 'Sábado', 7: 'Domingo'
@@ -296,8 +294,7 @@ export class AppointmentFormComponent implements OnInit {
   
   const doctor = this.doctors().find(d => d.id === doctorId);
   if (doctor && doctor.activeDays) {
-    const workingDays = doctor.activeDays.split(',').map(Number);
-    if (!workingDays.includes(dow)) {
+    if (!doctor.activeDays.includes(dow)) {
       this.availableSlots.set([]);
       const dayNames: Record<number, string> = { 
         1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 
@@ -406,9 +403,19 @@ private showInfoToast(message: string): void {
 
   // Envío del formulario
   onSubmit(): void {
+    if (this.isSubmitting()) return;
+
     if (this.appointmentForm.invalid) {
       this.appointmentForm.markAllAsTouched();
       this.showErrorToast('Complete todos los campos obligatorios');
+      return;
+    }
+
+    const selectedTime = this.f['time'].value;
+    if (selectedTime && !this.availableSlots().includes(selectedTime)) {
+      this.showErrorToast('Este horario ya no está disponible. Selecciona otro.');
+      this.f['time'].setValue('');
+      this.loadAvailableSlots();
       return;
     }
 
@@ -437,10 +444,12 @@ private showInfoToast(message: string): void {
         Swal.close();
         this.isSubmitting.set(false);
         
-        const errorMessage = err.error?.message || err.message || 'Error al crear la cita';
+        const raw = err.error?.message || err.message || 'Error al crear la cita';
+        const errorMessage = Array.isArray(raw) ? raw[0] || raw.join(', ') : raw;
         
         if (errorMessage.includes('horario ya está ocupado')) {
-          this.showErrorToast('Este horario ya fue tomado. Selecciona otro horario');
+          this.showErrorToast('Este horario ya fue tomado. Selecciona otro.');
+          this.f['time'].setValue('');
           this.loadAvailableSlots();
         } else if (errorMessage.includes('horas de anticipación')) {
           this.showErrorToast(errorMessage);

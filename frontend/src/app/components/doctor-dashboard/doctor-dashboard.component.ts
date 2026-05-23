@@ -357,9 +357,12 @@ export class DoctorDashboardComponent implements OnInit {
                 this.cdr.detectChanges();
             }, 100);
         },
-        error: () => {
+        error: (err) => {
             Swal.close();
-            this.showErrorToast('No se pudo confirmar la cita');
+            const msg = err.error?.message
+                ? (Array.isArray(err.error.message) ? err.error.message[0] : err.error.message)
+                : 'No se pudo confirmar la cita';
+            this.showErrorToast(msg);
             this.cdr.detectChanges();
         }
     });
@@ -397,9 +400,12 @@ export class DoctorDashboardComponent implements OnInit {
                         this.cdr.detectChanges();
                     }, 100);
                 },
-                error: () => {
+                error: (err) => {
                     Swal.close();
-                    this.showErrorToast('No se pudo cancelar la cita');
+                    const msg = err.error?.message
+                        ? (Array.isArray(err.error.message) ? err.error.message[0] : err.error.message)
+                        : 'No se pudo cancelar la cita';
+                    this.showErrorToast(msg);
                     this.cdr.detectChanges();
                 }
             });
@@ -507,7 +513,10 @@ export class DoctorDashboardComponent implements OnInit {
             console.error('Error al completar la cita:', err);
             Swal.close();
             this.closeCompletionModal();
-            this.showErrorToast('No se pudo completar la cita');
+            const msg = err.error?.message
+                ? (Array.isArray(err.error.message) ? err.error.message[0] : err.error.message)
+                : 'No se pudo completar la cita';
+            this.showErrorToast(msg);
             this.cdr.detectChanges();
         }
     });

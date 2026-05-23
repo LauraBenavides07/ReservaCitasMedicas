@@ -53,7 +53,7 @@ Eres un desarrollador senior especializado en **Angular (frontend)** y **NestJS 
 
 ### 3. Formularios y Consistencia
 - **Registro vs Citas**: Se ha eliminado `birthDate` de los formularios de citas para mantener consistencia con el flujo de registro simple de pacientes.
-- **Campos obligatorios**: Documento, Nombre, Apellido, Teléfono, Correo y Género (M, F, O).
+- **Campos obligatorios**: Documento, Nombre, Apellido, Teléfono y Género (M, F, O). Correo es opcional (no todos los pacientes tienen uno).
 
 ### 4. Accesibilidad y Responsividad (Adultos Mayores y Móvil)
 - **Mobile-First**: El diseño debe estar optimizado para pantallas pequeñas (celulares) antes que para PC.

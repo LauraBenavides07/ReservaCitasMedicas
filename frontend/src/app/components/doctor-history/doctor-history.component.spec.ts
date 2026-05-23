@@ -24,15 +24,15 @@ describe('DoctorHistoryComponent', () => {
   const mockDoctorId = 'doc1';
 
   const mockDoctors = [
-    { id: 'doc1', name: 'Carlos Médina', specialty: 'Cardiología', scheduleStart: '08:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: '1,2,3,4,5' },
-    { id: 'doc2', name: 'Dra. López', specialty: 'Pediatría', scheduleStart: '09:00', scheduleEnd: '16:00', slotDuration: 20, activeDays: '1,3,5' }
+    { id: 'doc1', name: 'Carlos Médina', specialty: 'Cardiología', scheduleStart: '08:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: [1, 2, 3, 4, 5] },
+    { id: 'doc2', name: 'Dra. López', specialty: 'Pediatría', scheduleStart: '09:00', scheduleEnd: '16:00', slotDuration: 20, activeDays: [1, 3, 5] }
   ];
 
   const mockAllAppointments: Appointment[] = [
-    { id: 'apt1', appointmentDate: '2024-12-01', appointmentTime: '09:00', time: '09:00', date: '2024-12-01', status: 'completada', patient: { firstName: 'Juan', lastName: 'Pérez', document: '12345', phone: '987654321' }, doctor: { id: 'doc1', name: 'Carlos Médina', specialty: 'Cardiología', scheduleStart: '08:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: '1,2,3,4,5' } },
-    { id: 'apt2', appointmentDate: '2024-11-15', appointmentTime: '10:00', time: '10:00', date: '2024-11-15', status: 'cancelada', patient: { firstName: 'Ana', lastName: 'García', document: '67890', phone: '123456789' }, doctor: { id: 'doc1', name: 'Carlos Médina', specialty: 'Cardiología', scheduleStart: '08:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: '1,2,3,4,5' } },
-    { id: 'apt3', appointmentDate: '2024-10-10', appointmentTime: '11:00', time: '11:00', date: '2024-10-10', status: 'completada', patient: { firstName: 'Luis', lastName: 'Martínez', document: '11111', phone: '555555555' }, doctor: { id: 'doc2', name: 'Dra. López', specialty: 'Pediatría', scheduleStart: '09:00', scheduleEnd: '16:00', slotDuration: 20, activeDays: '1,3,5' } },
-    { id: 'apt4', appointmentDate: '2024-12-20', appointmentTime: '08:00', time: '08:00', date: '2024-12-20', status: 'agendada', patient: { firstName: 'Sofía', lastName: 'Ramírez', document: '22222', phone: '666666666' }, doctor: { id: 'doc1', name: 'Carlos Médina', specialty: 'Cardiología', scheduleStart: '08:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: '1,2,3,4,5' } }
+    { id: 'apt1', appointmentDate: '2024-12-01', appointmentTime: '09:00', time: '09:00', date: '2024-12-01', status: 'completada', patient: { firstName: 'Juan', lastName: 'Pérez', document: '12345', phone: '987654321' }, doctor: { id: 'doc1', name: 'Carlos Médina', specialty: 'Cardiología', scheduleStart: '08:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: [1, 2, 3, 4, 5] } },
+    { id: 'apt2', appointmentDate: '2024-11-15', appointmentTime: '10:00', time: '10:00', date: '2024-11-15', status: 'cancelada', patient: { firstName: 'Ana', lastName: 'García', document: '67890', phone: '123456789' }, doctor: { id: 'doc1', name: 'Carlos Médina', specialty: 'Cardiología', scheduleStart: '08:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: [1, 2, 3, 4, 5] } },
+    { id: 'apt3', appointmentDate: '2024-10-10', appointmentTime: '11:00', time: '11:00', date: '2024-10-10', status: 'completada', patient: { firstName: 'Luis', lastName: 'Martínez', document: '11111', phone: '555555555' }, doctor: { id: 'doc2', name: 'Dra. López', specialty: 'Pediatría', scheduleStart: '09:00', scheduleEnd: '16:00', slotDuration: 20, activeDays: [1, 3, 5] } },
+    { id: 'apt4', appointmentDate: '2024-12-20', appointmentTime: '08:00', time: '08:00', date: '2024-12-20', status: 'agendada', patient: { firstName: 'Sofía', lastName: 'Ramírez', document: '22222', phone: '666666666' }, doctor: { id: 'doc1', name: 'Carlos Médina', specialty: 'Cardiología', scheduleStart: '08:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: [1, 2, 3, 4, 5] } }
   ];
 
   beforeAll(() => {

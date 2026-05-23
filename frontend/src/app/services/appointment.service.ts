@@ -34,7 +34,7 @@ export interface CreateAppointmentDto {
   firstName: string;
   lastName: string;
   phone: string;
-  gender: string;
+  gender?: string;
   birthDate?: string;
   email?: string;
   doctorId: string;

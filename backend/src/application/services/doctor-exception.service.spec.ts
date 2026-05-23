@@ -39,7 +39,7 @@ describe('DoctorExceptionService', () => {
   });
 
   it('debería agregar una excepción', async () => {
-    const data = { doctorId: '1', date: '2026-05-20', reason: 'Vacaciones' };
+    const data = { doctor: { id: '1' }, date: '2026-05-20', reason: 'Vacaciones' };
     mockDoctorRepository.findOneBy.mockResolvedValue({ id: '1' });
     mockExceptionRepository.create.mockReturnValue(data);
     mockExceptionRepository.save.mockResolvedValue(data);
@@ -50,13 +50,13 @@ describe('DoctorExceptionService', () => {
 
   it('debería obtener excepciones de un médico', async () => {
     mockExceptionRepository.find.mockResolvedValue([
-      { id: 'e1', doctorId: '1' },
+      { id: 'e1' },
     ]);
     const result = await service.findByDoctor('1');
     expect(result).toHaveLength(1);
     expect(mockExceptionRepository.find).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { doctorId: '1' },
+        where: { doctor: { id: '1' } },
       }),
     );
   });

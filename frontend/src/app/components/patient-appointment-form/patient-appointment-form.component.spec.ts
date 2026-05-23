@@ -30,8 +30,8 @@ describe('PatientAppointmentFormComponent', () => {
   };
 
   const mockDoctors: Doctor[] = [
-    { id: 'doc1', name: 'Dr. García', specialty: 'Cardiología', scheduleStart: '08:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: '1,2,3,4,5' },
-    { id: 'doc2', name: 'Dra. López', specialty: 'Pediatría', scheduleStart: '09:00', scheduleEnd: '16:00', slotDuration: 20, activeDays: '1,3,5' }
+    { id: 'doc1', name: 'Dr. García', specialty: 'Cardiología', scheduleStart: '08:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: [1, 2, 3, 4, 5] },
+    { id: 'doc2', name: 'Dra. López', specialty: 'Pediatría', scheduleStart: '09:00', scheduleEnd: '16:00', slotDuration: 20, activeDays: [1, 3, 5] }
   ];
 
   beforeAll(() => {
@@ -97,10 +97,10 @@ describe('PatientAppointmentFormComponent', () => {
   });
 
   it('should formatDays converts day numbers to Spanish abbreviations', () => {
-    expect(component.formatDays('1,2,3,4,5')).toBe('Lun, Mar, Mié, Jue, Vie');
-    expect(component.formatDays('1,3,5')).toBe('Lun, Mié, Vie');
-    expect(component.formatDays('6')).toBe('Sáb');
-    expect(component.formatDays('')).toBe('');
+    expect(component.formatDays([1,2,3,4,5])).toBe('Lun, Mar, Mié, Jue, Vie');
+    expect(component.formatDays([1,3,5])).toBe('Lun, Mié, Vie');
+    expect(component.formatDays([6])).toBe('Sáb');
+    expect(component.formatDays([])).toBe('');
   });
 
   it('should selectDoctor: sets selectedDoctor, generates dates, advances to step 2', () => {
@@ -119,7 +119,7 @@ describe('PatientAppointmentFormComponent', () => {
       scheduleStart: '08:00',
       scheduleEnd: '17:00',
       slotDuration: 30,
-      activeDays: '1'
+      activeDays: [1]
     };
 
     component.generateDates(doctor);

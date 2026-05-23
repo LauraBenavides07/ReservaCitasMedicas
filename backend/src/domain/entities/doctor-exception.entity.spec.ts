@@ -3,15 +3,17 @@ import { Doctor } from './doctor.entity';
 
 describe('DoctorException Entity', () => {
   it('debería crear una instancia con campos básicos', () => {
+    const doctor = new Doctor();
+    doctor.id = 'd1';
     const exception = new DoctorException();
     exception.id = 'e1';
-    exception.doctorId = 'd1';
+    exception.doctor = doctor;
     exception.date = '2026-06-20';
     exception.reason = 'Vacaciones';
 
     expect(exception).toBeDefined();
     expect(exception.id).toBe('e1');
-    expect(exception.doctorId).toBe('d1');
+    expect(exception.doctor.id).toBe('d1');
     expect(exception.date).toBe('2026-06-20');
     expect(exception.reason).toBe('Vacaciones');
   });

@@ -98,8 +98,11 @@ export class PatientDashboardComponent implements OnInit {
               }
             });
           },
-          error: () => {
-            this.showErrorModal('Error al cancelar la cita.');
+          error: (err) => {
+            const msg = err.error?.message
+              ? (Array.isArray(err.error.message) ? err.error.message[0] : err.error.message)
+              : 'Error al cancelar la cita.';
+            this.showErrorModal(msg);
           }
         });
       }

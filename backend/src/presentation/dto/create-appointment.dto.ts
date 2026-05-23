@@ -26,9 +26,8 @@ export class CreateAppointmentDto {
   phone: string;
 
   @IsString()
-  @IsNotEmpty()
-  @IsIn(['M', 'F', 'O'])
-  gender: string;
+  @IsOptional()
+  gender?: string;
 
   @IsDateString()
   @IsOptional()

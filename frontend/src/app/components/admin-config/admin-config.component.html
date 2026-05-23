@@ -171,6 +171,9 @@
         <h3 id="doctor-modal-title" class="modal-title">
             {{ selectedDoctor() ? 'Editar Médico' : 'Añadir Médico' }}
         </h3>
+        <div *ngIf="doctorFormMessage()" class="inline-message" [class.inline-error]="doctorFormMessage()!.type === 'error'" [class.inline-success]="doctorFormMessage()!.type === 'success'">
+            {{ doctorFormMessage()!.text }}
+        </div>
         <form [formGroup]="doctorForm" (ngSubmit)="saveDoctor()" class="form-grid">
             <div class="form-field">
                 <label for="doctor-name">Nombre Completo <span class="required">*</span></label>
@@ -247,7 +250,7 @@
             </div>
 
             <div class="modal-actions">
-            <app-button type="submit" variant="primary" [disabled]="doctorForm.invalid" (clicked)="saveDoctor()">Guardar Cambios</app-button>
+            <app-button type="submit" variant="primary" [disabled]="doctorForm.invalid">Guardar Cambios</app-button>
             <app-button *ngIf="selectedDoctor()" variant="danger" (clicked)="deleteDoctor(selectedDoctor()!.id)">Eliminar Médico</app-button>
             <app-button variant="secondary" (clicked)="closeDoctorModal()">Cancelar</app-button>
             </div>
@@ -261,6 +264,9 @@
             Configura los parámetros generales para todos los médicos del sistema.
         </p>
 
+        <div *ngIf="configFormMessage()" class="inline-message" [class.inline-error]="configFormMessage()!.type === 'error'" [class.inline-success]="configFormMessage()!.type === 'success'">
+            {{ configFormMessage()!.text }}
+        </div>
         <form [formGroup]="configForm" (ngSubmit)="saveConfig()" class="form-grid">
             <div class="form-field">
                 <label for="config-minAdvance">Antelación Mínima (Horas) <span class="required">*</span></label>
@@ -280,7 +286,7 @@
             </div>
 
             <div class="modal-actions">
-                <app-button type="submit" variant="primary" [disabled]="configForm.invalid" (clicked)="saveConfig()">Guardar Cambios</app-button>
+                <app-button type="submit" variant="primary" [disabled]="configForm.invalid">Guardar Cambios</app-button>
                 <app-button variant="secondary" (clicked)="closeConfigModal()">Cancelar</app-button>
             </div>
         </form>
@@ -322,7 +328,7 @@
             </div>
 
             <div class="modal-actions">
-                <app-button type="submit" variant="primary" [disabled]="exceptionForm.invalid" (clicked)="addException()">Bloquear Día</app-button>
+                <app-button type="submit" variant="primary" [disabled]="exceptionForm.invalid">Bloquear Día</app-button>
                 <app-button variant="secondary" (clicked)="closeExceptionsModal()">Cerrar</app-button>
             </div>
         </form>

@@ -344,33 +344,34 @@ onSearch(): void {
   confirmReschedule(): void {
     if (!this.selectedAppointment || !this.newRescheduleDate || !this.newRescheduleTime) return;
 
+    const appointment = this.selectedAppointment;
+    const date = this.newRescheduleDate;
+    const time = this.newRescheduleTime;
+    const doctorId = this.rescheduleDoctorId;
+
+    this.closeRescheduleModal();
+
     Swal.fire({
       title: 'Confirmar Reagendamiento',
-      text: `¿Estás seguro de reagendar la cita para el ${this.newRescheduleDate} a las ${this.newRescheduleTime}?`,
+      text: `¿Estás seguro de reagendar la cita para el ${date} a las ${time}?`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Sí, reagendar',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#3e7ba6',
-      customClass: {
-                container: 'swal-zindex-fix',
-                popup: 'swal-zindex-fix'
-      }
     }).then((result) => {
       if (result.isConfirmed) {
         this.appointmentService.rescheduleAppointment(
-          this.selectedAppointment!.id,
-          this.newRescheduleDate,
-          this.newRescheduleTime,
-          this.rescheduleDoctorId
+          appointment.id,
+          date,
+          time,
+          doctorId
         ).subscribe({
           next: () => {
-            this.closeRescheduleModal();
             Swal.fire({
               icon: 'success',
               title: '¡Éxito!',
               text: 'La cita ha sido reagendada.',
-              customClass: { popup: 'swal-zindex-fix' }
             });
             if (this.viewMode === 'all') {
               this.loadAllAppointments();
@@ -384,10 +385,11 @@ onSearch(): void {
               icon: 'error',
               title: 'Error',
               text: 'No se pudo reagendar la cita. Es posible que el horario ya no esté disponible.',
-              customClass: { popup: 'swal-zindex-fix' }
             });
           }
         });
+      } else {
+        this.openRescheduleModal(appointment);
       }
     });
   }

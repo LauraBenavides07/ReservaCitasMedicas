@@ -25,8 +25,8 @@ describe('DoctorDashboardComponent', () => {
   const mockDoctorId = 'doc1';
 
   const mockDoctors = [
-    { id: 'doc1', name: 'Carlos Médina', specialty: 'Cardiología', scheduleStart: '08:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: '1,2,3,4,5' },
-    { id: 'doc2', name: 'Dra. López', specialty: 'Pediatría', scheduleStart: '09:00', scheduleEnd: '16:00', slotDuration: 20, activeDays: '1,3,5' }
+    { id: 'doc1', name: 'Carlos Médina', specialty: 'Cardiología', scheduleStart: '08:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: [1, 2, 3, 4, 5] },
+    { id: 'doc2', name: 'Dra. López', specialty: 'Pediatría', scheduleStart: '09:00', scheduleEnd: '16:00', slotDuration: 20, activeDays: [1, 3, 5] }
   ];
 
   const mockAppointmentResponse = {

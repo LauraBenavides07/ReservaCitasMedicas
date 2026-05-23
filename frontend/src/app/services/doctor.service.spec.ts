@@ -22,7 +22,7 @@ describe('DoctorService', () => {
 
   it('should get all doctors', () => {
     const mockDoctors: Doctor[] = [
-      { id: '1', name: 'Dr. Perez', specialty: 'Fisioterapia', scheduleStart: '08:00', scheduleEnd: '16:00', slotDuration: 30, activeDays: '1,2,3,4,5' }
+      { id: '1', name: 'Dr. Perez', specialty: 'Fisioterapia', scheduleStart: '08:00', scheduleEnd: '16:00', slotDuration: 30, activeDays: [1, 2, 3, 4, 5] }
     ];
 
     service.getDoctors().subscribe(doctors => {
@@ -35,7 +35,7 @@ describe('DoctorService', () => {
   });
 
   it('should create a doctor', () => {
-    const data: Partial<Doctor> = { name: 'Dr. Test', specialty: 'Quiropraxia', scheduleStart: '09:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: '1,2,3,4,5' };
+    const data: Partial<Doctor> = { name: 'Dr. Test', specialty: 'Quiropraxia', scheduleStart: '09:00', scheduleEnd: '17:00', slotDuration: 30, activeDays: [1, 2, 3, 4, 5] };
     const mockDoctor: Doctor = { id: '2', ...data } as Doctor;
 
     service.createDoctor(data).subscribe(doctor => {
@@ -50,7 +50,7 @@ describe('DoctorService', () => {
 
   it('should update a doctor', () => {
     const data: Partial<Doctor> = { specialty: 'Fisioterapia' };
-    const mockDoctor: Doctor = { id: '1', name: 'Dr. Perez', specialty: 'Fisioterapia', scheduleStart: '08:00', scheduleEnd: '16:00', slotDuration: 30, activeDays: '1,2,3,4,5' };
+    const mockDoctor: Doctor = { id: '1', name: 'Dr. Perez', specialty: 'Fisioterapia', scheduleStart: '08:00', scheduleEnd: '16:00', slotDuration: 30, activeDays: [1, 2, 3, 4, 5] };
 
     service.updateDoctor('1', data).subscribe(doctor => {
       expect(doctor).toEqual(mockDoctor);

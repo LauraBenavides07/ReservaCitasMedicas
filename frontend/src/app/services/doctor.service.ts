@@ -9,7 +9,7 @@ export interface Doctor {
   scheduleStart: string;
   scheduleEnd: string;
   slotDuration: number;
-  activeDays: string;
+  activeDays: number[];
   lunchStart?: string;
   lunchEnd?: string;
 }

@@ -79,7 +79,7 @@ describe('DoctorController', () => {
       await controller.addException('d1', data);
       expect(exceptionService.add).toHaveBeenCalledWith({
         ...data,
-        doctorId: 'd1',
+        doctor: { id: 'd1' },
       });
     });
 

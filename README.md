@@ -12,18 +12,65 @@ Este proyecto es una aplicación web para la gestión de citas médicas, diseña
 
 ### 1. Requisitos previos
 - Node.js (versión 18 o superior)
-- npm
-- PostgreSQL corriendo localmente (Puerto 5432)
-- Docker (para ejecutar Keycloak)
-### 1.1. Levantamiento docker 
+- npm (o pnpm)
+- Docker + Docker Compose v2
 
-Levanta todos los servicios, Se debe realizar solo 1 vez la configuracion delservicio de Keycloak
+### 1.1. Configuración inicial (solo una vez)
+
+Antes de levantar Docker, configura las credenciales:
 
 ```bash
-docker-compose up -d 
+# 1. Copia la plantilla de secrets
+cp .env.example .env
+
+# 2. Edita .env con tus contraseñas (opcional, valores por defecto funcionan en dev)
 ```
-### 2. Configuración del Backend
-Accede a la carpeta del servidor e instala las dependencias:
+
+> **⚠️ `.env` contiene passwords. NO se commitea** (está en `.gitignore`).
+
+### 1.2. Levantar infraestructura con Docker
+
+Todo el entorno (PostgreSQL, RabbitMQ, Keycloak, backend y frontend) se levanta con Docker. No necesitas PostgreSQL ni Node localmente.
+
+#### Modo desarrollo (con puertos de infraestructura expuestos):
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+```
+Esto expone: PostgreSQL (5432), RabbitMQ UI (15672), Keycloak (8080) para herramientas como DBeaver, pgAdmin, etc.
+
+#### Modo producción (mínimos puertos):
+```bash
+docker compose up -d
+```
+Solo expone `frontend:80` y `backend:3000`. La infraestructura queda aislada en la red interna.
+
+> **Primera vez**: Keycloak requiere configuración inicial (realm, client). Sigue la [guía de Keycloak](docs/KEYCLOAK_SETUP.md).
+
+#### Servicios incluidos:
+
+| Servicio | Acceso interno | Puerto host (dev) |
+|---|---|---|
+| Frontend (Angular) | http://frontend:80 | 80 |
+| Backend (NestJS) | http://backend:3000 | 3000 |
+| PostgreSQL | postgres:5432 | 5432 |
+| PostgreSQL Notificaciones | postgres-notifications:5432 | 5433 |
+| RabbitMQ | rabbitmq:5672 | — |
+| RabbitMQ Management | rabbitmq:15672 | 15672 |
+| Keycloak | http://keycloak:8080 | 8080 |
+
+#### Notas importantes:
+- **Redes**: `frontend` (público), `backend` (internal — aislada). El backend se conecta a ambas.
+- **Recursos**: Límites de CPU/memoria definidos para evitar agotamiento.
+- **init-db.sql**: Solo crea la DB `keycloak`. Las DBs `piedrazul` y `notifications_db` se crean automáticamente vía `POSTGRES_DB`.
+- **Keycloak**: Corre en modo producción (`start` en vez de `start-dev`) con HTTP habilitado internamente y healthcheck configurado.
+- **Secrets**: Centralizados en `.env` — ningún password está hardcodeado en el compose.
+- **Seed data**: Para cargar datos iniciales, ejecuta dentro del contenedor:
+  ```bash
+  docker compose exec backend npx ts-node seed.ts
+  ```
+### 2. Configuración del Backend (local, sin Docker)
+
+Si prefieres ejecutar el backend fuera del contenedor:
 
 ```bash
 cd backend
@@ -31,54 +78,37 @@ pnpm install
 ```
 
 #### Configuración de Keycloak (Autenticación)
-Para la gestión de identidades, utilizamos Keycloak. Es **obligatorio** configurar Keycloak antes de iniciar el backend. 
 👉 **[Sigue la guía de configuración de Keycloak aquí](docs/KEYCLOAK_SETUP.md)**.
 
-#### Configuración de Variables de Entorno
-Crea o edita el archivo `.env` en la carpeta `backend` con los datos de tu PostgreSQL y Keycloak:
+#### Variables de Entorno
+Crea o edita `backend/.env`:
 ```env
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
-DB_PASSWORD=tu_contraseña
+DB_PASSWORD=postgres
 DB_DATABASE=piedrazul
-
-# Keycloak
 
 KEYCLOAK_URL=http://localhost:8080
 KEYCLOAK_REALM=piedrazul
 KEYCLOAK_CLIENT_ID=piedrazul-app
-KEYCLOAK_ADMIN=admin
-KEYCLOAK_ADMIN_PASSWORD=admin
-
-# ─ RabbitMQ 
 
 RABBITMQ_URL=amqp://piedrazul:piedrazul_pass@localhost:5672
 
-# ── Server 
 PORT=3000
 ```
 
-Para tener datos de prueba (médicos y pacientes iniciales), ejecuta:
-```bash
-npx ts-node seed.ts  #  Este comando reinicia la base de datos (borra datos existentes). Si usas Docker, elimina el volumen o ejecuta `docker-compose down -v` antes si deseas un clean start.
-```
-
-#### Iniciar el servidor
+#### Iniciar servidor
 ```bash
 pnpm run start:dev
 ```
-El servidor estará disponible en `http://localhost:3000`.
+Servidor en `http://localhost:3000`.
 
-### 3. Configuración del Frontend
-Accede a la carpeta de la aplicación cliente e instala las dependencias:
+### 3. Configuración del Frontend (local, sin Docker)
+
 ```bash
 cd frontend
 pnpm install
-```
-
-#### Iniciar la aplicación
-```bash
 pnpm start
 ```
 La aplicación se abrirá en `http://localhost:4200`.
@@ -99,9 +129,25 @@ cd frontend
 pnpm exec vitest run
 ```
 
-## Correos de prueba para microservicio-Notificacines
-pacientep26@gmail.com
+## Docker — Cambios Recientes
 
+Se incorporaron mejoras Docker basadas en la skill `docker-expert`. Archivos nuevos/modificados:
+
+| Archivo | Descripción |
+|---|---|
+| `docker-compose.yml` | Refactorizado con servicios backend + frontend, redes aisladas, resource limits, secrets vía `.env` |
+| `docker-compose.dev.yml` | Override de desarrollo con puertos de infraestructura |
+| `.env` | Secrets centralizados (gitignored) |
+| `.env.example` | Plantilla para `.env` |
+| `backend/Dockerfile` | Multi-stage (deps → build → runtime), usuario no-root, healthcheck |
+| `frontend/Dockerfile` | Multi-stage (build Angular → Nginx), usuario no-root, healthcheck |
+| `frontend/nginx.conf` | Proxy reverso: SPA + `/api/` al backend |
+| `backend/.dockerignore` | Excluye node_modules, dist, .env, etc. |
+| `frontend/.dockerignore` | Excluye node_modules, dist, .angular, etc. |
+| `init-db.sql` | Simplificado: solo crea DB `keycloak` |
+
+### Pendiente (próximos sprints)
+- Nada — los 10 items están completados ✅
 
 ## Características Clave
 - **Accesibilidad**: Texto de 18px+, botones de 48px+, contraste WCAG AAA.

@@ -5,16 +5,15 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  Index,
 } from 'typeorm';
 import { Doctor } from './doctor.entity';
 
 @Entity('doctor_exceptions')
+@Index(['doctor'])
 export class DoctorException {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ name: 'doctor_id' })
-  doctorId: string;
 
   @Column({ type: 'date' })
   date: string;
@@ -22,7 +21,7 @@ export class DoctorException {
   @Column({ type: 'text', nullable: true })
   reason: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
   @ManyToOne(() => Doctor, { onDelete: 'CASCADE' })

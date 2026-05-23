@@ -3,6 +3,8 @@ import {
   IsNotEmpty,
   IsOptional,
   IsNumber,
+  IsInt,
+  IsArray,
   Min,
   Matches,
 } from 'class-validator';
@@ -43,7 +45,8 @@ export class CreateDoctorDto {
   @IsOptional()
   lunchEnd?: string;
 
-  @IsString()
+  @IsArray()
+  @IsInt({ each: true })
   @IsOptional()
-  activeDays?: string;
+  activeDays?: number[];
 }

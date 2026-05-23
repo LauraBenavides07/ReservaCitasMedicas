@@ -14,6 +14,7 @@ import { DoctorExceptionService } from '../../application/services/doctor-except
 import { CreateDoctorDto } from '../dto/create-doctor.dto';
 import { UpdateDoctorDto } from '../dto/update-doctor.dto';
 import { CreateExceptionDto } from '../dto/create-exception.dto';
+import { Doctor } from '../../domain/entities/doctor.entity';
 import { JwtAuthGuard } from '../../infrastructure/auth/jwt-auth.guard';
 
 @Controller('doctors')
@@ -60,7 +61,7 @@ export class DoctorController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: CreateExceptionDto,
   ) {
-    return this.doctorExceptionService.add({ ...data, doctorId: id });
+    return this.doctorExceptionService.add({ ...data, doctor: { id } as Doctor });
   }
 
   @Get(':id/exceptions')

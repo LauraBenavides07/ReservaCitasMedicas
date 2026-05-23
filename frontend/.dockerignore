@@ -1,0 +1,12 @@
+node_modules
+dist
+.angular
+coverage
+.git
+.gitignore
+README.md
+.vscode
+public
+*.md
+.env
+npm-debug.log

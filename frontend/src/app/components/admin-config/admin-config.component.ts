@@ -19,6 +19,8 @@ export class AdminConfigComponent implements OnInit {
   activeTab = signal<'horarios' | 'estadisticas'>('horarios');
   doctors = signal<Doctor[]>([]);
   selectedDoctor = signal<Doctor | null>(null);
+  doctorFormMessage = signal<{ type: 'success' | 'error'; text: string } | null>(null);
+  configFormMessage = signal<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Referencias a dialogs
   @ViewChild('doctorModal') doctorModal!: ElementRef<HTMLDialogElement>;
@@ -57,7 +59,7 @@ export class AdminConfigComponent implements OnInit {
     } else {
       this.selectedDays.push(day);
     }
-    this.doctorForm.patchValue({ activeDays: this.selectedDays.join(',') });
+    this.doctorForm.patchValue({ activeDays: this.selectedDays.map(Number) });
   }
 
   closeDoctorModal(): void {
@@ -69,6 +71,7 @@ export class AdminConfigComponent implements OnInit {
   }
 
   openConfigModal(): void {
+    this.configFormMessage.set(null);
     this.configModal.nativeElement.showModal();
   }
 
@@ -126,7 +129,7 @@ export class AdminConfigComponent implements OnInit {
       scheduleStart: ['08:00', Validators.required],
       scheduleEnd: ['18:00', Validators.required],
       slotDuration: [30, [Validators.required, Validators.min(10)]],
-      activeDays: ['1,2,3,4,5', Validators.required],
+       activeDays: [[1, 2, 3, 4, 5], Validators.required],
       lunchStart: [null],
       lunchEnd: [null]
     });
@@ -173,27 +176,28 @@ export class AdminConfigComponent implements OnInit {
 
   // Abre el formulario para crear o editar un médico
   openDoctorForm(doctor?: Doctor): void {
+    this.doctorFormMessage.set(null);
     if (doctor) {
       this.selectedDoctor.set(doctor);
       this.doctorForm.patchValue(doctor);
-      this.syncDaysFromForm(doctor.activeDays || '1,2,3,4,5');
+      this.syncDaysFromForm(doctor.activeDays ?? [1, 2, 3, 4, 5]);
     } else {
       this.selectedDoctor.set(null);
       this.doctorForm.reset({
         scheduleStart: '08:00',
         scheduleEnd: '18:00',
         slotDuration: 30,
-        activeDays: '1,2,3,4,5',
+        activeDays: [1, 2, 3, 4, 5],
         lunchStart: null,
         lunchEnd: null
       });
-      this.syncDaysFromForm('1,2,3,4,5');
+      this.syncDaysFromForm([1, 2, 3, 4, 5]);
     }
-    this.showDoctorForm.set(true);
+    this.doctorModal.nativeElement.showModal();
   }
 
-  private syncDaysFromForm(daysStr: string): void {
-    this.selectedDays = daysStr ? daysStr.split(',').filter(d => d.trim()) : [];
+  private syncDaysFromForm(days: number[]): void {
+    this.selectedDays = days ? days.map(String) : [];
   }
 
   // Guarda los datos del médico (crea o actualiza)
@@ -208,19 +212,19 @@ export class AdminConfigComponent implements OnInit {
 
     // Validar que la hora fin sea mayor a la hora inicio
     if (data.scheduleStart && data.scheduleEnd && data.scheduleEnd <= data.scheduleStart) {
-      this.showErrorModal('La hora de fin debe ser mayor a la hora de inicio.');
+      this.doctorFormMessage.set({ type: 'error', text: 'La hora de fin debe ser mayor a la hora de inicio.' });
       return;
     }
 
     // Validar que el fin del descanso sea mayor al inicio del descanso (si ambos están definidos)
     if (data.lunchStart && data.lunchEnd && data.lunchEnd <= data.lunchStart) {
-      this.showErrorModal('La hora de fin del descanso debe ser mayor a la hora de inicio.');
+      this.doctorFormMessage.set({ type: 'error', text: 'La hora de fin del descanso debe ser mayor a la hora de inicio.' });
       return;
     }
 
     // Validar que al menos un día esté seleccionado
     if (this.selectedDays.length === 0) {
-      this.showErrorModal('Debes seleccionar al menos un día laboral.');
+      this.doctorFormMessage.set({ type: 'error', text: 'Debes seleccionar al menos un día laboral.' });
       return;
     }
 
@@ -233,7 +237,7 @@ export class AdminConfigComponent implements OnInit {
           this.closeDoctorModal();
         },
         error: (err) => {
-          this.showErrorModal(err.error?.message || 'Error al actualizar el médico.');
+          this.doctorFormMessage.set({ type: 'error', text: err.error?.message || 'Error al actualizar el médico.' });
         }
       });
     } else {
@@ -243,7 +247,7 @@ export class AdminConfigComponent implements OnInit {
           this.closeDoctorModal();
         },
         error: (err) => {
-          this.showErrorModal(err.error?.message || 'Error al crear el médico.');
+          this.doctorFormMessage.set({ type: 'error', text: err.error?.message || 'Error al crear el médico.' });
         }
       });
     }
@@ -251,14 +255,42 @@ export class AdminConfigComponent implements OnInit {
 
   // Elimina un médico por su ID
   deleteDoctor(id: string): void {
-    if (confirm('¿Está seguro de eliminar este médico?')) {
-      this.doctorService.deleteDoctor(id).subscribe({
-        next: () => this.loadDoctors(),
-        error: (err) => {
-          alert(err.error?.message || 'Error al eliminar el médico.');
-        }
-      });
-    }
+    const doc = this.selectedDoctor();
+    this.closeDoctorModal();
+
+    Swal.fire({
+      title: 'Eliminar Médico',
+      text: doc ? `¿Estás seguro de eliminar a Dr(a). ${doc.name}?` : '¿Estás seguro de eliminar este médico?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#dc2626',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.doctorService.deleteDoctor(id).subscribe({
+          next: () => {
+            this.loadDoctors();
+            Swal.fire({
+              icon: 'success',
+              title: 'Eliminado',
+              text: 'El médico ha sido eliminado correctamente.',
+              confirmButtonColor: '#3e7ba6',
+            });
+          },
+          error: (err) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: err.error?.message || 'Error al eliminar el médico.',
+              confirmButtonColor: '#3e7ba6',
+            });
+          }
+        });
+      } else {
+        this.openDoctorForm(doc ?? undefined);
+      }
+    });
   }
 
   // --- Gestión de Excepciones ---
@@ -290,12 +322,13 @@ export class AdminConfigComponent implements OnInit {
 
   // Guarda la configuración global
   saveConfig(): void {
+    this.configFormMessage.set(null);
     this.configService.updateConfig(this.configForm.value).subscribe({
       next: () => {
         this.closeConfigModal();
       },
       error: (err) => {
-        this.showErrorModal(err.error?.message || 'Error al guardar la configuración.');
+        this.configFormMessage.set({ type: 'error', text: err.error?.message || 'Error al guardar la configuración.' });
       }
     });
   }
@@ -349,12 +382,10 @@ export class AdminConfigComponent implements OnInit {
   }
 
   // Formatea los días laborales para mostrar nombres legibles
-  formatDays(daysStr: string): string {
-    if (!daysStr) return '';
-    // Mapeo de números de día a nombres
-    const map: any = { '1': 'Lunes', '2': 'Martes', '3': 'Miércoles', '4': 'Jueves', '5': 'Viernes', '6': 'Sábado', '7': 'Domingo' };
-    // Convierte cadena separada por comas en array de nombres
-    return daysStr.split(',').map(d => map[d.trim()]).filter(d => Boolean(d)).join(', ');
+  formatDays(days: number[]): string {
+    if (!days || days.length === 0) return '';
+    const map: Record<number, string> = { 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado', 7: 'Domingo' };
+    return days.map(d => map[d]).filter(Boolean).join(', ');
   }
 }
 

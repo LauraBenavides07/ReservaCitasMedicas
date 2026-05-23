@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNumber, Min, Matches } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsInt, IsArray, Min, Matches } from 'class-validator';
 
 export class UpdateDoctorDto {
   @IsString()
@@ -36,7 +36,8 @@ export class UpdateDoctorDto {
   @IsOptional()
   lunchEnd?: string;
 
-  @IsString()
+  @IsArray()
+  @IsInt({ each: true })
   @IsOptional()
-  activeDays?: string;
+  activeDays?: number[];
 }

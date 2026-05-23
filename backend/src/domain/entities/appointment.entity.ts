@@ -7,6 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
   Index,
+  Check,
 } from 'typeorm';
 import { Doctor } from './doctor.entity';
 import { Patient } from './patient.entity';
@@ -14,6 +15,10 @@ import { AppointmentStatus } from '../types/appointment-status.enum';
 
 @Entity('appointments')
 @Index(['doctor', 'appointmentDate', 'appointmentTime'], { unique: true })
+@Index(['doctor'])
+@Index(['patient'])
+@Index(['appointmentDate'])
+@Check(`"status" IN ('agendada', 'confirmada', 'completada', 'cancelada')`)
 export class Appointment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -24,10 +29,10 @@ export class Appointment {
   @Column({ name: 'appointment_time', type: 'time' })
   appointmentTime: string;
 
-  @Column({ length: 20, default: AppointmentStatus.SCHEDULED })
+  @Column({ default: AppointmentStatus.SCHEDULED })
   status: string;
 
-  @Column({ name: 'created_by', length: 100, nullable: true })
+  @Column({ name: 'created_by', nullable: true })
   createdBy: string;
 
   @ManyToOne(() => Doctor, (doctor) => doctor.appointments)
@@ -44,10 +49,10 @@ export class Appointment {
   @Column({ type: 'text', nullable: true })
   diagnosis?: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
 
   isScheduled(): boolean {

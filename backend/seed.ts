@@ -3,6 +3,9 @@ import { DataSource } from 'typeorm';
 import { Doctor } from './src/domain/entities/doctor.entity';
 import { Patient } from './src/domain/entities/patient.entity';
 import { Appointment } from './src/domain/entities/appointment.entity';
+import { AppointmentHistory } from './src/domain/entities/appointment-history.entity';
+import { DoctorException } from './src/domain/entities/doctor-exception.entity';
+import { Config } from './src/domain/entities/config.entity';
 import { User, UserRole } from './src/domain/entities/user.entity';
 import * as dotenv from 'dotenv';
 import * as bcrypt from 'bcrypt';
@@ -15,8 +18,9 @@ const dataSource = new DataSource({
   username: process.env.DB_USERNAME || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_DATABASE || 'piedrazul',
-  entities: [Doctor, Patient, Appointment, User],
-  synchronize: true,
+  entities: [Doctor, Patient, Appointment, User, AppointmentHistory, DoctorException, Config],
+  synchronize: false,
+  migrations: ['src/migrations/*.ts'],
 });
 
 async function seed() {
@@ -24,13 +28,17 @@ async function seed() {
     await dataSource.initialize();
     console.log('DataSource initialized. Connected to PostgreSQL.');
 
+    // Ejecutar migrations antes de seedear
+    await dataSource.runMigrations();
+    console.log('Migrations executed successfully.');
+
     const doctorRepo = dataSource.getRepository(Doctor);
     const patientRepo = dataSource.getRepository(Patient);
     const appointmentRepo = dataSource.getRepository(Appointment);
     const userRepo = dataSource.getRepository(User);
 
     // Limpiar datos
-    await dataSource.query('TRUNCATE TABLE appointments, patients, doctors, users CASCADE;');
+    await dataSource.query('TRUNCATE TABLE appointments, doctor_exceptions, patients, doctors, configs, users CASCADE;');
 
     const commonPasswordHash = await bcrypt.hash('123456', 10);
 
@@ -70,7 +78,7 @@ async function seed() {
       firstName: 'Luisa',
       lastName: 'Perez',
       phone: '3000000000',
-      gender: 'Mujer',
+      gender: 'F',
       email: 'paciente@piedrazul.com',
       password: commonPasswordHash,
     });

@@ -63,12 +63,10 @@ export class PatientAppointmentFormComponent implements OnInit {
   }
 
   // Formatea los días laborales para mostrar nombres abreviados
-  formatDays(daysStr: string): string {
-    if (!daysStr) return '';
-    // Mapeo de números de día a nombres abreviados
-    const map: any = { '1': 'Lun', '2': 'Mar', '3': 'Mié', '4': 'Jue', '5': 'Vie', '6': 'Sáb', '7': 'Dom' };
-    // Convierte cadena separada por comas en array de nombres
-    return daysStr.split(',').map(d => map[d.trim()]).filter(d => Boolean(d)).join(', ');
+  formatDays(days: number[]): string {
+    if (!days || days.length === 0) return '';
+    const map: Record<number, string> = { 1: 'Lun', 2: 'Mar', 3: 'Mié', 4: 'Jue', 5: 'Vie', 6: 'Sáb', 7: 'Dom' };
+    return days.map(d => map[d]).filter(Boolean).join(', ');
   }
 
   // ============================================
@@ -87,7 +85,7 @@ export class PatientAppointmentFormComponent implements OnInit {
     const dates: UIDate[] = [];
     const today = new Date();
     // Array de días laborales, por defecto Lunes a Viernes si no está configurado
-    const workingDaysArray = doc.activeDays ? doc.activeDays.split(',').map(Number) : [1, 2, 3, 4, 5];
+    const workingDaysArray = doc.activeDays ?? [1, 2, 3, 4, 5];
 
     // Arrays para nombres de días y meses en español
     const dayNames = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'];
@@ -175,7 +173,7 @@ export class PatientAppointmentFormComponent implements OnInit {
       firstName: user.firstName,
       lastName: user.lastName,
       phone: user.phone || '0000000000',
-      gender: user.gender || 'Otro',
+      gender: user.gender || undefined,
       doctorId: this.selectedDoctor()!.id,
       date: this.selectedDate()!.fullDate,
       time: this.selectedTime()

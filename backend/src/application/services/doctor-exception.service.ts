@@ -14,13 +14,13 @@ export class DoctorExceptionService {
 
   async findByDoctor(doctorId: string): Promise<DoctorException[]> {
     return this.exceptionRepository.find({
-      where: { doctorId },
+      where: { doctor: { id: doctorId } },
     });
   }
 
   async add(data: Partial<DoctorException>): Promise<DoctorException> {
     const doctor = await this.doctorRepository.findOneBy({
-      id: data.doctorId,
+      id: data.doctor?.id,
     });
     if (!doctor) {
       throw new NotFoundException('Doctor no encontrado');

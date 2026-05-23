@@ -30,7 +30,7 @@ export class AvailabilityService {
     }
 
     const exception = await this.doctorExceptionRepository.findOneBy({
-      doctorId: doctor.id,
+      doctor: { id: doctor.id },
       date,
     });
     if (exception) {
@@ -115,7 +115,7 @@ export class AvailabilityService {
 
   async validateDoctorException(doctorId: string, date: string): Promise<void> {
     const exception = await this.doctorExceptionRepository.findOneBy({
-      doctorId,
+      doctor: { id: doctorId },
       date,
     });
     if (exception) {

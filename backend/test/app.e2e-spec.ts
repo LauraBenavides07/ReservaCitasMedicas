@@ -130,7 +130,7 @@ describe('Piedrazul API (e2e)', () => {
           slotDuration: 20,
           lunchStart: '13:00',
           lunchEnd: '14:00',
-          activeDays: '1,2,3,4,5',
+          activeDays: [1,2,3,4,5],
         })
         .expect(201);
 

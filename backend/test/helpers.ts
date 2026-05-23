@@ -25,7 +25,7 @@ export async function seedTestData(app: INestApplication): Promise<TestSeed> {
     slotDuration: 30,
     lunchStart: '12:00',
     lunchEnd: '13:00',
-    activeDays: '1,2,3,4,5,6,7',
+    activeDays: [1,2,3,4,5,6,7],
   });
 
   await configRepo.save({

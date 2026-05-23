@@ -16,6 +16,7 @@ import {
 } from '@nestjs/common';
 import { IAppointmentRepository } from '../ports/appointment.repository';
 import { IDoctorRepository } from '../ports/doctor.repository';
+import { IAppointmentHistoryRepository } from '../ports/appointment-history.repository';
 
 describe('AppointmentService', () => {
   let service: AppointmentService;
@@ -69,6 +70,13 @@ describe('AppointmentService', () => {
         { provide: AvailabilityService, useValue: mockAvailability },
         { provide: PatientService, useValue: mockPatientSvc },
         { provide: NotificationService, useValue: mockNotificationSvc },
+        {
+          provide: IAppointmentHistoryRepository,
+          useValue: {
+            create: jest.fn(),
+            save: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
