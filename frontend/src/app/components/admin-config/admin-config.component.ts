@@ -63,7 +63,7 @@ export class AdminConfigComponent implements OnInit {
   }
 
   closeDoctorModal(): void {
-    this.doctorModal.nativeElement.close();
+    this.doctorModal?.nativeElement?.close();
   }
 
   onDoctorModalClose(): void {
@@ -72,11 +72,11 @@ export class AdminConfigComponent implements OnInit {
 
   openConfigModal(): void {
     this.configFormMessage.set(null);
-    this.configModal.nativeElement.showModal();
+    this.configModal?.nativeElement?.showModal();
   }
 
   closeConfigModal(): void {
-    this.configModal.nativeElement.close();
+    this.configModal?.nativeElement?.close();
   }
 
   onConfigModalClose(): void {
@@ -85,11 +85,11 @@ export class AdminConfigComponent implements OnInit {
   openExceptions(doctor: Doctor): void {
     this.selectedDoctor.set(doctor);
     this.loadExceptions(doctor.id);
-    this.exceptionsModal.nativeElement.showModal();
+    this.exceptionsModal?.nativeElement?.showModal();
   }
 
   closeExceptionsModal(): void {
-    this.exceptionsModal.nativeElement.close();
+    this.exceptionsModal?.nativeElement?.close();
   }
 
   onExceptionsModalClose(): void {
@@ -193,7 +193,7 @@ export class AdminConfigComponent implements OnInit {
       });
       this.syncDaysFromForm([1, 2, 3, 4, 5]);
     }
-    this.doctorModal.nativeElement.showModal();
+    this.doctorModal?.nativeElement?.showModal();
   }
 
   private syncDaysFromForm(days: number[]): void {

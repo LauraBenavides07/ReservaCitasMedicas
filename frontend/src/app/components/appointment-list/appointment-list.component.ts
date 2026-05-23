@@ -293,11 +293,11 @@ onSearch(): void {
     this.newRescheduleTime = '';
     this.rescheduleDoctorId = appt.doctor?.id || '';
     this.loadAvailableSlots();
-    this.rescheduleModal.nativeElement.showModal();
+    this.rescheduleModal?.nativeElement?.showModal();
   }
 
   closeRescheduleModal(): void {
-    this.rescheduleModal.nativeElement.close();
+    this.rescheduleModal?.nativeElement?.close();
   }
 
   onRescheduleModalClose(): void {

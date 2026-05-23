@@ -422,11 +422,11 @@ export class DoctorDashboardComponent implements OnInit {
         this.rescheduleTime = '';
         this.rescheduleDoctorId = this.doctorId;
         this.availableSlots = [];
-        this.completionModal.nativeElement.showModal();
+        this.completionModal?.nativeElement?.showModal();
     }
 
     closeCompletionModal(): void {
-        this.completionModal.nativeElement.close();
+        this.completionModal?.nativeElement?.close();
     }
 
     onCompletionModalClose(): void {

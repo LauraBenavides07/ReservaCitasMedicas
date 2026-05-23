@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
 import { ButtonComponent } from './button.component';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
@@ -15,8 +16,8 @@ describe('ButtonComponent (Atomic Design)', () => {
 
     fixture = TestBed.createComponent(ButtonComponent);
     component = fixture.componentInstance;
-    buttonElement = fixture.debugElement.query(By.css('.app-button'));
     fixture.detectChanges();
+    buttonElement = fixture.debugElement.query(By.css('.app-button'));
   });
 
   // ==================== CREACIÓN ====================
@@ -114,27 +115,27 @@ describe('ButtonComponent (Atomic Design)', () => {
   // ==================== EVENTOS ====================
 
   it('should emit clicked event when clicked', () => {
-    spyOn(component.clicked, 'emit');
+    vi.spyOn(component.clicked, 'emit');
     component.onClick();
     expect(component.clicked.emit).toHaveBeenCalledWith(undefined);
   });
 
   it('should not emit clicked event when disabled', () => {
     component.disabled = true;
-    spyOn(component.clicked, 'emit');
+    vi.spyOn(component.clicked, 'emit');
     component.onClick();
     expect(component.clicked.emit).not.toHaveBeenCalled();
   });
 
   it('should not emit clicked event when loading', () => {
     component.loading = true;
-    spyOn(component.clicked, 'emit');
+    vi.spyOn(component.clicked, 'emit');
     component.onClick();
     expect(component.clicked.emit).not.toHaveBeenCalled();
   });
 
   it('should emit event when native button is clicked and enabled', () => {
-    spyOn(component.clicked, 'emit');
+    vi.spyOn(component.clicked, 'emit');
     buttonElement.nativeElement.click();
     expect(component.clicked.emit).toHaveBeenCalled();
   });

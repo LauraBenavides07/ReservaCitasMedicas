@@ -3,11 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Repository, DataSource } from 'typeorm';
 import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
 import { Doctor } from '../src/domain/entities/doctor.entity';
-import { Patient } from '../src/domain/entities/patient.entity';
 import { Config } from '../src/domain/entities/config.entity';
-import { User } from '../src/domain/entities/user.entity';
-import { DoctorException } from '../src/domain/entities/doctor-exception.entity';
-import { Appointment } from '../src/domain/entities/appointment.entity';
 
 export interface TestSeed {
   doctor: Doctor;

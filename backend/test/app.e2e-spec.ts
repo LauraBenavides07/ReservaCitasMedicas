@@ -43,8 +43,36 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Doctor } from '../src/domain/entities/doctor.entity';
 import { Patient } from '../src/domain/entities/patient.entity';
 import { Appointment } from '../src/domain/entities/appointment.entity';
-import { Config } from '../src/domain/entities/config.entity';
 import { DoctorException } from '../src/domain/entities/doctor-exception.entity';
+
+interface DoctorResponse {
+  id: string;
+  name: string;
+  specialty: string;
+}
+
+interface AppointmentResponse {
+  id: string;
+  status: string;
+  appointmentDate?: string;
+  appointmentTime?: string;
+}
+
+interface DoctorExceptionResponse {
+  id: string;
+  reason: string;
+}
+
+interface ConfigResponse {
+  minAdvanceHours: number;
+  appointmentWindowDays: number;
+}
+
+interface StatsResponse {
+  stats: any;
+  doctorStats: any;
+}
+
 
 const AUTH_PATIENT_ID = '11111111-1111-4111-8111-111111111111';
 
@@ -99,9 +127,10 @@ describe('Piedrazul API (e2e)', () => {
         .get('/doctors')
         .expect(200);
 
-      expect(Array.isArray(res.body)).toBe(true);
-      expect(res.body.length).toBeGreaterThanOrEqual(1);
-      expect(res.body[0].name).toBe('Dr. Test');
+      const body = res.body as DoctorResponse[];
+      expect(Array.isArray(body)).toBe(true);
+      expect(body.length).toBeGreaterThanOrEqual(1);
+      expect(body[0].name).toBe('Dr. Test');
     });
 
     it('GET /doctors/:id debería retornar un doctor', async () => {
@@ -109,8 +138,9 @@ describe('Piedrazul API (e2e)', () => {
         .get(`/doctors/${seed.doctor.id}`)
         .expect(200);
 
-      expect(res.body.name).toBe('Dr. Test');
-      expect(res.body.specialty).toBe('Cardiología');
+      const body = res.body as DoctorResponse;
+      expect(body.name).toBe('Dr. Test');
+      expect(body.specialty).toBe('Cardiología');
     });
 
     it('GET /doctors/:id debería retornar 404 si no existe', () => {
@@ -134,8 +164,9 @@ describe('Piedrazul API (e2e)', () => {
         })
         .expect(201);
 
-      expect(res.body.name).toBe('Dra. López');
-      expect(res.body.id).toBeDefined();
+      const body = res.body as DoctorResponse;
+      expect(body.name).toBe('Dra. López');
+      expect(body.id).toBeDefined();
     });
 
     it('PATCH /doctors/:id debería actualizar un doctor', async () => {
@@ -200,8 +231,9 @@ describe('Piedrazul API (e2e)', () => {
           .get(`/doctors/${seed.doctor.id}/exceptions`)
           .expect(200);
 
-        expect(res.body.length).toBe(1);
-        expect(res.body[0].reason).toBe('Navidad');
+        const body = res.body as DoctorExceptionResponse[];
+        expect(body.length).toBe(1);
+        expect(body[0].reason).toBe('Navidad');
       });
 
       it('DELETE /doctors/:id/exceptions/:excId debería eliminar excepción', async () => {
@@ -230,8 +262,8 @@ describe('Piedrazul API (e2e)', () => {
         )
         .expect(200);
 
-      expect(Array.isArray(res.body)).toBe(true);
       const slots = res.body as string[];
+      expect(Array.isArray(slots)).toBe(true);
       expect(slots.length).toBeGreaterThan(0);
       expect(slots[0]).toMatch(/^\d{2}:\d{2}$/);
     });
@@ -254,8 +286,9 @@ describe('Piedrazul API (e2e)', () => {
         })
         .expect(201);
 
-      expect(res.body.id).toBeDefined();
-      expect(res.body.status).toBe('agendada');
+      const body = res.body as AppointmentResponse;
+      expect(body.id).toBeDefined();
+      expect(body.status).toBe('agendada');
     });
 
     it('POST /appointments debería fallar si el slot está ocupado', async () => {
@@ -313,8 +346,9 @@ describe('Piedrazul API (e2e)', () => {
         .get(`/appointments?doctorId=${seed.doctor.id}&date=${testDate}`)
         .expect(200);
 
-      expect(res.body.appointments).toBeDefined();
-      expect(res.body.total).toBeGreaterThanOrEqual(1);
+      const body = res.body as { appointments: AppointmentResponse[]; total: number };
+      expect(body.appointments).toBeDefined();
+      expect(body.total).toBeGreaterThanOrEqual(1);
     });
 
     it('POST /appointments debería crear paciente si no existe', async () => {
@@ -353,8 +387,9 @@ describe('Piedrazul API (e2e)', () => {
         .get('/appointments/stats')
         .expect(200);
 
-      expect(res.body.stats).toBeDefined();
-      expect(res.body.doctorStats).toBeDefined();
+      const body = res.body as StatsResponse;
+      expect(body.stats).toBeDefined();
+      expect(body.doctorStats).toBeDefined();
     });
 
     it('PATCH /appointments/:id/confirm debería confirmar una cita', async () => {
@@ -377,7 +412,8 @@ describe('Piedrazul API (e2e)', () => {
         .patch(`/appointments/${appt.id}/confirm`)
         .expect(200);
 
-      expect(res.body.status).toBe('confirmada');
+      const body = res.body as AppointmentResponse;
+      expect(body.status).toBe('confirmada');
     });
   });
 
@@ -387,8 +423,9 @@ describe('Piedrazul API (e2e)', () => {
         .get('/configs')
         .expect(200);
 
-      expect(res.body.minAdvanceHours).toBe(2);
-      expect(res.body.appointmentWindowDays).toBe(15);
+      const body = res.body as ConfigResponse;
+      expect(body.minAdvanceHours).toBe(2);
+      expect(body.appointmentWindowDays).toBe(15);
     });
 
     it('PATCH /configs debería actualizar la configuración', async () => {
@@ -397,8 +434,9 @@ describe('Piedrazul API (e2e)', () => {
         .send({ minAdvanceHours: 4, appointmentWindowDays: 30 })
         .expect(200);
 
-      expect(res.body.minAdvanceHours).toBe(4);
-      expect(res.body.appointmentWindowDays).toBe(30);
+      const body = res.body as ConfigResponse;
+      expect(body.minAdvanceHours).toBe(4);
+      expect(body.appointmentWindowDays).toBe(30);
     });
   });
 
@@ -427,9 +465,10 @@ describe('Piedrazul API (e2e)', () => {
         .get('/appointments/my-appointments')
         .expect(200);
 
-      expect(Array.isArray(res.body)).toBe(true);
-      expect(res.body.length).toBe(1);
-      expect(res.body[0].id).toBe(appt.id);
+      const body = res.body as AppointmentResponse[];
+      expect(Array.isArray(body)).toBe(true);
+      expect(body.length).toBe(1);
+      expect(body[0].id).toBe(appt.id);
     });
 
     it('PATCH /appointments/:id/cancel debería cancelar la cita del paciente', async () => {
@@ -445,7 +484,8 @@ describe('Piedrazul API (e2e)', () => {
         .patch(`/appointments/${appt.id}/cancel`)
         .expect(200);
 
-      expect(res.body.status).toBe('cancelada');
+      const body = res.body as AppointmentResponse;
+      expect(body.status).toBe('cancelada');
     });
 
     it('PATCH /appointments/:id/reschedule debería reagendar la cita', async () => {
@@ -463,8 +503,9 @@ describe('Piedrazul API (e2e)', () => {
         .send({ date: newDate, time: '11:00' })
         .expect(200);
 
-      expect(res.body.appointmentDate).toBe(newDate);
-      expect(res.body.appointmentTime).toBe('11:00');
+      const body = res.body as AppointmentResponse;
+      expect(body.appointmentDate).toBe(newDate);
+      expect(body.appointmentTime).toBe('11:00');
     });
   });
 

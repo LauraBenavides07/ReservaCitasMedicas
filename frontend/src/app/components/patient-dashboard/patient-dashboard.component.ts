@@ -18,6 +18,10 @@ export class PatientDashboardComponent implements OnInit {
 
   appointments = signal<any[]>([]);
   isLoading = signal(true);
+  reschedulingId = signal<string | null>(null);
+  availableSlots = signal<string[]>([]);
+  newDate = '';
+  newTime = '';
 
   auth = inject(AuthService);
   private appointmentService = inject(AppointmentService);
@@ -136,13 +140,73 @@ export class PatientDashboardComponent implements OnInit {
     if (!dateStr) return '';
     try {
       const d = new Date(dateStr + 'T12:00:00');
-      const day = String(d.getDate()).padStart(2, '0');
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const year = d.getFullYear();
-      return `${day}/${month}/${year}`;
+      const day = d.getDate();
+      const monthNames = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+      const month = monthNames[d.getMonth()];
+      return `${day} de ${month}`;
     } catch {
       return dateStr;
     }
+  }
+
+  startReschedule(appt: any): void {
+    this.reschedulingId.set(appt.id);
+    this.newDate = appt.appointmentDate;
+    this.newTime = '';
+    this.onDateChange(appt.doctor.id);
+  }
+
+  onDateChange(doctorId: string): void {
+    if (!this.newDate) {
+      this.availableSlots.set([]);
+      return;
+    }
+    this.appointmentService.getAvailableSlots(doctorId, this.newDate).subscribe({
+      next: (slots: string[]) => this.availableSlots.set(slots),
+      error: () => this.availableSlots.set([])
+    });
+  }
+
+  confirmReschedule(apptId: string): void {
+    if (!this.newDate || !this.newTime) {
+      this.showErrorModal('Debe seleccionar fecha y hora.');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Reagendando cita...',
+      text: 'Por favor espera',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      customClass: {
+        popup: 'custom-popup',
+        title: 'custom-title'
+      }
+    });
+
+    this.appointmentService.rescheduleAppointment(apptId, this.newDate, this.newTime).subscribe({
+      next: () => {
+        this.reschedulingId.set(null);
+        this.loadAppointments();
+        Swal.fire({
+          icon: 'success',
+          title: 'Cita reagendada',
+          confirmButtonText: 'Aceptar',
+          customClass: {
+            popup: 'custom-popup',
+            title: 'custom-title'
+          }
+        });
+      },
+      error: (err: any) => {
+        const msg = err.error?.message
+          ? (Array.isArray(err.error.message) ? err.error.message[0] : err.error.message)
+          : 'Error al reagendar la cita.';
+        this.showErrorModal(msg);
+      }
+    });
   }
 
   formatTime(timeStr: string): string {

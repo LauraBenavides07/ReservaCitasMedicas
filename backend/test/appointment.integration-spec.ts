@@ -8,7 +8,6 @@ import { StatsService } from '../src/application/services/stats.service';
 import { ExportService } from '../src/application/services/export.service';
 import { NotificationService } from '../src/application/services/notification.service';
 import { PatientService } from '../src/application/services/patient.service';
-import { DoctorService } from '../src/application/services/doctor.service';
 import { ConfigService } from '../src/application/services/config.service';
 import { Appointment } from '../src/domain/entities/appointment.entity';
 import { Patient } from '../src/domain/entities/patient.entity';
@@ -56,12 +55,6 @@ function daysFromNow(n: number): string {
   const d = new Date();
   d.setDate(d.getDate() + n);
   return d.toISOString().split('T')[0];
-}
-
-function oneHourAgo(): string {
-  const d = new Date();
-  d.setHours(d.getHours() - 1);
-  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
 function today(): string {
@@ -420,7 +413,7 @@ describe('Appointment Integration', () => {
 
   describe('AppointmentService.create - reglas de validación', () => {
     it('debería lanzar BadRequestException si la hora es muy cercana (minAdvanceHours)', async () => {
-      const patient = await patientRepo.save({
+      await patientRepo.save({
         document: '11111111',
         firstName: 'A',
         lastName: 'B',
@@ -443,7 +436,7 @@ describe('Appointment Integration', () => {
     });
 
     it('debería lanzar BadRequestException si la fecha excede el máximo de días', async () => {
-      const patient = await patientRepo.save({
+      await patientRepo.save({
         document: '11111111',
         firstName: 'A',
         lastName: 'B',
@@ -469,7 +462,7 @@ describe('Appointment Integration', () => {
       const excRepo = module.get(getRepositoryToken(DoctorException));
       await excRepo.save({ doctorId, date: tomorrow(), reason: 'Feriado' });
 
-      const patient = await patientRepo.save({
+      await patientRepo.save({
         document: '11111111',
         firstName: 'A',
         lastName: 'B',

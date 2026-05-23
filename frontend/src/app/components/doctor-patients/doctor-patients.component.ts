@@ -232,11 +232,11 @@ export class DoctorPatientsComponent implements OnInit {
       this.editingPatient = patient;
       this.tempDiagnosis = patient.diagnosis || '';
       this.tempObservation = patient.observation || '';
-      this.editModal.nativeElement.showModal();
+      this.editModal?.nativeElement?.showModal();
   }
 
   closeModal() {
-      this.editModal.nativeElement.close();
+      this.editModal?.nativeElement?.close();
   }
 
   onEditModalClose() {
