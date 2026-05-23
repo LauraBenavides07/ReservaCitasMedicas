@@ -5,7 +5,6 @@ import {
   IsUUID,
   IsOptional,
   IsEmail,
-  IsIn,
 } from 'class-validator';
 
 export class CreateAppointmentDto {
