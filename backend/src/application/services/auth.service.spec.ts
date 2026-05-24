@@ -233,7 +233,7 @@ describe('AuthService', () => {
           phone: '300',
           gender: 'M',
           password: 'pass',
-        } as RegisterDto),
+        }),
       ).rejects.toThrow(ConflictException);
     });
   });
