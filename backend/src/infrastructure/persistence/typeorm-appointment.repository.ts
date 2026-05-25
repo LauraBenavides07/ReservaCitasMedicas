@@ -41,7 +41,7 @@ export class TypeOrmAppointmentRepository extends IAppointmentRepository {
     return this.repo.count(options);
   }
 
-  createQueryBuilder(): any {
-    return this.repo.createQueryBuilder();
+  createQueryBuilder(alias?: string) {
+    return this.repo.createQueryBuilder(alias);
   }
 }

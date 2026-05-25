@@ -29,8 +29,8 @@ export class Appointment {
   @Column({ name: 'appointment_time', type: 'time' })
   appointmentTime: string;
 
-  @Column({ default: AppointmentStatus.SCHEDULED })
-  status: string;
+  @Column({ default: AppointmentStatus.SCHEDULED, type: 'varchar' })
+  status: AppointmentStatus;
 
   @Column({ name: 'created_by', nullable: true })
   createdBy: string;

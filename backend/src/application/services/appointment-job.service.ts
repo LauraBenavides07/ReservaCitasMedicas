@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { Appointment } from '../../domain/entities/appointment.entity';
 import { AppointmentStatus } from '../../domain/types/appointment-status.enum';
 import { NotificationService } from './notification.service';
 import { IAppointmentRepository } from '../ports/appointment.repository';
@@ -23,12 +24,14 @@ export class AppointmentJobService {
     const timeStr = `${hours}:${minutes}`;
 
     await this.appointmentRepository
-      .createQueryBuilder()
-      .update()
+      .createQueryBuilder('appointment')
+      .update(Appointment)
       .set({ status: AppointmentStatus.COMPLETED })
-      .where('status = :status', { status: AppointmentStatus.SCHEDULED })
+      .where('appointment.status = :status', {
+        status: AppointmentStatus.SCHEDULED,
+      })
       .andWhere(
-        '(appointmentDate < :date OR (appointmentDate = :date AND appointmentTime < :time))',
+        '(appointment.appointmentDate < :date OR (appointment.appointmentDate = :date AND appointment.appointmentTime < :time))',
         { date: dateStr, time: timeStr },
       )
       .execute();

@@ -4,7 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { passportJwtSecret } from 'jwks-rsa';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Patient } from '../../domain/entities/patient.entity';
+import type { Request } from 'express';
 import { User } from '../../domain/entities/user.entity';
 import { DecodedToken } from '../../domain/types/keycloak.types';
 import { KeycloakConfig } from './keycloak-config';
@@ -29,21 +29,24 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKeyProvider: (request, rawJwtToken, done) => {
+      secretOrKeyProvider: (request: Request, rawJwtToken?: string, done) => {
         if (rawJwtToken) {
           const parts = rawJwtToken.split('.');
           if (parts.length === 3) {
             try {
               const header = JSON.parse(
                 Buffer.from(parts[0], 'base64').toString(),
-              );
+              ) as Record<string, unknown>;
+
               if (header.alg === 'HS256') {
                 return done(
                   null,
                   process.env.JWT_SECRET || 'PIEDRAZUL_SECRET_KEY',
                 );
               }
-            } catch (e) {}
+            } catch {
+              // fall through to Keycloak JWKS secret provider
+            }
           }
         }
         return keycloakSecretProvider(request, rawJwtToken, done);
@@ -58,7 +61,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     let localId = payload.sub;
-    let localRole: string | undefined = (payload as any).role;
+    const customRole = (payload as Record<string, unknown>).role as
+      | string
+      | undefined;
+    let localRole = customRole;
 
     const patient = await this.patientRepository.findOneBy([
       { keycloakId: payload.sub },
