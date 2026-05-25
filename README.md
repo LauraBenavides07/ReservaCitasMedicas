@@ -4,9 +4,35 @@ Este proyecto es una aplicación web para la gestión de citas médicas, diseña
 
 ## Tecnologías
 
-- **Frontend**: Angular (Standalone Components, Signals, Vitest).
-- **Backend**: NestJS (monolito en capas, TypeORM, PostgreSQL).
+- **Frontend**: Angular 21 (Standalone Components, Signals, Vitest).
+- **Backend**: NestJS 11 (monolito en capas, TypeORM, PostgreSQL).
 - **Estilo**: CSS Vanilla enfocado en accesibilidad (WCAG AAA).
+- **Paquetería**: pnpm (reemplaza a npm).
+
+## Compilar el proyecto
+
+### Backend
+```bash
+cd backend
+pnpm install
+pnpm run build          # Compila a dist/
+pnpm run start:dev      # Servidor en http://localhost:3000
+pnpm run start:prod     # Modo producción (requiere build previo)
+```
+
+### Frontend
+```bash
+cd frontend
+pnpm install
+pnpm run build          # Compila a dist/frontend/browser
+pnpm start              # Servidor dev en http://localhost:4200
+```
+
+### Build completo (raíz)
+```bash
+pnpm install            # Instala dependencias de todos los workspaces
+pnpm run -r build       # Compila backend y frontend
+```
 
 ## Cómo iniciar el proyecto
 
@@ -116,17 +142,25 @@ La aplicación se abrirá en `http://localhost:4200`.
 ## Pruebas (Testing)
 
 ### Backend (Jest)
-Ejecutar todos los tests:
 ```bash
 cd backend
-pnpm test
+pnpm test               # Ejecutar todos los tests
+pnpm run test:cov       # Tests con cobertura
+pnpm run test:watch     # Modo watch
+pnpm run test:e2e       # Tests de integración
 ```
 
 ### Frontend (Vitest)
-Ejecutar todos los tests:
 ```bash
 cd frontend
-pnpm exec vitest run
+pnpm test               # Ejecutar todos los tests (vitest run)
+pnpm run test:coverage  # Tests con cobertura
+pnpm run test:watch     # Modo watch
+```
+
+### Todos los workspaces (raíz)
+```bash
+cd backend && pnpm test && cd ../frontend && pnpm test
 ```
 
 ## Docker — Cambios Recientes
