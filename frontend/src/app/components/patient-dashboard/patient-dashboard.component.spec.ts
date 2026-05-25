@@ -8,8 +8,10 @@ import { AuthService } from '../../services/auth.service';
 
 vi.mock('sweetalert2', () => ({
   default: {
-    fire: vi.fn().mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false })
-  , close: vi.fn(), showLoading: vi.fn() }
+    fire: vi.fn().mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false }),
+    close: vi.fn(),
+    showLoading: vi.fn()
+  }
 }));
 
 describe('PatientDashboardComponent', () => {
@@ -93,7 +95,7 @@ describe('PatientDashboardComponent', () => {
 
     component.loadAppointments();
 
-    expect(component.appointments()).toEqual(mockAppointments);
+    expect(component.appointments()).toEqual([mockAppointments[1], mockAppointments[0]]);
     expect(component.isLoading()).toBe(false);
   });
 

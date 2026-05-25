@@ -131,7 +131,7 @@ describe('AppointmentController', () => {
     it('createAppointment debería llamar al servicio', async () => {
       const dto = { doctorId: 'd1' } as CreateAppointmentDto;
       await controller.createAppointment(dto);
-      expect(appointmentService.create).toHaveBeenCalledWith(expect.any(dto));
+      expect(appointmentService.create).toHaveBeenCalledWith(dto);
     });
 
     it('confirmAppointment debería llamar al servicio', async () => {

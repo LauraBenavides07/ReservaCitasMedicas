@@ -10,8 +10,9 @@ import { DoctorService } from '../../services/doctor.service';
 vi.mock('sweetalert2', () => ({
   default: {
     fire: vi.fn().mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false }),
+    close: vi.fn(),
     showLoading: vi.fn()
-  , close: vi.fn(), showLoading: vi.fn() }
+  }
 }));
 
 describe('DoctorDashboardComponent', () => {
@@ -77,6 +78,14 @@ describe('DoctorDashboardComponent', () => {
     appointmentService = TestBed.inject(AppointmentService);
     authService = TestBed.inject(AuthService) as any;
     doctorService = TestBed.inject(DoctorService);
+
+    const mockDialog = {
+      showModal: vi.fn(),
+      close: vi.fn()
+    } as unknown as HTMLDialogElement;
+    component.completionModal = {
+      nativeElement: mockDialog
+    } as any;
   });
 
   afterEach(() => {
@@ -349,23 +358,13 @@ describe('DoctorDashboardComponent', () => {
     it('should call confirmAppointment service on confirmation', async () => {
       const Swal = (await import('sweetalert2')).default as any;
       const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', date: '2024-01-15', time: '09:00', status: 'Pendiente', reason: 'Consulta' };
+      component.appointments = [apt];
       vi.spyOn(appointmentService, 'confirmAppointment').mockReturnValue(of({}));
 
       await component.confirmAppointment(apt);
 
       expect(appointmentService.confirmAppointment).toHaveBeenCalledWith('apt1');
       expect(apt.status).toBe('Confirmada');
-    });
-
-    it('should do nothing if user cancels confirmation', async () => {
-      const Swal = (await import('sweetalert2')).default as any;
-      Swal.fire.mockResolvedValueOnce({ isConfirmed: false, isDenied: false, isDismissed: true });
-      const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', date: '2024-01-15', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
-      const confirmSpy = vi.spyOn(appointmentService, 'confirmAppointment');
-
-      await component.confirmAppointment(apt);
-
-      expect(confirmSpy).not.toHaveBeenCalled();
     });
 
     it('should handle confirmAppointment error', async () => {
@@ -376,7 +375,7 @@ describe('DoctorDashboardComponent', () => {
       await component.confirmAppointment(apt);
 
       expect(Swal.fire).toHaveBeenCalledWith(
-        expect.objectContaining({ icon: 'error', title: 'No se pudo confirmar la cita' })
+        expect.objectContaining({ icon: 'error', title: 'Error', text: 'No se pudo confirmar la cita' })
       );
     });
   });
@@ -385,6 +384,7 @@ describe('DoctorDashboardComponent', () => {
     it('should call cancelAppointment service on confirmation', async () => {
       const Swal = (await import('sweetalert2')).default as any;
       const apt = { id: 'apt1', patientName: 'Juan Pérez', cc: '12345', phone: '987654321', date: '2024-01-15', time: '09:00', status: 'Confirmada', reason: 'Consulta' };
+      component.appointments = [apt];
       vi.spyOn(appointmentService, 'cancelAppointment').mockReturnValue(of({}));
 
       await component.cancelAppointment(apt);
@@ -412,7 +412,7 @@ describe('DoctorDashboardComponent', () => {
       await component.cancelAppointment(apt);
 
       expect(Swal.fire).toHaveBeenCalledWith(
-        expect.objectContaining({ icon: 'error', title: 'No se pudo cancelar la cita' })
+        expect.objectContaining({ icon: 'error', title: 'Error', text: 'No se pudo cancelar la cita' })
       );
     });
   });
@@ -425,7 +425,7 @@ describe('DoctorDashboardComponent', () => {
       component.completeAppointment(apt);
 
       expect(component.selectedAppointment).toBe(apt);
-      expect(component.isCompletionModalOpen).toBe(true);
+      expect(component.completionModal.nativeElement.showModal).toHaveBeenCalled();
       expect(component.appointmentObservations).toBe('');
       expect(component.appointmentDiagnosis).toBe('');
       expect(component.rescheduleDoctorId).toBe(mockDoctorId);

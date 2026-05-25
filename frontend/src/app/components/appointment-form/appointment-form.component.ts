@@ -127,6 +127,7 @@ export class AppointmentFormComponent implements OnInit {
     this.appointmentService.getPatientByDocument(document).subscribe({
       next: (patient) => {
         Swal.close();
+        this.errorMessage.set('');
         
         if (this.isPatientView) {
           // Si está deshabilitado, no se puede modificar
@@ -142,6 +143,7 @@ export class AppointmentFormComponent implements OnInit {
       },
       error: () => {
         Swal.close();
+        this.errorMessage.set('Paciente no encontrado. Complete los datos manualmente.');
         this.showErrorToast('Paciente no encontrado. Complete los datos manualmente.');
       }
     });

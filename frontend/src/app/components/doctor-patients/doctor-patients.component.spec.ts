@@ -66,6 +66,14 @@ describe('DoctorPatientsComponent', () => {
     appointmentService = TestBed.inject(AppointmentService);
     authService = TestBed.inject(AuthService) as any;
     doctorService = TestBed.inject(DoctorService);
+
+    const mockDialog = {
+      showModal: vi.fn(),
+      close: vi.fn()
+    } as unknown as HTMLDialogElement;
+    component.editModal = {
+      nativeElement: mockDialog
+    } as any;
   });
 
   afterEach(() => {
@@ -286,7 +294,7 @@ describe('DoctorPatientsComponent', () => {
     it('should open modal with patient data', () => {
       component.openEditModal(mockPatient);
 
-      expect(component.isEditingModalOpen).toBe(true);
+      expect(component.editModal.nativeElement.showModal).toHaveBeenCalled();
       expect(component.editingPatient).toBe(mockPatient);
       expect(component.tempDiagnosis).toBe('Hipertensión');
       expect(component.tempObservation).toBe('En tratamiento');
@@ -295,8 +303,9 @@ describe('DoctorPatientsComponent', () => {
     it('should close modal and clear editingPatient', () => {
       component.openEditModal(mockPatient);
       component.closeModal();
+      component.onEditModalClose();
 
-      expect(component.isEditingModalOpen).toBe(false);
+      expect(component.editModal.nativeElement.close).toHaveBeenCalled();
       expect(component.editingPatient).toBeNull();
     });
 
@@ -307,9 +316,10 @@ describe('DoctorPatientsComponent', () => {
       component.tempObservation = 'Nueva observación';
 
       component.saveModalData();
+      component.onEditModalClose();
 
       expect(component.editingPatient).toBeNull();
-      expect(component.isEditingModalOpen).toBe(false);
+      expect(component.editModal.nativeElement.close).toHaveBeenCalled();
       expect(mockPatient.diagnosis).toBe('Nuevo diagnóstico');
       expect(mockPatient.observation).toBe('Nueva observación');
       expect(localStorage.getItem('diagnosis_12345')).toBe('Nuevo diagnóstico');

@@ -9,8 +9,10 @@ import { DoctorService, Doctor } from '../../services/doctor.service';
 
 vi.mock('sweetalert2', () => ({
   default: {
-    fire: vi.fn().mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false })
-  , close: vi.fn(), showLoading: vi.fn() }
+    fire: vi.fn().mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false }),
+    close: vi.fn(),
+    showLoading: vi.fn()
+  }
 }));
 
 describe('AppointmentListComponent', () => {
