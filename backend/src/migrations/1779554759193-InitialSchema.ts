@@ -77,9 +77,7 @@ export class InitialSchema1779554759193 implements MigrationInterface {
     await queryRunner.query(
       `UPDATE "doctors" SET "active_days_arr" = CASE WHEN "active_days" IS NOT NULL AND "active_days" != '' THEN string_to_array("active_days", ',')::int[] ELSE '{1,2,3,4,5}' END`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "doctors" DROP COLUMN "active_days"`,
-    );
+    await queryRunner.query(`ALTER TABLE "doctors" DROP COLUMN "active_days"`);
     await queryRunner.query(
       `ALTER TABLE "doctors" RENAME COLUMN "active_days_arr" TO "active_days"`,
     );
@@ -302,24 +300,34 @@ export class InitialSchema1779554759193 implements MigrationInterface {
       'CHK_patients_document_length',
     ];
     for (const c of checkConstraints) {
-      await queryRunner.query(
-        `ALTER TABLE IF EXISTS "patients" DROP CONSTRAINT IF EXISTS "${c}"`,
-      ).catch(() => {});
-      await queryRunner.query(
-        `ALTER TABLE IF EXISTS "appointments" DROP CONSTRAINT IF EXISTS "${c}"`,
-      ).catch(() => {});
-      await queryRunner.query(
-        `ALTER TABLE IF EXISTS "doctors" DROP CONSTRAINT IF EXISTS "${c}"`,
-      ).catch(() => {});
-      await queryRunner.query(
-        `ALTER TABLE IF EXISTS "configs" DROP CONSTRAINT IF EXISTS "${c}"`,
-      ).catch(() => {});
-      await queryRunner.query(
-        `ALTER TABLE IF EXISTS "users" DROP CONSTRAINT IF EXISTS "${c}"`,
-      ).catch(() => {});
-      await queryRunner.query(
-        `ALTER TABLE IF EXISTS "appointment_history" DROP CONSTRAINT IF EXISTS "${c}"`,
-      ).catch(() => {});
+      await queryRunner
+        .query(
+          `ALTER TABLE IF EXISTS "patients" DROP CONSTRAINT IF EXISTS "${c}"`,
+        )
+        .catch(() => {});
+      await queryRunner
+        .query(
+          `ALTER TABLE IF EXISTS "appointments" DROP CONSTRAINT IF EXISTS "${c}"`,
+        )
+        .catch(() => {});
+      await queryRunner
+        .query(
+          `ALTER TABLE IF EXISTS "doctors" DROP CONSTRAINT IF EXISTS "${c}"`,
+        )
+        .catch(() => {});
+      await queryRunner
+        .query(
+          `ALTER TABLE IF EXISTS "configs" DROP CONSTRAINT IF EXISTS "${c}"`,
+        )
+        .catch(() => {});
+      await queryRunner
+        .query(`ALTER TABLE IF EXISTS "users" DROP CONSTRAINT IF EXISTS "${c}"`)
+        .catch(() => {});
+      await queryRunner
+        .query(
+          `ALTER TABLE IF EXISTS "appointment_history" DROP CONSTRAINT IF EXISTS "${c}"`,
+        )
+        .catch(() => {});
     }
 
     // Drop new indexes
@@ -334,9 +342,9 @@ export class InitialSchema1779554759193 implements MigrationInterface {
       'IDX_appointments_appointment_date',
     ];
     for (const idx of indexes) {
-      await queryRunner.query(
-        `DROP INDEX IF EXISTS "public"."${idx}"`,
-      ).catch(() => {});
+      await queryRunner
+        .query(`DROP INDEX IF EXISTS "public"."${idx}"`)
+        .catch(() => {});
     }
 
     // Revert active_days: integer[] → varchar(50)
@@ -346,18 +354,13 @@ export class InitialSchema1779554759193 implements MigrationInterface {
     await queryRunner.query(
       `UPDATE "doctors" SET "active_days_str" = array_to_string("active_days", ',')`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "doctors" DROP COLUMN "active_days"`,
-    );
+    await queryRunner.query(`ALTER TABLE "doctors" DROP COLUMN "active_days"`);
     await queryRunner.query(
       `ALTER TABLE "doctors" RENAME COLUMN "active_days_str" TO "active_days"`,
     );
 
     // Revert timestamptz → timestamp
-    const revertTimestamptz = async (
-      table: string,
-      cols: string[],
-    ) => {
+    const revertTimestamptz = async (table: string, cols: string[]) => {
       for (const col of cols) {
         await queryRunner.query(
           `ALTER TABLE "${table}" ALTER COLUMN "${col}" TYPE TIMESTAMP USING "${col}"::TIMESTAMP`,

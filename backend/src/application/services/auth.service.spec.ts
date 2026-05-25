@@ -2,15 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../../domain/entities/user.entity';
-import { Patient } from '../../domain/entities/patient.entity';
-import { JwtService } from '@nestjs/jwt';
+import { User } from '../../domain/entities/user.entity';
 import { LoginDto } from '../../presentation/dto/login.dto';
 import { RegisterDto } from '../../presentation/dto/register.dto';
-import {
-  UnauthorizedException,
-  ConflictException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { IPasswordHasher } from '../abstractions/ipassword-hasher.interface';
 import { KeycloakService } from '../../infrastructure/auth/keycloak.service';
 import { IPatientRepository } from '../ports/patient.repository';

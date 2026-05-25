@@ -2,12 +2,10 @@ import {
   Injectable,
   UnauthorizedException,
   ConflictException,
-  InternalServerErrorException,
   Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Patient } from '../../domain/entities/patient.entity';
 import { User } from '../../domain/entities/user.entity';
 import { LoginDto } from '../../presentation/dto/login.dto';
 import { RegisterDto } from '../../presentation/dto/register.dto';
@@ -143,7 +141,14 @@ export class AuthService {
 
     let dbUser: DbUser | null = await this.patientRepository.findOne({
       where: [{ document: dto.login }, { email: dto.login }],
-      select: { id: true, firstName: true, lastName: true, password: true, document: true, email: true },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        password: true,
+        document: true,
+        email: true,
+      },
     });
 
     let role = 'patient';
@@ -151,7 +156,14 @@ export class AuthService {
     if (!dbUser) {
       dbUser = await this.userRepository.findOne({
         where: { email: dto.login },
-        select: { id: true, firstName: true, lastName: true, password: true, email: true, role: true },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          password: true,
+          email: true,
+          role: true,
+        },
       });
       if (dbUser && 'role' in dbUser) {
         role = dbUser.role || 'patient';

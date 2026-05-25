@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { FindOptionsWhere } from 'typeorm';
 import { Appointment } from '../../domain/entities/appointment.entity';
-import { Doctor } from '../../domain/entities/doctor.entity';
 import { CreateAppointmentDto } from '../../presentation/dto/create-appointment.dto';
 import { ConfigService } from './config.service';
 import { AvailabilityService } from './availability.service';
@@ -17,7 +16,6 @@ import { NotificationService } from './notification.service';
 import { IAppointmentRepository } from '../ports/appointment.repository';
 import { IDoctorRepository } from '../ports/doctor.repository';
 import { IAppointmentHistoryRepository } from '../ports/appointment-history.repository';
-import { AppointmentHistory } from '../../domain/entities/appointment-history.entity';
 
 @Injectable()
 export class AppointmentService {
@@ -242,7 +240,7 @@ export class AppointmentService {
       previousStatus,
       newStatus: saved.status,
       changedBy: patientId,
-      changedByRole: isStaff ? (localRole || 'staff') : 'patient',
+      changedByRole: isStaff ? localRole || 'staff' : 'patient',
     });
 
     return saved;

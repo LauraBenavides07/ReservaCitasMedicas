@@ -22,7 +22,7 @@ describe('JwtStrategy', () => {
     findOneBy: jest.fn(),
   };
 
-  beforeEach(async () => {
+  beforeEach(() => {
     // Evitar llamar al constructor que usa dependencias ESM problemáticas
     strategy = Object.create(JwtStrategy.prototype);
     (strategy as any).patientRepository = mockPatientRepository;

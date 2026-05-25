@@ -1,8 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppointmentService } from './appointment.service';
-import { Appointment } from '../../domain/entities/appointment.entity';
-import { Patient } from '../../domain/entities/patient.entity';
-import { Doctor } from '../../domain/entities/doctor.entity';
 import { ConfigService } from './config.service';
 import { AvailabilityService } from './availability.service';
 import { PatientService } from './patient.service';
@@ -10,7 +7,6 @@ import { NotificationService } from './notification.service';
 import { CreateAppointmentDto } from '../../presentation/dto/create-appointment.dto';
 import {
   BadRequestException,
-  ConflictException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';

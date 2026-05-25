@@ -73,12 +73,11 @@ interface StatsResponse {
   doctorStats: any;
 }
 
-
 const AUTH_PATIENT_ID = '11111111-1111-4111-8111-111111111111';
 
 class MockAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
-    const req = context.switchToHttp().getRequest() as any;
+    const req = context.switchToHttp().getRequest();
     const user = {
       id: AUTH_PATIENT_ID,
       document: '12345',
@@ -165,7 +164,7 @@ describe('Piedrazul API (e2e)', () => {
           slotDuration: 20,
           lunchStart: '13:00',
           lunchEnd: '14:00',
-          activeDays: [1,2,3,4,5],
+          activeDays: [1, 2, 3, 4, 5],
         })
         .expect(201);
 
@@ -351,7 +350,10 @@ describe('Piedrazul API (e2e)', () => {
         .get(`/appointments?doctorId=${seed.doctor.id}&date=${testDate}`)
         .expect(200);
 
-      const body = res.body as { appointments: AppointmentResponse[]; total: number };
+      const body = res.body as {
+        appointments: AppointmentResponse[];
+        total: number;
+      };
       expect(body.appointments).toBeDefined();
       expect(body.total).toBeGreaterThanOrEqual(1);
     });

@@ -1,4 +1,5 @@
 import { BcryptPasswordHasher } from './bcrypt-password-hasher';
+import bcrypt from 'bcrypt';
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn().mockResolvedValue('$2b$10$hashed_password'),
@@ -22,14 +23,19 @@ describe('BcryptPasswordHasher', () => {
 
   describe('compare', () => {
     it('debería retornar true si la contraseña coincide', async () => {
-      const result = await hasher.compare('miPassword123', '$2b$10$hashed_password');
+      const result = await hasher.compare(
+        'miPassword123',
+        '$2b$10$hashed_password',
+      );
       expect(result).toBe(true);
     });
 
     it('debería retornar false si la contraseña no coincide', async () => {
-      const bcrypt = require('bcrypt');
-      bcrypt.compare.mockResolvedValueOnce(false);
-      const result = await hasher.compare('wrongPassword', '$2b$10$hashed_password');
+      (bcrypt.compare as jest.Mock).mockResolvedValueOnce(false);
+      const result = await hasher.compare(
+        'wrongPassword',
+        '$2b$10$hashed_password',
+      );
       expect(result).toBe(false);
     });
   });

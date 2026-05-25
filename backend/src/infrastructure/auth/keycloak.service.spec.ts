@@ -17,8 +17,10 @@ describe('KeycloakService', () => {
     clientId: 'piedrazul-app',
     adminUsername: 'admin',
     adminPassword: 'admin',
-    tokenUrl: 'http://127.0.0.1:8080/realms/piedrazul/protocol/openid-connect/token',
-    adminTokenUrl: 'http://127.0.0.1:8080/realms/master/protocol/openid-connect/token',
+    tokenUrl:
+      'http://127.0.0.1:8080/realms/piedrazul/protocol/openid-connect/token',
+    adminTokenUrl:
+      'http://127.0.0.1:8080/realms/master/protocol/openid-connect/token',
     usersAdminUrl: 'http://127.0.0.1:8080/admin/realms/piedrazul/users',
   };
 

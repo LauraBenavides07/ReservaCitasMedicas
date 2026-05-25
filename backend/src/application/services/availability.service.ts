@@ -4,9 +4,8 @@ import {
   NotFoundException,
   Inject,
 } from '@nestjs/common';
-import { Doctor } from '../../domain/entities/doctor.entity';
 import { ConfigService } from './config.service';
-import { timeToMinutes, minutesToTime } from '../utils/time.utils';
+import { minutesToTime } from '../utils/time.utils';
 import { IAppointmentRepository } from '../ports/appointment.repository';
 import { IDoctorRepository } from '../ports/doctor.repository';
 import { IDoctorExceptionRepository } from '../ports/doctor-exception.repository';

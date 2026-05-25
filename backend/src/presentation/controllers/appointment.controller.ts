@@ -163,9 +163,7 @@ export class AppointmentController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id/history')
-  async getAppointmentHistory(
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
+  async getAppointmentHistory(@Param('id', ParseUUIDPipe) id: string) {
     return this.appointmentService.getAppointmentHistory(id);
   }
 

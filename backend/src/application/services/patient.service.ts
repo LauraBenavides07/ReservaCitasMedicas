@@ -61,7 +61,8 @@ export class PatientService {
   ): Promise<Patient> {
     const patient = await this.findOne(id);
     if (data.diagnosis !== undefined) patient.diagnosis = data.diagnosis;
-    if (data.observations !== undefined) patient.observations = data.observations;
+    if (data.observations !== undefined)
+      patient.observations = data.observations;
     return this.patientRepository.save(patient);
   }
 }

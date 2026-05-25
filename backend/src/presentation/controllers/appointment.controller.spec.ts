@@ -1,9 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppointmentController } from './appointment.controller';
 import { AppointmentService } from '../../application/services/appointment.service';
-import { AvailabilityService } from '../../application/services/availability.service';
-import { StatsService } from '../../application/services/stats.service';
-import { ExportService } from '../../application/services/export.service';
 import { JwtAuthGuard } from '../../infrastructure/auth/jwt-auth.guard';
 import { Response } from 'express';
 import { CreateAppointmentDto } from '../dto/create-appointment.dto';
@@ -11,9 +8,6 @@ import { CreateAppointmentDto } from '../dto/create-appointment.dto';
 describe('AppointmentController', () => {
   let controller: AppointmentController;
   let appointmentService: AppointmentService;
-  let availabilityService: AvailabilityService;
-  let statsService: StatsService;
-  let exportService: ExportService;
 
   const mockAppointmentService = {
     findAllByDoctorAndDate: jest.fn(),
@@ -137,7 +131,9 @@ describe('AppointmentController', () => {
     it('confirmAppointment debería llamar al servicio', async () => {
       const appointmentId = 'a1';
       await controller.confirmAppointment(appointmentId);
-      expect(appointmentService.confirmAppointment).toHaveBeenCalledWith(appointmentId);
+      expect(appointmentService.confirmAppointment).toHaveBeenCalledWith(
+        appointmentId,
+      );
     });
   });
 });

@@ -90,7 +90,7 @@ describe('Doctor Integration', () => {
       slotDuration: 30,
       lunchStart: '12:00',
       lunchEnd: '13:00',
-      activeDays: [1,2,3,4,5,6,7],
+      activeDays: [1, 2, 3, 4, 5, 6, 7],
     });
     doctorId = doctor.id;
   });
@@ -136,7 +136,7 @@ describe('Doctor Integration', () => {
           scheduleStart: '09:00',
           scheduleEnd: '16:00',
           slotDuration: 20,
-          activeDays: [1,2,3,4,5],
+          activeDays: [1, 2, 3, 4, 5],
         });
 
         expect(result.id).toBeDefined();
@@ -211,7 +211,9 @@ describe('Doctor Integration', () => {
     });
 
     it('getExceptions debería retornar excepciones ordenadas por fecha', async () => {
-      const excRepo = module.get(getRepositoryToken(DoctorException));
+      const excRepo = module.get<Repository<DoctorException>>(
+        getRepositoryToken(DoctorException),
+      );
       await excRepo.save([
         { doctorId, date: '2026-12-25', reason: 'Navidad' },
         { doctorId, date: '2026-12-24', reason: 'Nochebuena' },
@@ -224,7 +226,9 @@ describe('Doctor Integration', () => {
     });
 
     it('removeException debería eliminar una excepción', async () => {
-      const excRepo = module.get(getRepositoryToken(DoctorException));
+      const excRepo = module.get<Repository<DoctorException>>(
+        getRepositoryToken(DoctorException),
+      );
       const exc = await excRepo.save({
         doctorId,
         date: '2026-12-25',

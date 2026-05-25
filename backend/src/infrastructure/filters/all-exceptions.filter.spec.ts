@@ -50,7 +50,9 @@ describe('AllExceptionsFilter', () => {
   it('debería capturar errores no HTTP como Internal Server Error', () => {
     const exception = new Error('Algo salió mal');
     filter.catch(exception, mockHost);
-    expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
+    expect(mockResponse.status).toHaveBeenCalledWith(
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
     expect(mockJson).toHaveBeenCalledWith(
       expect.objectContaining({
         message: ['Error interno del servidor'],

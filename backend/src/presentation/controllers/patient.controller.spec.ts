@@ -16,9 +16,7 @@ describe('PatientController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PatientController],
-      providers: [
-        { provide: PatientService, useValue: mockPatientService },
-      ],
+      providers: [{ provide: PatientService, useValue: mockPatientService }],
     })
       .overrideGuard(JwtAuthGuard)
       .useValue(mockJwtAuthGuard)

@@ -19,7 +19,10 @@ describe('ExportService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ExportService,
-        { provide: IAppointmentRepository, useValue: mockAppointmentRepository },
+        {
+          provide: IAppointmentRepository,
+          useValue: mockAppointmentRepository,
+        },
         { provide: ICsvExporter, useValue: mockCsvExporter },
       ],
     }).compile();
@@ -33,13 +36,23 @@ describe('ExportService', () => {
       {
         appointmentTime: '10:00',
         status: 'agendada',
-        patient: { firstName: 'Juan', lastName: 'Pérez', document: '123', phone: '555-0001' },
+        patient: {
+          firstName: 'Juan',
+          lastName: 'Pérez',
+          document: '123',
+          phone: '555-0001',
+        },
         doctor: { name: 'Dr. García' },
       },
       {
         appointmentTime: '11:00',
         status: 'completada',
-        patient: { firstName: 'María', lastName: 'López', document: '456', phone: '555-0002' },
+        patient: {
+          firstName: 'María',
+          lastName: 'López',
+          document: '456',
+          phone: '555-0002',
+        },
         doctor: { name: 'Dr. García' },
       },
     ];
@@ -47,7 +60,10 @@ describe('ExportService', () => {
     mockAppointmentRepository.find.mockResolvedValue(appointments);
     mockCsvExporter.export.mockReturnValue('csv,content');
 
-    const result = await service.exportAppointmentsByDateAndDoctor('2026-10-10', 'd1');
+    const result = await service.exportAppointmentsByDateAndDoctor(
+      '2026-10-10',
+      'd1',
+    );
 
     expect(result).toBe('csv,content');
     expect(mockAppointmentRepository.find).toHaveBeenCalledWith(
@@ -65,6 +81,8 @@ describe('ExportService', () => {
 
   it('debería lanzar NotFoundException si no hay citas', async () => {
     mockAppointmentRepository.find.mockResolvedValue([]);
-    await expect(service.exportAppointmentsByDateAndDoctor('2026-10-10', 'd1')).rejects.toThrow(NotFoundException);
+    await expect(
+      service.exportAppointmentsByDateAndDoctor('2026-10-10', 'd1'),
+    ).rejects.toThrow(NotFoundException);
   });
 });

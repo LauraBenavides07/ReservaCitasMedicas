@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotificationService } from './notification.service';
-import { ClientProxy } from '@nestjs/microservices';
 import { NOTIFICATION_SERVICE } from '../../infrastructure/messaging/notifications-client.module';
 
 describe('NotificationService', () => {
@@ -25,11 +24,17 @@ describe('NotificationService', () => {
   it('debería emitir un evento al cliente de notificaciones', () => {
     mockClient.emit.mockReturnValue({ subscribe: jest.fn() });
     service.emit('appointment.created', { appointmentId: 'a1' });
-    expect(mockClient.emit).toHaveBeenCalledWith('appointment.created', { appointmentId: 'a1' });
+    expect(mockClient.emit).toHaveBeenCalledWith('appointment.created', {
+      appointmentId: 'a1',
+    });
   });
 
   it('debería manejar errores sin lanzar excepción', () => {
-    mockClient.emit.mockImplementation(() => { throw new Error('Connection refused'); });
-    expect(() => service.emit('appointment.created', { appointmentId: 'a1' })).not.toThrow();
+    mockClient.emit.mockImplementation(() => {
+      throw new Error('Connection refused');
+    });
+    expect(() =>
+      service.emit('appointment.created', { appointmentId: 'a1' }),
+    ).not.toThrow();
   });
 });

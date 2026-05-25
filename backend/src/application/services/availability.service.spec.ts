@@ -34,9 +34,15 @@ describe('AvailabilityService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AvailabilityService,
-        { provide: IAppointmentRepository, useValue: mockAppointmentRepository },
+        {
+          provide: IAppointmentRepository,
+          useValue: mockAppointmentRepository,
+        },
         { provide: IDoctorRepository, useValue: mockDoctorRepository },
-        { provide: IDoctorExceptionRepository, useValue: mockDoctorExceptionRepository },
+        {
+          provide: IDoctorExceptionRepository,
+          useValue: mockDoctorExceptionRepository,
+        },
         { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compile();
@@ -79,7 +85,9 @@ describe('AvailabilityService', () => {
 
     it('debería retornar lista vacía si el médico no existe', async () => {
       mockDoctorRepository.findOneBy.mockResolvedValue(null);
-      await expect(service.getAvailableSlots('invalid', '2026-10-10')).rejects.toThrow(NotFoundException);
+      await expect(
+        service.getAvailableSlots('invalid', '2026-10-10'),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it('debería retornar lista vacía si hay excepción', async () => {
@@ -88,7 +96,10 @@ describe('AvailabilityService', () => {
         isWorkingDay: jest.fn().mockReturnValue(true),
       };
       mockDoctorRepository.findOneBy.mockResolvedValue(doctor);
-      mockDoctorExceptionRepository.findOneBy.mockResolvedValue({ id: 'e1', reason: 'Feriado' });
+      mockDoctorExceptionRepository.findOneBy.mockResolvedValue({
+        id: 'e1',
+        reason: 'Feriado',
+      });
 
       const slots = await service.getAvailableSlots('d1', '2026-10-10');
       expect(slots).toEqual([]);
@@ -141,26 +152,37 @@ describe('AvailabilityService', () => {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const dateStr = tomorrow.toISOString().split('T')[0];
-      await expect(service.validateTimeWindow(dateStr, '10:00')).resolves.toBeUndefined();
+      await expect(
+        service.validateTimeWindow(dateStr, '10:00'),
+      ).resolves.toBeUndefined();
     });
 
     it('debería fallar si la fecha es pasada', async () => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       const dateStr = yesterday.toISOString().split('T')[0];
-      await expect(service.validateTimeWindow(dateStr, '10:00')).rejects.toThrow(BadRequestException);
+      await expect(
+        service.validateTimeWindow(dateStr, '10:00'),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
   describe('validateDoctorException', () => {
     it('debería pasar si no hay excepción', async () => {
       mockDoctorExceptionRepository.findOneBy.mockResolvedValue(null);
-      await expect(service.validateDoctorException('d1', '2026-10-10')).resolves.toBeUndefined();
+      await expect(
+        service.validateDoctorException('d1', '2026-10-10'),
+      ).resolves.toBeUndefined();
     });
 
     it('debería fallar si hay excepción para el médico en esa fecha', async () => {
-      mockDoctorExceptionRepository.findOneBy.mockResolvedValue({ id: 'e1', reason: 'Capacitación' });
-      await expect(service.validateDoctorException('d1', '2026-10-10')).rejects.toThrow(BadRequestException);
+      mockDoctorExceptionRepository.findOneBy.mockResolvedValue({
+        id: 'e1',
+        reason: 'Capacitación',
+      });
+      await expect(
+        service.validateDoctorException('d1', '2026-10-10'),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -179,7 +201,12 @@ describe('AvailabilityService', () => {
 
     it('debería ignorar la cita excluida', async () => {
       mockAppointmentRepository.findOne.mockResolvedValue({ id: 'a1' });
-      const result = await service.isSlotAvailable('d1', '2026-10-10', '10:00', 'a1');
+      const result = await service.isSlotAvailable(
+        'd1',
+        '2026-10-10',
+        '10:00',
+        'a1',
+      );
       expect(result).toBe(true);
     });
   });
@@ -187,12 +214,16 @@ describe('AvailabilityService', () => {
   describe('assertSlotAvailable', () => {
     it('debería pasar si el slot está libre', async () => {
       mockAppointmentRepository.findOneBy.mockResolvedValue(null);
-      await expect(service.assertSlotAvailable('d1', '2026-10-10', '10:00')).resolves.toBeUndefined();
+      await expect(
+        service.assertSlotAvailable('d1', '2026-10-10', '10:00'),
+      ).resolves.toBeUndefined();
     });
 
     it('debería fallar si el slot está ocupado', async () => {
       mockAppointmentRepository.findOneBy.mockResolvedValue({ id: 'a1' });
-      await expect(service.assertSlotAvailable('d1', '2026-10-10', '10:00')).rejects.toThrow(BadRequestException);
+      await expect(
+        service.assertSlotAvailable('d1', '2026-10-10', '10:00'),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 });

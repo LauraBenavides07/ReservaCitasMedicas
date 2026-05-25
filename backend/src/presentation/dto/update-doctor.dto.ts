@@ -1,4 +1,12 @@
-import { IsString, IsOptional, IsNumber, IsInt, IsArray, Min, Matches } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsInt,
+  IsArray,
+  Min,
+  Matches,
+} from 'class-validator';
 
 export class UpdateDoctorDto {
   @IsString()

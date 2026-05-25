@@ -18,7 +18,10 @@ describe('StatsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StatsService,
-        { provide: IAppointmentRepository, useValue: mockAppointmentRepository },
+        {
+          provide: IAppointmentRepository,
+          useValue: mockAppointmentRepository,
+        },
         { provide: IDoctorRepository, useValue: mockDoctorRepository },
       ],
     }).compile();

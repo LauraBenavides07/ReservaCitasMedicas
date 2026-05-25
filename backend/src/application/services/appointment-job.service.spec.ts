@@ -19,7 +19,10 @@ describe('AppointmentJobService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AppointmentJobService,
-        { provide: IAppointmentRepository, useValue: mockAppointmentRepository },
+        {
+          provide: IAppointmentRepository,
+          useValue: mockAppointmentRepository,
+        },
         { provide: NotificationService, useValue: mockNotificationService },
       ],
     }).compile();
@@ -34,9 +37,16 @@ describe('AppointmentJobService', () => {
       const mockWhere = jest.fn().mockReturnThis();
       const mockAndWhere = jest.fn().mockReturnThis();
       const mockSet = jest.fn().mockReturnThis();
-      const mockUpdate = jest.fn().mockReturnValue({ set: mockSet, where: mockWhere, andWhere: mockAndWhere, execute: mockExecute });
+      const mockUpdate = jest.fn().mockReturnValue({
+        set: mockSet,
+        where: mockWhere,
+        andWhere: mockAndWhere,
+        execute: mockExecute,
+      });
 
-      mockAppointmentRepository.createQueryBuilder.mockReturnValue({ update: mockUpdate });
+      mockAppointmentRepository.createQueryBuilder.mockReturnValue({
+        update: mockUpdate,
+      });
 
       await service.autoCompletePastAppointments();
 
@@ -53,7 +63,12 @@ describe('AppointmentJobService', () => {
           appointmentDate: '2026-05-24',
           appointmentTime: '10:00',
           status: 'agendada',
-          patient: { id: 'p1', firstName: 'Juan', lastName: 'Pérez', phone: '123456789' },
+          patient: {
+            id: 'p1',
+            firstName: 'Juan',
+            lastName: 'Pérez',
+            phone: '123456789',
+          },
           doctor: { name: 'Dr. García' },
         },
         {
@@ -61,7 +76,12 @@ describe('AppointmentJobService', () => {
           appointmentDate: '2026-05-24',
           appointmentTime: '11:00',
           status: 'agendada',
-          patient: { id: 'p2', firstName: 'María', lastName: 'López', phone: '987654321' },
+          patient: {
+            id: 'p2',
+            firstName: 'María',
+            lastName: 'López',
+            phone: '987654321',
+          },
           doctor: { name: 'Dr. García' },
         },
       ];

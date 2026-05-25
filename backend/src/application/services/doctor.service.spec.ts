@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DoctorService } from './doctor.service';
-import { Doctor } from '../../domain/entities/doctor.entity';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { IDoctorRepository } from '../ports/doctor.repository';
 import { IAppointmentRepository } from '../ports/appointment.repository';

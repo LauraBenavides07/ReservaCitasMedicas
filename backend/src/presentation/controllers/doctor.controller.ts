@@ -61,7 +61,10 @@ export class DoctorController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: CreateExceptionDto,
   ) {
-    return this.doctorExceptionService.add({ ...data, doctor: { id } as Doctor });
+    return this.doctorExceptionService.add({
+      ...data,
+      doctor: { id } as Doctor,
+    });
   }
 
   @Get(':id/exceptions')

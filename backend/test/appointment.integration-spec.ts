@@ -159,7 +159,7 @@ describe('Appointment Integration', () => {
       slotDuration: 30,
       lunchStart: '12:00',
       lunchEnd: '13:00',
-      activeDays: [1,2,3,4,5,6,7],
+      activeDays: [1, 2, 3, 4, 5, 6, 7],
     });
     doctorId = doctor.id;
 
@@ -462,7 +462,9 @@ describe('Appointment Integration', () => {
     });
 
     it('debería lanzar BadRequestException si el médico tiene excepción ese día', async () => {
-      const excRepo = module.get(getRepositoryToken(DoctorException));
+      const excRepo = module.get<Repository<DoctorException>>(
+        getRepositoryToken(DoctorException),
+      );
       await excRepo.save({ doctorId, date: tomorrow(), reason: 'Feriado' });
 
       await patientRepo.save({
