@@ -3,9 +3,10 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { passportJwtSecret } from 'jwks-rsa';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, FindOptionsWhere } from 'typeorm';
 import type { Request } from 'express';
 import { User } from '../../domain/entities/user.entity';
+import { Patient } from '../../domain/entities/patient.entity';
 import { DecodedToken } from '../../domain/types/keycloak.types';
 import { KeycloakConfig } from './keycloak-config';
 import { IPatientRepository } from '../../application/ports/patient.repository';
@@ -73,7 +74,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const patient = await this.patientRepository.findOneBy([
       { keycloakId: payload.sub },
       { id: payload.sub },
-    ]);
+    ] as FindOptionsWhere<Patient>[]);
     if (patient) {
       localId = patient.id;
       localRole = 'patient';
@@ -81,7 +82,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       const staff = await this.userRepository.findOneBy([
         { keycloakId: payload.sub },
         { id: payload.sub },
-      ]);
+      ] as FindOptionsWhere<User>[]);
       if (staff) {
         localId = staff.id;
         localRole = staff.role;

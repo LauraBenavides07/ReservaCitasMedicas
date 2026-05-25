@@ -62,16 +62,19 @@ describe('ConfigService', () => {
 
   describe('updateConfig', () => {
     it('debería actualizar la configuración', async () => {
-      mockConfigRepository.findOne.mockResolvedValue({
+      const existing = {
         key: 'appointment_rules',
-      });
+      };
+      mockConfigRepository.findOne.mockResolvedValue(existing);
       const newData = { minAdvanceHours: 4, appointmentWindowDays: 20 };
 
       await service.updateConfig(newData);
 
-      expect(mockConfigRepository.update).toHaveBeenCalledWith(
-        { key: 'appointment_rules' },
-        { value: newData },
+      expect(mockConfigRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: 'appointment_rules',
+          value: newData,
+        }),
       );
     });
   });

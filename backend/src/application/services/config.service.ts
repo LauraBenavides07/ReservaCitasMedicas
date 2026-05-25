@@ -44,10 +44,8 @@ export class ConfigService implements OnModuleInit {
     if (existing) {
       const existingValue = existing.value as GlobalConfig;
       const merged = { ...existingValue, ...data };
-      await this.configRepository.update(
-        { key: 'appointment_rules' },
-        { value: merged },
-      );
+      existing.value = merged;
+      await this.configRepository.save(existing);
     }
     return this.getConfig();
   }

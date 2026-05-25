@@ -209,16 +209,16 @@ export class AuthService {
   async getPatientByDocument(document: string) {
     const patient = await this.patientRepository.findOne({
       where: { document },
-      select: [
-        'id',
-        'firstName',
-        'lastName',
-        'document',
-        'phone',
-        'gender',
-        'birthDate',
-        'email',
-      ],
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        document: true,
+        phone: true,
+        gender: true,
+        birthDate: true,
+        email: true,
+      },
     });
 
     if (!patient) {
