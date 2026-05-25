@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, FindManyOptions, FindOptionsWhere } from 'typeorm';
 import { DoctorException } from '../../domain/entities/doctor-exception.entity';
 import { IDoctorExceptionRepository } from '../../application/ports/doctor-exception.repository';
 
@@ -13,11 +13,15 @@ export class TypeOrmDoctorExceptionRepository extends IDoctorExceptionRepository
     super();
   }
 
-  async findOneBy(where: any): Promise<DoctorException | null> {
+  async findOneBy(
+    where: FindOptionsWhere<DoctorException>,
+  ): Promise<DoctorException | null> {
     return this.repo.findOneBy(where);
   }
 
-  async find(options?: any): Promise<DoctorException[]> {
+  async find(
+    options?: FindManyOptions<DoctorException>,
+  ): Promise<DoctorException[]> {
     return this.repo.find(options);
   }
 
@@ -29,7 +33,7 @@ export class TypeOrmDoctorExceptionRepository extends IDoctorExceptionRepository
     return this.repo.save(entity);
   }
 
-  async delete(criteria: any): Promise<any> {
+  async delete(criteria: string | number): Promise<unknown> {
     return this.repo.delete(criteria);
   }
 }

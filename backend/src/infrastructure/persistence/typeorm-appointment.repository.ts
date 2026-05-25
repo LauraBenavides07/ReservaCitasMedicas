@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {
+  Repository,
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+} from 'typeorm';
 import { Appointment } from '../../domain/entities/appointment.entity';
 import { IAppointmentRepository } from '../../application/ports/appointment.repository';
 
@@ -13,19 +18,25 @@ export class TypeOrmAppointmentRepository extends IAppointmentRepository {
     super();
   }
 
-  async findAndCount(options?: any): Promise<[Appointment[], number]> {
+  async findAndCount(
+    options?: FindManyOptions<Appointment>,
+  ): Promise<[Appointment[], number]> {
     return this.repo.findAndCount(options);
   }
 
-  async find(options?: any): Promise<Appointment[]> {
+  async find(options?: FindManyOptions<Appointment>): Promise<Appointment[]> {
     return this.repo.find(options);
   }
 
-  async findOne(options: any): Promise<Appointment | null> {
+  async findOne(
+    options: FindOneOptions<Appointment>,
+  ): Promise<Appointment | null> {
     return this.repo.findOne(options);
   }
 
-  async findOneBy(where: any): Promise<Appointment | null> {
+  async findOneBy(
+    where: FindOptionsWhere<Appointment>,
+  ): Promise<Appointment | null> {
     return this.repo.findOneBy(where);
   }
 
@@ -37,7 +48,7 @@ export class TypeOrmAppointmentRepository extends IAppointmentRepository {
     return this.repo.save(entity);
   }
 
-  async count(options?: any): Promise<number> {
+  async count(options?: FindManyOptions<Appointment>): Promise<number> {
     return this.repo.count(options);
   }
 

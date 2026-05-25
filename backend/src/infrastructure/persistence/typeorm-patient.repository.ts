@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, FindOneOptions, FindOptionsWhere } from 'typeorm';
 import { Patient } from '../../domain/entities/patient.entity';
 import { IPatientRepository } from '../../application/ports/patient.repository';
 
@@ -13,11 +13,11 @@ export class TypeOrmPatientRepository extends IPatientRepository {
     super();
   }
 
-  async findOneBy(where: any): Promise<Patient | null> {
+  async findOneBy(where: FindOptionsWhere<Patient>): Promise<Patient | null> {
     return this.repo.findOneBy(where);
   }
 
-  async findOne(options: any): Promise<Patient | null> {
+  async findOne(options: FindOneOptions<Patient>): Promise<Patient | null> {
     return this.repo.findOne(options);
   }
 

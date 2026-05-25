@@ -70,8 +70,12 @@ export class AuthService {
         dto.login,
       );
       const accessToken = tokenResponse.access_token;
-      const decodedToken = this.jwtService.decode(accessToken);
-      const keycloakSub = decodedToken?.sub;
+      const rawDecoded: unknown = this.jwtService.decode(accessToken);
+      const decodedToken =
+        rawDecoded != null && typeof rawDecoded === 'object'
+          ? (rawDecoded as Record<string, unknown>)
+          : null;
+      const keycloakSub = decodedToken?.sub as string | undefined;
 
       let userData: UserData | null = null;
 

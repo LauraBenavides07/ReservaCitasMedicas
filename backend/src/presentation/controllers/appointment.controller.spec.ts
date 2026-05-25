@@ -11,9 +11,6 @@ import { CreateAppointmentDto } from '../dto/create-appointment.dto';
 describe('AppointmentController', () => {
   let controller: AppointmentController;
   let appointmentService: AppointmentService;
-  let availabilityService: AvailabilityService;
-  let statsService: StatsService;
-  let exportService: ExportService;
 
   const mockAppointmentService = {
     findAllByDoctorAndDate: jest.fn(),
@@ -55,9 +52,6 @@ describe('AppointmentController', () => {
 
     controller = module.get<AppointmentController>(AppointmentController);
     appointmentService = module.get<AppointmentService>(AppointmentService);
-    availabilityService = module.get<AvailabilityService>(AvailabilityService);
-    statsService = module.get<StatsService>(StatsService);
-    exportService = module.get<ExportService>(ExportService);
   });
 
   it('debería estar definido', () => {

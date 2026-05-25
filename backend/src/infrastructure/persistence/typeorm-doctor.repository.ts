@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, FindManyOptions, FindOptionsWhere } from 'typeorm';
 import { Doctor } from '../../domain/entities/doctor.entity';
 import { IDoctorRepository } from '../../application/ports/doctor.repository';
 
@@ -13,11 +13,11 @@ export class TypeOrmDoctorRepository extends IDoctorRepository {
     super();
   }
 
-  async find(options?: any): Promise<Doctor[]> {
+  async find(options?: FindManyOptions<Doctor>): Promise<Doctor[]> {
     return this.repo.find(options);
   }
 
-  async findOneBy(where: any): Promise<Doctor | null> {
+  async findOneBy(where: FindOptionsWhere<Doctor>): Promise<Doctor | null> {
     return this.repo.findOneBy(where);
   }
 
@@ -29,7 +29,7 @@ export class TypeOrmDoctorRepository extends IDoctorRepository {
     return this.repo.save(entity);
   }
 
-  async update(id: any, data: Partial<Doctor>): Promise<any> {
+  async update(id: string, data: Partial<Doctor>): Promise<unknown> {
     return this.repo.update(id, data);
   }
 

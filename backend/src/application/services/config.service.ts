@@ -42,7 +42,8 @@ export class ConfigService implements OnModuleInit {
       where: { key: 'appointment_rules' },
     });
     if (existing) {
-      const merged = { ...existing.value, ...data };
+      const existingValue = existing.value as GlobalConfig;
+      const merged = { ...existingValue, ...data };
       await this.configRepository.update(
         { key: 'appointment_rules' },
         { value: merged },

@@ -127,7 +127,7 @@ export class AppointmentService {
       patient,
     });
 
-    let saved;
+    let saved: Appointment;
     try {
       saved = await this.appointmentRepository.save(appointment);
     } catch (error: unknown) {
@@ -447,7 +447,7 @@ export class AppointmentService {
     changeType?: string;
     limit?: number;
   }) {
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (filters.appointmentId) {
       where.appointment = { id: filters.appointmentId };
     }
@@ -456,7 +456,7 @@ export class AppointmentService {
     }
 
     const [history, total] = await this.historyRepository.findAndCount({
-      where,
+      where: where,
       relations: { appointment: { doctor: true, patient: true } },
       order: { changedAt: 'DESC' },
       take: filters.limit || 50,
