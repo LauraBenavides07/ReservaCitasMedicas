@@ -44,7 +44,7 @@ jobs:
           cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Install Dependencies
-        run: pnpm install --no-optional
+        run: pnpm install
 
       - name: Run Linter
         run: pnpm run lint
@@ -91,7 +91,7 @@ jobs:
           cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Install Dependencies
-        run: pnpm install --no-optional
+        run: pnpm install
 
       - name: Run Build
         run: pnpm run build
