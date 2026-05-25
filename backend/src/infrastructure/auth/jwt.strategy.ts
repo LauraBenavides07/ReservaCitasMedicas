@@ -29,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKeyProvider: (request: Request, rawJwtToken?: string, done) => {
+      secretOrKeyProvider: (request: Request, rawJwtToken: string | undefined, done: (err: any, secret?: any) => void) => {
         if (rawJwtToken) {
           const parts = rawJwtToken.split('.');
           if (parts.length === 3) {
@@ -61,7 +61,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     let localId = payload.sub;
-    const customRole = (payload as Record<string, unknown>).role as
+    const customRole = (payload as unknown as Record<string, unknown>).role as
       | string
       | undefined;
     let localRole = customRole;

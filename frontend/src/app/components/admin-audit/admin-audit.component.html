@@ -74,7 +74,7 @@
                         <td class="date-cell">{{ formatDateTime(entry.changedAt) }}</td>
                         <td class="patient-cell">
                             <strong>{{ entry.patientName || '-' }}</strong>
-                            <small *ngIf="entry.appointmentId" class="id-hint">ID: {{ entry.appointmentId?.slice(0, 8) }}...</small>
+                            <small *ngIf="entry.appointmentId" class="id-hint">ID: {{ entry.appointmentId.slice(0, 8) }}...</small>
                         </td>
                         <td>{{ entry.doctorName || '-' }}</td>
                         <td>

@@ -378,7 +378,7 @@ export class DoctorDashboardComponent implements OnInit {
         confirmButtonColor: '#ef4444',
         cancelButtonColor: '#64748b',
         customClass: { popup: 'custom-popup', title: 'custom-title' }
-    }).then((result) => {
+    }).then((result: any) => {
         if (result.isConfirmed) {
             Swal.fire({
                 title: 'Cancelando cita...',

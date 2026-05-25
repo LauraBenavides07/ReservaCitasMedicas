@@ -16,7 +16,6 @@ import { DoctorDashboardComponent } from './components/doctor-dashboard/doctor-d
 import { DoctorPatientsComponent } from './components/doctor-patients/doctor-patients.component';
 import { DoctorHistoryComponent } from './components/doctor-history/doctor-history.component';
 import { AdminAuditComponent } from './components/admin-audit/admin-audit.component';
-import { AppointmentHistoryTimelineComponent } from './components/appointment-history-timeline/appointment-history-timeline.component';
 import { ButtonComponent } from './shared/atoms/button/button.component';
 
 @Component({
@@ -36,8 +35,7 @@ import { ButtonComponent } from './shared/atoms/button/button.component';
     DoctorDashboardComponent,
     DoctorPatientsComponent,
     DoctorHistoryComponent,
-    AdminAuditComponent,
-    AppointmentHistoryTimelineComponent
+    AdminAuditComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

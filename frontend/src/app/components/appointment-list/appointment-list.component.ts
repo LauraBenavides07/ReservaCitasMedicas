@@ -359,7 +359,7 @@ onSearch(): void {
       confirmButtonText: 'Sí, reagendar',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#3e7ba6',
-    }).then((result) => {
+    }).then((result: any) => {
       if (result.isConfirmed) {
         this.appointmentService.rescheduleAppointment(
           appointment.id,

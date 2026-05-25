@@ -266,7 +266,7 @@ export class AdminConfigComponent implements OnInit {
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#dc2626',
-    }).then((result) => {
+    }).then((result: any) => {
       if (result.isConfirmed) {
         this.doctorService.deleteDoctor(id).subscribe({
           next: () => {
