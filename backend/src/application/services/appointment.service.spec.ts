@@ -20,7 +20,12 @@ describe('AppointmentService', () => {
   let mockAvailability: Record<string, jest.Mock>;
   let mockPatientSvc: Record<string, jest.Mock>;
   let mockNotificationSvc: Record<string, jest.Mock>;
-  let mockQueryBuilder: any;
+  let mockQueryBuilder: Record<string, jest.Mock>;
+  let mockHistoryRepo: {
+    create: jest.Mock;
+    save: jest.Mock;
+    createQueryBuilder: jest.Mock;
+  };
 
   const mockAppointmentRepository = {
     findAndCount: jest.fn(),
@@ -56,6 +61,12 @@ describe('AppointmentService', () => {
       emit: jest.fn(),
     };
 
+    mockHistoryRepo = {
+      create: jest.fn(),
+      save: jest.fn(),
+      createQueryBuilder: jest.fn(),
+    };
+
     module = await Test.createTestingModule({
       providers: [
         AppointmentService,
@@ -70,11 +81,7 @@ describe('AppointmentService', () => {
         { provide: NotificationService, useValue: mockNotificationSvc },
         {
           provide: IAppointmentHistoryRepository,
-          useValue: {
-            create: jest.fn(),
-            save: jest.fn(),
-            createQueryBuilder: jest.fn(),
-          },
+          useValue: mockHistoryRepo,
         },
       ],
     }).compile();
@@ -92,8 +99,7 @@ describe('AppointmentService', () => {
       andWhere: jest.fn().mockReturnThis(),
       getManyAndCount: jest.fn(),
     };
-    const historyRepo = module.get(IAppointmentHistoryRepository);
-    historyRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+    mockHistoryRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
   });
 
   describe('findAllByDoctorAndDate', () => {
@@ -391,8 +397,7 @@ describe('AppointmentService', () => {
         andWhere: jest.fn().mockReturnThis(),
         getManyAndCount: jest.fn(),
       };
-      const historyRepo = module.get(IAppointmentHistoryRepository);
-      historyRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+      mockHistoryRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
     });
 
     it('debería retornar historial completo sin filtros', async () => {
@@ -425,7 +430,10 @@ describe('AppointmentService', () => {
       expect(result.history[0].doctorName).toBe('Dr. Pérez');
       expect(result.history[0].patientName).toBe('Juan López');
       expect(mockQueryBuilder.leftJoinAndSelect).toHaveBeenCalled();
-      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('h.changedAt', 'DESC');
+      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith(
+        'h.changedAt',
+        'DESC',
+      );
       expect(mockQueryBuilder.take).toHaveBeenCalledWith(50);
     });
 
