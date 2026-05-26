@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AppointmentService, AppointmentHistoryEntry } from '../../services/appointment.service';
+import { DoctorService, Doctor } from '../../services/doctor.service';
 import { ButtonComponent } from '../../shared/atoms/button/button.component';
 import Swal from 'sweetalert2';
 import { finalize } from 'rxjs/operators';
@@ -20,8 +21,12 @@ export class AdminAuditComponent implements OnInit {
   error = '';
 
   filterChangeType = '';
-  filterAppointmentId = '';
+  filterDoctorId = '';
+  filterDate = '';
+  filterSearch = '';
   limit = 50;
+
+  doctors: Doctor[] = [];
 
   changeTypes = [
     { value: '', label: '📋 Todos los cambios' },
@@ -34,38 +39,53 @@ export class AdminAuditComponent implements OnInit {
 
   constructor(
     private appointmentService: AppointmentService,
-    private cdr: ChangeDetectorRef  // ← Agregar ChangeDetectorRef
+    private doctorService: DoctorService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.loadDoctors();
     this.loadHistory();
   }
 
+  loadDoctors(): void {
+    this.doctorService.getDoctors().subscribe({
+      next: (list) => {
+        this.doctors = list;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.doctors = [];
+      }
+    });
+  }
+
   loadHistory(): void {
-    console.log('🔍 Cargando historial...');
-    
     this.loading = true;
     this.error = '';
-    this.cdr.detectChanges(); // ← Forzar detección de cambios para mostrar el spinner
-    
+    this.cdr.detectChanges();
+
     const params: any = { limit: this.limit };
-    if (this.filterChangeType && this.filterChangeType !== '') {
+    if (this.filterChangeType) {
       params.changeType = this.filterChangeType;
     }
-    if (this.filterAppointmentId && this.filterAppointmentId.trim() !== '') {
-      params.appointmentId = this.filterAppointmentId.trim();
+    if (this.filterDoctorId) {
+      params.doctorId = this.filterDoctorId;
+    }
+    if (this.filterDate) {
+      params.date = this.filterDate;
+    }
+    if (this.filterSearch && this.filterSearch.trim()) {
+      params.search = this.filterSearch.trim();
     }
 
     this.appointmentService.getAllHistory(params)
       .pipe(finalize(() => {
-        console.log('🔍 finalize() ejecutado');
         this.loading = false;
-        this.cdr.detectChanges(); // ← Forzar detección de cambios para ocultar el spinner
+        this.cdr.detectChanges();
       }))
       .subscribe({
         next: (response) => {
-          console.log('✅ Respuesta recibida:', response);
-          
           if (response && response.history) {
             this.history = response.history;
             this.total = response.total || response.history.length;
@@ -76,16 +96,13 @@ export class AdminAuditComponent implements OnInit {
             this.history = [];
             this.total = 0;
           }
-          
-          console.log(`📊 Total registros: ${this.total}`);
-          this.cdr.detectChanges(); // ← Forzar actualización de la tabla
+          this.cdr.detectChanges();
         },
         error: (err) => {
-          console.error('❌ Error:', err);
           this.error = err.error?.message || err.message || 'Error al cargar el historial';
           this.history = [];
           this.total = 0;
-          this.cdr.detectChanges(); // ← Forzar actualización del error
+          this.cdr.detectChanges();
           this.showErrorToast(this.error);
         }
       });
@@ -95,22 +112,12 @@ export class AdminAuditComponent implements OnInit {
     this.loadHistory();
   }
 
-  showHelpId(): void {
-    Swal.fire({
-      title: '¿Cómo obtener el ID de una cita?',
-      html: `
-        <div style="text-align: left;">
-          <p><strong>📋 El ID de cita (UUID) se genera automáticamente</strong></p>
-          <p>Puedes obtenerlo en la <strong>respuesta del backend</strong> cuando creas una cita.</p>
-          <p><strong>🔍 Ejemplo de formato UUID:</strong></p>
-          <code style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">
-            3089f3ac-aa36-4d00-8eb5-fcf938c93b2b
-          </code>
-        </div>
-      `,
-      icon: 'info',
-      confirmButtonText: 'Entendido'
-    });
+  clearFilters(): void {
+    this.filterChangeType = '';
+    this.filterDoctorId = '';
+    this.filterDate = '';
+    this.filterSearch = '';
+    this.loadHistory();
   }
 
   trackById(index: number, entry: AppointmentHistoryEntry): string {

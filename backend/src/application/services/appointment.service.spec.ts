@@ -16,9 +16,11 @@ import { IAppointmentHistoryRepository } from '../ports/appointment-history.repo
 
 describe('AppointmentService', () => {
   let service: AppointmentService;
+  let module: TestingModule;
   let mockAvailability: Record<string, jest.Mock>;
   let mockPatientSvc: Record<string, jest.Mock>;
   let mockNotificationSvc: Record<string, jest.Mock>;
+  let mockQueryBuilder: any;
 
   const mockAppointmentRepository = {
     findAndCount: jest.fn(),
@@ -54,7 +56,7 @@ describe('AppointmentService', () => {
       emit: jest.fn(),
     };
 
-    const module: TestingModule = await Test.createTestingModule({
+    module = await Test.createTestingModule({
       providers: [
         AppointmentService,
         {
@@ -71,6 +73,7 @@ describe('AppointmentService', () => {
           useValue: {
             create: jest.fn(),
             save: jest.fn(),
+            createQueryBuilder: jest.fn(),
           },
         },
       ],
@@ -82,6 +85,15 @@ describe('AppointmentService', () => {
       minAdvanceHours: 2,
       appointmentWindowDays: 15,
     });
+    mockQueryBuilder = {
+      leftJoinAndSelect: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      getManyAndCount: jest.fn(),
+    };
+    const historyRepo = module.get(IAppointmentHistoryRepository);
+    historyRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
   });
 
   describe('findAllByDoctorAndDate', () => {
@@ -367,6 +379,103 @@ describe('AppointmentService', () => {
       await expect(service.confirmAppointment('1')).rejects.toThrow(
         BadRequestException,
       );
+    });
+  });
+
+  describe('getAllHistory', () => {
+    beforeEach(() => {
+      mockQueryBuilder = {
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn(),
+      };
+      const historyRepo = module.get(IAppointmentHistoryRepository);
+      historyRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+    });
+
+    it('debería retornar historial completo sin filtros', async () => {
+      const mockEntries = [
+        {
+          id: 'h1',
+          appointment: {
+            id: 'a1',
+            doctor: { name: 'Dr. Pérez' },
+            patient: { firstName: 'Juan', lastName: 'López' },
+          },
+          changeType: 'CREATED',
+          previousDate: null,
+          previousTime: null,
+          previousStatus: null,
+          newDate: null,
+          newTime: null,
+          newStatus: 'PENDING',
+          changedBy: 'patient@test.com',
+          changedByRole: 'patient',
+          reason: null,
+          changedAt: new Date('2026-05-25T10:00:00Z'),
+        },
+      ];
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([mockEntries, 1]);
+
+      const result = await service.getAllHistory({ limit: 50 });
+
+      expect(result.total).toBe(1);
+      expect(result.history[0].doctorName).toBe('Dr. Pérez');
+      expect(result.history[0].patientName).toBe('Juan López');
+      expect(mockQueryBuilder.leftJoinAndSelect).toHaveBeenCalled();
+      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('h.changedAt', 'DESC');
+      expect(mockQueryBuilder.take).toHaveBeenCalledWith(50);
+    });
+
+    it('debería aplicar filtro por changeType', async () => {
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+      await service.getAllHistory({ changeType: 'CONFIRMED', limit: 50 });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
+        'h.changeType = :changeType',
+        { changeType: 'CONFIRMED' },
+      );
+    });
+
+    it('debería aplicar filtro por doctorId', async () => {
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+      await service.getAllHistory({ doctorId: 'd1', limit: 50 });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
+        'd.id = :doctorId',
+        { doctorId: 'd1' },
+      );
+    });
+
+    it('debería aplicar filtro por fecha', async () => {
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+      await service.getAllHistory({ date: '2026-05-25', limit: 50 });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
+        'a.appointmentDate = :date',
+        { date: '2026-05-25' },
+      );
+    });
+
+    it('debería aplicar filtro de búsqueda por paciente', async () => {
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+      await service.getAllHistory({ search: 'Juan', limit: 50 });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
+        expect.stringContaining('ILIKE'),
+        { search: '%Juan%' },
+      );
+    });
+
+    it('debería combinar múltiples filtros', async () => {
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+      await service.getAllHistory({
+        changeType: 'RESCHEDULED',
+        doctorId: 'd1',
+        date: '2026-05-25',
+        search: 'Ana',
+        limit: 10,
+      });
+      expect(mockQueryBuilder.take).toHaveBeenCalledWith(10);
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledTimes(4);
     });
   });
 });

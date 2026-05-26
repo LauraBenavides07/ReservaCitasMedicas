@@ -446,21 +446,42 @@ export class AppointmentService {
     appointmentId?: string;
     changeType?: string;
     limit?: number;
+    doctorId?: string;
+    date?: string;
+    search?: string;
   }) {
-    const where: Record<string, unknown> = {};
+    const query = this.historyRepository
+      .createQueryBuilder('h')
+      .leftJoinAndSelect('h.appointment', 'a')
+      .leftJoinAndSelect('a.doctor', 'd')
+      .leftJoinAndSelect('a.patient', 'p')
+      .orderBy('h.changedAt', 'DESC')
+      .take(filters.limit || 50);
+
     if (filters.appointmentId) {
-      where.appointment = { id: filters.appointmentId };
+      query.andWhere('h.appointmentId = :appointmentId', {
+        appointmentId: filters.appointmentId,
+      });
     }
     if (filters.changeType) {
-      where.changeType = filters.changeType;
+      query.andWhere('h.changeType = :changeType', {
+        changeType: filters.changeType,
+      });
+    }
+    if (filters.doctorId) {
+      query.andWhere('d.id = :doctorId', { doctorId: filters.doctorId });
+    }
+    if (filters.date) {
+      query.andWhere('a.appointmentDate = :date', { date: filters.date });
+    }
+    if (filters.search) {
+      query.andWhere(
+        "(p.firstName ILIKE :search OR p.lastName ILIKE :search OR p.document ILIKE :search OR CONCAT(p.firstName, ' ', p.lastName) ILIKE :search)",
+        { search: `%${filters.search}%` },
+      );
     }
 
-    const [history, total] = await this.historyRepository.findAndCount({
-      where: where,
-      relations: { appointment: { doctor: true, patient: true } },
-      order: { changedAt: 'DESC' },
-      take: filters.limit || 50,
-    });
+    const [history, total] = await query.getManyAndCount();
 
     return {
       total,

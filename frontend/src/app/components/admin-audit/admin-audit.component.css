@@ -1,6 +1,3 @@
-/* ============================================
-   AUDIT CONTAINER
-   ============================================ */
 .audit-container {
     width: 100%;
     max-width: 1400px;
@@ -9,9 +6,6 @@
     font-family: 'Inter', system-ui, sans-serif;
 }
 
-/* ============================================
-   HEADER
-   ============================================ */
 .audit-header {
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
@@ -31,9 +25,6 @@
     margin-top: 0.25rem;
 }
 
-/* ============================================
-   FILTERS PANEL - EN UNA SOLA FILA
-   ============================================ */
 .audit-filters-panel {
     background: #f8fafc;
     border-radius: 16px;
@@ -44,8 +35,8 @@
 
 .filters-row {
     display: flex;
-    gap: 2rem;
-    align-items: flex-start;  /* ← Cambia de flex-end a flex-start */
+    gap: 1rem;
+    align-items: flex-end;
     flex-wrap: wrap;
 }
 
@@ -53,23 +44,20 @@
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
-    justify-content: flex-end;  /* ← Alinea el contenido hacia abajo */
-    min-height: 80px;  
-    width: 400px;     
+    min-width: 180px;
+    flex: 1;
 }
 
-/* El grupo del botón no necesita tanta altura */
+.filter-group-wide {
+    flex: 2;
+    min-width: 220px;
+}
+
 .filter-actions {
     display: flex;
-    align-items: center;     
-    justify-content: center; 
-    margin-bottom: 0;       
+    align-items: center;
+    gap: 0.5rem;
     align-self: center;
-}
-
-.filter-group:nth-child(2) {
-    flex: 2;                 /* ← Ocupa el doble de espacio */
-    width: 400px;  
 }
 
 .filter-group label {
@@ -77,6 +65,7 @@
     font-weight: 700;
     color: #94a3b8;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .filter-group select,
@@ -88,45 +77,27 @@
     background: white;
     min-height: 42px;
     min-width: 100px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-
-.input-with-help {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.input-with-help input {
-    flex: 1;
-}
-
-.help-btn {
-    background: #e2e8f0;
-    border: none;
-    width: 42px;
+.btn-clear {
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
+    padding: 0.5rem 0.75rem;
     border-radius: 10px;
+    font-size: 0.8rem;
     cursor: pointer;
-    font-size: 1rem;
+    min-height: 42px;
     transition: all 0.2s;
+    white-space: nowrap;
 }
 
-.help-btn:hover {
-    background: #cbd5e1;
+.btn-clear:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
 }
-
-.input-hint {
-    display: block;
-    font-size: 0.65rem;
-    color: #94a3b8;
-    margin-top: 0.25rem;
-}
-
-
-
-
-/* ============================================
-   BUTTONS
-   ============================================ */
 
 .btn-success {
     background: #10b981;
@@ -160,9 +131,6 @@
     color: white;
 }
 
-/* ============================================
-   LOADING STATE
-   ============================================ */
 .loading-state {
     text-align: center;
     padding: 3rem;
@@ -184,9 +152,6 @@
     to { transform: rotate(360deg); }
 }
 
-/* ============================================
-   ERROR STATE
-   ============================================ */
 .error-state {
     text-align: center;
     padding: 3rem;
@@ -201,16 +166,12 @@
     margin-bottom: 0.5rem;
 }
 
-/* ============================================
-   RESULTS HEADER
-   ============================================ */
 .audit-results {
     background: white;
     border-radius: 16px;
     border: 1px solid #e2e8f0;
     overflow: hidden;
 }
-
 
 .results-header {
     display: flex;
@@ -231,9 +192,6 @@
     font-size: 1rem;
 }
 
-/* ============================================
-   TABLE
-   ============================================ */
 .table-wrapper {
     overflow-x: auto;
 }
@@ -264,7 +222,6 @@
     background-color: #f8fafc;
 }
 
-/* Table cells */
 .date-cell {
     font-family: monospace;
     font-size: 0.8rem;
@@ -308,7 +265,6 @@
     color: #94a3b8;
 }
 
-/* Badges */
 .badge {
     font-size: 0.7rem;
     font-weight: 600;
@@ -323,9 +279,6 @@
 .badge-confirmed { background: #d1fae5; color: #059669; }
 .badge-completed { background: #e0e7ff; color: #4338ca; }
 
-/* ============================================
-   EMPTY STATE
-   ============================================ */
 .empty-state {
     text-align: center;
     padding: 3rem;
@@ -348,30 +301,33 @@
     margin-bottom: 1rem;
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
 @media (max-width: 768px) {
     .filters-row {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .filter-group {
         width: 100%;
+        min-width: unset;
     }
-    
+
+    .filter-group-wide {
+        min-width: unset;
+    }
+
     .filter-actions {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    min-width: 120px;
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+        gap: 0.5rem;
     }
-    
+
+    .filter-actions app-button,
     .filter-actions button {
-        width: 100%;
+        flex: 1;
     }
-    
+
     .results-header {
         flex-direction: column;
         gap: 0.5rem;

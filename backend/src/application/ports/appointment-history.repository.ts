@@ -1,4 +1,4 @@
-import { FindManyOptions } from 'typeorm';
+import { FindManyOptions, SelectQueryBuilder } from 'typeorm';
 import { AppointmentHistory } from '../../domain/entities/appointment-history.entity';
 
 export abstract class IAppointmentHistoryRepository {
@@ -10,4 +10,7 @@ export abstract class IAppointmentHistoryRepository {
   abstract findAndCount(
     options?: FindManyOptions<AppointmentHistory>,
   ): Promise<[AppointmentHistory[], number]>;
+  abstract createQueryBuilder(
+    alias?: string,
+  ): SelectQueryBuilder<AppointmentHistory>;
 }

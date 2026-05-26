@@ -113,11 +113,21 @@ export class AppointmentService {
     return this.http.patch(`${this.patientsApiUrl}/${patientId}/medical-info`, data);
   }
 
-  getAllHistory(params?: { appointmentId?: string; changeType?: string; limit?: number }): Observable<{ total: number; history: AppointmentHistoryEntry[] }> {
+  getAllHistory(params?: {
+    appointmentId?: string;
+    changeType?: string;
+    limit?: number;
+    doctorId?: string;
+    date?: string;
+    search?: string;
+  }): Observable<{ total: number; history: AppointmentHistoryEntry[] }> {
     let query = '';
     if (params?.appointmentId) query += `&appointmentId=${params.appointmentId}`;
     if (params?.changeType) query += `&changeType=${params.changeType}`;
     if (params?.limit) query += `&limit=${params.limit}`;
+    if (params?.doctorId) query += `&doctorId=${params.doctorId}`;
+    if (params?.date) query += `&date=${params.date}`;
+    if (params?.search) query += `&search=${encodeURIComponent(params.search)}`;
     return this.http.get<{ total: number; history: AppointmentHistoryEntry[] }>(`${this.apiUrl}/history/all?${query}`);
   }
 }

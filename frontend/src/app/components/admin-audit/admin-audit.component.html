@@ -14,24 +14,37 @@
                         {{ type.label }}
                     </option>
                 </select>
-                 <small class="input-hint invisible"> </small>
             </div>
-            
+
             <div class="filter-group">
-                <label>🆔 ID DE CITA</label>
-                <div class="input-with-help">
-                    <input type="text" 
-                           [(ngModel)]="filterAppointmentId" 
-                           placeholder="Ej: 3089f3ac-aa36-4d00-8eb5-fcf938c93b2b">
-                    <button type="button" class="help-btn" (click)="showHelpId()" title="¿Cómo obtener el ID?">❓</button>
-                </div>
-                <small class="input-hint">Formato UUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</small>
+                <label>👨‍⚕️ MÉDICO</label>
+                <select [(ngModel)]="filterDoctorId">
+                    <option value="">Todos los médicos</option>
+                    <option *ngFor="let doc of doctors" [value]="doc.id">
+                        {{ doc.name }} - {{ doc.specialty }}
+                    </option>
+                </select>
             </div>
-            
-           <div class="filter-actions">
+
+            <div class="filter-group">
+                <label>📅 FECHA</label>
+                <input type="date" [(ngModel)]="filterDate">
+            </div>
+
+            <div class="filter-group filter-group-wide">
+                <label>👤 BUSCAR PACIENTE</label>
+                <input type="text"
+                       [(ngModel)]="filterSearch"
+                       placeholder="Nombre, apellido o documento">
+            </div>
+
+            <div class="filter-actions">
                 <app-button variant="search" (clicked)="applyFilter()">
                     🔍 Filtrar
                 </app-button>
+                <button type="button" class="btn-clear" (click)="clearFilters()">
+                    ✖ Limpiar
+                </button>
             </div>
         </div>
     </div>
@@ -55,7 +68,7 @@
             <div class="results-count">📊 Total de registros: <strong>{{ total }}</strong></div>
             <button class="btn-export" (click)="exportToCSV()">📥 Exportar a CSV</button>
         </div>
-        
+
         <div class="table-wrapper">
             <table class="audit-table">
                 <thead>

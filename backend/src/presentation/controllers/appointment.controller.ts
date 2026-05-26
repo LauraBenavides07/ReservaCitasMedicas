@@ -173,11 +173,17 @@ export class AppointmentController {
     @Query('appointmentId') appointmentId?: string,
     @Query('changeType') changeType?: string,
     @Query('limit') limit?: string,
+    @Query('doctorId') doctorId?: string,
+    @Query('date') date?: string,
+    @Query('search') search?: string,
   ) {
     return this.appointmentService.getAllHistory({
       appointmentId,
       changeType,
       limit: limit ? Number(limit) : 50,
+      doctorId,
+      date,
+      search,
     });
   }
 }
