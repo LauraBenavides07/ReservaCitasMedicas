@@ -7,11 +7,12 @@ import { AuthService } from '../../services/auth.service';
 import { catchError, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ButtonComponent } from '../../shared/atoms/button/button.component';
+import { FormFieldComponent } from '../../shared/atoms/form-field/form-field.component';
 
 @Component({
   selector: 'app-appointment-form',
   standalone: true,
-  imports: [ButtonComponent, CommonModule, ReactiveFormsModule],
+  imports: [ButtonComponent, FormFieldComponent,CommonModule, ReactiveFormsModule],
   templateUrl: './appointment-form.component.html',
   styleUrls: ['./appointment-form.component.css']
 })

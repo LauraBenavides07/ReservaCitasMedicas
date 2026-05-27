@@ -27,12 +27,25 @@ export class AuthService {
     private keycloakService: KeycloakService,
   ) {}
 
+// backend/src/application/services/auth.service.ts
+
   async register(dto: RegisterDto) {
-    const existing = await this.patientRepository.findOneBy({
+    // Validar documento duplicado
+    const existingByDocument = await this.patientRepository.findOneBy({
       document: dto.document,
     });
-    if (existing) {
+    if (existingByDocument) {
       throw new ConflictException('El documento ya está registrado.');
+    }
+
+    // Validar email duplicado 
+    if (dto.email) {
+      const existingByEmail = await this.patientRepository.findOneBy({
+        email: dto.email,
+      });
+      if (existingByEmail) {
+        throw new ConflictException('El correo electrónico ya está registrado.');
+      }
     }
 
     const hashedPassword = await this.passwordHasher.hash(dto.password);

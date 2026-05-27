@@ -27,54 +27,53 @@
                 <div class="form-grid">
 
                     <!-- Documento -->
-                    <div class="form-field full-width">
-                        <label for="doc-input">DOCUMENTO DE IDENTIDAD *</label>
-
+                    <app-form-field 
+                        class="full-width"
+                        label="DOCUMENTO DE IDENTIDAD"
+                        inputId="doc-input"
+                        [required]="true"
+                        [error]="f['patientDocument'].touched && f['patientDocument'].invalid ? 'El documento es necesario' : ''">
                         <div class="input-with-button">
                             <input type="text" id="doc-input" formControlName="patientDocument" placeholder="Ej: 12345678"
                                 [class.input-error]="f['patientDocument'].touched && f['patientDocument'].errors">
-
-                            <!-- Botón con lógica de búsqueda -->
                             <app-button variant="secondary" size="sm" (clicked)="searchPatient()">🔍 Buscar</app-button>
                         </div>
-                        <span class="validation-message"
-                            *ngIf="f['patientDocument'].touched && f['patientDocument'].invalid">
-                            El documento es necesario
-                        </span>
-                    </div>
+                    </app-form-field>
 
-                    <!-- Nombre y apellido -->
-                    <div class="form-field full-width">
-                        <label>NOMBRES Y APELLIDOS *</label>
-
+                    <!-- Nombre y apellido - Este es especial porque tiene dos inputs -->
+                    <app-form-field 
+                        class="full-width"
+                        label="NOMBRES Y APELLIDOS"
+                        [required]="true"
+                        [error]="(f['firstName'].touched && f['firstName'].invalid) || (f['lastName'].touched && f['lastName'].invalid) ? 'Ambos nombres y apellidos son requeridos' : ''">
                         <div class="split-inputs">
                             <div>
                                 <input type="text" formControlName="firstName" placeholder="Nombres"
                                     [class.input-error]="f['firstName'].touched && f['firstName'].invalid">
-                                <span class="validation-message"
-                                    *ngIf="f['firstName'].touched && f['firstName'].invalid">Requerido</span>
                             </div>
                             <div>
                                 <input type="text" formControlName="lastName" placeholder="Apellidos"
                                     [class.input-error]="f['lastName'].touched && f['lastName'].invalid">
-                                <span class="validation-message"
-                                    *ngIf="f['lastName'].touched && f['lastName'].invalid">Requerido</span>
                             </div>
                         </div>
-                    </div>
+                    </app-form-field>
 
-                    <!-- Celular y género -->
+                    <!-- Celular y género (2 columnas) -->
                     <div class="form-row">
-                        <div class="form-field">
-                            <label for="phone-input">CELULAR *</label>
+                        <app-form-field
+                            label="CELULAR"
+                            inputId="phone-input"
+                            [required]="true"
+                            [error]="f['phone'].touched && f['phone'].invalid ? 'El celular es obligatorio' : ''">
                             <input type="tel" id="phone-input" formControlName="phone" placeholder="300 000 0000"
                                 [class.input-error]="f['phone'].touched && f['phone'].invalid">
-                            <span class="validation-message"
-                                *ngIf="f['phone'].touched && f['phone'].invalid">Obligatorio</span>
-                        </div>
+                        </app-form-field>
 
-                        <div class="form-field">
-                            <label for="gender-input">GÉNERO *</label>
+                        <app-form-field
+                            label="GÉNERO"
+                            inputId="gender-input"
+                            [required]="true"
+                            [error]="f['gender'].touched && f['gender'].invalid ? 'Debe seleccionar un género' : ''">
                             <select id="gender-input" formControlName="gender"
                                 [class.input-error]="f['gender'].touched && f['gender'].invalid">
                                 <option value="">Seleccionar...</option>
@@ -82,19 +81,19 @@
                                 <option value="F">Femenino</option>
                                 <option value="O">Otro</option>
                             </select>
-                            <span class="validation-message"
-                                *ngIf="f['gender'].touched && f['gender'].invalid">Obligatorio</span>
-                        </div>
+                        </app-form-field>
                     </div>
 
                     <!-- Correo -->
-                    <div class="form-field full-width">
-                        <label for="email-input">CORREO ELECTRÓNICO</label>
+                    <app-form-field 
+                        class="full-width"
+                        label="CORREO ELECTRÓNICO"
+                        inputId="email-input"
+                        [required]="false"
+                        [error]="f['email'].touched && f['email'].invalid ? 'Correo electrónico inválido' : ''">
                         <input type="email" id="email-input" formControlName="email" placeholder="paciente@ejemplo.com"
                             [class.input-error]="f['email'].touched && f['email'].invalid">
-                        <span class="validation-message" *ngIf="f['email'].touched && f['email'].invalid">Correo
-                            inválido</span>
-                    </div>
+                    </app-form-field>
 
                 </div>
             </div>
@@ -131,19 +130,21 @@
                     <h3 class="card-title mt-1.5rem">3. Fecha y Hora</h3>
 
                     <div class="form-row">
-                        <div class="form-field">
-                            <label for="date-input">DÍA DE CITA *</label>
+                        <app-form-field
+                            label="DÍA DE CITA"
+                            inputId="date-input"
+                            [required]="true"
+                            [error]="f['date'].touched && f['date'].invalid ? 'Debe seleccionar una fecha' : 
+                                    (f['date'].value && isDateDisabled(f['date'].value) ? getDisabledDateReason(f['date'].value) : '')">
                             <input type="date" id="date-input" formControlName="date" (change)="onDateChange()" [min]="today"
                                 [class.input-error]="f['date'].touched && f['date'].invalid">
-                            <span class="validation-message"
-                                *ngIf="f['date'].touched && f['date'].invalid">Obligatorio</span>
-                            <span class="validation-message" *ngIf="f['date'].value && isDateDisabled(f['date'].value)">
-                                {{ getDisabledDateReason(f['date'].value) }}
-                            </span>
-                        </div>
+                        </app-form-field>
 
-                        <div class="form-field">
-                            <label for="time-input">HORARIO *</label>
+                        <app-form-field
+                            label="HORARIO"
+                            inputId="time-input"
+                            [required]="true"
+                            [error]="f['time'].touched && f['time'].invalid ? 'Debe seleccionar una hora' : ''">
                             <select id="time-input" formControlName="time"
                                 [class.input-error]="f['time'].touched && f['time'].invalid">
                                 <option value="">Ver turnos...</option>
@@ -151,13 +152,8 @@
                                     {{ formatSlot(slot) }}
                                 </option>
                             </select>
-                            <span class="validation-message" *ngIf="f['time'].touched && f['time'].invalid">Seleccione
-                                una hora</span>
-                        </div>
+                        </app-form-field>
                     </div>
-
-                    <!-- Mensaje si no hay horarios -->
-                    <!-- Ya manejado por errorMessage() arriba -->
 
                 </div>
 

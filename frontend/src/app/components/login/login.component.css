@@ -194,64 +194,6 @@ form {
   gap: 1.25rem;
 }
 
-/* Contenedor de cada campo del formulario */
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-/* Etiqueta del campo */
-.form-field label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Inputs y selects */
-.form-field input,
-.form-field select {
-  padding: 0.875rem 1rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-family: inherit;
-  transition: all 0.2s;
-  color: #0f172a;
-  min-height: 48px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Placeholder */
-.form-field input::placeholder {
-  color: #64748b;
-  opacity: 0.8;
-}
-
-/* Estado focus */
-.form-field input:focus,
-.form-field select:focus {
-  outline: none;
-  border-color: #1e3a6a;
-  box-shadow: 0 0 0 3px rgba(30, 58, 106, 0.1);
-}
-
-/* Clase para input con error */
-.input-error {
-  border-color: #ef4444 !important;
-}
-
-/* Mensaje de error */
-.error-message {
-  color: #ef4444;
-  font-size: 0.85rem;
-  font-weight: 500;
-  margin-top: -0.25rem;
-}
-
 /* ============================================
    PASSWORD TOGGLE
    ============================================ */

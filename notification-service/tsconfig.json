@@ -20,6 +20,6 @@
     "strictPropertyInitialization": false,
     "types": ["jest", "node"]
   },
-  "include": ["src/**/*", "test/**/*", "scripts/test-events.js", "scripts/test-email.js"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

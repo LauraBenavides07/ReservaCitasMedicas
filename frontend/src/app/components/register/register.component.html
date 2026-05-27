@@ -26,59 +26,63 @@
             <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
                 <!-- Fila de nombres y apellidos (2 columnas) -->
                 <div class="form-row">
-                    <div class="form-field">
-                        <label for="reg-firstName">NOMBRES *</label>
+                    <app-form-field
+                        label="NOMBRES"
+                        inputId="reg-firstName"
+                        [required]="true"
+                        [error]="f['firstName'].invalid && f['firstName'].touched ? 'Por favor escriba sus nombres.' : ''">
                         <input type="text" id="reg-firstName" formControlName="firstName" placeholder="Juan"
                             [class.input-error]="f['firstName'].invalid && f['firstName'].touched">
-                        <div *ngIf="f['firstName'].invalid && f['firstName'].touched" class="error-message">
-                            Por favor escriba sus nombres.
-                        </div>
-                    </div>
-                    <div class="form-field">
-                        <label for="reg-lastName">APELLIDOS *</label>
+                    </app-form-field>
+                    <app-form-field
+                        label="APELLIDOS"
+                        inputId="reg-lastName"
+                        [required]="true"
+                        [error]="f['lastName'].invalid && f['lastName'].touched ? 'Por favor escriba sus apellidos.' : ''">
                         <input type="text" id="reg-lastName" formControlName="lastName" placeholder="Perez"
                             [class.input-error]="f['lastName'].invalid && f['lastName'].touched">
-                        <div *ngIf="f['lastName'].invalid && f['lastName'].touched" class="error-message">
-                            Por favor escriba sus apellidos.
-                        </div>
-                    </div>
+                    </app-form-field>
                 </div>
 
                 <!-- Fila de documento y teléfono (2 columnas) -->
                 <div class="form-row">
-                    <div class="form-field">
-                        <label for="reg-document">CÉDULA *</label>
+                    <app-form-field
+                        label="CÉDULA"
+                        inputId="reg-document"
+                        [required]="true"
+                        [error]="f['document'].invalid && f['document'].touched ? 
+                            (f['document'].errors?.['required'] ? 'El documento es obligatorio.' : 
+                             f['document'].errors?.['pattern'] ? 'El documento debe contener solo números.' : '') : ''">
                         <input type="text" id="reg-document" formControlName="document" placeholder="Número de cédula"
                             [class.input-error]="f['document'].invalid && f['document'].touched">
-                        <div *ngIf="f['document'].invalid && f['document'].touched" class="error-message">
-                            <span *ngIf="f['document'].errors?.['required']">El documento es obligatorio.</span>
-                            <span *ngIf="f['document'].errors?.['pattern']">El documento debe contener solo
-                                números.</span>
-                        </div>
-                    </div>
-                    <div class="form-field">
-                        <label for="reg-phone">TELÉFONO *</label>
+                    </app-form-field>
+                    <app-form-field
+                        label="TELÉFONO"
+                        inputId="reg-phone"
+                        [required]="true"
+                        [error]="f['phone'].invalid && f['phone'].touched ? 
+                            (f['phone'].errors?.['required'] ? 'El teléfono es obligatorio.' : 
+                             f['phone'].errors?.['pattern'] ? 'El teléfono debe contener solo números.' : '') : ''">
                         <input type="tel" id="reg-phone" formControlName="phone" placeholder="Número de celular"
                             [class.input-error]="f['phone'].invalid && f['phone'].touched">
-                        <div *ngIf="f['phone'].invalid && f['phone'].touched" class="error-message">
-                            <span *ngIf="f['phone'].errors?.['required']">El teléfono es obligatorio.</span>
-                            <span *ngIf="f['phone'].errors?.['pattern']">El teléfono debe contener solo números.</span>
-                        </div>
-                    </div>
+                    </app-form-field>
                 </div>
 
                 <!-- Fila de correo y género (2 columnas) -->
                 <div class="form-row">
-                    <div class="form-field">
-                        <label for="reg-email">CORREO ELECTRÓNICO</label>
+                    <app-form-field
+                        label="CORREO ELECTRÓNICO"
+                        inputId="reg-email"
+                        [required]="false"
+                        [error]="f['email'].invalid && f['email'].touched ? 'Por favor ingrese un correo válido.' : ''">
                         <input type="email" id="reg-email" formControlName="email" placeholder="correo@ejemplo.com"
                             [class.input-error]="f['email'].invalid && f['email'].touched">
-                        <div *ngIf="f['email'].invalid && f['email'].touched" class="error-message">
-                            Por favor ingrese un correo válido.
-                        </div>
-                    </div>
-                    <div class="form-field">
-                        <label for="reg-gender">GÉNERO *</label>
+                    </app-form-field>
+                    <app-form-field
+                        label="GÉNERO"
+                        inputId="reg-gender"
+                        [required]="true"
+                        [error]="f['gender'].invalid && f['gender'].touched ? 'Por favor seleccione su género.' : ''">
                         <select id="reg-gender" formControlName="gender"
                             [class.input-error]="f['gender'].invalid && f['gender'].touched">
                             <option value="">Seleccione</option>
@@ -86,15 +90,17 @@
                             <option value="F">Femenino</option>
                             <option value="O">Otro</option>
                         </select>
-                        <div *ngIf="f['gender'].invalid && f['gender'].touched" class="error-message">
-                            Por favor seleccione su género.
-                        </div>
-                    </div>
+                    </app-form-field>
                 </div>
 
                 <!-- Campo de contraseña -->
-                <div class="form-field">
-                    <label for="reg-password">CONTRASEÑA *</label>
+                <app-form-field
+                    label="CONTRASEÑA"
+                    inputId="reg-password"
+                    [required]="true"
+                    [error]="f['password'].invalid && f['password'].touched ? 
+                        (f['password'].errors?.['required'] ? 'La contraseña es obligatoria.' : 
+                         f['password'].errors?.['minlength'] ? 'La contraseña debe tener al menos 8 caracteres.' : '') : ''">
                     <div class="password-field-wrapper">
                         <input [type]="showPassword() ? 'text' : 'password'" id="reg-password" formControlName="password"
                             placeholder="Mínimo 8 caracteres"
@@ -105,12 +111,7 @@
                             (change)="togglePassword()">
                         <label for="show-password-reg">Mostrar contraseña</label>
                     </div>
-                    <div *ngIf="f['password'].invalid && f['password'].touched" class="error-message">
-                        <span *ngIf="f['password'].errors?.['required']">La contraseña es obligatoria.</span>
-                        <span *ngIf="f['password'].errors?.['minlength']">La contraseña debe tener al menos 8
-                            caracteres.</span>
-                    </div>
-                </div>
+                </app-form-field>
 
                 <!-- Mensaje de error del registro -->
                 <div *ngIf="error()" class="alert alert-error">

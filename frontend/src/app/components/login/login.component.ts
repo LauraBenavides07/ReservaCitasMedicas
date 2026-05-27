@@ -4,11 +4,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ButtonComponent } from '../../shared/atoms/button/button.component';
+import { FormFieldComponent } from '../../shared/atoms/form-field/form-field.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ButtonComponent, CommonModule, ReactiveFormsModule, ButtonComponent],
+  imports: [ButtonComponent,FormFieldComponent, CommonModule, ReactiveFormsModule, ButtonComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })

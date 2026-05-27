@@ -56,44 +56,6 @@
     gap: 1.25rem;
 }
 
-/* Contenedor de cada campo del formulario */
-.form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-/* Etiqueta del campo */
-.form-field label {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* Inputs y selects */
-.form-field input,
-.form-field select {
-    padding: 0.8rem 1rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    color: #1e293b;
-    outline: none;
-    background: #ffffff;
-    transition: all 0.2s;
-    min-height: 48px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* Estado focus de inputs */
-.form-field input:focus,
-.form-field select:focus {
-    border-color: #1e3a6a;
-    box-shadow: 0 0 0 3px rgba(30, 58, 106, 0.1);
-}
 
 /* Contenedor para input con botón al lado */
 .input-with-button {
@@ -234,11 +196,6 @@
    VALIDATION STYLES
    ============================================ */
 
-/* Clase para input con error */
-.input-error {
-    border-color: #ef4444 !important;
-    background-color: #fef2f2 !important;
-}
 
 /* Mensaje de validación */
 .validation-message {
