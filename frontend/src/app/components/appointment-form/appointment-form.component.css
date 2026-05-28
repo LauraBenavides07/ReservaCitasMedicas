@@ -24,28 +24,6 @@
 }
 
 /* ============================================
-   CARDS & TITLES
-   ============================================ */
-
-/* Tarjeta blanca con sombra */
-.card {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-}
-
-/* Título dentro de las tarjetas */
-.card-title {
-    margin: 0 0 1.5rem 0;
-    color: #1e3a6a;
-    font-size: 1.15rem;
-    font-weight: 600;
-    border-bottom: 1px solid #f1f5f9;
-    padding-bottom: 1rem;
-}
-
-/* ============================================
    FORMS & INPUTS
    ============================================ */
 
@@ -97,85 +75,10 @@
     gap: 1rem;
 }
 
-/* Tarjeta individual de médico */
-.doctor-box {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 0.75rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-/* Efecto hover en tarjeta de médico */
-.doctor-box:hover {
-    border-color: #9bbfd7;
-    box-shadow: 0 4px 12px rgba(155, 191, 215, 0.2);
-    transform: translateY(-2px);
-}
-
-/* Tarjeta de médico seleccionada */
-.doctor-box.selected {
-    background: #f8fafc;
-    border-color: #1a3972;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-}
-
-/* Avatar del médico */
-.doctor-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    font-weight: 700;
-}
-
-/* Información del médico */
-.doctor-info h4 {
-    margin: 0;
-    font-size: 0.95rem;
-    color: #1e293b;
-}
-
-/* Especialidad del médico */
-.doctor-info .specialty {
-    margin: 0;
-    font-size: 0.8rem;
-    color: #94a3b8;
-}
 
 /* ============================================
    MESSAGES & UTILS
    ============================================ */
-
-/* Clase base para alertas */
-.alert {
-    padding: 1rem;
-    border-radius: 8px;
-    font-weight: 600;
-    margin-top: 1rem;
-}
-
-/* Alerta de éxito */
-.alert-success {
-    background: #f0fdf4;
-    color: #15803d;
-}
-
-/* Alerta de error */
-.alert-error {
-    background: #fef2f2;
-    color: #b91c1c;
-}
 
 /* Utilidad para ancho completo */
 .full-width {
@@ -190,6 +93,12 @@
 /* Margen superior de 1.5rem */
 .mt-1\.5rem {
     margin-top: 1.5rem;
+}
+
+/* Margen de la alerta de agendamiento */
+app-alert {
+  display: block;
+  margin-bottom: 1.5rem;
 }
 
 /* ============================================

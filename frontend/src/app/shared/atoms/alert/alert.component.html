@@ -1,0 +1,23 @@
+<div
+  *ngIf="isVisible"
+  [ngClass]="alertClasses"
+  role="alert"
+  aria-live="polite">
+
+  <!-- Icono del tipo -->
+  <span class="alert__icon" aria-hidden="true">{{ icon }}</span>
+
+  <!-- Mensaje (soporta HTML con innerHTML para el caso info con <strong>) -->
+  <span class="alert__message" [innerHTML]="message"></span>
+
+  <!-- Botón de cerrar (solo si dismissible=true) -->
+  <button
+    *ngIf="dismissible"
+    class="alert__close"
+    (click)="dismiss()"
+    aria-label="Cerrar alerta"
+    type="button">
+    ×
+  </button>
+
+</div>

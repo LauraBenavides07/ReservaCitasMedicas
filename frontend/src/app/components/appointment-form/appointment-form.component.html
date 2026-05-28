@@ -1,19 +1,24 @@
 <div class="appointment-form-wrapper">
 
     <!-- Banner de anticipación -->
-    <div class="alert alert-info">
-        <strong>ℹ️ Información importante:</strong> Las citas deben agendarse con <strong>mínimo {{ minAdvanceHours }} horas de anticipación</strong>
-        y <strong>máximo {{ maxAppointmentDays }} días de anticipación</strong>.
-    </div>
+    <app-alert
+        type="info"
+        [message]="'Las citas deben agendarse con <strong>mínimo ' + minAdvanceHours + ' horas de anticipación</strong> y <strong>máximo ' + maxAppointmentDays + ' días de anticipación</strong>.'"
+        [show]="true">
+    </app-alert>
 
     <!-- Mensajes de estado (arriba para visibilidad inmediata en móvil) -->
-    <div *ngIf="successMessage()" class="alert alert-success">
-         {{ successMessage() }}
-    </div>
+    <app-alert
+        type="success"
+        [message]="successMessage()"
+        [show]="!!successMessage()">
+    </app-alert>
 
-    <div *ngIf="errorMessage()" class="alert alert-error">
-         {{ errorMessage() }}
-    </div>
+    <app-alert
+        type="error"
+        [message]="errorMessage()"
+        [show]="!!errorMessage()">
+    </app-alert>
 
     <!-- Formulario principal -->
     <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="two-column-layout">
@@ -21,8 +26,8 @@
         <!-- COLUMNA IZQUIERDA: DATOS DEL PACIENTE -->
         <div class="column-left">
 
-            <div class="card data-card">
-                <h3 class="card-title">1. Datos del Paciente</h3>
+            <app-card padding="md">
+            <h3 class="card-title">1. Datos del Paciente</h3>
 
                 <div class="form-grid">
 
@@ -96,13 +101,13 @@
                     </app-form-field>
 
                 </div>
-            </div>
+            </app-card>
         </div>
 
         <!-- COLUMNA DERECHA: MÉDICO Y HORARIO -->
         <div class="column-right">
 
-            <div class="card doctor-card-container">
+            <app-card padding="md">
                 <h3 class="card-title">2. Selección de Especialista</h3>
 
                 <!-- Campo oculto -->
@@ -110,18 +115,14 @@
 
                 <!-- Lista de doctores -->
                 <div class="doctors-grid">
-                    <button type="button" class="doctor-box" *ngFor="let doctor of doctors()"
-                        [class.selected]="f['doctorId'].value === doctor.id" (click)="selectDoctor(doctor.id)">
-
-                        <div class="doctor-avatar" [ngStyle]="{'background-color': getDoctorColor(doctor.id)}">
-                            {{ doctor.name.substring(0,2).toUpperCase() }}
-                        </div>
-
-                        <div class="doctor-info">
-                            <h4>Dr(a). {{ doctor.name }}</h4>
-                            <p class="specialty">{{ doctor.specialty }}</p>
-                        </div>
-                    </button>
+                    <app-doctor-card
+                        *ngFor="let doctor of doctors()"
+                        [doctorId]="doctor.id"
+                        [doctorName]="doctor.name"
+                        [specialty]="doctor.specialty"
+                        [selected]="f['doctorId'].value === doctor.id"
+                        (selectDoctor)="selectDoctor(doctor.id)">
+                    </app-doctor-card>
                 </div>
 
                 <!-- Sección de agendamiento -->
@@ -164,7 +165,7 @@
                     </app-button>
                 </div>
 
-            </div>
+            </app-card>
         </div>
 
     </form>

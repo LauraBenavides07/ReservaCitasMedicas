@@ -285,17 +285,6 @@ textarea {
    TABLES (TABLAS)
    ============================================ */
 
-/* Contenedor de tabla — card con scroll interno */
-.table-card {
-    background: white;
-    border-radius: 12px;
-    border: 1px solid rgba(62, 123, 166, 0.08);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-    padding: 1rem;
-    width: 100%;
-    box-sizing: border-box;
-}
-
 /* Wrapper de scroll horizontal para la tabla */
 .table-responsive {
     width: 100%;
@@ -312,13 +301,6 @@ textarea {
     /* Chrome, Safari, Opera */
 }
 
-/* Título de la tarjeta/tabla */
-.card-title {
-    margin: 0 0 1rem 0;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--primary-color);
-}
 
 /* Tabla estilizada */
 .styled-table {
@@ -619,10 +601,6 @@ dialog::backdrop {
 
     .stat-label {
         font-size: 0.68rem;
-    }
-
-    .table-card {
-        padding: 1.25rem;
     }
 }
 

@@ -4,8 +4,7 @@
         <div class="spinner"></div>
     </div>
 
-    <div *ngIf="!isLoading()" class="card card-container">
-
+    <app-card *ngIf="!isLoading()" padding="none" overflow="hidden">
         <div class="card-header">
             <h3 class="card-title">Mis citas</h3>
             <app-button variant="primary" (clicked)="goToNuevaCita()">
@@ -24,7 +23,7 @@
                     <th>HORA</th>
                     <th>MÉDICO</th>
                     <th>ESTADO</th>
-                    <th></th>
+                    <th>OPCIONES</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,10 +40,10 @@
                     <td data-label="MÉDICO">Dr(a). {{ app.doctor?.name }}</td>
 
                     <td data-label="ESTADO">
-                        <div class="apt-status" [ngClass]="getStatusClass(app.status)">
-                            <span class="status-dot"></span>
-                            {{ app.status | titlecase }}
-                        </div>
+                        <app-badge
+                            [status]="app.status"
+                            variant="solid">
+                        </app-badge>
                     </td>
 
                     <td class="actions-cell" data-label="ACCIONES">
@@ -57,5 +56,5 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    </app-card>
 </div>

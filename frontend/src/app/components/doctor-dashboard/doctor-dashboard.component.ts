@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { DoctorService } from '../../services/doctor.service';
 import Swal from 'sweetalert2';
 import { ButtonComponent } from '../../shared/atoms/button/button.component';
+import { BadgeComponent } from '../../shared/atoms/badge/badge.component';
 
 
 export interface DisplayAppointment {
@@ -23,7 +24,7 @@ export interface DisplayAppointment {
 @Component({
     selector: 'app-doctor-dashboard',
     standalone: true,
-    imports: [ButtonComponent, CommonModule, FormsModule, RouterModule],
+    imports: [BadgeComponent, ButtonComponent, CommonModule, FormsModule, RouterModule],
     providers: [DatePipe],
     templateUrl: './doctor-dashboard.component.html',
     styleUrls: ['./doctor-dashboard.component.css']

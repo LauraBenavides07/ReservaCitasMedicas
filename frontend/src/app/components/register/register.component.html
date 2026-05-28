@@ -114,14 +114,18 @@
                 </app-form-field>
 
                 <!-- Mensaje de error del registro -->
-                <div *ngIf="error()" class="alert alert-error">
-                    {{ error() }}
-                </div>
+                <app-alert
+                    type="error"
+                    [message]="error()"
+                    [show]="!!error()">
+                </app-alert>
 
                 <!-- Mensaje de éxito del registro -->
-                <div *ngIf="successMessage()" class="alert alert-success">
-                    {{ successMessage() }}
-                </div>
+                <app-alert
+                    type="success"
+                    [message]="successMessage()"
+                    [show]="!!successMessage()">
+                </app-alert>
 
                 <!-- Botón de envío del formulario -->
                 <app-button type="submit" variant="primary" [fullWidth]="true" [disabled]="isLoading()" (clicked)="onSubmit()">

@@ -8,11 +8,14 @@ import { catchError, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ButtonComponent } from '../../shared/atoms/button/button.component';
 import { FormFieldComponent } from '../../shared/atoms/form-field/form-field.component';
+import { CardComponent } from '../../shared/atoms/card/card.component';
+import { AlertComponent } from '../../shared/atoms/alert/alert.component';
+import { DoctorCardComponent } from '../../shared/molecules/doctor-card/doctor-card.component';
 
 @Component({
   selector: 'app-appointment-form',
   standalone: true,
-  imports: [ButtonComponent, FormFieldComponent,CommonModule, ReactiveFormsModule],
+  imports: [DoctorCardComponent, AlertComponent,ButtonComponent, CardComponent, FormFieldComponent, CommonModule, ReactiveFormsModule],
   templateUrl: './appointment-form.component.html',
   styleUrls: ['./appointment-form.component.css']
 })
@@ -258,13 +261,6 @@ export class AppointmentFormComponent implements OnInit {
   selectDoctor(id: string): void {
     this.f['doctorId'].setValue(id);
     this.onDoctorChange();
-  }
-
-  // Genera color del avatar
-  getDoctorColor(id: string | number): string {
-    const colors = ['#ef4444', '#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#06b6d4'];
-    const num = typeof id === 'string' ? id.charCodeAt(id.length - 1) : id;
-    return colors[num % colors.length];
   }
 
   // Cambio de fecha

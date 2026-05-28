@@ -4,11 +4,13 @@ import { AppointmentService } from '../../services/appointment.service';
 import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
 import { ButtonComponent } from '../../shared/atoms/button/button.component';
+import { CardComponent } from '../../shared/atoms/card/card.component';
+import { BadgeComponent } from '../../shared/atoms/badge/badge.component';
 
 @Component({
   selector: 'app-patient-dashboard',
   standalone: true,
-  imports: [ButtonComponent, CommonModule],
+  imports: [BadgeComponent, ButtonComponent, CardComponent,  CommonModule],
   templateUrl: './patient-dashboard.component.html',
   styleUrls: ['./patient-dashboard.component.css']
 })

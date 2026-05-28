@@ -6,11 +6,12 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ButtonComponent } from '../../shared/atoms/button/button.component';
 import { FormFieldComponent } from '../../shared/atoms/form-field/form-field.component';
+import { AlertComponent } from '../../shared/atoms/alert/alert.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ButtonComponent,FormFieldComponent, CommonModule, ReactiveFormsModule],
+  imports: [AlertComponent, ButtonComponent,FormFieldComponent, CommonModule, ReactiveFormsModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })

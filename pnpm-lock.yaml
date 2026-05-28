@@ -236,7 +236,7 @@ importers:
   notification-service:
     dependencies:
       '@nestjs-modules/mailer':
-        specifier: ^2.3.6
+        specifier: ^2.0.1
         version: 2.3.6(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.24)(chokidar@3.6.0)(nodemailer@8.0.8)(svgo@4.0.1)(terser@5.48.0)(typescript@6.0.3)
       '@nestjs/common':
         specifier: ^11.1.24
@@ -5124,10 +5124,6 @@ packages:
 
   nodemailer@8.0.5:
     resolution: {integrity: sha512-0PF8Yb1yZuQfQbq+5/pZJrtF6WQcjTd5/S4JOHs9PGFxuTqoB/icwuB44pOdURHJbRKX1PPoJZtY7R4VUoCC8w==}
-    engines: {node: '>=6.0.0'}
-
-  nodemailer@8.0.7:
-    resolution: {integrity: sha512-pkjE4mkBzQjdJT4/UmlKl3pX0rC9fZmjh7c6C9o7lv66Ac6w9WCnzPzhbPNxwZAzlF4mdq4CSWB5+FbK6FWCow==}
     engines: {node: '>=6.0.0'}
 
   nodemailer@8.0.8:
@@ -12407,9 +12403,6 @@ snapshots:
   nodemailer@8.0.5:
     optional: true
 
-  nodemailer@8.0.7:
-    optional: true
-
   nodemailer@8.0.8: {}
 
   nopt@7.2.1:
@@ -13033,7 +13026,7 @@ snapshots:
       fixpack: 4.0.0
       get-port: 5.1.1
       mailparser: 3.9.8
-      nodemailer: 8.0.7
+      nodemailer: 8.0.8
       open: 7.4.2
       p-event: 4.2.0
       p-wait-for: 3.2.0

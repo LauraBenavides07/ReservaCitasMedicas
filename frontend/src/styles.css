@@ -82,19 +82,6 @@ select:focus {
   display: block;
 }
 
-/* Cards for Premium Feel */
-.card {
-  background: white;
-  border-radius: var(--radius);
-  padding: 2rem;
-  box-shadow: var(--shadow-md);
-  transition: var(--transition);
-  border: 1px solid rgba(62, 123, 166, 0.1);
-}
-
-.card:hover {
-  box-shadow: 0 8px 24px rgba(62, 123, 166, 0.2);
-}
 
 .container {
   max-width: 1200px;

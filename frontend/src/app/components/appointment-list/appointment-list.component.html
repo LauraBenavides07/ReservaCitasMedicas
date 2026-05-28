@@ -85,9 +85,10 @@
                         <td>{{ appt?.patient?.document || 'N/A' }}</td>
                         <td>{{ appt?.patient?.phone || 'N/A' }}</td>
                         <td>
-                            <span class="badge" [class]="getStatusClass(appt?.status)">
-                                {{ appt?.status || 'desconocido' }}
-                            </span>
+                            <app-badge
+                                [status]="appt?.status || 'desconocido'"
+                                variant="outline">
+                            </app-badge>
                         </td>
                         <td>
                             <app-button *ngIf="appt?.status === 'agendada' || appt?.status === 'confirmada'" 

@@ -1,0 +1,38 @@
+<button
+  type="button"
+  class="doctor-card"
+  [class.doctor-card--selected]="selected"
+  [class.doctor-card--horizontal]="hasScheduleInfo"
+  (click)="onSelect()"
+  [attr.aria-pressed]="selected"
+  [attr.aria-label]="'Seleccionar Dr(a). ' + doctorName + ', ' + specialty">
+
+  <!-- Avatar -->
+  <div
+    class="doctor-card__avatar"
+    [ngStyle]="{ 'background-color': avatarColor }"
+    aria-hidden="true">
+    {{ initials }}
+  </div>
+
+  <!-- Info -->
+  <div class="doctor-card__info">
+    <h4 class="doctor-card__name">Dr(a). {{ doctorName }}</h4>
+    <p class="doctor-card__specialty">{{ specialty }}</p>
+
+    <!-- Horario (solo si se pasan los inputs) -->
+    <ng-container *ngIf="hasScheduleInfo">
+      <p class="doctor-card__schedule" *ngIf="scheduleStart || scheduleEnd">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        {{ formatTime(scheduleStart) }}–{{ formatTime(scheduleEnd) }}
+        <span *ngIf="slotDuration"> · {{ slotDuration }}min</span>
+      </p>
+      <p class="doctor-card__days" *ngIf="activeDays">{{ activeDays }}</p>
+    </ng-container>
+  </div>
+
+</button>

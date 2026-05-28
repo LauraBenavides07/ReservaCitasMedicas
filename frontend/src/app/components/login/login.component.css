@@ -266,33 +266,6 @@ form {
 }
 
 /* ============================================
-   ALERTS
-   ============================================ */
-
-/* Clase base para alertas */
-.alert {
-  padding: 1rem;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.95rem;
-  text-align: center;
-}
-
-/* Alerta de error */
-.alert-error {
-  background: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
-}
-
-/* Alerta de éxito */
-.alert-success {
-  background: #f0fdf4;
-  color: #15803d;
-  border: 1px solid #bbf7d0;
-}
-
-/* ============================================
    RESPONSIVE
    ============================================ */
 

@@ -122,10 +122,10 @@
                         </div>
 
                         <!-- Status indicator -->
-                        <div class="apt-status" [ngClass]="getStatusClass(apt.status)">
-                            <span class="status-dot"></span>
-                            {{ apt.status | titlecase }}
-                        </div>
+                        <app-badge
+                            [status]="apt.status"
+                            variant="solid">
+                        </app-badge>
 
                         <!-- Action Buttons -->
                         <div class="apt-actions">

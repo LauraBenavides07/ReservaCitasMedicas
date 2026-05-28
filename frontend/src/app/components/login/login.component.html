@@ -43,9 +43,11 @@
               <label for="show-password-login">Mostrar contraseña</label>
           </div>
         </app-form-field>
-        <div *ngIf="error()" class="alert alert-error">
-          {{ error() }}
-        </div>
+        <app-alert
+          type="error"
+          [message]="error()"
+          [show]="!!error()">
+        </app-alert>
 
         <app-button
         type="submit"

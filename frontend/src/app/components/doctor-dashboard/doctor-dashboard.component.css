@@ -131,42 +131,6 @@
     font-weight: 800;
 }
 
-/* ============================================
-   INFO BOX
-   ============================================ */
-.agenda-info-box {
-    background-color: white;
-    border: 1px solid rgba(62, 123, 166, 0.1);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    box-shadow: var(--shadow-sm);
-}
-
-.icon-calendar {
-    background-color: var(--soft-background);
-    padding: 12px;
-    border-radius: 50%;
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.info-text h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    color: var(--primary-color);
-}
-
-.info-text p {
-    margin: 5px 0 0;
-    font-size: 0.95rem;
-    color: var(--text-muted);
-}
 
 /* ============================================
    PATIENT LIST
@@ -218,50 +182,6 @@
 
 .patient-card.status-cancelled {
     border-left: 6px solid #ef4444 !important;
-}
-
-/* STATUS BADGES */
-.apt-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1.2rem;
-    border-radius: 999px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #ffffff;
-    white-space: nowrap;
-    line-height: 1.2;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: fit-content;
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #ffffff;
-    flex-shrink: 0;
-}
-
-.apt-status.status-confirmed {
-    background-color: #10b981;
-}
-
-.apt-status.status-pending {
-    background-color: #f59e0b;
-}
-
-.apt-status.status-completed {
-    background-color: #0d2c5b;
-}
-
-.apt-status.status-cancelled {
-    background-color: #ef4444;
-}
-
-.apt-status.status-default {
-    background-color: #6b7280;
 }
 
 /* CARD STRUCTURE */
@@ -345,35 +265,6 @@
     border-top: 1px solid var(--soft-background);
 }
 
-.btn-primary {
-    background-color: #3e7ba6 !important;
-    color: white !important;
-    border: none !important;
-}
-
-.btn-primary.btn-action-fixed:hover {
-    background-color: #2d5d80 !important;
-}
-
-.btn-success {
-    background-color: #10b981 !important;
-    color: white !important;
-    border: none !important;
-}
-
-.btn-success.btn-action-fixed:hover {
-    background-color: #059669 !important;
-}
-
-.btn-outline {
-    background-color: #ef4444 !important;
-    color: white !important;
-    border: none !important;
-}
-
-.btn-outline.btn-action-fixed:hover {
-    background-color: #dc2626 !important;
-}
 
 /*  NUEVO: Forzar mismo tamaño para Completar y Cancelar */
 .btn-success,
@@ -525,35 +416,6 @@
     color: #9ca3af;
 }
 
-/* ============================================
-   SWEETALERT2 - ESTILOS PERSONALIZADOS
-   ============================================ */
-
-.modal-error-content {
-    text-align: left;
-}
-
-.modal-error-message {
-    margin-bottom: 12px;
-}
-
-.modal-solutions-title {
-    color: #64748b;
-    font-size: 0.9rem;
-    margin-bottom: 4px;
-}
-
-.modal-solutions-list {
-    text-align: left;
-    color: #64748b;
-    font-size: 0.85rem;
-    padding-left: 20px;
-    margin: 0;
-}
-
-.modal-solutions-list li {
-    margin-bottom: 4px;
-}
 
 /* Título del modal */
 .swal2-title.custom-title {

@@ -8,11 +8,12 @@ import Swal from 'sweetalert2';
 import { AppointmentService, Appointment, AppointmentResponse } from '../../services/appointment.service';
 import { DoctorService, Doctor } from '../../services/doctor.service';
 import { ButtonComponent } from '../../shared/atoms/button/button.component';
+import { BadgeComponent } from '../../shared/atoms/badge/badge.component';
 
 @Component({
   selector: 'app-appointment-list',
   standalone: true,
-  imports: [ButtonComponent, CommonModule, FormsModule],
+  imports: [BadgeComponent, ButtonComponent, CommonModule, FormsModule],
   templateUrl: './appointment-list.component.html',
   styleUrls: ['./appointment-list.component.css']
 })

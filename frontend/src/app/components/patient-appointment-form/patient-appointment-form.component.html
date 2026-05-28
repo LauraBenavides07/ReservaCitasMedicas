@@ -35,7 +35,7 @@
     </div>
 
     <!-- MAIN CONTENT CARD -->
-    <div class="card wizard-card">
+    <app-card padding="none" overflow="hidden" class="wizard-card">
 
         <!-- ==================== STEP 1: MÉDICO ==================== -->
         <ng-container *ngIf="step() === 1">
@@ -43,27 +43,20 @@
                 <h3 class="step-title">Elige tu especialista</h3>
             </div>
             <div class="card-body">
-                <div class="doctors-grid">
-                    <button type="button" class="doctor-box" *ngFor="let doctor of doctors()" (click)="selectDoctor(doctor)">
-                        <div class="doctor-avatar" [ngStyle]="{'background-color': getDoctorColor(doctor.id)}">
-                            {{ doctor.name.substring(0,2).toUpperCase() }}
-                        </div>
-                        <div class="doctor-info">
-                            <h4>Dr(a). {{ doctor.name }}</h4>
-                            <p class="specialty">{{ doctor.specialty }}</p>
-                            <p class="schedule-info">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <polyline points="12 6 12 12 16 14"></polyline>
-                                </svg>
-                                {{ doctor.scheduleStart | slice:0:5 }}–{{ doctor.scheduleEnd | slice:0:5 }} · {{
-                                doctor.slotDuration }}min
-                            </p>
-                            <p class="schedule-days">{{ formatDays(doctor.activeDays) }}</p>
-                        </div>
-                    </button>
-                </div>
+                <div class="doctors-grid">                        <!-- ← AGREGAR este div -->
+                    <app-doctor-card
+                        *ngFor="let doctor of doctors()"
+                        [doctorId]="doctor.id"
+                        [doctorName]="doctor.name"
+                        [specialty]="doctor.specialty"
+                        [selected]="selectedDoctor()?.id === doctor.id"
+                        [scheduleStart]="doctor.scheduleStart"
+                        [scheduleEnd]="doctor.scheduleEnd"
+                        [slotDuration]="doctor.slotDuration"
+                        [activeDays]="formatDays(doctor.activeDays)"
+                        (selectDoctor)="selectDoctor(doctor)">
+                    </app-doctor-card>
+                </div>                                            <!-- ← CERRAR aquí -->
             </div>
         </ng-container>
 
@@ -74,33 +67,41 @@
                 <app-button variant="secondary" size="sm" (clicked)="goToStep(1)">← Cambiar</app-button>
             </div>
             <div class="card-body">
-                <!-- Banner con información del médico seleccionado -->
+
+                <!-- Banner médico seleccionado -->
                 <div class="selected-context-banner">
                     Especialista: Dr(a). {{ selectedDoctor()?.name }}
                 </div>
 
-                <!-- VERSIÓN DESKTOP: Carrusel horizontal -->
-                <div class="dates-carousel desktop-view">
-                    <button type="button" class="date-box" *ngFor="let d of availableDates()" (click)="selectDate(d)"
-                        [class.selected]="selectedDate() === d">
+                <!-- TABS DE MESES -->
+                <div class="month-tabs">
+                    <button
+                        type="button"
+                        class="month-tab"
+                        *ngFor="let month of availableMonths()"
+                        [class.month-tab--active]="selectedMonth()?.monthIndex === month.monthIndex
+                                                && selectedMonth()?.year === month.year"
+                        (click)="selectMonth(month)">
+                        {{ month.label }}
+                    </button>
+                </div>
+
+                <!-- GRID DE DÍAS -->
+                <div class="dates-carousel">
+                    <button
+                        type="button"
+                        class="date-box"
+                        *ngFor="let d of datesOfSelectedMonth"
+                        (click)="d.available && selectDate(d)"
+                        [class.selected]="selectedDate()?.fullDate === d.fullDate"
+                        [class.date-box--disabled]="!d.available"
+                        [disabled]="!d.available">
                         <span class="day-name">{{ d.dayName }}</span>
                         <span class="day-num">{{ d.dayNum }}</span>
                         <span class="month-name">{{ d.monthName }}</span>
                     </button>
                 </div>
 
-                <!-- VERSIÓN MÓVIL/TABLET: Grid vertical -->
-                <div class="dates-grid mobile-view">
-                    <button type="button" class="date-item" *ngFor="let d of availableDates()" (click)="selectDate(d)"
-                        [class.selected]="selectedDate() === d">
-                        <div class="date-info">
-                            <span class="date-day">{{ d.dayName }}</span>
-                            <span class="date-number">{{ d.dayNum }}</span>
-                            <span class="date-month">{{ d.monthName }}</span>
-                        </div>
-                        <div class="date-arrow">→</div>
-                    </button>
-                </div>
             </div>
         </ng-container>
 
@@ -154,8 +155,16 @@
                     <p>Doc: {{ auth.user()?.document }} · {{ auth.user()?.phone }}</p>
                 </div>
 
-                <div *ngIf="errorMessage()" class="alert alert-error">{{ errorMessage() }}</div>
-                <div *ngIf="successMessage()" class="alert alert-success">{{ successMessage() }}</div>
+                <app-alert
+                    type="error"
+                    [message]="errorMessage()"
+                    [show]="!!errorMessage()">
+                </app-alert>
+                <app-alert
+                    type="success"
+                    [message]="successMessage()"
+                    [show]="!!successMessage()">
+                </app-alert>
 
                 <div class="form-actions">
                     <app-button variant="primary" [fullWidth]="true" (clicked)="confirmAppointment()" [disabled]="isSubmitting() || successMessage() !== ''">
@@ -165,5 +174,5 @@
             </div>
         </ng-container>
 
-    </div>
+    </app-card>
 </div>

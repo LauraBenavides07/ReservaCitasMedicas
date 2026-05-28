@@ -456,12 +456,4 @@ describe('DoctorDashboardComponent', () => {
     });
   });
 
-  describe('getStatusClass', () => {
-    it('should return correct classes', () => {
-      expect(component.getStatusClass('Confirmada')).toBe('status-confirmed');
-      expect(component.getStatusClass('Pendiente')).toBe('status-pending');
-      expect(component.getStatusClass('Completada')).toBe('status-completed');
-      expect(component.getStatusClass('Cancelada')).toBe('status-cancelled');
-    });
-  });
 });

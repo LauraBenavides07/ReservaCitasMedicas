@@ -5,11 +5,12 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ButtonComponent } from '../../shared/atoms/button/button.component';
 import { FormFieldComponent } from '../../shared/atoms/form-field/form-field.component';
+import { AlertComponent } from '../../shared/atoms/alert/alert.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ButtonComponent,FormFieldComponent, CommonModule, ReactiveFormsModule, ButtonComponent],
+  imports: [AlertComponent,ButtonComponent,FormFieldComponent, CommonModule, ReactiveFormsModule, ButtonComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })

@@ -120,11 +120,9 @@ describe('PatientDashboardComponent', () => {
 
   it('should cancel: does nothing if user dismisses', async () => {
     const Swal = (await import('sweetalert2')).default;
-    Swal.fire.mockResolvedValueOnce({ isConfirmed: false, isDenied: false, isDismissed: true });
+    (Swal.fire as any).mockResolvedValueOnce({ isConfirmed: false, isDenied: false, isDismissed: true });
     const cancelSpy = vi.spyOn(appointmentService, 'cancelAppointment');
-
     await component.cancel('apt1');
-
     expect(cancelSpy).not.toHaveBeenCalled();
   });
 
@@ -179,11 +177,6 @@ describe('PatientDashboardComponent', () => {
     );
   });
 
-  it('should getStatusClass return correct class', () => {
-    expect(component.getStatusClass('confirmed')).toBe('badge-confirmed');
-    expect(component.getStatusClass('pending')).toBe('badge-pending');
-    expect(component.getStatusClass('cancelled')).toBe('badge-cancelled');
-  });
 
   it('should getUserName returns firstName from auth', () => {
     expect(component.getUserName()).toBe('Juan');

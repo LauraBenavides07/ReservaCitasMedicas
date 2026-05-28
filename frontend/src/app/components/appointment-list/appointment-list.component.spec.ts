@@ -210,14 +210,6 @@ describe('AppointmentListComponent', () => {
     createElementSpy.mockRestore();
   });
 
-  it('should getStatusClass return correct classes for different statuses', () => {
-    expect(component.getStatusClass('confirmed')).toBe('badge-confirmed');
-    expect(component.getStatusClass('pending')).toBe('badge-pending');
-    expect(component.getStatusClass('cancelled')).toBe('badge-cancelled');
-    expect(component.getStatusClass(undefined)).toBe('badge-desconocido');
-    expect(component.getStatusClass('')).toBe('badge-desconocido');
-  });
-
   it('should getAlBadgeClass return correct classes for different statuses', () => {
     expect(component.getAlBadgeClass('confirmed')).toBe('al-badge--confirmed');
     expect(component.getAlBadgeClass('pending')).toBe('al-badge--pending');
