@@ -36,46 +36,6 @@
 /* ============================================
    TABLE STYLES
    ============================================ */
-
-/* Tabla estilizada */
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-/* Encabezados de la tabla */
-.styled-table th {
-    text-align: left;
-    padding: 1.25rem 1.5rem;
-    background-color: #0d2c5b;
-    color: #ffffff;
-    font-size: 0.95rem;
-    font-weight: 700;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-/* Celdas de la tabla */
-.styled-table td {
-    padding: 1.25rem 1.5rem;
-    color: #1f1f1f;
-    font-size: 1rem;
-    font-weight: 500;
-    border-bottom: 1px solid #e2e8f0;
-    vertical-align: middle;
-}
-
-/* Efecto hover en filas de la tabla */
-.styled-table tr:hover {
-    background: #fcfcfd;
-}
-
-/* Fila cancelada */
-.styled-table tr.cancelled td {
-    opacity: 0.6;
-}
-
 /* Celda de acciones - alineada a la derecha en desktop */
 .actions-cell {
     text-align: right;
@@ -90,15 +50,6 @@
     flex-wrap: wrap;
 }
 
-/* Inputs y selects dentro de la tabla */
-.styled-table input,
-.styled-table select {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    box-sizing: border-box;
-}
 
 .styled-table input {
     width: 130px;

@@ -15,8 +15,12 @@
   <app-register (navigate)="view.set($event)"></app-register>
 </ng-container>
 
+<ng-container *ngIf="view() === 'change-password'">
+  <app-change-password></app-change-password>
+</ng-container>
+
 <!-- DASHBOARD: se muestra cuando el usuario está autenticado y no está en vistas de autenticación -->
-<ng-container *ngIf="view() !== 'landing' && view() !== 'login' && view() !== 'register'">
+<ng-container *ngIf="view() !== 'landing' && view() !== 'login' && view() !== 'register' && view() !== 'change-password'">
   <div class="dashboard-layout">
 
     <!-- BARRA LATERAL (SIDEBAR) -->
@@ -296,6 +300,10 @@
         </div>
         <div *ngIf="view() === 'doctor-history'">
           <app-doctor-history (navigate)="changeView($event)"></app-doctor-history>
+        </div>
+        <!-- VISTA CAMBIO DE CONTRASEÑA -->
+        <div *ngIf="view() === 'change-password'">
+          <app-change-password></app-change-password>
         </div>
       </div>
     </main>

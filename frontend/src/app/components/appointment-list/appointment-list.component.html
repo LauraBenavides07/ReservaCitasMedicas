@@ -61,36 +61,35 @@
         <div class="results-header">
             <h3>Citas Programadas ({{ total }})</h3>
             <app-button variant="secondary" (clicked)="exportCsv()" [disabled]="loading || appointments.length === 0">
-            📥 Exportar a CSV
+                📥 Exportar a CSV
             </app-button>
         </div>
 
         <div class="table-container">
-            <table class="styled-table">
+        
+            <table class="piedrazul-table">
                 <thead>
                     <tr>
-                        <th>Fecha</th>
-                        <th>Hora</th>
-                        <th>Paciente</th>
-                        <th>Documento</th>
-                        <th>Teléfono</th>
-                        <th>Estado</th>
+                        <th>FECHA</th>
+                        <th>HORA</th>
+                        <th>PACIENTE</th>
+                        <th>DOCUMENTO</th>
+                        <th>TELÉFONO</th>
+                        <th>ESTADO</th>
+                        <th>OPCIONES</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let appt of appointments; trackBy: trackById" class="appointment-row">
-                        <td><strong>{{ formatDate(appt?.appointmentDate) }}</strong></td>
-                        <td><strong>{{ formatTime(appt?.appointmentTime) }}</strong></td>
-                        <td>{{ appt?.patient?.firstName || 'Sin' }} {{ appt?.patient?.lastName || 'Paciente' }}</td>
-                        <td>{{ appt?.patient?.document || 'N/A' }}</td>
-                        <td>{{ appt?.patient?.phone || 'N/A' }}</td>
-                        <td>
-                            <app-badge
-                                [status]="appt?.status || 'desconocido'"
-                                variant="outline">
-                            </app-badge>
+                        <td data-label="FECHA"><strong>{{ formatDate(appt?.appointmentDate) }}</strong></td>
+                        <td data-label="HORA"><strong>{{ formatTime(appt?.appointmentTime) }}</strong></td>
+                        <td data-label="PACIENTE">{{ appt?.patient?.firstName || 'Sin' }} {{ appt?.patient?.lastName || 'Paciente' }}</td>
+                        <td data-label="DOCUMENTO">{{ appt?.patient?.document || 'N/A' }}</td>
+                        <td data-label="TELÉFONO">{{ appt?.patient?.phone || 'N/A' }}</td>
+                        <td data-label="ESTADO">
+                            <app-badge [status]="appt?.status || 'desconocido'" variant="outline"></app-badge>
                         </td>
-                        <td>
+                        <td data-label="OPCIONES">
                             <app-button *ngIf="appt?.status === 'agendada' || appt?.status === 'confirmada'" 
                                 variant="secondary" size="sm" (clicked)="openRescheduleModal(appt)">
                                 Reagendar

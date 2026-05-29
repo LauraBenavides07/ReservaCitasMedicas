@@ -6,9 +6,27 @@ import {
   IsArray,
   Min,
   Matches,
+  Length,
+  IsEmail,
 } from 'class-validator';
 
 export class UpdateDoctorDto {
+  
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+    
+  @IsOptional()
+  password?: string;
+    
+  @IsOptional()
+  mustChangePassword?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @Length(6, 20)
+  document?: string;
+    
   @IsString()
   @IsOptional()
   name?: string;

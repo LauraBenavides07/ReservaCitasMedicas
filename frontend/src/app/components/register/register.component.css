@@ -298,7 +298,50 @@ form {
 .checkbox-container:hover {
     opacity: 0.8;
 }
+/* ============================================
+   ESTILOS PARA VALIDADORES PERSONALIZADOS
+   ============================================ */
 
+/* Contenedor del campo cédula (equivalente a app-form-field) */
+.form-field-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+/* Etiqueta del campo */
+.form-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--text-muted, #94a3b8);
+    text-transform: uppercase;
+}
+
+.required-mark {
+    color: #ef4444;
+    margin-left: 2px;
+}
+
+/* Mensajes de error en rojo */
+.text-danger {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.text-danger small {
+    color: #ef4444;
+    font-size: 0.75rem;
+}
+
+/* Mensaje de validación en progreso */
+.text-validating {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-style: italic;
+}
 /* ============================================
    RESPONSIVE
    ============================================ */

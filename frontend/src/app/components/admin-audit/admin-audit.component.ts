@@ -29,7 +29,7 @@ export class AdminAuditComponent implements OnInit {
   doctors: Doctor[] = [];
 
   changeTypes = [
-    { value: '', label: '📋 Todos los cambios' },
+    { value: '', label: 'Todos los cambios' },
     { value: 'CREATED', label: '➕ Creada' },
     { value: 'RESCHEDULED', label: '🔄 Reagendada' },
     { value: 'CANCELLED', label: '❌ Cancelada' },
@@ -135,6 +135,24 @@ export class AdminAuditComponent implements OnInit {
     return labels[type] || type;
   }
 
+
+
+
+// Método para mostrar el responsable con ID y nombre
+getResponsibleDisplay(changedBy: string, role: string): string {
+    if (!changedBy) return '-';
+    
+    // Si es un email, mostrar solo la parte antes del @
+    let displayName = changedBy;
+    if (changedBy.includes('@')) {
+        displayName = changedBy.split('@')[0];
+    }
+    
+    const roleLabel = this.getRoleLabel(role);
+  
+    return `${displayName} (${roleLabel})`;
+}
+
   formatDateTime(dt: string): string {
     if (!dt) return '-';
     try {
@@ -175,18 +193,6 @@ export class AdminAuditComponent implements OnInit {
     }
   }
 
-  getResponsibleDisplay(changedBy: string, role: string): string {
-    if (!changedBy) return '-';
-    if (role === 'patient' && changedBy.includes('@')) {
-      const local = changedBy.split('@')[0];
-      return `Paciente: ${local}`;
-    }
-    if (changedBy.includes('@')) {
-      return changedBy.split('@')[0];
-    }
-    return changedBy;
-  }
-
   getRoleLabel(role: string): string {
     const labels: Record<string, string> = {
       admin: 'Administrador',
@@ -197,6 +203,44 @@ export class AdminAuditComponent implements OnInit {
     };
     return labels[role] || role;
   }
+  // Obtener el ID del responsable
+getResponsibleId(changedBy: string): string {
+    if (!changedBy) return '-';
+    
+    // Si es un email, tomar la parte antes del @
+    if (changedBy.includes('@')) {
+        return changedBy.split('@')[0];
+    }
+    
+    // Si es un UUID, mostrar los primeros 8 caracteres
+    if (changedBy.includes('-') && changedBy.length === 36) {
+        return changedBy.substring(0, 8);
+    }
+    
+    return changedBy;
+}
+
+// Obtener el nombre del responsable
+getResponsibleName(entry: any): string {
+    // Si es paciente, usar el nombre del paciente de la cita
+    if (entry.changedByRole === 'patient') {
+        return entry.patientName || 'Paciente';
+    }
+    
+    // Si es médico/doctor
+    if (entry.changedByRole === 'doctor') {
+        return entry.doctorName || 'Médico';
+    }
+    
+    // Para admin/staff, intentar extraer nombre del email
+    if (entry.changedBy && entry.changedBy.includes('@')) {
+        return entry.changedBy.split('@')[0];
+    }
+    
+    return entry.changedBy || '-';
+}
+
+
 
   exportToCSV(): void {
     if (this.history.length === 0) {

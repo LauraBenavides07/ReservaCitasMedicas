@@ -66,11 +66,19 @@ export class LoginComponent {
     // Llamado al servicio de login
     this.auth.login(this.loginForm.value).subscribe({
       next: (response) => {
-        this.isLoading.set(false);
+      console.log('Login response:', response);
+      console.log('User role:', response.user?.role);
 
-        // Redirige según el rol del usuario
-        this.redirectByRole(response.user.role);
-      },
+      this.isLoading.set(false);
+
+      if (response.mustChangePassword) {
+       console.log('Emitiendo change-password');
+        this.navigate.emit('change-password');
+          return;
+        }
+
+      this.redirectByRole(response.user.role);
+    },
       error: (err) => {
         console.error('Login error:', err);
 
@@ -92,6 +100,7 @@ export class LoginComponent {
 
     // Normaliza el texto (minúsculas y sin espacios)
     const normalizedRole = role.toLowerCase().trim();
+    console.log('Redirigiendo por rol:', normalizedRole);
 
     if (normalizedRole === 'admin') {
       this.router.navigate(['/admin/config']);

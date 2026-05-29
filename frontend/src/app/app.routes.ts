@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
 import { authGuard, roleGuard } from './guards/auth.guard';
+import { ChangePasswordComponent } from './components/change-password/change-password.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', loadComponent: () => import('./components/login/login.component').then(m => m.LoginComponent) },
   { path: 'register', loadComponent: () => import('./components/register/register.component').then(m => m.RegisterComponent) },
+  { path: 'change-password', component: ChangePasswordComponent },
   {
     path: 'appointments/list',
     loadComponent: () => import('./components/appointment-list/appointment-list.component').then(m => m.AppointmentListComponent),
@@ -51,5 +53,7 @@ export const routes: Routes = [
     canActivate: [roleGuard],
     data: { role: 'doctor' }
   },
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: '/login' },
+  
+
 ];

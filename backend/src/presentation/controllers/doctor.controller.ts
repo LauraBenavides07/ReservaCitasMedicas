@@ -16,12 +16,14 @@ import { UpdateDoctorDto } from '../dto/update-doctor.dto';
 import { CreateExceptionDto } from '../dto/create-exception.dto';
 import { Doctor } from '../../domain/entities/doctor.entity';
 import { JwtAuthGuard } from '../../infrastructure/auth/jwt-auth.guard';
+import { AuthService } from '../../application/services/auth.service';
 
 @Controller('doctors')
 export class DoctorController {
   constructor(
     private readonly doctorService: DoctorService,
     private readonly doctorExceptionService: DoctorExceptionService,
+    private readonly authService: AuthService,
   ) {}
 
   @Get()
@@ -70,6 +72,12 @@ export class DoctorController {
   @Get(':id/exceptions')
   async getExceptions(@Param('id', ParseUUIDPipe) id: string) {
     return this.doctorExceptionService.findByDoctor(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/reset-password')
+  async resetPassword(@Param('id', ParseUUIDPipe) id: string) {
+    return this.doctorService.resetPassword(id);  // ← doctorService, no authService
   }
 
   @UseGuards(JwtAuthGuard)

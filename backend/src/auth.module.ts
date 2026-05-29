@@ -16,10 +16,11 @@ import { KeycloakConfig } from './infrastructure/auth/keycloak-config';
 import { KeycloakService } from './infrastructure/auth/keycloak.service';
 import { IPatientRepository } from './application/ports/patient.repository';
 import { TypeOrmPatientRepository } from './infrastructure/persistence/typeorm-patient.repository';
+import { Doctor } from './domain/entities/doctor.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Patient, User]),
+    TypeOrmModule.forFeature([Patient, User, Doctor]),
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

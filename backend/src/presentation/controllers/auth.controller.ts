@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Req, UseGuards  } from '@nestjs/common';
 import { AuthService } from '../../application/services/auth.service';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
+import { JwtAuthGuard } from '../../infrastructure/auth/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -11,6 +12,7 @@ export class AuthController {
   async register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
+  
 
   @Post('login')
   async login(@Body() dto: LoginDto) {
@@ -21,4 +23,28 @@ export class AuthController {
   async getPatientByDocument(@Param('document') document: string) {
     return this.authService.getPatientByDocument(document);
   }
+
+  // verifica si un documento ya está registrado
+  @Get('existe-documento/:document')
+  async existeDocumento(@Param('document') document: string) {
+    return this.authService.existeDocumento(document);
+  }
+
+  @UseGuards(JwtAuthGuard)
+    @Post('change-password')
+    async changePassword(
+        @Req() req: Request & { user: { id: string } },
+        @Body() body: { currentPassword: string; newPassword: string }
+    ) {
+        return this.authService.changePassword(req.user.id, body.currentPassword, body.newPassword);
+  }
+  
+  @UseGuards(JwtAuthGuard)
+  @Post('reset-doctor-password/:doctorId')
+  async resetDoctorPassword(
+      @Param('doctorId') doctorId: string
+  ) {
+      return this.authService.resetDoctorPassword(doctorId);
+  }
+
 }

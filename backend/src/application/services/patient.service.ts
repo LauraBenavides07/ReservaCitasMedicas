@@ -65,4 +65,8 @@ export class PatientService {
       patient.observations = data.observations;
     return this.patientRepository.save(patient);
   }
+
+  async findAll(): Promise<Patient[]> {
+    return this.patientRepository.findAll();
+  }
 }

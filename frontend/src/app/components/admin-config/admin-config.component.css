@@ -301,32 +301,6 @@ textarea {
     /* Chrome, Safari, Opera */
 }
 
-
-/* Tabla estilizada */
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 320px;
-}
-
-/* Encabezados de la tabla */
-.styled-table th {
-    text-align: left;
-    padding: 0.75rem;
-    background: var(--neutral-background);
-    color: var(--primary-color);
-    font-size: 0.75rem;
-    font-weight: 700;
-    border-bottom: 2px solid var(--soft-background);
-}
-
-/* Celdas de la tabla */
-.styled-table td {
-    padding: 0.875rem 0.75rem;
-    border-bottom: 1px solid var(--soft-background);
-    font-size: 0.8rem;
-}
-
 /* Celda de proporción para barras de progreso */
 .proportion-cell {
     width: 40%;
@@ -825,4 +799,168 @@ dialog::backdrop {
 .swal2-html-container.custom-html {
     color: #475569 !important;
     font-size: 0.95rem !important;
+}
+
+/* ============================================
+   PACIENTES - ESTILOS
+   ============================================ */
+
+.patient-form-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.form-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-close:hover {
+    color: #1e293b;
+}
+
+.patients-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.patient-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s;
+}
+
+.patient-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.patient-info {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+.patient-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.patient-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.patient-name {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.patient-document,
+.patient-phone,
+.patient-email,
+.patient-gender {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+    color: #64748b;
+    word-break: break-word;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #94a3b8;
+    font-size: 1rem;
+    background: white;
+    border-radius: 12px;
+    border: 1px dashed #cbd5e1;
+}
+
+.initial-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: linear-gradient(135deg, #f0f4fa 0%, #e8eef5 100%);
+    border-radius: 12px;
+    border: 1px solid #cbd5e1;
+}
+
+.initial-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.initial-message p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #475569;
+    font-weight: 500;
+}
+
+.initial-message small {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .patients-list {
+        grid-template-columns: 1fr;
+    }
+
+    .patient-form-container {
+        padding: 1rem;
+    }
+
+    .form-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+    }
 }

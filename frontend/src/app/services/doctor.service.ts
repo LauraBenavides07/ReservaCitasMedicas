@@ -4,8 +4,10 @@ import { Observable } from 'rxjs';
 
 export interface Doctor {
   id: string;
+  document: string; 
   name: string;
   specialty: string;
+  email: string;
   scheduleStart: string;
   scheduleEnd: string;
   slotDuration: number;
@@ -49,5 +51,12 @@ export class DoctorService {
 
   removeException(doctorId: string, exceptionId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${doctorId}/exceptions/${exceptionId}`);
+  }
+
+  resetPassword(doctorId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `http://localhost:3000/doctors/${doctorId}/reset-password`,
+      {}
+    );
   }
 }

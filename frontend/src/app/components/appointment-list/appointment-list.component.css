@@ -178,44 +178,6 @@
     font-weight: 600;
 }
 
-.table-container {
-    overflow-x: auto;
-    width: 100%;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.table-container::-webkit-scrollbar {
-    display: none;
-}
-
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 500px;
-}
-
-.styled-table th,
-.styled-table td {
-    padding: 0.875rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.styled-table th {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #94a3b8;
-    background: transparent;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.styled-table td {
-    color: #334155;
-    font-size: 0.85rem;
-}
-
 .appointment-row:hover {
     background-color: #f8fafc;
     cursor: pointer;
@@ -269,11 +231,6 @@
         font-size: 1rem;
     }
 
-    .styled-table th,
-    .styled-table td {
-        padding: 0.7rem 0.75rem;
-        font-size: 0.75rem;
-    }
 
     .badge {
         padding: 0.2rem 0.5rem;
@@ -303,11 +260,7 @@
         min-height: 42px;
     }
 
-    .styled-table th,
-    .styled-table td {
-        padding: 0.5rem 0.5rem;
-        font-size: 0.7rem;
-    }
+  
 }
 
 @media (min-width: 1024px) {
@@ -326,12 +279,6 @@
 
     .results-card {
         padding: 1.5rem 1.75rem;
-    }
-
-    .styled-table th,
-    .styled-table td {
-        padding: 1rem 1.25rem;
-        font-size: 0.9rem;
     }
 
     .badge {

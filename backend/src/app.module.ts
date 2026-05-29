@@ -1,3 +1,7 @@
+import { KeycloakService } from './infrastructure/auth/keycloak.service';
+import { KeycloakConfig } from './infrastructure/auth/keycloak-config';
+import { IHttpClient } from './application/abstractions/ihttp-client.interface';
+import { AxiosHttpClient } from './infrastructure/auth/axios-http-client';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -85,6 +89,8 @@ import { TypeOrmAppointmentHistoryRepository } from './infrastructure/persistenc
     PatientController,
   ],
   providers: [
+    KeycloakService,
+    KeycloakConfig,
     AppointmentService,
     AvailabilityService,
     StatsService,
@@ -95,9 +101,11 @@ import { TypeOrmAppointmentHistoryRepository } from './infrastructure/persistenc
     DoctorService,
     DoctorExceptionService,
     AppConfigService,
+    { provide: IHttpClient, useClass: AxiosHttpClient },
     { provide: ICsvExporter, useClass: Json2CsvExporter },
     { provide: IAppointmentRepository, useClass: TypeOrmAppointmentRepository },
-    { provide: IDoctorRepository, useClass: TypeOrmDoctorRepository },
+    { provide: IDoctorRepository, useClass: TypeOrmDoctorRepository,
+    },
     {
       provide: IDoctorExceptionRepository,
       useClass: TypeOrmDoctorExceptionRepository,

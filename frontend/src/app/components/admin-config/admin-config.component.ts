@@ -1,27 +1,33 @@
-import { Component, OnInit, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, signal, ViewChild, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { DoctorService, Doctor } from '../../services/doctor.service';
 import { ConfigService, GlobalConfig } from '../../services/config.service';
 import { AppointmentService } from '../../services/appointment.service';
+import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
 import { ButtonComponent } from '../../shared/atoms/button/button.component';
 import { CardComponent } from '../../shared/atoms/card/card.component';
+import { RegisterComponent } from '../register/register.component';
 
 @Component({
   selector: 'app-admin-config',
   standalone: true,
-  imports: [ButtonComponent, CardComponent, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [ButtonComponent, CardComponent, RegisterComponent, CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './admin-config.component.html',
   styleUrls: ['./admin-config.component.css']
 })
 export class AdminConfigComponent implements OnInit {
   // Señales para estado reactivo del componente
-  activeTab = signal<'horarios' | 'estadisticas'>('horarios');
+  activeTab = signal<'horarios' | 'estadisticas' | 'pacientes'>('horarios');
   doctors = signal<Doctor[]>([]);
   selectedDoctor = signal<Doctor | null>(null);
   doctorFormMessage = signal<{ type: 'success' | 'error'; text: string } | null>(null);
   configFormMessage = signal<{ type: 'success' | 'error'; text: string } | null>(null);
+  patients = signal<any[]>([]);
+  showPatientForm = signal<boolean>(false);
+  showPatientList = signal<boolean>(false);
 
   // Referencias a dialogs
   @ViewChild('doctorModal') doctorModal!: ElementRef<HTMLDialogElement>;
@@ -119,12 +125,16 @@ export class AdminConfigComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private http: HttpClient,
+    private auth: AuthService,
     private doctorService: DoctorService,
     private configService: ConfigService,
     private appointmentService: AppointmentService
   ) {
     // Inicialización del formulario de médico con validaciones
     this.doctorForm = this.fb.group({
+      document: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]],
+      email: ['', [Validators.required, Validators.email]], 
       name: ['', Validators.required],
       specialty: ['', Validators.required],
       scheduleStart: ['08:00', Validators.required],
@@ -185,6 +195,9 @@ export class AdminConfigComponent implements OnInit {
     } else {
       this.selectedDoctor.set(null);
       this.doctorForm.reset({
+        document: '',   
+        email: '',
+        name: '',
         scheduleStart: '08:00',
         scheduleEnd: '18:00',
         slotDuration: 30,
@@ -205,6 +218,10 @@ export class AdminConfigComponent implements OnInit {
   saveDoctor(): void {
     const data = this.doctorForm.value;
 
+     if (!data.document) {
+        this.doctorFormMessage.set({ type: 'error', text: 'La cédula es obligatoria.' });
+        return;
+    }
     // PostgreSQL retorna TIME con segundos (HH:mm:ss), el backend solo acepta HH:mm
     if (data.scheduleStart) data.scheduleStart = data.scheduleStart.substring(0, 5);
     if (data.scheduleEnd) data.scheduleEnd = data.scheduleEnd.substring(0, 5);
@@ -246,9 +263,29 @@ export class AdminConfigComponent implements OnInit {
         next: () => {
           this.loadDoctors();
           this.closeDoctorModal();
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Médico creado exitosamente',
+            html: `
+                <div style="text-align: left;">
+                    <p><strong>Médico:</strong> ${data.name}</p>
+                    <p><strong>Email:</strong> ${data.email}</p>
+                    <p><strong>Contraseña temporal:</strong> 12345678</p>
+                    <p style="margin-top: 1rem; color: #e67e22;">⚠️ El médico deberá cambiar su contraseña en el primer inicio de sesión.</p>
+                </div>
+            `,
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#1e3a6a'
+        });
+  
         },
         error: (err) => {
-          this.doctorFormMessage.set({ type: 'error', text: err.error?.message || 'Error al crear el médico.' });
+          let errorMessage = err.error?.message || 'Error al crear el médico.';
+          if (errorMessage.includes('paciente')) {
+              errorMessage = 'Esta cédula ya está registrada como paciente.';
+          }
+           this.doctorFormMessage.set({ type: 'error', text: errorMessage });
         }
       });
     }
@@ -372,6 +409,70 @@ export class AdminConfigComponent implements OnInit {
   }
 
   // ============================================
+  // GESTIÓN DE PACIENTES
+  // ============================================
+
+  loadPatients(): void {
+    // Verificar si el usuario está autenticado
+    const token = this.auth.getToken();
+    if (!token) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Sesión Expirada',
+        text: 'Por favor inicie sesión nuevamente',
+        confirmButtonColor: '#3e7ba6'
+      });
+      return;
+    }
+
+    this.http.get<any[]>('http://localhost:3000/patients').subscribe({
+      next: (data) => {
+        this.patients.set(data);
+        this.showPatientList.set(true);
+        this.showPatientForm.set(false);
+      },
+      error: (err) => {
+        console.error('Error cargando pacientes:', err);
+        let message = 'No se pudieron cargar los pacientes';
+        if (err.status === 401) {
+          message = 'Sesión expirada. Por favor inicie sesión nuevamente';
+        }
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: message,
+          confirmButtonColor: '#3e7ba6'
+        });
+      }
+    });
+  }
+
+  openRegisterPatient(): void {
+    this.showPatientForm.set(true);
+    this.showPatientList.set(false);
+  }
+
+  openPatientList(): void {
+    this.loadPatients();
+  }
+
+  closeRegisterPatient(): void {
+    this.showPatientForm.set(false);
+    this.showPatientList.set(true);
+  }
+
+  onPatientRegistered(): void {
+    this.loadPatients();
+    this.closeRegisterPatient();
+  }
+
+  showPatients(): void {
+    this.activeTab.set('pacientes');
+    this.loadPatients();
+    this.showPatientForm.set(false);
+  }
+
+  // ============================================
   // Métodos auxiliares para la interfaz de usuario
   // ============================================
 
@@ -387,6 +488,40 @@ export class AdminConfigComponent implements OnInit {
     if (!days || days.length === 0) return '';
     const map: Record<number, string> = { 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado', 7: 'Domingo' };
     return days.map(d => map[d]).filter(Boolean).join(', ');
+  }
+
+  resetDoctorPassword(doctor: Doctor): void {
+  Swal.fire({
+    title: '¿Restablecer contraseña?',
+    html: `Se restablecerá la contraseña de <strong>Dr(a). ${doctor.name}</strong> a <code>12345678</code>.<br><br>El médico deberá cambiarla en su próximo ingreso.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#1e3a6a',
+    cancelButtonColor: '#94a3b8',
+    confirmButtonText: 'Sí, restablecer',
+    cancelButtonText: 'Cancelar'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.doctorService.resetPassword(doctor.id).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Contraseña restablecida',
+              text: `La contraseña de Dr(a). ${doctor.name} fue restablecida a 12345678.`,
+              confirmButtonColor: '#1e3a6a'
+            });
+          },
+          error: (err: any) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: err.error?.message || 'No se pudo restablecer la contraseña.',
+              confirmButtonColor: '#1e3a6a'
+            });
+          }
+        });
+      }
+    });
   }
 }
 

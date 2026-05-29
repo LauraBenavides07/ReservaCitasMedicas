@@ -7,8 +7,11 @@ import {
   OneToMany,
   Check,
   Index,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Appointment } from './appointment.entity';
+import { User } from './user.entity';
 
 @Entity('doctors')
 @Check(`LENGTH("name") <= 100`)
@@ -17,11 +20,24 @@ export class Doctor {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ unique: true, length: 20 })
+  document: string;
+
   @Column()
   name: string;
 
   @Column({ nullable: true })
   specialty: string;
+
+  @Column({ unique: true, nullable: true })
+  email: string;
+
+  @Column({ name: 'user_id', nullable: true })
+  userId: string;
+
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @Column({ name: 'schedule_start', type: 'time', default: '08:00' })
   scheduleStart: string;

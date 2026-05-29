@@ -75,6 +75,50 @@ describe('RegisterComponent', () => {
     expect(component.registerForm.invalid).toBe(true);
   });
 
+  it('should require email and set required error when empty', () => {
+    const emailControl = component.registerForm.get('email');
+    emailControl!.setValue('');
+    emailControl!.markAsTouched();
+    expect(emailControl!.invalid).toBe(true);
+    expect(emailControl!.errors).toHaveProperty('required');
+  });
+
+  it('should validate firstName and lastName minlength and maxlength', () => {
+    const first = component.registerForm.get('firstName')!;
+    const last = component.registerForm.get('lastName')!;
+
+    first.setValue('Ana'); // 3 chars
+    first.markAsTouched();
+    expect(first.invalid).toBe(true);
+    expect(first.errors).toHaveProperty('minlength');
+
+    first.setValue('A'.repeat(21)); // 21 chars
+    expect(first.invalid).toBe(true);
+    expect(first.errors).toHaveProperty('maxlength');
+
+    last.setValue('Ana');
+    last.markAsTouched();
+    expect(last.invalid).toBe(true);
+    expect(last.errors).toHaveProperty('minlength');
+
+    last.setValue('B'.repeat(25));
+    expect(last.invalid).toBe(true);
+    expect(last.errors).toHaveProperty('maxlength');
+  });
+
+  it('should invalidate email with disallowed domain or bad format', () => {
+    const email = component.registerForm.get('email')!;
+    email.setValue('not-an-email');
+    email.markAsTouched();
+    expect(email.invalid).toBe(true);
+    // Either format or domain error expected
+    expect(email.errors && (email.errors['invalidEmailFormat'] || email.errors['invalidEmailDomain'])).toBeTruthy();
+
+    email.setValue('user@otherdomain.com');
+    expect(email.invalid).toBe(true);
+    expect(email.errors).toHaveProperty('invalidEmailDomain');
+  });
+
   it('should mark fields as touched when submitting an invalid form', () => {
     component.onSubmit();
     expect(component.registerForm.get('document')!.touched).toBe(true);
@@ -86,15 +130,33 @@ describe('RegisterComponent', () => {
   });
 
   it('should be valid when filled with correct data', () => {
+    // Clear async validators (document) to avoid pending state in unit test
+    const docCtrl = component.registerForm.get('document')!;
+    docCtrl.clearAsyncValidators();
+    docCtrl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+
     component.registerForm.setValue({
       document: '12345678',
-      firstName: 'Juan',
+      firstName: 'Juana',
       lastName: 'Pérez',
-      phone: '987654321',
+      phone: '987654321000',
       gender: 'M',
-      email: 'juan@example.com',
+      email: 'juan@gmail.com',
       password: 'password123',
     });
+    if (!component.registerForm.valid) {
+      console.log('FORM STATUS', component.registerForm.status);
+      // debug print control errors
+      console.log('FORM ERRORS DEBUG', {
+        document: component.registerForm.get('document')!.errors,
+        firstName: component.registerForm.get('firstName')!.errors,
+        lastName: component.registerForm.get('lastName')!.errors,
+        phone: component.registerForm.get('phone')!.errors,
+        gender: component.registerForm.get('gender')!.errors,
+        email: component.registerForm.get('email')!.errors,
+        password: component.registerForm.get('password')!.errors,
+      });
+    }
     expect(component.registerForm.valid).toBe(true);
   });
 
@@ -107,7 +169,7 @@ describe('RegisterComponent', () => {
 
     const formData = {
       document: '12345678',
-      firstName: 'Juan',
+      firstName: 'Juana',
       lastName: 'Pérez',
       phone: '987654321',
       gender: 'M',
@@ -130,7 +192,7 @@ describe('RegisterComponent', () => {
 
     component.registerForm.setValue({
       document: '12345678',
-      firstName: 'Juan',
+      firstName: 'Juana',
       lastName: 'Pérez',
       phone: '987654321',
       gender: 'M',
@@ -152,7 +214,7 @@ describe('RegisterComponent', () => {
 
     component.registerForm.setValue({
       document: '12345678',
-      firstName: 'Juan',
+      firstName: 'Juana',
       lastName: 'Pérez',
       phone: '987654321',
       gender: 'M',
@@ -161,7 +223,7 @@ describe('RegisterComponent', () => {
     });
     component.onSubmit();
 
-    expect(component.error()).toBe('No se pudo conectar con el servidor. Verifique si el backend esta corriendo.');
+    expect(component.error()).toBe('No se pudo conectar con el servidor. Verifique si el backend está corriendo.');
   });
 
   it('should set error message on API error', () => {

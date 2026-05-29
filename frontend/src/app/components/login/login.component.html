@@ -50,11 +50,12 @@
         </app-alert>
 
         <app-button
-        type="submit"
+        type="button"
         variant="primary"
         [fullWidth]="true"
         [loading]="isLoading()"
-        [disabled]="isLoading()">
+        [disabled]="isLoading()"
+        (clicked)="onSubmit()">
         {{ isLoading() ? 'Ingresando...' : 'Ingresar' }}
       </app-button>
       </form>

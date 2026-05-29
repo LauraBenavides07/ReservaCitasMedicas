@@ -8,4 +8,6 @@ export abstract class IDoctorRepository {
   abstract save(entity: Doctor): Promise<Doctor>;
   abstract update(id: string, data: Partial<Doctor>): Promise<unknown>;
   abstract remove(entity: Doctor): Promise<Doctor>;
+  abstract existsByDocument(document: string): Promise<boolean>;
+  abstract existsInPatients(document: string): Promise<boolean>;
 }

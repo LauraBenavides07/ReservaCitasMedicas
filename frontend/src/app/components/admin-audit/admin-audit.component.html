@@ -8,7 +8,7 @@
     <div class="audit-filters-panel">
         <div class="filters-row">
             <div class="filter-group">
-                <label>🔍 TIPO DE CAMBIO</label>
+                <label>TIPO DE CAMBIO</label>
                 <select [(ngModel)]="filterChangeType">
                     <option *ngFor="let type of changeTypes" [value]="type.value">
                         {{ type.label }}
@@ -17,7 +17,7 @@
             </div>
 
             <div class="filter-group">
-                <label>👨‍⚕️ MÉDICO</label>
+                <label> MÉDICO</label>
                 <select [(ngModel)]="filterDoctorId">
                     <option value="">Todos los médicos</option>
                     <option *ngFor="let doc of doctors" [value]="doc.id">
@@ -27,12 +27,12 @@
             </div>
 
             <div class="filter-group">
-                <label>📅 FECHA</label>
+                <label>FECHA</label>
                 <input type="date" [(ngModel)]="filterDate">
             </div>
 
             <div class="filter-group filter-group-wide">
-                <label>👤 BUSCAR PACIENTE</label>
+                <label>BUSCAR PACIENTE</label>
                 <input type="text"
                        [(ngModel)]="filterSearch"
                        placeholder="Nombre, apellido o documento">
@@ -40,10 +40,10 @@
 
             <div class="filter-actions">
                 <app-button variant="search" (clicked)="applyFilter()">
-                    🔍 Filtrar
+                    Filtrar
                 </app-button>
                 <button type="button" class="btn-clear" (click)="clearFilters()">
-                    ✖ Limpiar
+                    Limpiar
                 </button>
             </div>
         </div>
@@ -65,37 +65,40 @@
     <!-- Tabla de resultados -->
     <div *ngIf="!loading && !error && history.length > 0" class="audit-results">
         <div class="results-header">
-            <div class="results-count">📊 Total de registros: <strong>{{ total }}</strong></div>
+            <div class="results-count">Total de registros: <strong>{{ total }}</strong></div>
             <button class="btn-export" (click)="exportToCSV()">📥 Exportar a CSV</button>
         </div>
 
         <div class="table-wrapper">
-            <table class="audit-table">
+            
+            <table class="piedrazul-table">
                 <thead>
                     <tr>
-                        <th>📅 Fecha/Hora</th>
-                        <th>👤 Paciente</th>
-                        <th>👨‍⚕️ Médico</th>
-                        <th>🔄 Tipo</th>
-                        <th>📌 Anterior</th>
-                        <th>✨ Nuevo</th>
-                        <th>👤 Responsable</th>
+                        <th>FECHA/HORA</th>
+                        <th>PACIENTE</th>
+                        <th>MÉDICO</th>
+                        <th>TIPO</th>
+                        <th>ANTERIOR</th>
+                        <th>NUEVO</th>
+                        <th>RESPONSABLE</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let entry of history; trackBy: trackById">
-                        <td class="date-cell">{{ formatDateTime(entry.changedAt) }}</td>
-                        <td class="patient-cell">
+                        <!-- Agregar data-label para responsive -->
+                        <td data-label="FECHA/HORA" class="date-cell">{{ formatDateTime(entry.changedAt) }}</td>
+                        <td data-label="PACIENTE" class="patient-cell">
                             <strong>{{ entry.patientName || '-' }}</strong>
                             <small *ngIf="entry.appointmentId" class="id-hint">ID: {{ entry.appointmentId.slice(0, 8) }}...</small>
                         </td>
-                        <td>{{ entry.doctorName || '-' }}</td>
-                        <td>
-                            <span class="badge" [class]="'badge-' + entry.changeType.toLowerCase()">
-                                {{ getChangeLabel(entry.changeType) }}
+                        <td data-label="MÉDICO">{{ entry.doctorName || '-' }}</td>
+                        <td data-label="TIPO">
+                            <span class="appointment-type-badge type-specialty">
+                                {{ entry.doctorSpecialty || 'Sin especialidad' }}
                             </span>
                         </td>
-                        <td class="old-value">
+                        
+                        <td data-label="ESTADO ANTERIOR " class="old-value">
                             <ng-container *ngIf="entry.changeType === 'RESCHEDULED'">
                                 {{ formatDate(entry.previousDate) }} {{ formatTime(entry.previousTime) }}
                             </ng-container>
@@ -103,7 +106,7 @@
                                 {{ entry.previousStatus || '-' }}
                             </ng-container>
                         </td>
-                        <td class="new-value">
+                        <td data-label="NUEVO ESTADO" class="new-value">
                             <ng-container *ngIf="entry.changeType === 'RESCHEDULED'">
                                 {{ formatDate(entry.newDate) }} {{ formatTime(entry.newTime) }}
                             </ng-container>
@@ -111,9 +114,13 @@
                                 {{ entry.newStatus || '-' }}
                             </ng-container>
                         </td>
-                        <td class="responsible-cell">
-                            <span class="responsible-name">{{ getResponsibleDisplay(entry.changedBy, entry.changedByRole) }}</span>
-                            <small>{{ getRoleLabel(entry.changedByRole) }}</small>
+                        <!-- Columna RESPONSABLE -->
+                        <td data-label="RESPONSABLE" class="responsible-cell">
+                            <div class="responsible-info">
+                                <span class="responsible-id">{{ getResponsibleId(entry.changedBy) }}</span>
+                                <span class="responsible-name">{{ getResponsibleName(entry) }}</span>
+                                <span class="responsible-role">{{ getRoleLabel(entry.changedByRole) }}</span>
+                            </div>
                         </td>
                     </tr>
                 </tbody>

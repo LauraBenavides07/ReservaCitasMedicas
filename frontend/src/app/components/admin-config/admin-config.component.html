@@ -11,6 +11,10 @@
         <button [class.active]="activeTab() === 'estadisticas'" (click)="activeTab.set('estadisticas')" class="tab-btn">
             <span class="icon">📊</span> Estadísticas
         </button>
+        <!-- Pestaña Pacientes -->
+        <button [class.active]="activeTab() === 'pacientes'" (click)="activeTab.set('pacientes')" class="tab-btn">
+            <span class="icon">👥</span> Pacientes
+        </button>
     </nav>
 
     <!-- PESTAÑA HORARIOS -->
@@ -36,6 +40,7 @@
                     <div class="doc-details">
                         <h4 class="doc-name">Dr(a). {{ doctor.name }}</h4>
                         <p class="doc-specialty">{{ doctor.specialty }}</p>
+                        <p class="doc-document" style="font-size: 0.7rem; color: #64748b;">CC: {{ doctor.document }}</p>
                     </div>
                 </div>
 
@@ -68,6 +73,9 @@
                 <div class="doc-actions">
                     <app-button variant="secondary" size="sm" (clicked)="openExceptions(doctor)">
                         📅 Excepciones
+                    </app-button>
+                    <app-button variant="warning" size="sm" (clicked)="resetDoctorPassword(doctor)">
+                        🔑 Restablecer clave
                     </app-button>
                     <app-button variant="primary" size="sm" (clicked)="openDoctorForm(doctor)">
                         ✏️ Editar
@@ -142,7 +150,8 @@
         <app-card padding="sm">
             <h3 class="card-title">Distribución por Médico</h3>
             <div class="table-responsive">
-                <table class="styled-table">
+
+                <table class="piedrazul-table">
                     <thead>
                         <tr>
                             <th>MÉDICO</th>
@@ -152,9 +161,9 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let ds of doctorStats">
-                            <td>{{ ds.name }}</td>
-                            <td>{{ ds.count }}</td>
-                            <td class="proportion-cell">
+                            <td data-label="MÉDICO">{{ ds.name }}</td>
+                            <td data-label="CITAS">{{ ds.count }}</td>
+                            <td data-label="PROPORCIÓN" class="proportion-cell">
                                 <div class="progress-bar-container">
                                     <div class="progress-bar-fill" [style.width.%]="ds.percentage"></div>
                                 </div>
@@ -175,6 +184,18 @@
             {{ doctorFormMessage()!.text }}
         </div>
         <form [formGroup]="doctorForm" (ngSubmit)="saveDoctor()" class="form-grid">
+            <!-- Campo Cedula -->
+            <div class="form-field">
+                <label for="doctor-document">Cedula <span class="required">*</span></label>
+                <input id="doctor-document" type="text" formControlName="document" 
+                    placeholder="Ej: 12345678"
+                    [class.field-invalid]="doctorForm.get('document')?.invalid && doctorForm.get('document')?.touched" />
+                <small class="field-error" *ngIf="doctorForm.get('document')?.invalid && doctorForm.get('document')?.touched">
+                    La cédula es obligatoria (6-20 dígitos)
+                </small>
+            </div>
+            
+             <!-- Campo Nombre -->   
             <div class="form-field">
                 <label for="doctor-name">Nombre Completo <span class="required">*</span></label>
                 <input id="doctor-name" formControlName="name" placeholder="Ej: Juan Perez"
@@ -183,7 +204,18 @@
                     El nombre es obligatorio
                 </small>
             </div>
-
+            <!--  CAMPO: Email -->
+              <div class="form-field">
+                <label for="doctor-email">correo electrónico <span class="required">*</span></label>
+                <input id="doctor-email" type="email" formControlName="email" 
+                    placeholder="doctor@ejemplo.com"
+                    [class.field-invalid]="doctorForm.get('email')?.invalid && doctorForm.get('email')?.touched" />
+                <small class="field-hint">El médico usará este correo para iniciar sesión</small>
+                <small class="field-error" *ngIf="doctorForm.get('email')?.invalid && doctorForm.get('email')?.touched">
+                    Ingrese un correo electrónico válido
+                </small>
+            </div>
+            
             <div class="form-field">
                 <label for="doctor-specialty">Especialidad <span class="required">*</span></label>
                 <select id="doctor-specialty" formControlName="specialty"
@@ -333,4 +365,55 @@
             </div>
         </form>
     </dialog>
+
+    <!-- PESTAÑA PACIENTES -->
+    <section *ngIf="activeTab() === 'pacientes'" class="tab-content">
+        <!-- Barra de acciones con botones para registrar y listar pacientes -->
+        <div class="actions-bar">
+            <app-button variant="primary" (clicked)="openRegisterPatient()">
+                <span>+</span> Registrar Paciente
+            </app-button>
+            <app-button variant="secondary" (clicked)="openPatientList()">
+                <span>👥</span> Lista de Pacientes
+            </app-button>
+        </div>
+
+        <!-- FORMULARIO DE REGISTRO DE PACIENTE -->
+        <div *ngIf="showPatientForm()" class="patient-form-container">
+            <div class="form-header">
+                <h3>Registrar Nuevo Paciente</h3>
+                <button class="btn-close" (click)="closeRegisterPatient()">✕</button>
+            </div>
+            <app-register (navigate)="onPatientRegistered()"></app-register>
+        </div>
+
+        <!-- LISTA DE PACIENTES -->
+        <div *ngIf="showPatientList()" class="patients-list">
+            <div *ngIf="patients().length === 0" class="empty-state">
+                <p>Cargando pacientes...</p>
+            </div>
+            <div *ngFor="let patient of patients()" class="patient-card">
+                <div class="patient-info">
+                    <div class="patient-avatar" [ngStyle]="{'background-color': getDoctorColor(patient.id)}">
+                        {{ patient.firstName.substring(0,1).toUpperCase() }}{{ patient.lastName.substring(0,1).toUpperCase() }}
+                    </div>
+                    <div class="patient-details">
+                        <h4 class="patient-name">{{ patient.firstName }} {{ patient.lastName }}</h4>
+                        <p class="patient-document">Cédula: {{ patient.document }}</p>
+                        <p class="patient-phone">Teléfono: {{ patient.phone }}</p>
+                        <p class="patient-email" *ngIf="patient.email">Correo: {{ patient.email }}</p>
+                        <p class="patient-gender">Género: {{ patient.gender === 'M' ? 'Masculino' : patient.gender === 'F' ? 'Femenino' : 'Otro' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ESTADO INICIAL - No seleccionado nada aún -->
+        <div *ngIf="!showPatientForm() && !showPatientList()" class="initial-state">
+            <div class="initial-message">
+                <p>👥 Selecciona una opción arriba para continuar</p>
+                <small>Puedes registrar un nuevo paciente o ver la lista de pacientes existentes</small>
+            </div>
+        </div>
+    </section>
 </div>

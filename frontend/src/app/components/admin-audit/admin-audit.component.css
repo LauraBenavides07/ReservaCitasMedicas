@@ -196,31 +196,6 @@
     overflow-x: auto;
 }
 
-.audit-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 800px;
-}
-
-.audit-table th,
-.audit-table td {
-    padding: 0.85rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid #f1f5f9;
-    font-size: 0.85rem;
-}
-
-.audit-table th {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #64748b;
-    text-transform: uppercase;
-    background: #fafafa;
-}
-
-.audit-table tbody tr:hover {
-    background-color: #f8fafc;
-}
 
 .date-cell {
     font-family: monospace;
@@ -250,9 +225,11 @@
     font-size: 0.8rem;
 }
 
+/* Columna RESPONSABLE - alineación vertical */
 .responsible-cell {
     display: flex;
     flex-direction: column;
+    gap: 4px;
 }
 
 .responsible-name {
@@ -261,8 +238,8 @@
 }
 
 .responsible-cell small {
-    font-size: 0.65rem;
-    color: #94a3b8;
+    font-size: 0.7rem;
+    color: #64748b;
 }
 
 .badge {
@@ -333,4 +310,103 @@
         gap: 0.5rem;
         align-items: flex-start;
     }
+}
+/* ============================================
+   APPOINTMENT TYPE BADGES
+   ============================================ */
+
+.appointment-type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+/* Medicina General */
+.type-general {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+/* Terapia Neural */
+.type-therapy {
+    background-color: #f3e8ff;
+    color: #6b21a5;
+}
+
+/* Quiropraxia */
+.type-chiro {
+    background-color: #fed7aa;
+    color: #9a3412;
+}
+
+/* Fisioterapia */
+.type-physio {
+    background-color: #ccfbf1;
+    color: #0f766e;
+}
+
+/* Control / Seguimiento */
+.type-followup {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+/* ============================================
+   RESPONSABLE CELL - ALINEACIÓN VERTICAL
+   ============================================ */
+
+.responsible-cell {
+    vertical-align: middle;
+    padding: 12px 16px !important;
+}
+
+.responsible-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    line-height: 1.4;
+}
+
+.responsible-id {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.responsible-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #334155;
+}
+
+.responsible-role {
+    font-size: 0.7rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+/* ============================================
+   ESTILOS GLOBALES DE TABLA - ALINEACIÓN
+   ============================================ */
+
+
+/* Asegurar que todas las filas tengan la misma altura */
+.piedrazul-table tr {
+    height: auto;
+}
+
+
+/* Badge para mostrar la especialidad */
+.type-specialty {
+    background-color: #e0e7ff;
+    color: #3730a3;
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
 }

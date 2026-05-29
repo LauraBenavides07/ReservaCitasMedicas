@@ -17,6 +17,7 @@ import { DoctorPatientsComponent } from './components/doctor-patients/doctor-pat
 import { DoctorHistoryComponent } from './components/doctor-history/doctor-history.component';
 import { AdminAuditComponent } from './components/admin-audit/admin-audit.component';
 import { ButtonComponent } from './shared/atoms/button/button.component';
+import { ChangePasswordComponent } from './components/change-password/change-password.component';
 
 @Component({
   selector: 'app-root',
@@ -35,7 +36,8 @@ import { ButtonComponent } from './shared/atoms/button/button.component';
     DoctorDashboardComponent,
     DoctorPatientsComponent,
     DoctorHistoryComponent,
-    AdminAuditComponent
+    AdminAuditComponent,
+    ChangePasswordComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
@@ -46,13 +48,13 @@ export class AppComponent implements OnInit {
   private router = inject(Router);
 
   // Señal que controla la vista actual de la aplicación
-  view = signal<'landing' | 'admin-list' | 'admin-create' | 'admin-config' | 'admin-audit' | 'login' | 'register' | 'patient-dashboard' | 'patient-create' | 'doctor-dashboard' | 'doctor-create' | 'doctor-patients' | 'doctor-history' | 'doctor-search'>('landing');
-
+  view = signal<'landing' | 'admin-list' | 'admin-create' | 'admin-config' | 'admin-audit' | 'login' | 'register' | 'patient-dashboard' | 'patient-create' | 'doctor-dashboard' | 'doctor-create' | 'doctor-patients' | 'doctor-history' | 'doctor-search' | 'change-password'>('landing');
   // Estado para el menú móvil
   isMobileMenuOpen = signal(false);
 
   private readonly routeMap: Record<string, string> = {
     '/login': 'login',
+    '/change-password': 'change-password',
     '/register': 'register',
     '/appointments/list': 'admin-list',
     '/appointments/create': 'admin-create',
@@ -82,7 +84,7 @@ export class AppComponent implements OnInit {
 
       if (!user) {
         const v = this.view();
-        if (v !== 'login' && v !== 'register' && v !== 'landing') {
+        if (v !== 'login' && v !== 'register' && v !== 'landing' && v !== 'change-password') {
           this.view.set('landing');
           this.router.navigate(['/']);
         }
@@ -90,7 +92,7 @@ export class AppComponent implements OnInit {
       }
 
       const currentView = this.view();
-      if (currentView === 'login' || currentView === 'register' || currentView === 'landing') {
+      if (currentView === 'login' || currentView === 'register' || currentView === 'landing' || currentView === 'change-password') {
         if (user.role === 'patient') {
           this.view.set('patient-dashboard');
           this.router.navigate(['/patient/dashboard']);

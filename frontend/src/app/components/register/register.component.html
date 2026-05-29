@@ -3,6 +3,7 @@
     <div class="auth-card">
         <!-- Botón para cerrar el modal -->
         <app-button variant="secondary" size="sm" (clicked)="navigate.emit('landing')" ariaLabel="Cerrar">×</app-button>
+
         <!-- Encabezado del modal con logo y título -->
         <div class="auth-header">
             <div class="header-content">
@@ -10,7 +11,6 @@
                 <h1 class="auth-title">Bienvenido a Piedrazul</h1>
                 <p class="auth-subtitle">Centro Médico Especializado</p>
             </div>
-            <!-- Elementos decorativos de fondo -->
             <div class="header-decorator circle-1"></div>
             <div class="header-decorator circle-2"></div>
         </div>
@@ -24,13 +24,17 @@
         <!-- Cuerpo del modal con el formulario de registro -->
         <div class="auth-body">
             <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-                <!-- Fila de nombres y apellidos (2 columnas) -->
+
+                <!-- Fila de nombres y apellidos -->
                 <div class="form-row">
                     <app-form-field
                         label="NOMBRES"
                         inputId="reg-firstName"
                         [required]="true"
-                        [error]="f['firstName'].invalid && f['firstName'].touched ? 'Por favor escriba sus nombres.' : ''">
+                        [error]="f['firstName'].invalid && f['firstName'].touched ?
+                            (f['firstName'].errors?.['minlength'] ? 'debe tener al menos 5 caracteres' :
+                             f['firstName'].errors?.['maxlength'] ? 'debe tener maximo 20 caracteres' :
+                             'Por favor escriba sus nombres.') : ''">
                         <input type="text" id="reg-firstName" formControlName="firstName" placeholder="Juan"
                             [class.input-error]="f['firstName'].invalid && f['firstName'].touched">
                     </app-form-field>
@@ -38,43 +42,79 @@
                         label="APELLIDOS"
                         inputId="reg-lastName"
                         [required]="true"
-                        [error]="f['lastName'].invalid && f['lastName'].touched ? 'Por favor escriba sus apellidos.' : ''">
+                        [error]="f['lastName'].invalid && f['lastName'].touched ?
+                            (f['lastName'].errors?.['minlength'] ? 'debe tener al menos 5 caracteres' :
+                             f['lastName'].errors?.['maxlength'] ? 'debe tener maximo 20 caracteres' :
+                             'Por favor escriba sus apellidos.') : ''">
                         <input type="text" id="reg-lastName" formControlName="lastName" placeholder="Perez"
                             [class.input-error]="f['lastName'].invalid && f['lastName'].touched">
                     </app-form-field>
                 </div>
 
-                <!-- Fila de documento y teléfono (2 columnas) -->
+                <!-- Fila de documento y teléfono -->
                 <div class="form-row">
-                    <app-form-field
-                        label="CÉDULA"
-                        inputId="reg-document"
-                        [required]="true"
-                        [error]="f['document'].invalid && f['document'].touched ? 
-                            (f['document'].errors?.['required'] ? 'El documento es obligatorio.' : 
-                             f['document'].errors?.['pattern'] ? 'El documento debe contener solo números.' : '') : ''">
-                        <input type="text" id="reg-document" formControlName="document" placeholder="Número de cédula"
+
+                    <!-- CAMPO CÉDULA — con validadores personalizados -->
+                    <div class="form-field-wrapper">
+                        <label for="reg-document" class="form-label">
+                            CÉDULA <span class="required-mark">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="reg-document"
+                            formControlName="document"
+                            placeholder="Ej: 1061234567"
                             [class.input-error]="f['document'].invalid && f['document'].touched">
-                    </app-form-field>
+
+                        <!-- Indicador mientras se valida de forma asíncrona -->
+                        <small *ngIf="f['document'].pending" class="text-validating">
+                            Verificando disponibilidad...
+                        </small>
+
+                        <!-- Bloque de errores: se muestra si el campo es inválido y fue tocado -->
+                        <div *ngIf="f['document'].invalid && f['document'].touched && !f['document'].pending"
+                             class="text-danger">
+
+                            <!-- Error 1: campo vacío -->
+                            <small *ngIf="f['document'].errors?.['required']">
+                                La cédula es obligatoria.
+                            </small>
+
+                            <!-- Error 2: validador síncrono personalizado -->
+                            <small *ngIf="f['document'].errors?.['documentoInvalido']">
+                                La cédula debe tener entre 6 y 10 dígitos numéricos.
+                            </small>
+
+                            <!-- Error 3: validador asíncrono personalizado (backend) -->
+                            <small *ngIf="f['document'].errors?.['documentoDuplicado']">
+                                Este número de cédula ya está registrado.
+                            </small>
+                        </div>
+                    </div>
+
                     <app-form-field
                         label="TELÉFONO"
                         inputId="reg-phone"
                         [required]="true"
-                        [error]="f['phone'].invalid && f['phone'].touched ? 
-                            (f['phone'].errors?.['required'] ? 'El teléfono es obligatorio.' : 
-                             f['phone'].errors?.['pattern'] ? 'El teléfono debe contener solo números.' : '') : ''">
+                        [error]="f['phone'].invalid && f['phone'].touched ?
+                            (f['phone'].errors?.['required'] ? 'El teléfono es obligatorio.' :
+                             f['phone'].errors?.['pattern'] ? 'El teléfono debe contener 10 números.' : '') : ''">
                         <input type="tel" id="reg-phone" formControlName="phone" placeholder="Número de celular"
                             [class.input-error]="f['phone'].invalid && f['phone'].touched">
                     </app-form-field>
                 </div>
 
-                <!-- Fila de correo y género (2 columnas) -->
+                <!-- Fila de correo y género -->
                 <div class="form-row">
                     <app-form-field
                         label="CORREO ELECTRÓNICO"
                         inputId="reg-email"
-                        [required]="false"
-                        [error]="f['email'].invalid && f['email'].touched ? 'Por favor ingrese un correo válido.' : ''">
+                        [required]="true"
+                        [error]="f['email'].invalid && f['email'].touched ?
+                            (f['email'].errors?.['required'] ? 'El email es obligatorio.' :
+                             (f['email'].errors?.['invalidEmailFormat'] || f['email'].errors?.['invalidEmailDomain'] ?
+                                'El correo no sigue un fomato valido. El correo debe terninar  en @unicauca.edu' :
+                                'Por favor ingrese un correo válido.')) : ''">
                         <input type="email" id="reg-email" formControlName="email" placeholder="correo@ejemplo.com"
                             [class.input-error]="f['email'].invalid && f['email'].touched">
                     </app-form-field>
@@ -98,8 +138,8 @@
                     label="CONTRASEÑA"
                     inputId="reg-password"
                     [required]="true"
-                    [error]="f['password'].invalid && f['password'].touched ? 
-                        (f['password'].errors?.['required'] ? 'La contraseña es obligatoria.' : 
+                    [error]="f['password'].invalid && f['password'].touched ?
+                        (f['password'].errors?.['required'] ? 'La contraseña es obligatoria.' :
                          f['password'].errors?.['minlength'] ? 'La contraseña debe tener al menos 8 caracteres.' : '') : ''">
                     <div class="password-field-wrapper">
                         <input [type]="showPassword() ? 'text' : 'password'" id="reg-password" formControlName="password"
@@ -113,24 +153,22 @@
                     </div>
                 </app-form-field>
 
-                <!-- Mensaje de error del registro -->
-                <app-alert
-                    type="error"
-                    [message]="error()"
-                    [show]="!!error()">
-                </app-alert>
+                <!-- Mensaje de error general -->
+                <app-alert type="error" [message]="error()" [show]="!!error()"></app-alert>
 
-                <!-- Mensaje de éxito del registro -->
-                <app-alert
-                    type="success"
-                    [message]="successMessage()"
-                    [show]="!!successMessage()">
-                </app-alert>
+                <!-- Mensaje de éxito -->
+                <app-alert type="success" [message]="successMessage()" [show]="!!successMessage()"></app-alert>
 
-                <!-- Botón de envío del formulario -->
-                <app-button type="submit" variant="primary" [fullWidth]="true" [disabled]="isLoading()" (clicked)="onSubmit()">
+                <!-- BOTÓN CREAR: deshabilitado si el formulario es inválido O está cargando -->
+                <app-button
+                    type="submit"
+                    variant="primary"
+                    [fullWidth]="true"
+                    [disabled]="registerForm.invalid || isLoading()"
+                    (clicked)="onSubmit()">
                     {{ isLoading() ? 'Creando cuenta...' : 'Crear cuenta' }}
                 </app-button>
+
             </form>
         </div>
     </div>

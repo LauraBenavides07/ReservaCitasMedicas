@@ -500,6 +500,7 @@ export class AppointmentService {
         reason: entry.reason,
         changedAt: entry.changedAt,
         doctorName: entry.appointment.doctor?.name,
+        doctorSpecialty: entry.appointment.doctor?.specialty, 
         patientName: entry.appointment.patient
           ? `${entry.appointment.patient.firstName} ${entry.appointment.patient.lastName}`
           : null,

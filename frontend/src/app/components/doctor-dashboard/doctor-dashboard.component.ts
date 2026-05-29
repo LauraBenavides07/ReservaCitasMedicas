@@ -8,7 +8,7 @@ import { DoctorService } from '../../services/doctor.service';
 import Swal from 'sweetalert2';
 import { ButtonComponent } from '../../shared/atoms/button/button.component';
 import { BadgeComponent } from '../../shared/atoms/badge/badge.component';
-
+import { ChangeDetectionStrategy } from '@angular/core';
 
 export interface DisplayAppointment {
     id: string;
@@ -22,6 +22,7 @@ export interface DisplayAppointment {
 }
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-doctor-dashboard',
     standalone: true,
     imports: [BadgeComponent, ButtonComponent, CommonModule, FormsModule, RouterModule],

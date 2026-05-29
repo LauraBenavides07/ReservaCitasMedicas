@@ -40,7 +40,7 @@ export class PatientDashboardComponent implements OnInit {
     this.isLoading.set(true);
 
     this.appointmentService.getPatientAppointments().subscribe({
-      next: (data) => {
+      next: (data: any[]) => {
         const sorted = [...data].sort((a, b) => {
           const aActive = a.status === 'agendada' || a.status === 'confirmada' ? 0 : 1;
           const bActive = b.status === 'agendada' || b.status === 'confirmada' ? 0 : 1;

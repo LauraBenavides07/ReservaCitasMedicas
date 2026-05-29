@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Patch,
   Param,
   Body,
@@ -19,13 +20,21 @@ class UpdateMedicalInfoDto {
 export class PatientController {
   constructor(private readonly patientService: PatientService) {}
 
-  @Patch(':id/medical-info')
-  @UseGuards(JwtAuthGuard)
+  @Get()
   @HttpCode(HttpStatus.OK)
+  async findAll() {
+    return this.patientService.findAll();
+  }
+
+  @Patch(':id/medical-info')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
   async updateMedicalInfo(
     @Param('id') id: string,
     @Body() dto: UpdateMedicalInfoDto,
   ) {
     return this.patientService.updateMedicalInfo(id, dto);
   }
+
+  
 }

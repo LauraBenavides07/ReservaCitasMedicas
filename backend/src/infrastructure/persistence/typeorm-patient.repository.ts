@@ -21,11 +21,20 @@ export class TypeOrmPatientRepository extends IPatientRepository {
     return this.repo.findOne(options);
   }
 
+  async findAll(): Promise<Patient[]> {
+    return this.repo.find();
+  }
+
   create(data: Partial<Patient>): Patient {
     return this.repo.create(data);
   }
 
   async save(entity: Patient): Promise<Patient> {
     return this.repo.save(entity);
+  }
+
+  async existeDocumento(document: string): Promise<boolean> {
+    const paciente = await this.repo.findOneBy({ document });
+    return !!paciente;
   }
 }

@@ -88,6 +88,7 @@ export class AppointmentFormComponent implements OnInit {
         doctorId: ['', [Validators.required]],
         date: [this.today, [Validators.required]],
         time: ['', [Validators.required]]
+       
       });
     } else {
       // Para admin/staff: todos los campos habilitados
@@ -100,7 +101,8 @@ export class AppointmentFormComponent implements OnInit {
         email: [null, [Validators.email]],
         doctorId: ['', [Validators.required]],
         date: [this.today, [Validators.required]],
-        time: ['', [Validators.required]]
+        time: ['', [Validators.required]],
+        
       });
     }
   }
@@ -431,7 +433,8 @@ private showInfoToast(message: string): void {
       gender: formValue.gender,
       doctorId: formValue.doctorId,
       date: formValue.date,
-      time: formValue.time
+      time: formValue.time,
+    
     };
 
     if (formValue.email) dto.email = formValue.email;

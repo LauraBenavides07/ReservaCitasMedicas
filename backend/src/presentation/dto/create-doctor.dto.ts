@@ -7,9 +7,17 @@ import {
   IsArray,
   Min,
   Matches,
+  Length,
+  IsEmail,
 } from 'class-validator';
 
 export class CreateDoctorDto {
+
+  @IsString()
+  @IsNotEmpty()
+  @Length(6, 20)
+  document: string;
+
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -17,6 +25,10 @@ export class CreateDoctorDto {
   @IsString()
   @IsOptional()
   specialty?: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 
   @IsString()
   @Matches(/^\d{2}:\d{2}$/, {

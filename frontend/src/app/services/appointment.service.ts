@@ -30,17 +30,17 @@ export interface AppointmentResponse {
 }
 
 export interface CreateAppointmentDto {
-  patientDocument: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  gender?: string;
-  birthDate?: string;
-  email?: string;
-  doctorId: string;
-  date: string;
-  time: string;
-}
+    patientDocument: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    gender?: string;
+    birthDate?: string;
+    email?: string;
+    doctorId: string;
+    date: string;
+    time: string; 
+  }
 
 @Injectable({
   providedIn: 'root'
@@ -147,5 +147,7 @@ export interface AppointmentHistoryEntry {
   reason: string | null;
   changedAt: string;
   doctorName?: string;
+  doctorSpecialty?: string | null;
   patientName?: string;
+  patientDocument?: string | null;
 }
