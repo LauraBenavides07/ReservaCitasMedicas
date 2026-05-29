@@ -1,0 +1,11 @@
+#cloud-config
+# Pegar en "Cloud init script" al crear la VM en Oracle Cloud (Ubuntu 22.04/24.04)
+package_update: true
+packages:
+  - git
+  - curl
+
+runcmd:
+  - curl -fsSL https://raw.githubusercontent.com/LauraBenavides07/ReservaCitasMedicas/develop/deploy/oracle/install.sh -o /tmp/piedrazul-install.sh
+  - chmod +x /tmp/piedrazul-install.sh
+  - bash /tmp/piedrazul-install.sh

@@ -163,6 +163,19 @@ pnpm run test:watch     # Modo watch
 cd backend && pnpm test && cd ../frontend && pnpm test
 ```
 
+## Despliegue en producción (Oracle Cloud gratis)
+
+Para publicar el stack completo en una VM gratuita de Oracle Cloud:
+
+👉 **[Guía de despliegue Oracle Cloud](docs/deploy-oracle.md)**
+
+```bash
+# En la VM Ubuntu (como root)
+sudo bash deploy/oracle/install.sh
+```
+
+**URL de la app:** `http://TU_IP_PUBLICA/`
+
 ## Docker — Cambios Recientes
 
 Se incorporaron mejoras Docker basadas en la skill `docker-expert`. Archivos nuevos/modificados:

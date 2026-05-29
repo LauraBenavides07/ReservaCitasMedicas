@@ -99,9 +99,6 @@ importers:
       '@nestjs/testing':
         specifier: ^11.1.24
         version: 11.1.24(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.24)(@nestjs/microservices@11.1.24)(@nestjs/platform-express@11.1.24)
-      '@types/dotenv':
-        specifier: ^8.2.3
-        version: 8.2.3
       '@types/express':
         specifier: ^5.0.6
         version: 5.0.6
@@ -2472,10 +2469,6 @@ packages:
 
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
-
-  '@types/dotenv@8.2.3':
-    resolution: {integrity: sha512-g2FXjlDX/cYuc5CiQvyU/6kkbP1JtmGzh0obW50zD7OKeILVL0NSpPWLXVfqoAGQjom2/SLLx9zHq0KXvD6mbw==}
-    deprecated: This is a stub types definition. dotenv provides its own type definitions, so you do not need this installed.
 
   '@types/ejs@3.1.5':
     resolution: {integrity: sha512-nv+GSx77ZtXiJzwKdsASqi+YQ5Z7vwHsTP0JY2SiQgjGckkBRKZnk8nIM+7oUZ1VCtuTz0+By4qVR7fqzp/Dfg==}
@@ -8899,10 +8892,6 @@ snapshots:
       '@types/node': 25.9.1
 
   '@types/deep-eql@4.0.2': {}
-
-  '@types/dotenv@8.2.3':
-    dependencies:
-      dotenv: 17.4.1
 
   '@types/ejs@3.1.5':
     optional: true

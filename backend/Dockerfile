@@ -1,13 +1,14 @@
 FROM node:20-alpine AS base
 RUN npm install -g pnpm
 WORKDIR /app
-COPY package*.json pnpm-lock.yaml ./
 
 FROM base AS deps
-RUN pnpm install --frozen-lockfile --prod && pnpm store prune
+COPY package.json ./
+RUN pnpm install --prod && pnpm store prune
 
 FROM base AS build
-RUN pnpm install --frozen-lockfile
+COPY package.json ./
+RUN pnpm install
 COPY . .
 RUN pnpm run build && pnpm prune --prod && pnpm store prune
 

@@ -1,6 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { API_BASE_URL } from '../core/api-config';
 
 export interface User {
   id: string;
@@ -23,7 +24,7 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/auth';
+  private apiUrl = `${API_BASE_URL}/auth`;
   private _user = signal<User | null>(this.getUserFromStorage());
   
   user = computed(() => this._user());

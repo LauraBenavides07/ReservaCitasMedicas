@@ -1,0 +1,55 @@
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:08 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +14ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsClientModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +40ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClientsModule dependencies initialized[39m[38;5;3m +139ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +1ms[39m
+query: SELECT version()
+query: SELECT * FROM current_schema()
+query: CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +202ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +5ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppointmentController {/appointments}:[39m[38;5;3m +90ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments/stats, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments/export, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments/my-appointments, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments/available-slots, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments/:id/cancel, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments/:id/confirm, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments/:id/complete, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments/:id/reschedule, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments/patient-by-document/:document, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments/all, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments/:id/history, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/appointments/history/all, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDoctorController {/doctors}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/doctors, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/doctors/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/doctors, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/doctors/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/doctors/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/doctors/:id/exceptions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/doctors/:id/exceptions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/doctors/:id/exceptions/:exceptionId, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mConfigController {/configs}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/configs, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/configs, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPatientController {/patients}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/patients/:id/medical-info, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/register, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/patient/:document, GET} route[39m[38;5;3m +1ms[39m
+query: SELECT "Config"."id" AS "Config_id", "Config"."key" AS "Config_key", "Config"."value" AS "Config_value", "Config"."description" AS "Config_description", "Config"."updated_at" AS "Config_updated_at" FROM "configs" "Config" WHERE (("Config"."key" = $1)) LIMIT 1 -- PARAMETERS: ["appointment_rules"]
+[32m[Nest] 22544  - [39m29/05/2026, 11:15:09 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +64ms[39m
+query: SELECT "Doctor"."id" AS "Doctor_id", "Doctor"."name" AS "Doctor_name", "Doctor"."specialty" AS "Doctor_specialty", "Doctor"."schedule_start" AS "Doctor_schedule_start", "Doctor"."schedule_end" AS "Doctor_schedule_end", "Doctor"."slot_duration" AS "Doctor_slot_duration", "Doctor"."lunch_start" AS "Doctor_lunch_start", "Doctor"."lunch_end" AS "Doctor_lunch_end", "Doctor"."active_days" AS "Doctor_active_days", "Doctor"."created_at" AS "Doctor_created_at", "Doctor"."updated_at" AS "Doctor_updated_at" FROM "doctors" "Doctor"

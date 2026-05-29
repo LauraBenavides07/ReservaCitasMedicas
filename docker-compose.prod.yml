@@ -1,0 +1,48 @@
+# Producción en VPS (Oracle Cloud, etc.)
+# Uso: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Antes: cp .env.example .env && cp backend/.env.example backend/.env
+# Definir DEPLOY_HOST con IP pública o dominio (sin https://)
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: deploy/docker/backend.Dockerfile
+      target: runtime
+    ports: []
+    environment:
+      NODE_ENV: production
+
+  frontend:
+    build:
+      context: .
+      dockerfile: deploy/docker/frontend.Dockerfile
+      target: runtime
+    ports:
+      - '80:80'
+
+  keycloak:
+    environment:
+      KC_HOSTNAME: ${DEPLOY_HOST:-localhost}
+      KC_HOSTNAME_STRICT: 'false'
+      KC_HTTP_ENABLED: 'true'
+      KC_PROXY: edge
+
+  migrator:
+    profiles: [tools]
+    build:
+      context: .
+      dockerfile: deploy/docker/backend.Dockerfile
+      target: migrate
+    env_file:
+      - ./backend/.env
+      - ./.env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend

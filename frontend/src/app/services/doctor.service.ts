@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../core/api-config';
 
 export interface Doctor {
   id: string;
@@ -18,7 +19,7 @@ export interface Doctor {
   providedIn: 'root'
 })
 export class DoctorService {
-  private apiUrl = 'http://localhost:3000/doctors';
+  private apiUrl = `${API_BASE_URL}/doctors`;
 
   constructor(private http: HttpClient) {}
 
