@@ -23,34 +23,33 @@ export class AuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @Inject(IPatientRepository)
+    private patientRepository: IPatientRepository,
     @InjectRepository(Doctor)
     private doctorRepository: Repository<Doctor>,
-    private patientRepository: IPatientRepository,
     private jwtService: JwtService,
     private passwordHasher: IPasswordHasher,
     private keycloakService: KeycloakService,
   
   ) {}
 
-// backend/src/application/services/auth.service.ts
 
   async register(dto: RegisterDto) {
-    // Validar documento duplicado
-    const existingByDocument = await this.patientRepository.findOneBy({
-      document: dto.document,
+    // Verificar si el documento ya existe en patients
+    const existingPatient = await this.patientRepository.findOne({
+        where: { document: dto.document }
     });
-    if (existingByDocument) {
-      throw new ConflictException('El documento ya está registrado.');
+    if (existingPatient) {
+        throw new ConflictException('El documento ya está registrado.');
     }
 
-    // Validar email duplicado 
+    // Si tiene email, verificar que no esté duplicado
     if (dto.email) {
-      const existingByEmail = await this.patientRepository.findOneBy({
-        email: dto.email,
-      });
-      if (existingByEmail) {
+        const existingUser = await this.userRepository.findOne({
+        where: { email: dto.email.toLowerCase().trim() }
+        });
+        if (existingUser) {
         throw new ConflictException('El correo electrónico ya está registrado.');
-      }
+        }
     }
 
     const hashedPassword = await this.passwordHasher.hash(dto.password);
@@ -76,7 +75,7 @@ export class AuthService {
       );
     }
 
-    return this.login({ login: dto.document, password: dto.password });
+   return { message: 'Paciente registrado exitosamente.' };
   }
   async resetDoctorPassword(doctorId: string): Promise<{ message: string }> {
     // Buscar el doctor para obtener su userId
@@ -153,7 +152,7 @@ export class AuthService {
 
         let userData: UserData | null = null;
         let mustChangePassword = false;
-
+       
         const patient = await this.patientRepository.findOneBy([
             { document: dto.login },
             { email: dto.login },
@@ -282,15 +281,10 @@ export class AuthService {
     }
     
     // Buscar en patients con email o documento normalizado
-    let patient = await this.patientRepository.findOne({
-        where: { email: normalizedLogin }
-    });
-    
-    if (!patient) {
-        patient = await this.patientRepository.findOne({
-            where: { document: normalizedLogin }
-        });
-    }
+    const isEmail = normalizedLogin.includes('@');
+    const patient = isEmail
+    ? await this.patientRepository.findOne({ where: { email: normalizedLogin } })
+    : await this.patientRepository.findOne({ where: { document: normalizedLogin } });
     
     if (patient && patient.password) {
         const isPasswordValid = await this.passwordHasher.compare(dto.password, patient.password);
@@ -346,6 +340,21 @@ export class AuthService {
   }
 
   async existeDocumento(document: string): Promise<boolean> {
-    return this.patientRepository.existeDocumento(document);
-  }
+    const patient = await this.patientRepository.findOneBy({ document });
+    return !!patient;
+    }
+
+  async existeEmail(email: string): Promise<boolean> {
+    const normalizedEmail = email.toLowerCase().trim();
+    
+    const enUsers = await this.userRepository.findOne({
+        where: { email: normalizedEmail }
+    });
+    if (enUsers) return true;
+
+    const enPatients = await this.patientRepository.findOne({
+        where: { email: normalizedEmail }
+    });
+    return !!enPatients;
+    }
 }

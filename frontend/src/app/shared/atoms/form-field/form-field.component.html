@@ -6,7 +6,11 @@
   </label>
 
   <!-- El input real va aquí (viene del padre con ng-content) -->
-  <ng-content></ng-content>
+  <ng-content>
+    <span *ngIf="validating && !error" class="field-validating">
+    Verificando...
+    </span>
+  </ng-content>
 
   <!-- Texto de ayuda (solo si no hay error) -->
   <span *ngIf="hint && !error" class="field-hint">{{ hint }}</span>

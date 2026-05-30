@@ -74,7 +74,31 @@
     grid-template-columns: 1fr;
     gap: 1rem;
 }
+/* Grid de doctores - contenedor con scroll */
+.card-body {
+  max-height: 500px;          /* Altura máxima antes de hacer scroll */
+  overflow-y: auto;           /* Scroll vertical cuando sea necesario */
+  padding: 1rem;              /* Espaciado interno */
+}
 
+/* Opcional: Personalizar la barra de scroll */
+.card-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.card-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+  background: #0d2c5b;
+  border-radius: 4px;
+}
+
+.card-body::-webkit-scrollbar-thumb:hover {
+  background: #1a5bbf;
+}
 
 /* ============================================
    MESSAGES & UTILS

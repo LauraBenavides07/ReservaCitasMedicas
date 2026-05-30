@@ -301,7 +301,19 @@ form {
 /* ============================================
    ESTILOS PARA VALIDADORES PERSONALIZADOS
    ============================================ */
+.email-field-wrapper {
+    position: relative;
+}
 
+.email-validating {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.7rem;
+    color: #f59e0b;
+    font-style: italic;
+}
 /* Contenedor del campo cédula (equivalente a app-form-field) */
 .form-field-wrapper {
     display: flex;

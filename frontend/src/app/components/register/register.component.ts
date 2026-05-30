@@ -10,8 +10,7 @@ import { AlertComponent } from '../../shared/atoms/alert/alert.component';
 import Swal from 'sweetalert2';
 
 // Importamos nuestros validadores personalizados (lb)
-import {validarFormatoDocumento,documentoDuplicadoValidator, validarEmailDominio} from '../../validators/registro.validators';
-
+import {validarFormatoDocumento, documentoDuplicadoValidator, validarEmailDominio, emailDuplicadoValidator} from '../../validators/registro.validators';
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -57,8 +56,8 @@ export class RegisterComponent {
       ],
 
       // Campos con validadores estándar
-      firstName: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
-      lastName: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
+      firstName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+      lastName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
       phone: [
         '',
         [Validators.required, Validators.pattern('^[0-9]{10}$')],
@@ -66,7 +65,7 @@ export class RegisterComponent {
       gender: ['', [Validators.required]],
 
       // Email con validador estándar de Angular y dominio específico
-      email: ['', [Validators.required, Validators.email, validarEmailDominio()]],
+      email: ['', [Validators.required, Validators.email, validarEmailDominio()], [emailDuplicadoValidator(this.http)]],
 
       // Contraseña con longitud mínima
       password: ['', [Validators.required, Validators.minLength(8)]],
@@ -80,7 +79,7 @@ export class RegisterComponent {
 
   // Maneja el envío del formulario
   onSubmit(): void {
-    if (this.registerForm.invalid) {
+    if (this.registerForm.invalid || this.registerForm.pending) {
       this.registerForm.markAllAsTouched();
       return;
     }
@@ -99,39 +98,55 @@ export class RegisterComponent {
         this.isLoading.set(false);
         const firstName = payload.firstName || '';
         Swal.fire({
-          icon: 'success',
-          title: 'Nuevo cliente',
-          html: `Cliente <strong>${firstName}</strong> creado con éxito!`,
-          confirmButtonText: 'OK',
-          confirmButtonColor: '#3e7ba6',
-          allowOutsideClick: false,
-          didClose: () => {
-            this.router.navigate(['/login']);
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Register error:', err);
+            icon: 'success',
+            title: '¡Registro exitoso!',
+            html: `Bienvenido/a <strong>${firstName}</strong>.<br>Ya puedes iniciar sesión con tu cédula y contraseña.`,
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#1e3a6a',
+            target: '.auth-card', 
+            customClass: {
+              popup: 'swal2-front-layer'
+            },
+            allowOutsideClick: false, // Evita que se cierre haciendo clic fuera
+            allowEscapeKey: false     // Evita que se cierre con la tecla Escape
+          }).then((result) => {
+            if (result.isConfirmed) { // Se ejecuta estrictamente cuando presionan "OK"
+              this.registerForm.reset();
+              this.navigate.emit('login'); 
+            }
+          });
+        },
+      error: (err: any) => {
         this.isLoading.set(false);
-        let errorMessage = 'Error al registrarse.';
+
         if (err.status === 0) {
-          errorMessage = 'No se pudo conectar con el servidor. Verifique si el backend está corriendo.';
-        } else if (err.status === 409) {
-          errorMessage = err.error?.message || 'El documento o correo ya está registrado.';
-        } else if (err.status === 500) {
-          errorMessage = 'Error en el servidor. Por favor intente más tarde.';
-        } else {
-          errorMessage = err.error?.message || 'Error al registrarse.';
+          this.error.set('No se pudo conectar con el servidor. Verifique si el backend está corriendo.');
+          return;
         }
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Error en el registro',
-          html: errorMessage,
-          confirmButtonText: 'OK',
-          confirmButtonColor: '#ef4444',
-        });
-      },
+        const raw = err.error?.message;
+        const backendMessage = Array.isArray(raw)
+          ? raw.join(' ').toLowerCase()
+          : (typeof raw === 'string' ? raw.toLowerCase() : '');
+
+        if (err.status === 409) {
+          if (backendMessage.includes('document') || backendMessage.includes('cédula') || backendMessage.includes('cedula')) {
+            this.registerForm.get('document')?.setErrors({ documentoDuplicado: true });
+            this.registerForm.get('document')?.markAsTouched();
+            this.error.set('');
+          } else if (backendMessage.includes('correo') || backendMessage.includes('email')) {
+            this.registerForm.get('email')?.setErrors({ emailDuplicado: true });
+            this.registerForm.get('email')?.markAsTouched();
+            this.error.set('');
+          } else {
+            this.error.set(Array.isArray(raw) ? raw.join(', ') : (raw || 'El documento o correo ya está registrado.'));
+          }
+        } else if (err.status === 500) {
+          this.error.set('Error en el servidor. Por favor intente más tarde.');
+        } else {
+          this.error.set(Array.isArray(raw) ? raw.join(', ') : (raw || 'Error al registrarse.'));
+        }
+      }
     });
   }
 

@@ -1,5 +1,5 @@
 import { AbstractControl, ValidationErrors, ValidatorFn, AsyncValidatorFn } from '@angular/forms';
-import { Observable, of } from 'rxjs';
+import { Observable, of, timer } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { debounceTime, switchMap } from 'rxjs/operators';
@@ -28,22 +28,23 @@ export function validarFormatoDocumento(): ValidatorFn {
 // Retorna null si no existe, o { documentoDuplicado: true } si ya existe
 // ============================================================
 export function documentoDuplicadoValidator(http: HttpClient): AsyncValidatorFn {
-  return (control: AbstractControl): Observable<ValidationErrors | null> => {
-    if (!control.value) {
-      return of(null);
-    }
-
-    return of(control.value).pipe(
-      debounceTime(400),
-      switchMap(value =>
-        http.get<boolean>(`http://localhost:3000/auth/existe-documento/${value}`).pipe(
-          map((existe) => (existe ? { documentoDuplicado: true } : null)),
-          catchError(() => of(null))
-        )
-      )
-    );
-  };
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+        if (!control.value || control.value.length < 6) {
+            return of(null);  // No validar si no tiene mínimo 6 dígitos
+        }
+        
+       
+        return timer(500).pipe(
+            switchMap(() => {
+                return http.get<boolean>(`http://localhost:3000/auth/existe-documento/${control.value}`).pipe(
+                    map((existe) => (existe ? { documentoDuplicado: true } : null)),
+                    catchError(() => of(null))
+                );
+            })
+        );
+    };
 }
+
 
   // ============================================================
   // VALIDADOR SÍNCRONO PARA EMAIL CON DOMINIOS ACEPTADOS
@@ -70,3 +71,23 @@ export function documentoDuplicadoValidator(http: HttpClient): AsyncValidatorFn 
       return ok ? null : { invalidEmailDomain: true };
     };
   }
+
+// Validador asíncrono para email duplicado
+export function emailDuplicadoValidator(http: HttpClient): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+        if (!control.value || control.value.length < 5 || control.invalid) {
+            return of(null);
+        }
+        
+        const email = control.value.toLowerCase().trim();
+        
+        return timer(800).pipe(  // Delay para no llamar en cada tecla
+            switchMap(() => {
+                return http.get<boolean>(`http://localhost:3000/auth/existe-email/${encodeURIComponent(email)}`).pipe(
+                    map((existe) => (existe ? { emailDuplicado: true } : null)),
+                    catchError(() => of(null))
+                );
+            })
+        );
+    };
+}

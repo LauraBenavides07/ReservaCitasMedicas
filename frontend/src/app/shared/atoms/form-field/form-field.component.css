@@ -22,7 +22,14 @@
 .required-mark {
   color: #ef4444;
 }
-
+/* Mensaje de error */
+.field-validating {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-style: italic;
+    display: block;
+    margin-top: 0.25rem;
+}
 /* Inputs y selects que vengan dentro del form-field */
 :host ::ng-deep input,
 :host ::ng-deep select {

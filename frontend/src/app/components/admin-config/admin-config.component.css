@@ -157,6 +157,7 @@ textarea {
     gap: 0.5rem;
 }
 
+
 /* Bloque de información individual */
 .info-block {
     display: flex;
@@ -193,6 +194,29 @@ textarea {
     padding: 0.5rem 1rem;
     font-size: 0.8rem;
 }
+/* ── Cabecera sección pacientes ── */
+.search-input {
+    padding: 1rem 1rem;
+    border: 1.5px solid #acc9f0;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    min-width: 240px;
+    outline: none;
+    transition: border-color 0.2s;
+    margin : 0 0 1.5rem 0;
+}
+.search-input:focus { border-color: #1e3a6a; }
+
+/* ── Badge de género ── */
+.gender-badge {
+    font-size: 0.72rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 99px;
+    background: #f1f5f9; color: #64748b;
+}
+.gender-badge.male   { background: #dbeafe; color: #1d4ed8; }
+.gender-badge.female { background: #fce7f3; color: #be185d; }
+
+.date-cell { font-size: 0.82rem; color: #94a3b8; }
 
 /* ============================================
    STATISTICS (ESTADÍSTICAS) — MOBILE FIRST

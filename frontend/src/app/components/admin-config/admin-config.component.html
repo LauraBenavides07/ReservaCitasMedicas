@@ -149,7 +149,7 @@
         <!-- Tabla de citas por médico -->
         <app-card padding="sm">
             <h3 class="card-title">Distribución por Médico</h3>
-            <div class="table-responsive">
+            <div *ngIf="patients().length > 0" class="table-responsive" style="margin-top: 1.25rem;">
 
                 <table class="piedrazul-table">
                     <thead>
@@ -368,52 +368,64 @@
 
     <!-- PESTAÑA PACIENTES -->
     <section *ngIf="activeTab() === 'pacientes'" class="tab-content">
-        <!-- Barra de acciones con botones para registrar y listar pacientes -->
-        <div class="actions-bar">
-            <app-button variant="primary" (clicked)="openRegisterPatient()">
-                <span>+</span> Registrar Paciente
-            </app-button>
-            <app-button variant="secondary" (clicked)="openPatientList()">
-                <span>👥</span> Lista de Pacientes
-            </app-button>
+
+        <!-- Cabecera con título y buscador -->
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Lista de Pacientes</h2>
+                <p class="section-subtitle">{{ patients().length }} paciente(s) registrados</p>
+            </div>
+            <input
+                class="search-input"
+                type="text"
+                placeholder="🔍 Buscar por nombre, cédula..."
+                [value]="patientSearch()"
+                (input)="patientSearch.set($any($event.target).value)">
         </div>
 
-        <!-- FORMULARIO DE REGISTRO DE PACIENTE -->
-        <div *ngIf="showPatientForm()" class="patient-form-container">
-            <div class="form-header">
-                <h3>Registrar Nuevo Paciente</h3>
-                <button class="btn-close" (click)="closeRegisterPatient()">✕</button>
-            </div>
-            <app-register (navigate)="onPatientRegistered()"></app-register>
+        <!-- Estado vacío -->
+        <div *ngIf="patients().length === 0" class="empty-state">
+            <p>⏳ Cargando pacientes...</p>
         </div>
 
-        <!-- LISTA DE PACIENTES -->
-        <div *ngIf="showPatientList()" class="patients-list">
-            <div *ngIf="patients().length === 0" class="empty-state">
-                <p>Cargando pacientes...</p>
-            </div>
-            <div *ngFor="let patient of patients()" class="patient-card">
-                <div class="patient-info">
-                    <div class="patient-avatar" [ngStyle]="{'background-color': getDoctorColor(patient.id)}">
-                        {{ patient.firstName.substring(0,1).toUpperCase() }}{{ patient.lastName.substring(0,1).toUpperCase() }}
-                    </div>
-                    <div class="patient-details">
-                        <h4 class="patient-name">{{ patient.firstName }} {{ patient.lastName }}</h4>
-                        <p class="patient-document">Cédula: {{ patient.document }}</p>
-                        <p class="patient-phone">Teléfono: {{ patient.phone }}</p>
-                        <p class="patient-email" *ngIf="patient.email">Correo: {{ patient.email }}</p>
-                        <p class="patient-gender">Género: {{ patient.gender === 'M' ? 'Masculino' : patient.gender === 'F' ? 'Femenino' : 'Otro' }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ESTADO INICIAL - No seleccionado nada aún -->
-        <div *ngIf="!showPatientForm() && !showPatientList()" class="initial-state">
-            <div class="initial-message">
-                <p>👥 Selecciona una opción arriba para continuar</p>
-                <small>Puedes registrar un nuevo paciente o ver la lista de pacientes existentes</small>
-            </div>
+        <!-- Tabla de pacientes -->
+        <div *ngIf="patients().length > 0" class="table-responsive">
+            <table class="piedrazul-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Paciente</th>
+                        <th>Cédula</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Género</th>
+                        <th>Registrado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let patient of filteredPatients(); let i = index">
+                        <td>
+                            <div style="display:flex; align-items:center; gap:0.6rem;">
+                                <span style="font-size:0.82rem; color:#193358; min-width:18px;">{{ i + 1 }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <strong>{{ patient.firstName }} {{ patient.lastName }}</strong>
+                        </td>
+                        <td>{{ patient.document }}</td>
+                        <td>{{ patient.phone || '—' }}</td>
+                        <td>{{ patient.email || '—' }}</td>
+                        <td>
+                            <span class="gender-badge"
+                                [class.male]="patient.gender === 'M'"
+                                [class.female]="patient.gender === 'F'">
+                                {{ patient.gender === 'M' ? 'Masculino' : patient.gender === 'F' ? 'Femenino' : 'Otro' }}
+                            </span>
+                        </td>
+                        <td class="date-cell" style="font-size:0.82rem; color:#193358; min-width:18px;">{{ patient.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 </div>

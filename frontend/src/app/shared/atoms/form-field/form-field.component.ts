@@ -22,6 +22,9 @@ export class FormFieldComponent {
   // Mensaje de error a mostrar debajo del input (vacío = no muestra)
   @Input() error = '';
 
+  @Input() validating = false;   // muestra "Verificando..." mientras pending
+  @Input() hint2 = '';  
+
   // Texto de ayuda opcional debajo del input (solo si no hay error)
   @Input() hint = '';
 }

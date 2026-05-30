@@ -28,6 +28,14 @@ pnpm run build          # Compila a dist/frontend/browser
 pnpm start              # Servidor dev en http://localhost:4200
 ```
 
+### Microservicio (notification-service)
+```bash
+cd notification-service
+npm install
+npx nest build              # Compilar
+node dist/main.js           # Ejecutar (después de compilar)
+```
+
 ### Build completo (raíz)
 ```bash
 pnpm install            # Instala dependencias de todos los workspaces

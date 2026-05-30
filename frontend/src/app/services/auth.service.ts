@@ -103,7 +103,18 @@ completePasswordChange(newToken: string, user: User): void {
 
   private getUserFromStorage(): User | null {
     const userStr = localStorage.getItem('user');
-    return userStr ? JSON.parse(userStr) : null;
+    
+    // Validar que exista, que no sea nulo y que no sea el texto literal "undefined"
+    if (!userStr || userStr === 'undefined' || userStr === 'null') {
+      return null;
+    }
+
+    try {
+      return JSON.parse(userStr);
+    } catch (e) {
+      console.error('Error parseando el usuario desde localStorage:', e);
+      return null;
+    }
   }
 
   getToken(): string | null {

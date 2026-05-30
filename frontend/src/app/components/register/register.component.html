@@ -23,7 +23,7 @@
 
         <!-- Cuerpo del modal con el formulario de registro -->
         <div class="auth-body">
-            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <form [formGroup]="registerForm">
 
                 <!-- Fila de nombres y apellidos -->
                 <div class="form-row">
@@ -32,8 +32,9 @@
                         inputId="reg-firstName"
                         [required]="true"
                         [error]="f['firstName'].invalid && f['firstName'].touched ?
-                            (f['firstName'].errors?.['minlength'] ? 'debe tener al menos 5 caracteres' :
+                            (f['firstName'].errors?.['minlength'] ? 'debe tener al menos 3 caracteres' :
                              f['firstName'].errors?.['maxlength'] ? 'debe tener maximo 20 caracteres' :
+                             f['firstName'].errors?.['pattern'] ? 'El nombre no puede contener números ni caracteres especiales' :
                              'Por favor escriba sus nombres.') : ''">
                         <input type="text" id="reg-firstName" formControlName="firstName" placeholder="Juan"
                             [class.input-error]="f['firstName'].invalid && f['firstName'].touched">
@@ -43,8 +44,9 @@
                         inputId="reg-lastName"
                         [required]="true"
                         [error]="f['lastName'].invalid && f['lastName'].touched ?
-                            (f['lastName'].errors?.['minlength'] ? 'debe tener al menos 5 caracteres' :
+                            (f['lastName'].errors?.['minlength'] ? 'debe tener al menos 3 caracteres' :
                              f['lastName'].errors?.['maxlength'] ? 'debe tener maximo 20 caracteres' :
+                             f['lastName'].errors?.['pattern'] ? 'El apellido no puede contener números ni caracteres especiales' :
                              'Por favor escriba sus apellidos.') : ''">
                         <input type="text" id="reg-lastName" formControlName="lastName" placeholder="Perez"
                             [class.input-error]="f['lastName'].invalid && f['lastName'].touched">
@@ -110,12 +112,16 @@
                         label="CORREO ELECTRÓNICO"
                         inputId="reg-email"
                         [required]="true"
-                        [error]="f['email'].invalid && f['email'].touched ?
+                        [validating]="f['email'].pending"
+                        [error]="f['email'].invalid && f['email'].touched && !f['email'].pending ?
                             (f['email'].errors?.['required'] ? 'El email es obligatorio.' :
-                             (f['email'].errors?.['invalidEmailFormat'] || f['email'].errors?.['invalidEmailDomain'] ?
-                                'El correo no sigue un fomato valido. El correo debe terninar  en @unicauca.edu' :
-                                'Por favor ingrese un correo válido.')) : ''">
-                        <input type="email" id="reg-email" formControlName="email" placeholder="correo@ejemplo.com"
+                            f['email'].errors?.['email'] ? 'El correo no tiene un formato válido.' :
+                            f['email'].errors?.['invalidEmailFormat'] ? 'El correo no sigue un formato válido.' :
+                            f['email'].errors?.['invalidEmailDomain'] ? 'El correo debe terminar en @gmail.com, @hotmail.com o @unicauca.edu.co.' :
+                            f['email'].errors?.['emailDuplicado'] ? 'Este correo electrónico ya está registrado.' :
+                            'Por favor ingrese un correo válido.') : ''">
+                        <input type="email" id="reg-email" formControlName="email"
+                            placeholder="correo@ejemplo.com"
                             [class.input-error]="f['email'].invalid && f['email'].touched">
                     </app-form-field>
                     <app-form-field

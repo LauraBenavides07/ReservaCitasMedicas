@@ -47,4 +47,9 @@ export class AuthController {
       return this.authService.resetDoctorPassword(doctorId);
   }
 
+  @Get('existe-email/:email')
+  async existeEmail(@Param('email') email: string) {
+    return this.authService.existeEmail(email);
+  }
+
 }

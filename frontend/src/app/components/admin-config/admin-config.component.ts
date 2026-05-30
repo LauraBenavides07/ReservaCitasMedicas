@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, signal, ViewChild, ElementRef, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -26,8 +26,7 @@ export class AdminConfigComponent implements OnInit {
   doctorFormMessage = signal<{ type: 'success' | 'error'; text: string } | null>(null);
   configFormMessage = signal<{ type: 'success' | 'error'; text: string } | null>(null);
   patients = signal<any[]>([]);
-  showPatientForm = signal<boolean>(false);
-  showPatientList = signal<boolean>(false);
+  patientSearch = signal<string>('');
 
   // Referencias a dialogs
   @ViewChild('doctorModal') doctorModal!: ElementRef<HTMLDialogElement>;
@@ -38,6 +37,15 @@ export class AdminConfigComponent implements OnInit {
   exceptions = signal<any[]>([]);
   exceptionForm: FormGroup;
 
+  filteredPatients = computed(() => {
+  const term = this.patientSearch().toLowerCase().trim();
+  if (!term) return this.patients();
+  return this.patients().filter(p =>
+    `${p.firstName} ${p.lastName}`.toLowerCase().includes(term) ||
+    (p.document || '').toLowerCase().includes(term) ||
+    (p.email || '').toLowerCase().includes(term)
+  );
+});
   // Lista de especialidades predefinidas
   specialties = [
     'Medicina General',
@@ -163,6 +171,7 @@ export class AdminConfigComponent implements OnInit {
     this.loadDoctors();
     this.loadConfig();
     this.loadStats();
+    this.openPatientList();
   }
 
   // Carga las estadísticas desde el servicio de citas
@@ -428,8 +437,6 @@ export class AdminConfigComponent implements OnInit {
     this.http.get<any[]>('http://localhost:3000/patients').subscribe({
       next: (data) => {
         this.patients.set(data);
-        this.showPatientList.set(true);
-        this.showPatientForm.set(false);
       },
       error: (err) => {
         console.error('Error cargando pacientes:', err);
@@ -447,29 +454,15 @@ export class AdminConfigComponent implements OnInit {
     });
   }
 
-  openRegisterPatient(): void {
-    this.showPatientForm.set(true);
-    this.showPatientList.set(false);
-  }
 
   openPatientList(): void {
     this.loadPatients();
   }
 
-  closeRegisterPatient(): void {
-    this.showPatientForm.set(false);
-    this.showPatientList.set(true);
-  }
-
-  onPatientRegistered(): void {
-    this.loadPatients();
-    this.closeRegisterPatient();
-  }
 
   showPatients(): void {
     this.activeTab.set('pacientes');
     this.loadPatients();
-    this.showPatientForm.set(false);
   }
 
   // ============================================
