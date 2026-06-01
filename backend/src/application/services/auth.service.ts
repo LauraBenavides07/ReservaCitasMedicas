@@ -283,9 +283,35 @@ export class AuthService {
     // Buscar en patients con email o documento normalizado
     const isEmail = normalizedLogin.includes('@');
     const patient = isEmail
-    ? await this.patientRepository.findOne({ where: { email: normalizedLogin } })
-    : await this.patientRepository.findOne({ where: { document: normalizedLogin } });
-    
+  ? await this.patientRepository.findOne({
+      where: { email: normalizedLogin },
+      select: {
+        id: true,
+        document: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        password: true,
+      },
+    })
+  : await this.patientRepository.findOne({
+      where: { document: normalizedLogin },
+      select: {
+        id: true,
+        document: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        password: true,
+      },
+    });
+
+    console.log('Paciente encontrado:', patient ? 'SÍ' : 'NO');
+
+if (patient) {
+    console.log('Tiene password:', !!patient.password);
+}
+
     if (patient && patient.password) {
         const isPasswordValid = await this.passwordHasher.compare(dto.password, patient.password);
         if (isPasswordValid) {

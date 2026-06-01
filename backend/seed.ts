@@ -9,6 +9,7 @@ import { Config } from './src/domain/entities/config.entity';
 import { User, UserRole } from './src/domain/entities/user.entity';
 import * as dotenv from 'dotenv';
 import * as bcrypt from 'bcrypt';
+import { AppointmentStatus } from './src/domain/types/appointment-status.enum';
 dotenv.config();
 
 const dataSource = new DataSource({
@@ -64,8 +65,11 @@ async function seed() {
 
     // Crear Doctor (Entity para turnos)
     const doctor = doctorRepo.create({
+      document: '987654321',
       name: 'Juan Lopez',
       specialty: 'Cardiología',
+      email: 'medico@piedrazul.com',
+      user: doctorUser,
       scheduleStart: '08:00',
       scheduleEnd: '18:00',
       slotDuration: 30,
@@ -89,7 +93,7 @@ async function seed() {
     const appointment = appointmentRepo.create({
       appointmentDate: today,
       appointmentTime: '09:00',
-      status: 'agendada',
+      status: AppointmentStatus.SCHEDULED,  
       doctor: doctor,
       patient: patient,
     });
