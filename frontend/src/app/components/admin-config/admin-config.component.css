@@ -72,6 +72,76 @@ textarea {
     border-bottom-color: var(--primary-color);
 }
 
+/* Asegurar que los iconos de Tabler Icons tengan el tamaño correcto */
+.ti {
+    font-size: 1.3rem !important;
+    line-height: 1.5;
+    vertical-align: middle;
+}
+
+/* Ajuste específico para botones con iconos */
+.app-button .ti,
+app-button .ti,
+button .ti {
+    margin-right: 0.25rem;
+    font-size: 1.1em;
+}
+
+/* Para el botón de eliminar excepción sin texto */
+.btn-icon .ti {
+    margin-right: 0;
+    font-size: 1.2rem;
+}
+
+/* Ajuste para la pestaña */
+.tab-btn .ti {
+    font-size: 1.1rem;
+}
+
+/* Buscador sin emoji */
+.search-input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+/* Wrapper para buscador con icono */
+.search-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 300px;
+}
+/* Icono de lupa */
+.search-wrapper .ti-search {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 1.1rem;
+    pointer-events: none;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Input con padding izquierdo para el icono */
+.search-wrapper .search-input {
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    width: 100%;
+    border: 1.5px solid #acc9f0;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+    margin: 1rem 0 1rem 0;
+}
+
+.search-wrapper .search-input:focus {
+    border-color: #1e3a6a;
+}
+
 /* ============================================
    ACTIONS BAR
    ============================================ */

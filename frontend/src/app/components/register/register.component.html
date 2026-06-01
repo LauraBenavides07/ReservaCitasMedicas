@@ -2,8 +2,9 @@
 <div class="auth-overlay">
     <div class="auth-card">
         <!-- Botón para cerrar el modal -->
-        <app-button variant="secondary" size="sm" (clicked)="navigate.emit('landing')" ariaLabel="Cerrar">×</app-button>
-
+       <button class="btn-close-circle" (click)="navigate.emit('landing')" aria-label="Cerrar">
+            <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
         <!-- Encabezado del modal con logo y título -->
         <div class="auth-header">
             <div class="header-content">
@@ -57,42 +58,24 @@
                 <div class="form-row">
 
                     <!-- CAMPO CÉDULA — con validadores personalizados -->
-                    <div class="form-field-wrapper">
-                        <label for="reg-document" class="form-label">
-                            CÉDULA <span class="required-mark">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="reg-document"
-                            formControlName="document"
+                    <app-form-field
+                        label="CÉDULA"
+                        inputId="reg-document"
+                        [required]="true"
+                        [error]="f['document'].invalid && f['document'].touched && !f['document'].pending ?
+                            (f['document'].errors?.['required'] ? 'La cédula es obligatoria.' :
+                            f['document'].errors?.['documentoInvalido'] ? 'La cédula debe tener entre 6 y 10 dígitos numéricos.' :
+                            f['document'].errors?.['documentoDuplicado'] ? 'Este número de cédula ya está registrado.' : '') : ''">
+                        
+                        <input type="text" id="reg-document" formControlName="document" 
                             placeholder="Ej: 1061234567"
                             [class.input-error]="f['document'].invalid && f['document'].touched">
-
+                        
                         <!-- Indicador mientras se valida de forma asíncrona -->
                         <small *ngIf="f['document'].pending" class="text-validating">
                             Verificando disponibilidad...
                         </small>
-
-                        <!-- Bloque de errores: se muestra si el campo es inválido y fue tocado -->
-                        <div *ngIf="f['document'].invalid && f['document'].touched && !f['document'].pending"
-                             class="text-danger">
-
-                            <!-- Error 1: campo vacío -->
-                            <small *ngIf="f['document'].errors?.['required']">
-                                La cédula es obligatoria.
-                            </small>
-
-                            <!-- Error 2: validador síncrono personalizado -->
-                            <small *ngIf="f['document'].errors?.['documentoInvalido']">
-                                La cédula debe tener entre 6 y 10 dígitos numéricos.
-                            </small>
-
-                            <!-- Error 3: validador asíncrono personalizado (backend) -->
-                            <small *ngIf="f['document'].errors?.['documentoDuplicado']">
-                                Este número de cédula ya está registrado.
-                            </small>
-                        </div>
-                    </div>
+                    </app-form-field>
 
                     <app-form-field
                         label="TELÉFONO"

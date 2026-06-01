@@ -12,11 +12,13 @@ interface HistoryDisplay {
   id: string;
   patientName: string;
   document: string;
+  phone: string;
   date: string;
   time: string;
   status: string;
   monthStr: string;
   dayStr: string;
+  yearStr: string;
   observation?: string;
 }
 
@@ -131,11 +133,13 @@ export class DoctorHistoryComponent implements OnInit {
                 id: a.id,
                 patientName: `${a.patient.firstName} ${a.patient.lastName}`,
                 document: a.patient.document,
+                phone: a.patient.phone || 'N/A',
                 date: actualDate,
                 time: actualTime,
                 status: a.status === 'agendada' && new Date(`${actualDate}T${actualTime}`) < now ? 'No asistió' : a.status,
                 monthStr: !isNaN(dateObj.getMonth()) ? monthNames[dateObj.getMonth()] : '---',
                 dayStr: !isNaN(dateObj.getDate()) ? dateObj.getDate().toString().padStart(2, '0') : '--',
+                yearStr: !isNaN(dateObj.getFullYear()) ? dateObj.getFullYear().toString() : '----',
                 observation: a.observations || 'Sin observaciones registradas.'
             };
         });

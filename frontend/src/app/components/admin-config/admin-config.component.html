@@ -5,15 +5,15 @@
     <nav class="tabs">
         <!-- Pestaña Horarios -->
         <button [class.active]="activeTab() === 'horarios'" (click)="activeTab.set('horarios')" class="tab-btn">
-            <span class="icon">⚙️</span> Horarios
+            <i class="ti ti-settings" aria-hidden="true"></i> Horarios
         </button>
         <!-- Pestaña Estadísticas -->
         <button [class.active]="activeTab() === 'estadisticas'" (click)="activeTab.set('estadisticas')" class="tab-btn">
-            <span class="icon">📊</span> Estadísticas
+            <i class="ti ti-chart-bar" aria-hidden="true"></i> Estadísticas
         </button>
         <!-- Pestaña Pacientes -->
         <button [class.active]="activeTab() === 'pacientes'" (click)="activeTab.set('pacientes')" class="tab-btn">
-            <span class="icon">👥</span> Pacientes
+            <i class="ti ti-users" aria-hidden="true"></i> Pacientes
         </button>
     </nav>
 
@@ -22,10 +22,10 @@
         <!-- Barra de acciones con botones para configuraciones globales y añadir médico -->
         <div class="actions-bar">
             <app-button variant="secondary" (clicked)="openConfigModal()">
-                <span>⚙️</span> Configuración Global
+                <i class="ti ti-settings" aria-hidden="true"></i> Configuración Global
             </app-button>
             <app-button variant="primary" (clicked)="openDoctorForm()">
-                <span>+</span> Añadir Médico
+                <i class="ti ti-plus" aria-hidden="true"></i> Añadir Médico
             </app-button>
         </div>
 
@@ -72,13 +72,13 @@
                 <!-- Acción: botón para editar -->
                 <div class="doc-actions">
                     <app-button variant="secondary" size="sm" (clicked)="openExceptions(doctor)">
-                        📅 Excepciones
+                        <i class="ti ti-calendar-exclamation" aria-hidden="true"></i> Excepciones
                     </app-button>
                     <app-button variant="warning" size="sm" (clicked)="resetDoctorPassword(doctor)">
-                        🔑 Restablecer clave
+                        <i class="ti ti-key" aria-hidden="true"></i> Restablecer clave
                     </app-button>
                     <app-button variant="primary" size="sm" (clicked)="openDoctorForm(doctor)">
-                        ✏️ Editar
+                        <i class="ti ti-edit" aria-hidden="true"></i> Editar
                     </app-button>
                 </div>
             </div>
@@ -375,12 +375,15 @@
                 <h2 class="section-title">Lista de Pacientes</h2>
                 <p class="section-subtitle">{{ patients().length }} paciente(s) registrados</p>
             </div>
-            <input
-                class="search-input"
-                type="text"
-                placeholder="🔍 Buscar por nombre, cédula..."
-                [value]="patientSearch()"
-                (input)="patientSearch.set($any($event.target).value)">
+            <div class="search-wrapper">
+                <i class="ti ti-search" aria-hidden="true"></i>
+                <input
+                    class="search-input"
+                    type="text"
+                    placeholder="Buscar por nombre, cédula..."
+                    [value]="patientSearch()"
+                    (input)="patientSearch.set($any($event.target).value)">
+            </div>
         </div>
 
         <!-- Estado vacío -->

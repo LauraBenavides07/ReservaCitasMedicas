@@ -29,13 +29,21 @@ export class AdminAuditComponent implements OnInit {
   doctors: Doctor[] = [];
 
   changeTypes = [
-    { value: '', label: 'Todos los cambios' },
-    { value: 'CREATED', label: '➕ Creada' },
-    { value: 'RESCHEDULED', label: '🔄 Reagendada' },
-    { value: 'CANCELLED', label: '❌ Cancelada' },
-    { value: 'CONFIRMED', label: '✅ Confirmada' },
-    { value: 'COMPLETED', label: '✔️ Completada' }
+    { value: '',            label: 'Todos los cambios' },
+    { value: 'CREATED',     label: 'Creada',     icon: 'ri-add-circle-line' },
+    { value: 'RESCHEDULED', label: 'Reagendada', icon: 'ri-calendar-line' },
+    { value: 'CANCELLED',   label: 'Cancelada',  icon: 'ri-close-circle-line' },
+    { value: 'CONFIRMED',   label: 'Confirmada', icon: 'ri-checkbox-circle-line' },
+    { value: 'COMPLETED',   label: 'Completada', icon: 'ri-check-double-line' }
   ];
+
+  getChangeTypeIcon(value: string): string {
+    return this.changeTypes.find(t => t.value === value)?.icon || '';
+  }
+
+  getChangeTypeLabel(value: string): string {
+    return this.changeTypes.find(t => t.value === value)?.label || '';
+  }
 
   constructor(
     private appointmentService: AppointmentService,
@@ -126,11 +134,11 @@ export class AdminAuditComponent implements OnInit {
 
   getChangeLabel(type: string): string {
     const labels: Record<string, string> = {
-      CREATED: '➕ Creada',
-      RESCHEDULED: '🔄 Reagendada',
-      CANCELLED: '❌ Cancelada',
-      CONFIRMED: '✅ Confirmada',
-      COMPLETED: '✔️ Completada',
+      CREATED: ' Creada',
+      RESCHEDULED: ' Reagendada',
+      CANCELLED: ' Cancelada',
+      CONFIRMED: ' Confirmada',
+      COMPLETED: ' Completada',
     };
     return labels[type] || type;
   }

@@ -1,9 +1,4 @@
 <div class="audit-container">
-    <div class="audit-header">
-        <h2>📋 Auditoría de Citas</h2>
-        <p class="audit-description">Historial completo de cambios realizados en las citas médicas</p>
-    </div>
-
     <!-- Panel de filtros -->
     <div class="audit-filters-panel">
         <div class="filters-row">
@@ -40,10 +35,10 @@
 
             <div class="filter-actions">
                 <app-button variant="search" (clicked)="applyFilter()">
-                    Filtrar
+                    <i class="ti ti-filter" aria-hidden="true"></i> Filtrar
                 </app-button>
                 <button type="button" class="btn-clear" (click)="clearFilters()">
-                    Limpiar
+                    <i class="ti ti-x" aria-hidden="true"></i> Limpiar
                 </button>
             </div>
         </div>
@@ -57,7 +52,7 @@
 
     <!-- Estado de error -->
     <div *ngIf="error && !loading" class="error-state" role="alert">
-        <span class="error-icon">⚠️</span>
+        <i class="ti ti-alert-triangle error-icon" aria-hidden="true"></i>
         <p>{{ error }}</p>
         <button class="btn-primary" (click)="loadHistory()">Reintentar</button>
     </div>
@@ -66,7 +61,9 @@
     <div *ngIf="!loading && !error && history.length > 0" class="audit-results">
         <div class="results-header">
             <div class="results-count">Total de registros: <strong>{{ total }}</strong></div>
-            <button class="btn-export" (click)="exportToCSV()">📥 Exportar a CSV</button>
+            <button class="btn-export" (click)="exportToCSV()">
+                <i class="ti ti-download" aria-hidden="true"></i> Exportar a CSV
+            </button>
         </div>
 
         <div class="table-wrapper">
@@ -130,7 +127,7 @@
 
     <!-- Estado vacío -->
     <div *ngIf="!loading && !error && history.length === 0" class="empty-state">
-        <div class="empty-icon">📭</div>
+        <i class="ti ti-mailbox empty-icon" aria-hidden="true"></i>
         <h3>No hay registros</h3>
         <p>No se encontraron registros de auditoría con los filtros seleccionados.</p>
     </div>

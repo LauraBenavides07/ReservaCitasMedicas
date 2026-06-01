@@ -2,16 +2,16 @@
     <!-- Top Header -->
     <header class="top-header">
         <div class="header-title">
-            <p>{{ doctorName }} - {{ specialization }}</p>
+            <h3>{{ doctorName }} - {{ specialization }}</h3>
         </div>
         <div class="header-actions">
             <!-- Date Filter -->
             <div class="date-filter-wrapper">
                 <input type="date" class="date-input" [ngModel]="selectedDate" (ngModelChange)="onDateChange($event)" />
-                <app-button variant="primary" (clicked)="onSearchByDate()">Buscar</app-button>
+                <app-button variant="primary" (clicked)="onSearchByDate()"><i class="ti ti-search" aria-hidden="true"></i> Buscar</app-button>
             </div>
             <app-button variant="secondary" (clicked)="exportToCSV()">
-            📥 Exportar a CSV
+                <i class="ti ti-download" aria-hidden="true"></i> Exportar a CSV
             </app-button>
         </div>
     </header>
@@ -69,8 +69,6 @@
             </div>
         </section>
 
-
-
         <!-- Patient List -->
         <section class="patient-list">
             <h2 class="section-title">Pacientes del Día</h2>
@@ -90,33 +88,25 @@
 
                     <div class="card-middle">
                         <div class="patient-info">
-                            <div class="icon-user">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="#9CA3AF">
-                                    <path
-                                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                                </svg>
-                            </div>
                             <div>
                                 <div class="name">{{ apt.patientName }}</div>
-                                <div class="cc">CC: {{ apt.cc }}</div>
+
+                                <div class="cc">
+                                    <i class="ti ti-id" aria-hidden="true"></i>
+                                    CC: {{ apt.cc }}
+                                </div>
                                 <div class="phone">
-                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="#9CA3AF">
-                                        <path
-                                            d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                                    </svg>
+                                    <i class="ti ti-phone" aria-hidden="true"></i>
                                     {{ apt.phone }}
                                 </div>
                             </div>
                         </div>
                         <div class="reason-info">
-                            <div class="icon-doc">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="#9CA3AF">
-                                    <path
-                                        d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
-                                </svg>
-                            </div>
                             <div>
-                                <div class="label">Motivo de Consulta</div>
+                                <div class="label">
+                                    <i class="ti ti-notes" aria-hidden="true"></i>
+                                    Motivo de Consulta
+                                </div>
                                 <div class="value">{{ apt.reason }}</div>
                             </div>
                         </div>
@@ -138,7 +128,7 @@
                             <app-button *ngIf="apt.status === 'Pendiente' || apt.status === 'Confirmada'" variant="danger" size="sm" (clicked)="cancelAppointment(apt)">
                                 Cancelar
                             </app-button>
-                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -156,7 +146,9 @@
 <dialog #completionModal class="modal-content completion-modal" aria-labelledby="complete-modal-title" (close)="onCompletionModalClose()" (click)="onDialogClick($event, completionModal)">
     <div class="modal-header">
         <h2 id="complete-modal-title" class="modal-title">Finalizar Atención Médica</h2>
-        <button class="modal-close-btn" (click)="closeCompletionModal()">&times;</button>
+        <button class="modal-close-btn" (click)="closeCompletionModal()">
+            <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
     </div>
     <div class="modal-body">
         <div class="patient-card-modern" *ngIf="selectedAppointment">
@@ -170,11 +162,11 @@
                 <h3 class="patient-name-large">{{ selectedAppointment.patientName }}</h3>
                 <div class="appointment-meta">
                     <span class="meta-item">
-                        <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V8h14v11z"/></svg>
+                        <i class="ti ti-calendar" aria-hidden="true"></i>
                         {{ formatDate(selectedAppointment.date) }}
                     </span>
                     <span class="meta-item">
-                        <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+                        <i class="ti ti-clock" aria-hidden="true"></i>
                         {{ formatTime(selectedAppointment.time) }}
                     </span>
                 </div>
@@ -184,7 +176,7 @@
         <div class="form-section">
             <div class="form-group">
                 <label class="form-label">
-                    <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                    <i class="ti ti-notes" aria-hidden="true"></i>
                     DIAGNÓSTICO
                 </label>
                 <input type="text" class="form-input-modern" [(ngModel)]="appointmentDiagnosis" 
@@ -193,7 +185,7 @@
 
             <div class="form-group">
                 <label class="form-label">
-                    <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                    <i class="ti ti-message" aria-hidden="true"></i>
                     OBSERVACIONES Y RECOMENDACIONES
                 </label>
                 <textarea class="form-textarea-modern" [(ngModel)]="appointmentObservations" rows="4"
@@ -210,7 +202,7 @@
                     <div class="toggle-knob"></div>
                 </div>
                 <span class="toggle-label">
-                    <svg viewBox="0 0 24 24" width="16" height="16" class="toggle-icon"><path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V8h14v11z"/></svg>
+                    <i class="ti ti-calendar-plus" aria-hidden="true"></i>
                     Agendar cita de seguimiento
                 </span>
             </div>
@@ -219,8 +211,8 @@
                 <div class="form-grid-modern">
                     <div class="form-group">
                         <label class="form-label-mini">
-                            <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                            Médico Tratante <span class="required-star">*</span>
+                            <i class="ti ti-stethoscope" aria-hidden="true"></i>
+                            Médico / Terapista <span class="required-star">*</span>
                         </label>
                         <select class="form-select-modern" [(ngModel)]="rescheduleDoctorId" (change)="loadAvailableSlots()">
                             <option *ngFor="let doc of doctors" [value]="doc.id">
@@ -230,7 +222,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label-mini">
-                            <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V8h14v11z"/></svg>
+                            <i class="ti ti-calendar-event" aria-hidden="true"></i>
                             Fecha sugerida <span class="required-star">*</span>
                         </label>
                         <input type="date" class="form-input-mini"
@@ -242,7 +234,7 @@
                 
                 <div class="form-group mt-3">
                     <label class="form-label-mini">
-                        <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+                        <i class="ti ti-hourglass" aria-hidden="true"></i>
                         Horario disponible <span class="required-star">*</span>
                     </label>
                     

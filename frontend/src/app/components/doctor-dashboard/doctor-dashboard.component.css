@@ -1090,3 +1090,37 @@ body,
 .swal2-popup.custom-toast .swal2-timer-progress-bar {
     background: rgba(255, 255, 255, 0.3) !important;
 }
+
+/* Iconos en general */
+.ti {
+    font-size: 0.95rem;
+    line-height: 1;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Iconos en botones */
+app-button .ti,
+button .ti {
+    margin-right: 0.35rem;
+}
+
+/* Iconos en labels del modal */
+.form-label .ti,
+.form-label-mini .ti {
+    font-size: 1rem;
+    margin-right: 0.25rem;
+}
+
+/* Botón cerrar modal */
+.modal-close-btn .ti {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* Toggle icon */
+.toggle-label .ti {
+    font-size: 0.9rem;
+    margin-right: 0.25rem;
+}

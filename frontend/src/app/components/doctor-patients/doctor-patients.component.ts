@@ -119,12 +119,18 @@ export class DoctorPatientsComponent implements OnInit {
         // Filtrar citas del doctor actual
         const doctorApts = appointments.filter(a => a.doctor?.id === this.doctorId);
         
-        // Use all appointments to find next visit with this doctor
+        // ORDENAR por fecha de cita (más reciente primero)
+        const sortedApts = [...doctorApts].sort((a, b) => {
+          const dateA = a.appointmentDate || a.date || '';
+          const dateB = b.appointmentDate || b.date || '';
+          return dateB.localeCompare(dateA);
+        });
+        
         const now = new Date();
         const todayStr = now.toISOString().split('T')[0];
         const patientMap = new Map<string, PatientDisplay>();
 
-        doctorApts.forEach(apt => {
+        sortedApts.forEach(apt => {
           const doc = apt.patient.document;
           if (!patientMap.has(doc)) {
             patientMap.set(doc, {
@@ -144,33 +150,38 @@ export class DoctorPatientsComponent implements OnInit {
           }
           
           const p = patientMap.get(doc)!;
+          p.totalVisits += 1;
           
-          // Increment visits only if it's with this doctor
-          if (apt.doctor?.id === this.doctorId) {
-            p.totalVisits += 1;
-            
-            if (apt.status === 'confirmada' || apt.status === 'agendada') {
-                p.hasConfirmedAppointment = true;
-            }
+          // Guardar diagnóstico y observación SOLO si la cita TIENE datos
+          // y aún no se ha guardado ninguno (la primera que encuentra es la más reciente con datos)
+          const hasDiagnosis = apt.diagnosis && apt.diagnosis.trim() !== '' && apt.diagnosis !== 'Sin diagnóstico previo';
+          const hasObservation = apt.observations && apt.observations.trim() !== '' && apt.observations !== 'Sin observaciones previas';
+          
+          if ((hasDiagnosis || hasObservation) && p.diagnosis === 'Sin diagnóstico previo') {
+            if (hasDiagnosis) p.diagnosis = apt.diagnosis!;
+            if (hasObservation) p.observation = apt.observations!;
+          }
+          
+          if (apt.status === 'confirmada' || apt.status === 'agendada') {
+              p.hasConfirmedAppointment = true;
+          }
 
-            const aptDateValue = apt.appointmentDate || apt.date;
-            
-            // Proxima cita: earliest future appointment with THIS doctor
-            if (apt.status === 'agendada' || apt.status === 'confirmada') {
-              if (aptDateValue && aptDateValue >= todayStr) {
-                if (!p.nextVisit || aptDateValue < p.nextVisit) {
-                  p.nextVisit = aptDateValue;
-                }
+          const aptDateValue = apt.appointmentDate || apt.date;
+          
+          // Próxima cita
+          if (apt.status === 'agendada' || apt.status === 'confirmada') {
+            if (aptDateValue && aptDateValue >= todayStr) {
+              if (!p.nextVisit || aptDateValue < p.nextVisit) {
+                p.nextVisit = aptDateValue;
               }
             }
-            
-            // Last visit: latest past/completada appointment with THIS doctor
-            if (apt.status === 'completada' || (apt.status === 'confirmada' && aptDateValue && aptDateValue < todayStr)) {
-              if (!p.lastVisit || aptDateValue! > p.lastVisit) {
-                p.lastVisit = aptDateValue;
-                if (apt.diagnosis) p.diagnosis = apt.diagnosis;
-                if (apt.observations) p.observation = apt.observations;
-              }
+          }
+          
+          // Última cita con diagnóstico/observación
+          if ((hasDiagnosis || hasObservation)) {
+            const aptDateStr = aptDateValue || '';
+            if (!p.lastVisit || aptDateStr > p.lastVisit) {
+              p.lastVisit = aptDateStr;
             }
           }
         });

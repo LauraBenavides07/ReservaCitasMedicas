@@ -616,3 +616,50 @@ dialog::backdrop {
     margin-top: 0.25rem;
     display: block;
 }
+
+/* Icono spinner en slots */
+.no-slots-msg .ti-spinner {
+    animation: spin 1s linear infinite;
+    font-size: 0.8rem;
+    margin-right: 0.25rem;
+    display: inline-block;
+}
+
+/* Ajuste para avatar icon */
+.avatar-icon {
+    font-size: 1.5rem;
+    color: white;
+}
+
+/* Iconos de estado más grandes */
+.empty-state .ti-loader,
+.empty-state .ti-calendar-search,
+.empty-state .ti-inbox {
+    font-size: 2rem;
+    display: inline-block;
+}
+
+/* Ajuste específico para el spinner de carga */
+.empty-state .ti-loader {
+    font-size: 1.5rem;
+    color: var(--primary-color, #1e3a6a);
+    animation: spin 1s linear infinite;
+}
+
+/* Ajuste para estado inicial y sin resultados */
+.empty-state .ti-calendar-search,
+.empty-state .ti-inbox {
+    font-size: 2rem;
+    color: #94a3b8;
+}
+
+/* Asegurar que el empty-icon tenga el mismo tamaño */
+.empty-icon .ti-calendar-search {
+    font-size: 2rem;
+    color: #94a3b8;
+}
+
+/* Icono de médico en el modal más grande */
+.form-label-mini .ti-stethoscope {
+    font-size: 0.9rem;
+}

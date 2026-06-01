@@ -130,6 +130,7 @@
 .search-input-wrapper {
     position: relative;
     flex: 1;
+    min-width: 450px;
 }
 
 .search-icon {
@@ -137,6 +138,9 @@
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+    z-index: 1;
 }
 
 .search-input {
@@ -151,6 +155,36 @@
     box-sizing: border-box;
 }
 
+.ti {
+    font-size: 1rem;
+    line-height: 1;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+}
+
+app-button .ti {
+    margin-right: 0.35rem;
+}
+
+.contact-item .ti {
+    margin-right: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.info-value .ti {
+    margin-right: 0.25rem;
+}
+
+.avatar-icon {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.modal-close-btn .ti {
+    font-size: 1.1rem;
+    margin: 0;
+}
 
 /* ============================================
    ESTADOS (Loading / Empty)
@@ -311,13 +345,15 @@
     gap: 0.4rem;
     color: #334155;
     margin-top: 0.2rem;
+    margin-left: 0.6rem;
     font-size: 0.95rem;
 }
 
 .observation-text {
     color: #475569;
     margin-top: 0.2rem;
-    font-size: 0.9rem;
+    margin-left: 0.6rem;
+    font-size: 0.95rem;
     line-height: 1.4;
 }
 
@@ -342,7 +378,7 @@
 }
 
 .next-visit {
-    color: #00c853;
+    color: #17b358;
     font-weight: 600;
     font-size: 0.95rem;
     margin-top: 0.2rem;

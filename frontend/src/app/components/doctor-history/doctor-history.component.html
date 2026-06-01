@@ -1,13 +1,5 @@
 <div class="doctor-view-container">
     <!-- Top Header -->
-    <header class="top-header">
-        <div class="header-title">
-            <p>Consulte el historial completo de sus citas realizadas</p>
-        </div>
-        <app-button variant="secondary" (clicked)="exportCSV()">
-            📥 Exportar a CSV
-        </app-button>
-    </header>
 
     <div class="content-body">
 
@@ -78,14 +70,16 @@
         <!-- Search Bar -->
         <div class="search-container">
             <div class="search-input-wrapper">
-                <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" fill="#94a3b8">
-                    <path
-                        d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-                </svg>
+                <i class="ti ti-search search-icon" aria-hidden="true"></i>
                 <input type="text" class="search-input" placeholder="Buscar paciente o motivo..." [(ngModel)]="searchTerm"
                     (keyup.enter)="onSearchChange()">
             </div>
-            <app-button variant="primary" (clicked)="onSearchChange()">Buscar</app-button>
+            <app-button variant="primary" (clicked)="onSearchChange()"><i class="ti ti-search" aria-hidden="true"></i> Buscar</app-button>
+            <div class="export-wrapper">
+                <app-button variant="secondary" (clicked)="exportCSV()">
+                    <i class="ti ti-download" aria-hidden="true"></i> Exportar a CSV
+                </app-button>
+            </div>
         </div>
 
         <!-- Loading state -->
@@ -115,13 +109,10 @@
                     <div class="date-badge" [ngClass]="getStatusClass(apt.status)">
                         <div class="date-month">{{ apt.monthStr }}</div>
                         <div class="date-day">{{ apt.dayStr }}</div>
-                        <div class="date-month">{{ apt.monthStr }}</div>
+                        <div class="date-year">{{ apt.yearStr }}</div>
                     </div>
                     <div class="time-info">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                            <path
-                                d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-                        </svg>
+                        <i class="ti ti-clock" aria-hidden="true"></i>
                         {{ formatTime(apt.time) }}
                     </div>
                 </div>
@@ -132,19 +123,15 @@
                     <!-- Patient Info -->
                     <div class="patient-info">
                         <div class="patient-info-header">
-                            <svg viewBox="0 0 24 24" width="24" height="24" fill="#94a3b8">
-                                <path
-                                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                            </svg>
                             <div>
                                 <h3>{{ apt.patientName }}</h3>
-                                <p class="cc">CC: {{ apt.document }}</p>
+                                <p class="cc">
+                                    <i class="ti ti-id" aria-hidden="true"></i>
+                                    CC: {{ apt.document }}
+                                </p>
                                 <p class="phone">
-                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-                                        <path
-                                            d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z" />
-                                    </svg>
-                                    555-0147
+                                    <i class="ti ti-phone" aria-hidden="true"></i>
+                                    {{ apt.phone }}
                                 </p>
                             </div>
                         </div>
@@ -153,23 +140,22 @@
                     <!-- Additional Details -->
                     <div class="details-info">
                         <div class="detail-block">
-                            <span class="detail-label">MOTIVO</span>
+                            <span class="detail-label">
+                                <i class="ti ti-notes" aria-hidden="true"></i>
+                                MOTIVO
+                            </span>
                             <div class="detail-value">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="#94a3b8">
-                                    <path
-                                        d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
-                                </svg>
-                                Consulta general
+                                Consulta general.
                             </div>
                         </div>
                         <div>
-                            <span class="detail-label">OBSERVACIONES</span>
+                            <span class="detail-label">
+                                <i class="ti ti-message" aria-hidden="true"></i>
+                                OBSERVACIONES
+                            </span>
                             <p class="detail-text">{{ apt.observation }}</p>
                             <div class="detail-meta">
-                                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-                                    <path
-                                        d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-                                </svg>
+                                <i class="ti ti-clock" aria-hidden="true"></i>
                                 Duración: 30 minutos
                             </div>
                         </div>

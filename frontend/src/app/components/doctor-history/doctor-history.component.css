@@ -192,6 +192,7 @@
    SEARCH BAR — ancho completo en móvil
    ============================================ */
 .search-container {
+    display: flex;
     margin-bottom: 1.5rem;
     width: 100%;
     display: flex;
@@ -201,6 +202,7 @@
 .search-input-wrapper {
     position: relative;
     flex: 1;
+    min-width: 300px;
 }
 
 .search-icon {
@@ -311,6 +313,13 @@
     line-height: 1.1;
 }
 
+.date-year {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 0.2rem;
+}
+
 .date-badge.status-completed { background-color: #10b981; color: white; }
 .date-badge.status-cancelled { background-color: #ff0015; color: white; }
 .date-badge.status-noshow { background-color: #5d6d7e; color: white; }
@@ -392,12 +401,14 @@
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    color: #334155;
+    font-size: 0.95rem;
+    color: #475569;
     margin-top: 0.2rem;
+    margin-left: 0.6rem;
 }
 
 .detail-text {
-    margin: 0.2rem 0 0.5rem 0;
+    margin: 0.2rem 0 0.5rem 0.6rem;
     color: #475569;
     font-size: 0.95rem;
     line-height: 1.4;
@@ -559,4 +570,48 @@
 .swal2-html-container.custom-html {
     color: #475569 !important;
     font-size: 0.95rem !important;
+}
+
+/* Iconos en general */
+.ti {
+    font-size: 1rem;
+    line-height: 1;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Icono de búsqueda en el input */
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Iconos en botones */
+app-button .ti {
+    margin-right: 0.35rem;
+}
+
+.export-wrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Iconos en la tarjeta */
+.patient-info-header .ti,
+.detail-value .ti,
+.time-info .ti,
+.detail-meta .ti {
+    margin-right: 0.25rem;
+    flex-shrink: 0;
+}
+
+/* Ajuste para el input con icono */
+.search-input {
+    padding-left: 2.8rem;
 }

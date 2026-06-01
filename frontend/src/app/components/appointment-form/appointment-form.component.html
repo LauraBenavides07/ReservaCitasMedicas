@@ -41,7 +41,9 @@
                         <div class="input-with-button">
                             <input type="text" id="doc-input" formControlName="patientDocument" placeholder="Ej: 12345678"
                                 [class.input-error]="f['patientDocument'].touched && f['patientDocument'].errors">
-                            <app-button variant="secondary" size="sm" (clicked)="searchPatient()">🔍 Buscar</app-button>
+                            <app-button variant="secondary" size="sm" (clicked)="searchPatient()">
+                                <i class="ti ti-search" aria-hidden="true"></i> Buscar
+                            </app-button>
                         </div>
                     </app-form-field>
 

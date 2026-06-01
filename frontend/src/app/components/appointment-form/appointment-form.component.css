@@ -141,6 +141,24 @@ app-alert {
     gap: 0.25rem;
 }
 
+/* Iconos en botones */
+app-button .ti,
+button .ti {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    line-height: 1;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Icono específico del botón de búsqueda */
+.input-with-button app-button .ti {
+    font-size: 0.9rem;
+    margin-right: 0.25rem;
+}
+
+
 /* ============================================
    RESPONSIVE BREAKPOINTS
    ============================================ */

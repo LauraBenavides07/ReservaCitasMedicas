@@ -6,26 +6,38 @@
         <!-- Paso 1: Médico -->
         <button type="button" class="step" [class.active]="step() === 1" [class.completed]="step() > 1" (click)="goToStep(1)">
             <div class="step-circle" *ngIf="step() <= 1">1</div>
-            <div class="step-circle checked" *ngIf="step() > 1">✓</div>
+            <div class="step-circle checked" *ngIf="step() > 1">
+                <i class="ti ti-check" aria-hidden="true"></i>
+            </div>
             <span class="step-label">Médico</span>
         </button>
-        <div class="step-divider">›</div>
+        <div class="step-divider">
+            <i class="ti ti-chevron-right" aria-hidden="true"></i>
+        </div>
 
         <!-- Paso 2: Fecha -->
         <button type="button" class="step" [class.active]="step() === 2" [class.completed]="step() > 2" (click)="goToStep(2)">
             <div class="step-circle" *ngIf="step() <= 2">2</div>
-            <div class="step-circle checked" *ngIf="step() > 2">✓</div>
+            <div class="step-circle checked" *ngIf="step() > 2">
+                <i class="ti ti-check" aria-hidden="true"></i>
+            </div>
             <span class="step-label">Fecha</span>
         </button>
-        <div class="step-divider">›</div>
+        <div class="step-divider">
+            <i class="ti ti-chevron-right" aria-hidden="true"></i>
+        </div>
 
         <!-- Paso 3: Hora -->
         <button type="button" class="step" [class.active]="step() === 3" [class.completed]="step() > 3" (click)="goToStep(3)">
             <div class="step-circle" *ngIf="step() <= 3">3</div>
-            <div class="step-circle checked" *ngIf="step() > 3">✓</div>
+            <div class="step-circle checked" *ngIf="step() > 3">
+                <i class="ti ti-check" aria-hidden="true"></i>
+            </div>
             <span class="step-label">Hora</span>
         </button>
-        <div class="step-divider">›</div>
+        <div class="step-divider">
+            <i class="ti ti-chevron-right" aria-hidden="true"></i>
+        </div>
 
         <!-- Paso 4: Confirmar -->
         <div class="step" [class.active]="step() === 4" [class.completed]="step() > 4">
@@ -43,7 +55,7 @@
                 <h3 class="step-title">Elige tu especialista</h3>
             </div>
             <div class="card-body">
-                <div class="doctors-grid">                        <!-- ← AGREGAR este div -->
+                <div class="doctors-grid">
                     <app-doctor-card
                         *ngFor="let doctor of doctors()"
                         [doctorId]="doctor.id"
@@ -56,7 +68,7 @@
                         [activeDays]="formatDays(doctor.activeDays)"
                         (selectDoctor)="selectDoctor(doctor)">
                     </app-doctor-card>
-                </div>                                            <!-- ← CERRAR aquí -->
+                </div>
             </div>
         </ng-container>
 
@@ -64,7 +76,9 @@
         <ng-container *ngIf="step() === 2">
             <div class="card-header space-between">
                 <h3 class="step-title">Selecciona una fecha</h3>
-                <app-button variant="secondary" size="sm" (clicked)="goToStep(1)">← Cambiar</app-button>
+                <app-button variant="secondary" size="sm" (clicked)="goToStep(1)">
+                    <i class="ti ti-arrow-left" aria-hidden="true"></i> Cambiar
+                </app-button>
             </div>
             <div class="card-body">
 
@@ -109,7 +123,9 @@
         <ng-container *ngIf="step() === 3">
             <div class="card-header space-between">
                 <h3 class="step-title">Elige franja horaria</h3>
-                <app-button variant="secondary" size="sm" (clicked)="goToStep(2)">← Cambiar</app-button>
+                <app-button variant="secondary" size="sm" (clicked)="goToStep(2)">
+                    <i class="ti ti-arrow-left" aria-hidden="true"></i> Cambiar
+                </app-button>
             </div>
             <div class="card-body">
                 <div class="selected-context-banner">
@@ -124,6 +140,7 @@
                 </div>
 
                 <div class="empty-state" *ngIf="availableSlots().length === 0">
+                    <i class="ti ti-clock-off" aria-hidden="true"></i>
                     <p>No hay franjas disponibles para esta fecha.</p>
                 </div>
             </div>
@@ -133,26 +150,36 @@
         <ng-container *ngIf="step() === 4">
             <div class="card-header space-between">
                 <h3 class="step-title">Confirmar cita</h3>
-                <app-button variant="secondary" size="sm" (clicked)="goToStep(3)" *ngIf="!isSubmitting()">← Cambiar</app-button>
+                <app-button variant="secondary" size="sm" (clicked)="goToStep(3)" *ngIf="!isSubmitting()">
+                    <i class="ti ti-arrow-left" aria-hidden="true"></i> Cambiar
+                </app-button>
             </div>
             <div class="card-body">
                 <div class="summary-banner">
                     <div class="summary-row space-between p-bot">
                         <div class="summary-doctor">
-                            <span class="icon">🧑‍⚕️</span> Dr(a). {{ selectedDoctor()?.name }}
+                            <i class="ti ti-stethoscope" aria-hidden="true"></i>
+                            Dr(a). {{ selectedDoctor()?.name }}
                         </div>
                         <div class="summary-time">
                             <strong>{{ selectedTime() }}</strong>
                         </div>
                     </div>
                     <div class="summary-row date-row">
-                        <span class="icon">📅</span> {{ getFullDateHuman() }} a las {{ selectedTime() }}
+                        <i class="ti ti-calendar" aria-hidden="true"></i>
+                        {{ getFullDateHuman() }} a las {{ selectedTime() }}
                     </div>
                 </div>
 
                 <div class="patient-box">
-                    <h4>{{ auth.user()?.firstName }} {{ auth.user()?.lastName }}</h4>
-                    <p>Doc: {{ auth.user()?.document }} · {{ auth.user()?.phone }}</p>
+                    <h4>
+                        <i class="ti ti-user" aria-hidden="true"></i>
+                        {{ auth.user()?.firstName }} {{ auth.user()?.lastName }}
+                    </h4>
+                    <p>
+                        <i class="ti ti-id" aria-hidden="true"></i>
+                        Doc: {{ auth.user()?.document || 'No registrado' }}
+                    </p>
                 </div>
 
                 <app-alert
@@ -168,7 +195,8 @@
 
                 <div class="form-actions">
                     <app-button variant="primary" [fullWidth]="true" (clicked)="confirmAppointment()" [disabled]="isSubmitting() || successMessage() !== ''">
-                        {{ isSubmitting() ? 'Procesando...' : '✓ Confirmar cita' }}
+                        <i class="ti ti-calendar-check" aria-hidden="true"></i>
+                        {{ isSubmitting() ? 'Procesando...' : 'Confirmar cita' }}
                     </app-button>
                 </div>
             </div>
