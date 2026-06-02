@@ -12,14 +12,15 @@ describe('CardComponent', () => {
 
     fixture = TestBed.createComponent(CardComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
   it('should apply padding-md class by default', () => {
+    fixture.detectChanges();
     const div = fixture.nativeElement.querySelector('.card');
     expect(div.classList).toContain('card--padding-md');
   });

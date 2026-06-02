@@ -57,5 +57,4 @@ export class AppointmentHistory {
 
   @CreateDateColumn({ name: 'changed_at', type: 'timestamptz' })
   changedAt: Date;
-  
 }

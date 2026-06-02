@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../../domain/entities/user.entity';
+import { Doctor } from '../../domain/entities/doctor.entity';
 import { LoginDto } from '../../presentation/dto/login.dto';
 import { RegisterDto } from '../../presentation/dto/register.dto';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
@@ -24,6 +25,9 @@ describe('AuthService', () => {
     create: jest.fn(),
     save: jest.fn(),
   };
+  const mockDoctorRepository = {
+    findOne: jest.fn(),
+  };
   const mockJwtService = {
     sign: jest.fn(),
     decode: jest.fn(),
@@ -43,6 +47,7 @@ describe('AuthService', () => {
         AuthService,
         { provide: getRepositoryToken(User), useValue: mockUserRepository },
         { provide: IPatientRepository, useValue: mockPatientRepository },
+        { provide: getRepositoryToken(Doctor), useValue: mockDoctorRepository },
         { provide: JwtService, useValue: mockJwtService },
         { provide: IPasswordHasher, useValue: mockPasswordHasher },
         { provide: KeycloakService, useValue: mockKeycloakService },
@@ -50,7 +55,7 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   describe('login', () => {
@@ -210,12 +215,12 @@ describe('AuthService', () => {
       };
 
       const result = await service.register(dto);
-      expect(result.access_token).toBe('user-token');
+      expect(result.message).toBe('Paciente registrado exitosamente.');
       expect(mockPasswordHasher.hash).toHaveBeenCalledWith('securePass1');
     });
 
     it('debería lanzar ConflictException si el documento ya existe', async () => {
-      mockPatientRepository.findOneBy.mockResolvedValue({
+      mockPatientRepository.findOne.mockResolvedValue({
         id: 'p1',
         document: 'existing',
       });

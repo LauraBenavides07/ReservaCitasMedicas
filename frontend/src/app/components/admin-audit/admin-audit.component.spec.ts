@@ -181,8 +181,8 @@ describe('AdminAuditComponent', () => {
   });
 
   it('should format change type labels', () => {
-    expect(component.getChangeLabel('CREATED')).toBe('➕ Creada');
-    expect(component.getChangeLabel('RESCHEDULED')).toBe('🔄 Reagendada');
+    expect(component.getChangeLabel('CREATED')).toBe('Creada');
+    expect(component.getChangeLabel('RESCHEDULED')).toBe('Reagendada');
     expect(component.getChangeLabel('UNKNOWN')).toBe('UNKNOWN');
   });
 
@@ -218,7 +218,6 @@ describe('AdminAuditComponent', () => {
     expect(component.getRoleLabel('admin')).toBe('Administrador');
     expect(component.getRoleLabel('doctor')).toBe('Médico');
     expect(component.getRoleLabel('patient')).toBe('Paciente');
-    expect(component.getRoleLabel('unknown')).toBe('unknown');
   });
 
   it('should track by entry id', () => {

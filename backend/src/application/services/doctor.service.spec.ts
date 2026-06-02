@@ -1,8 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { DoctorService } from './doctor.service';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { IDoctorRepository } from '../ports/doctor.repository';
 import { IAppointmentRepository } from '../ports/appointment.repository';
+import { User } from '../../domain/entities/user.entity';
+import { KeycloakService } from '../../infrastructure/auth/keycloak.service';
 
 describe('DoctorService', () => {
   let service: DoctorService;
@@ -10,6 +13,8 @@ describe('DoctorService', () => {
   const mockDoctorRepository = {
     find: jest.fn(),
     findOneBy: jest.fn(),
+    existsByDocument: jest.fn(),
+    existsInPatients: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
     update: jest.fn(),
@@ -18,6 +23,17 @@ describe('DoctorService', () => {
 
   const mockAppointmentRepository = {
     count: jest.fn(),
+  };
+
+  const mockUserRepository = {
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+    update: jest.fn(),
+  };
+
+  const mockKeycloakService = {
+    createUser: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -29,6 +45,8 @@ describe('DoctorService', () => {
           provide: IAppointmentRepository,
           useValue: mockAppointmentRepository,
         },
+        { provide: getRepositoryToken(User), useValue: mockUserRepository },
+        { provide: KeycloakService, useValue: mockKeycloakService },
       ],
     }).compile();
 
@@ -72,13 +90,35 @@ describe('DoctorService', () => {
 
   describe('create', () => {
     it('debería crear un nuevo médico', async () => {
-      const data = { name: 'Dr. New', specialty: 'General' };
-      mockDoctorRepository.create.mockReturnValue(data);
-      mockDoctorRepository.save.mockResolvedValue({ id: '2', ...data });
+      const data = {
+        document: '12345678',
+        name: 'Dr. New',
+        specialty: 'General',
+        email: 'dr.new@test.com',
+      };
+
+      mockDoctorRepository.existsByDocument.mockResolvedValue(false);
+      mockDoctorRepository.existsInPatients.mockResolvedValue(false);
+      mockUserRepository.findOne.mockResolvedValue(null);
+      mockUserRepository.create.mockImplementation((user) => ({
+        ...user,
+      }));
+      mockUserRepository.save.mockImplementation(async (user) => {
+        user.id = 'u-1';
+        return user;
+      });
+      mockDoctorRepository.create.mockImplementation((doctor) => doctor);
+      mockDoctorRepository.save.mockResolvedValue({ id: '2', ...data, userId: 'u-1' });
 
       const result = await service.create(data);
+
       expect(result.id).toBe('2');
-      expect(mockDoctorRepository.create).toHaveBeenCalledWith(data);
+      expect(mockUserRepository.save).toHaveBeenCalled();
+      expect(mockDoctorRepository.create).toHaveBeenCalledWith({
+        ...data,
+        email: data.email.toLowerCase().trim(),
+        userId: 'u-1',
+      });
     });
   });
 

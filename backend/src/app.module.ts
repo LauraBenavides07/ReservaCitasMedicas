@@ -104,8 +104,7 @@ import { TypeOrmAppointmentHistoryRepository } from './infrastructure/persistenc
     { provide: IHttpClient, useClass: AxiosHttpClient },
     { provide: ICsvExporter, useClass: Json2CsvExporter },
     { provide: IAppointmentRepository, useClass: TypeOrmAppointmentRepository },
-    { provide: IDoctorRepository, useClass: TypeOrmDoctorRepository,
-    },
+    { provide: IDoctorRepository, useClass: TypeOrmDoctorRepository },
     {
       provide: IDoctorExceptionRepository,
       useClass: TypeOrmDoctorExceptionRepository,

@@ -55,7 +55,6 @@ export class AppointmentService {
       newStatus: params.newStatus || null,
       changedBy: params.changedBy,
       changedByRole: params.changedByRole,
-      
     });
     await this.historyRepository.save(history);
   }
