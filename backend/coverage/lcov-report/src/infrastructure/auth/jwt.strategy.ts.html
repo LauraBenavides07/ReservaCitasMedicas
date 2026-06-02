@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">68.42% </span>
+                <span class="strong">69.23% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>26/38</span>
+                <span class='fraction'>27/39</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">67.56% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>24/36</span>
+                <span class='fraction'>25/37</span>
             </div>
         
             
@@ -156,7 +156,18 @@
 <a name='L91'></a><a href='#L91'>91</a>
 <a name='L92'></a><a href='#L92'>92</a>
 <a name='L93'></a><a href='#L93'>93</a>
-<a name='L94'></a><a href='#L94'>94</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -165,20 +176,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -188,6 +200,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -195,8 +211,11 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -216,6 +235,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
@@ -254,9 +276,10 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { passportJwtSecret } from 'jwks-rsa';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Patient } from '../../domain/entities/patient.entity';
+import { Repository, FindOptionsWhere } from 'typeorm';
+import type { Request } from 'express';
 import { User } from '../../domain/entities/user.entity';
+import { Patient } from '../../domain/entities/patient.entity';
 import { DecodedToken } from '../../domain/types/keycloak.types';
 import { KeycloakConfig } from './keycloak-config';
 import { IPatientRepository } from '../../application/ports/patient.repository';
@@ -280,21 +303,28 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 <span class="cstat-no" title="statement not covered" >    super({</span>
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKeyProvider: <span class="fstat-no" title="function not covered" >(r</span>equest, rawJwtToken, done) =&gt; {
+      secretOrKeyProvider: <span class="fstat-no" title="function not covered" >(</span>
+        request: Request,
+        rawJwtToken: string | undefined,
+        done: (err: any, secret?: any) =&gt; void,
+      ) =&gt; {
 <span class="cstat-no" title="statement not covered" >        if (rawJwtToken) {</span>
           const parts = <span class="cstat-no" title="statement not covered" >rawJwtToken.split('.');</span>
 <span class="cstat-no" title="statement not covered" >          if (parts.length === 3) {</span>
 <span class="cstat-no" title="statement not covered" >            try {</span>
               const header = <span class="cstat-no" title="statement not covered" >JSON.parse(</span>
                 Buffer.from(parts[0], 'base64').toString(),
-              );
+              ) as Record&lt;string, unknown&gt;;
+&nbsp;
 <span class="cstat-no" title="statement not covered" >              if (header.alg === 'HS256') {</span>
 <span class="cstat-no" title="statement not covered" >                return done(</span>
                   null,
                   process.env.JWT_SECRET || 'PIEDRAZUL_SECRET_KEY',
                 );
               }
-            } catch (e) {}
+            } catch {
+              // fall through to Keycloak JWKS secret provider
+            }
           }
         }
 <span class="cstat-no" title="statement not covered" >        return keycloakSecretProvider(request, rawJwtToken, done);</span>
@@ -309,12 +339,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 &nbsp;
     let localId = payload.sub;
-    let localRole: string | undefined = (payload as any).role;
+    const customRole = (payload as unknown as Record&lt;string, unknown&gt;).role as
+      | string
+      | undefined;
+    let localRole = customRole;
 &nbsp;
     const patient = await this.patientRepository.findOneBy([
       { keycloakId: payload.sub },
       { id: payload.sub },
-    ]);
+    ] as FindOptionsWhere&lt;Patient&gt;[]);
     if (patient) {
       localId = patient.id;
       localRole = 'patient';
@@ -322,7 +355,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       const staff = await this.userRepository.findOneBy([
         { keycloakId: payload.sub },
         { id: payload.sub },
-      ]);
+      ] as FindOptionsWhere&lt;User&gt;[]);
       if (staff) {
         localId = staff.id;
         localRole = staff.role;
@@ -349,7 +382,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-23T19:25:14.043Z
+                at 2026-06-02T17:43:40.924Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -110,7 +110,7 @@ describe('LoginComponent', () => {
     component.loginForm.setValue({ login: 'patient', password: '12345678' });
     component.onSubmit();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/appointments/list']);
+    expect(router.navigate).toHaveBeenCalledWith(['/patient/dashboard']);
   });
 
   it('should navigate to /doctor/dashboard for doctor role', () => {

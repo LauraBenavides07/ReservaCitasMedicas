@@ -25,8 +25,8 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-    @Column({ name: 'must_change_password', type: 'boolean', default: false })
-    mustChangePassword: boolean;
+  @Column({ name: 'must_change_password', type: 'boolean', default: false })
+  mustChangePassword: boolean;
 
   @Column({ name: 'keycloak_id', type: 'uuid', nullable: true, unique: true })
   keycloakId: string;

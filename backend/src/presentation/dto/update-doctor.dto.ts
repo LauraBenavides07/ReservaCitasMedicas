@@ -11,14 +11,13 @@ import {
 } from 'class-validator';
 
 export class UpdateDoctorDto {
-  
   @IsOptional()
   @IsEmail()
   email?: string;
-    
+
   @IsOptional()
   password?: string;
-    
+
   @IsOptional()
   mustChangePassword?: boolean;
 
@@ -26,7 +25,7 @@ export class UpdateDoctorDto {
   @IsString()
   @Length(6, 20)
   document?: string;
-    
+
   @IsString()
   @IsOptional()
   name?: string;

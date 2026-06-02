@@ -12,7 +12,6 @@ import {
 } from 'class-validator';
 
 export class CreateDoctorDto {
-
   @IsString()
   @IsNotEmpty()
   @Length(6, 20)

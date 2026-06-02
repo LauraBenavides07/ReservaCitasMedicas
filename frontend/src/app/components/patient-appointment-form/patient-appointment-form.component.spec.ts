@@ -89,15 +89,6 @@ describe('PatientAppointmentFormComponent', () => {
     expect(component.doctors()).toEqual(mockDoctors);
   });
 
-  it('should getDoctorColor returns consistent colors for same id', () => {
-    const color1 = component.getDoctorColor('doc1');
-    const color2 = component.getDoctorColor('doc1');
-    expect(color1).toBe(color2);
-
-    const color3 = component.getDoctorColor('doc2');
-    expect(color1).not.toBe(color3);
-  });
-
   it('should formatDays converts day numbers to Spanish abbreviations', () => {
     expect(component.formatDays([1,2,3,4,5])).toBe('Lun, Mar, Mié, Jue, Vie');
     expect(component.formatDays([1,3,5])).toBe('Lun, Mié, Vie');
@@ -113,7 +104,7 @@ describe('PatientAppointmentFormComponent', () => {
     expect(component.availableDates().length).toBeGreaterThan(0);
   });
 
-  it('should generateDates: generates dates for next 28 days matching doctors activeDays', () => {
+  it('should generateDates: mark Mondays as available and others as unavailable when activeDays is [1]', () => {
     const doctor: Doctor = {
       id: 'doc1',
       name: 'Dr. García',
@@ -128,12 +119,18 @@ describe('PatientAppointmentFormComponent', () => {
 
     const dates = component.availableDates();
     expect(dates.length).toBeGreaterThan(0);
+    expect(dates.some(date => date.available)).toBe(true);
+    expect(dates.some(date => !date.available)).toBe(true);
 
     for (const date of dates) {
       const d = new Date(date.fullDate + 'T12:00:00');
       let dayOfWeek = d.getDay();
       if (dayOfWeek === 0) dayOfWeek = 7;
-      expect(dayOfWeek).toBe(1);
+      if (dayOfWeek === 1) {
+        expect(date.available).toBe(true);
+      } else {
+        expect(date.available).toBe(false);
+      }
     }
   });
 

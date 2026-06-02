@@ -134,11 +134,11 @@ export class AdminAuditComponent implements OnInit {
 
   getChangeLabel(type: string): string {
     const labels: Record<string, string> = {
-      CREATED: ' Creada',
-      RESCHEDULED: ' Reagendada',
-      CANCELLED: ' Cancelada',
-      CONFIRMED: ' Confirmada',
-      COMPLETED: ' Completada',
+      CREATED: 'Creada',
+      RESCHEDULED: 'Reagendada',
+      CANCELLED: 'Cancelada',
+      CONFIRMED: 'Confirmada',
+      COMPLETED: 'Completada',
     };
     return labels[type] || type;
   }

@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
+import Swal from 'sweetalert2';
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../services/auth.service';
 
@@ -14,6 +15,15 @@ describe('RegisterComponent', () => {
   let fixture: any;
   let auth: { register: ReturnType<typeof vi.fn> };
   let router: { navigate: ReturnType<typeof vi.fn> };
+
+  function disableAsyncValidators(): void {
+    const documentControl = component.registerForm.get('document')!;
+    const emailControl = component.registerForm.get('email')!;
+    [documentControl, emailControl].forEach(ctrl => {
+      ctrl.clearAsyncValidators();
+      ctrl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+    });
+  }
 
   beforeAll(() => {
     Object.defineProperty(window, 'matchMedia', {
@@ -87,7 +97,7 @@ describe('RegisterComponent', () => {
     const first = component.registerForm.get('firstName')!;
     const last = component.registerForm.get('lastName')!;
 
-    first.setValue('Ana'); // 3 chars
+    first.setValue('An'); // 2 chars
     first.markAsTouched();
     expect(first.invalid).toBe(true);
     expect(first.errors).toHaveProperty('minlength');
@@ -96,7 +106,7 @@ describe('RegisterComponent', () => {
     expect(first.invalid).toBe(true);
     expect(first.errors).toHaveProperty('maxlength');
 
-    last.setValue('Ana');
+    last.setValue('An');
     last.markAsTouched();
     expect(last.invalid).toBe(true);
     expect(last.errors).toHaveProperty('minlength');
@@ -130,23 +140,19 @@ describe('RegisterComponent', () => {
   });
 
   it('should be valid when filled with correct data', () => {
-    // Clear async validators (document) to avoid pending state in unit test
-    const docCtrl = component.registerForm.get('document')!;
-    docCtrl.clearAsyncValidators();
-    docCtrl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+    disableAsyncValidators();
 
     component.registerForm.setValue({
       document: '12345678',
       firstName: 'Juana',
       lastName: 'Pérez',
-      phone: '987654321000',
+      phone: '9876543210',
       gender: 'M',
       email: 'juan@gmail.com',
-      password: 'password123',
+      password: 'Password123',
     });
     if (!component.registerForm.valid) {
       console.log('FORM STATUS', component.registerForm.status);
-      // debug print control errors
       console.log('FORM ERRORS DEBUG', {
         document: component.registerForm.get('document')!.errors,
         firstName: component.registerForm.get('firstName')!.errors,
@@ -161,6 +167,7 @@ describe('RegisterComponent', () => {
   });
 
   it('should call auth.register() with form data on submit', () => {
+    disableAsyncValidators();
     auth.register.mockReturnValue({
       subscribe: (handlers: any) => {
         handlers.next({});
@@ -171,10 +178,10 @@ describe('RegisterComponent', () => {
       document: '12345678',
       firstName: 'Juana',
       lastName: 'Pérez',
-      phone: '987654321',
+      phone: '9876543210',
       gender: 'M',
-      email: 'juan@example.com',
-      password: 'password123',
+      email: 'juan@gmail.com',
+      password: 'Password123',
     };
 
     component.registerForm.setValue(formData);
@@ -183,7 +190,8 @@ describe('RegisterComponent', () => {
     expect(auth.register).toHaveBeenCalledWith(formData);
   });
 
-  it('should remove email from payload when empty', () => {
+  it('should not call auth.register when email is empty', () => {
+    disableAsyncValidators();
     auth.register.mockReturnValue({
       subscribe: (handlers: any) => {
         handlers.next({});
@@ -194,18 +202,19 @@ describe('RegisterComponent', () => {
       document: '12345678',
       firstName: 'Juana',
       lastName: 'Pérez',
-      phone: '987654321',
+      phone: '9876543210',
       gender: 'M',
       email: '',
-      password: 'password123',
+      password: 'Password123',
     });
     component.onSubmit();
 
-    const payload = auth.register.mock.calls[0][0];
-    expect(payload).not.toHaveProperty('email');
+    expect(component.registerForm.invalid).toBe(true);
+    expect(auth.register).not.toHaveBeenCalled();
   });
 
   it('should set error message on connection error (status 0)', () => {
+    disableAsyncValidators();
     auth.register.mockReturnValue({
       subscribe: (handlers: any) => {
         handlers.error({ status: 0, statusText: 'Unknown Error' });
@@ -216,10 +225,10 @@ describe('RegisterComponent', () => {
       document: '12345678',
       firstName: 'Juana',
       lastName: 'Pérez',
-      phone: '987654321',
+      phone: '9876543210',
       gender: 'M',
-      email: 'juan@example.com',
-      password: 'password123',
+      email: 'juan@gmail.com',
+      password: 'Password123',
     });
     component.onSubmit();
 
@@ -227,6 +236,7 @@ describe('RegisterComponent', () => {
   });
 
   it('should set error message on API error', () => {
+    disableAsyncValidators();
     auth.register.mockReturnValue({
       subscribe: (handlers: any) => {
         handlers.error({ status: 400, statusText: 'Bad Request', error: { message: 'El documento ya existe' } });
@@ -237,18 +247,19 @@ describe('RegisterComponent', () => {
       document: '12345678',
       firstName: 'Juan',
       lastName: 'Pérez',
-      phone: '987654321',
+      phone: '9876543210',
       gender: 'M',
-      email: 'juan@example.com',
-      password: 'password123',
+      email: 'juan@gmail.com',
+      password: 'Password123',
     });
     component.onSubmit();
 
     expect(component.error()).toBe('El documento ya existe');
   });
 
-  it('should set successMessage and navigate to /login on success', () => {
-    vi.useFakeTimers();
+  it('should show success alert and emit login navigation on success', async () => {
+    disableAsyncValidators();
+    const navigateSpy = vi.spyOn(component.navigate, 'emit');
 
     auth.register.mockReturnValue({
       subscribe: (handlers: any) => {
@@ -260,20 +271,17 @@ describe('RegisterComponent', () => {
       document: '12345678',
       firstName: 'Juan',
       lastName: 'Pérez',
-      phone: '987654321',
+      phone: '9876543210',
       gender: 'M',
-      email: 'juan@example.com',
-      password: 'password123',
+      email: 'juan@gmail.com',
+      password: 'Password123',
     });
     component.onSubmit();
+    await Promise.resolve();
 
-    expect(component.successMessage()).toBe('Cuenta creada exitosamente. Redirigiendo...');
+    expect(Swal.fire).toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith('login');
     expect(router.navigate).not.toHaveBeenCalled();
-
-    vi.advanceTimersByTime(1500);
-    expect(router.navigate).toHaveBeenCalledWith(['/login']);
-
-    vi.useRealTimers();
   });
 
   it('should toggle showPassword signal', () => {
