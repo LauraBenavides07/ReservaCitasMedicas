@@ -55,6 +55,7 @@ export class AppointmentService {
       newStatus: params.newStatus || null,
       changedBy: params.changedBy,
       changedByRole: params.changedByRole,
+      
     });
     await this.historyRepository.save(history);
   }
@@ -503,10 +504,12 @@ export class AppointmentService {
         reason: entry.reason,
         changedAt: entry.changedAt,
         doctorName: entry.appointment.doctor?.name,
-        doctorSpecialty: entry.appointment.doctor?.specialty, 
+        doctorSpecialty: entry.appointment.doctor?.specialty,
+        doctorDocument: entry.appointment.doctor?.document,
         patientName: entry.appointment.patient
           ? `${entry.appointment.patient.firstName} ${entry.appointment.patient.lastName}`
           : null,
+        patientDocument: entry.appointment.patient?.document,
       })),
     };
   }
