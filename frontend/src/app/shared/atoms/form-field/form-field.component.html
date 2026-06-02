@@ -1,0 +1,21 @@
+<div class="form-field">
+
+  <!-- Etiqueta del campo -->
+  <label *ngIf="label" [for]="inputId">
+    {{ label }}<span *ngIf="required" class="required-mark" aria-hidden="true"> *</span>
+  </label>
+
+  <!-- El input real va aquí (viene del padre con ng-content) -->
+  <ng-content>
+    <span *ngIf="validating && !error" class="field-validating">
+    Verificando...
+    </span>
+  </ng-content>
+
+  <!-- Texto de ayuda (solo si no hay error) -->
+  <span *ngIf="hint && !error" class="field-hint">{{ hint }}</span>
+
+  <!-- Mensaje de error -->
+  <span *ngIf="error" class="field-error" role="alert" aria-live="polite">{{ error }}</span>
+
+</div>

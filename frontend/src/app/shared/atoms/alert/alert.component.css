@@ -1,0 +1,123 @@
+/* ============================================
+   ALERT ATOM - Diseño unificado
+   ============================================ */
+
+
+/* Base */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
+  animation: alert-fadein 0.25s ease;
+}
+
+@keyframes alert-fadein {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Icono */
+.alert__icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+}
+
+/* Texto del mensaje */
+.alert__message {
+  flex: 1;
+  line-height: 1.5;
+  text-align: left;
+  margin-top: 0.1rem;
+}
+
+/* Botón de cerrar */
+.alert__close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0 0.2rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  color: inherit;
+  font-family: inherit;
+}
+
+.alert__close:hover {
+  opacity: 1;
+}
+
+/* ============================================
+   TIPOS
+   ============================================ */
+
+/* Error */
+.alert--error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* Éxito */
+.alert--success {
+  background: #f0fdf4;
+  color: #28cc64;
+  border: 1px solid #bbf7d0;
+}
+
+/* Info */
+.alert--info {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+/* Warning */
+.alert--warning {
+  background: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fde68a;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .alert {
+    font-size: 0.9rem;
+    padding: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .alert {
+    font-size: 0.85rem;
+    padding: 0.75rem;
+  }
+}
+
+/* Ajuste para iconos */
+.alert__icon .ti {
+  font-size: 1.25rem;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+/* Ajuste para botón cerrar */
+.alert__close .ti {
+  font-size: 1rem;
+  margin: 0;
+  vertical-align: middle;
+}

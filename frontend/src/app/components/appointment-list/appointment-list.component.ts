@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
@@ -7,11 +7,13 @@ import Swal from 'sweetalert2';
 // Servicios y modelos
 import { AppointmentService, Appointment, AppointmentResponse } from '../../services/appointment.service';
 import { DoctorService, Doctor } from '../../services/doctor.service';
+import { ButtonComponent } from '../../shared/atoms/button/button.component';
+import { BadgeComponent } from '../../shared/atoms/badge/badge.component';
 
 @Component({
   selector: 'app-appointment-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [BadgeComponent, ButtonComponent, CommonModule, FormsModule],
   templateUrl: './appointment-list.component.html',
   styleUrls: ['./appointment-list.component.css']
 })
@@ -40,6 +42,21 @@ export class AppointmentListComponent implements OnInit {
 
   // Indica si ya se hizo una búsqueda
   hasSearched: boolean = false;
+
+  // Rescheduling state
+  @ViewChild('rescheduleModal') rescheduleModal!: ElementRef<HTMLDialogElement>;
+  selectedAppointment: Appointment | null = null;
+  newRescheduleDate: string = '';
+  newRescheduleTime: string = '';
+  availableSlots: string[] = [];
+  isLoadingSlots: boolean = false;
+  rescheduleDoctorId: string = '';
+  touchedRescheduleDate: boolean = false;
+  touchedRescheduleTime: boolean = false;
+
+  trackById(index: number, appt: Appointment): string {
+    return appt.id;
+  }
 
   constructor(
     private appointmentService: AppointmentService,
@@ -117,24 +134,35 @@ export class AppointmentListComponent implements OnInit {
     return `al-badge--${status.toLowerCase()}`;
   }
 
-  // Formatea fecha (ej: 5 de mar)
   formatDate(dateStr: string | undefined): string {
     if (!dateStr) return 'N/A';
-
     try {
-      // Evita problemas de zona horaria
       const d = new Date(dateStr + 'T12:00:00');
-      const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-      return `${d.getDate()} de ${months[d.getMonth()]}`;
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`;
     } catch {
       return dateStr;
+    }
+  }
+
+  formatTime(timeStr: string | undefined): string {
+    if (!timeStr) return '';
+    try {
+      const [h, m] = timeStr.split(':').map(Number);
+      const period = h >= 12 ? 'PM' : 'AM';
+      const hour12 = h % 12 || 12;
+      return `${hour12}:${String(m).padStart(2, '0')} ${period}`;
+    } catch {
+      return timeStr;
     }
   }
 
     // Cargar TODAS las citas
   loadAllAppointments(): void {
   this.loading = true;
-  this.viewMode = 'all';  // Cambia a modo 'all'
+  this.viewMode = 'all';
   this.hasSearched = true;
   
   this.appointmentService.getAllAppointments()
@@ -144,8 +172,23 @@ export class AppointmentListComponent implements OnInit {
     }))
     .subscribe({
       next: (data) => {
-        this.appointments = data;
-        this.total = data.length;
+        // ORDENAR: De más reciente a más antigua 
+        this.appointments = data.sort((a, b) => {
+          // Primero ordenar por fecha (descendente)
+          const dateA = a.appointmentDate || a.date;
+          const dateB = b.appointmentDate || b.date;
+          
+          if (dateA !== dateB) {
+            return dateB.localeCompare(dateA); // Más reciente primero
+          }
+          
+          // Si misma fecha, ordenar por hora (descendente)
+          const timeA = a.appointmentTime || a.time;
+          const timeB = b.appointmentTime || b.time;
+          return timeB.localeCompare(timeA);
+        });
+        
+        this.total = this.appointments.length;
       },
       error: (err) => console.error('Error loading all appointments:', err)
     });
@@ -245,4 +288,110 @@ onSearch(): void {
     });
   }
 
+  openRescheduleModal(appt: Appointment): void {
+    this.selectedAppointment = appt;
+    this.newRescheduleDate = appt.appointmentDate || this.selectedDate;
+    this.newRescheduleTime = '';
+    this.rescheduleDoctorId = appt.doctor?.id || '';
+    this.loadAvailableSlots();
+    this.rescheduleModal?.nativeElement?.showModal();
+  }
+
+  closeRescheduleModal(): void {
+    this.rescheduleModal?.nativeElement?.close();
+  }
+
+  onRescheduleModalClose(): void {
+    this.selectedAppointment = null;
+    this.newRescheduleDate = '';
+    this.newRescheduleTime = '';
+    this.availableSlots = [];
+    this.rescheduleDoctorId = '';
+    this.touchedRescheduleDate = false;
+    this.touchedRescheduleTime = false;
+  }
+
+  onDialogClick(event: MouseEvent, dialog: HTMLDialogElement): void {
+    if (event.target === dialog) {
+      dialog.close();
+    }
+  }
+
+  loadAvailableSlots(): void {
+    const doctorId = this.rescheduleDoctorId;
+    if (!doctorId || !this.newRescheduleDate) return;
+
+    this.isLoadingSlots = true;
+    this.appointmentService.getAvailableSlots(doctorId, this.newRescheduleDate).subscribe({
+      next: (slots) => {
+        this.availableSlots = slots;
+        this.isLoadingSlots = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error loading slots:', err);
+        this.availableSlots = [];
+        this.isLoadingSlots = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  selectSlot(slot: string): void {
+    this.newRescheduleTime = slot;
+    this.cdr.detectChanges();
+  }
+
+  confirmReschedule(): void {
+    if (!this.selectedAppointment || !this.newRescheduleDate || !this.newRescheduleTime) return;
+
+    const appointment = this.selectedAppointment;
+    const date = this.newRescheduleDate;
+    const time = this.newRescheduleTime;
+    const doctorId = this.rescheduleDoctorId;
+
+    this.closeRescheduleModal();
+
+    Swal.fire({
+      title: 'Confirmar Reagendamiento',
+      text: `¿Estás seguro de reagendar la cita para el ${date} a las ${time}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, reagendar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3e7ba6',
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        this.appointmentService.rescheduleAppointment(
+          appointment.id,
+          date,
+          time,
+          doctorId
+        ).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: '¡Éxito!',
+              text: 'La cita ha sido reagendada.',
+            });
+            if (this.viewMode === 'all') {
+              this.loadAllAppointments();
+            } else {
+              this.loadAppointments();
+            }
+          },
+          error: (err) => {
+            console.error('Error rescheduling:', err);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo reagendar la cita. Es posible que el horario ya no esté disponible.',
+            });
+          }
+        });
+      } else {
+        this.openRescheduleModal(appointment);
+      }
+    });
+  }
 }

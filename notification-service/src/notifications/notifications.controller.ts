@@ -68,10 +68,13 @@ export class NotificationsController {
       const email = this.getRecipientEmail(patientName, data.patientEmail);
 
       // Enviar correo
-      const subject = ' Cita Confirmada - Piedrazul';
-      const html = `<h1>Hola ${patientName}</h1>
-                    <p>Tu cita con <strong>${doctorName}</strong> ha sido agendada para el <strong>${appointmentDate}</strong> a las <strong>${appointmentTime}</strong>.</p>
-                    <p>Si necesitas cancelar o reagendar, hazlo con al menos 2 horas de anticipación.</p>`;
+      const subject = '🩺 Confirmación de Cita - Piedrazul';
+      const html = this.templateService.buildCreatedEmail({
+        patientName,
+        doctorName,
+        appointmentDate,
+        appointmentTime,
+      });
       await this.emailService.sendEmail(email, subject, html);
 
       // Enviar WhatsApp
@@ -118,10 +121,13 @@ export class NotificationsController {
       const appointmentTime = data.appointmentTime?.slice(0, 5) || 'hora no especificada';
       const email = this.getRecipientEmail(patientName, data.patientEmail);
 
-      const subject = ' Cita Cancelada - Piedrazul';
-      const html = `<h1>Hola ${patientName}</h1>
-                    <p>Tu cita con <strong>${doctorName}</strong> del <strong>${appointmentDate}</strong> a las <strong>${appointmentTime}</strong> ha sido cancelada.</p>
-                    <p>Puedes agendar una nueva cita en nuestra plataforma.</p>`;
+      const subject = '⚠️ Cita Cancelada - Piedrazul';
+      const html = this.templateService.buildCancelledEmail({
+        patientName,
+        doctorName,
+        appointmentDate,
+        appointmentTime,
+      });
       await this.emailService.sendEmail(email, subject, html);
 
       if (patientPhone) {
@@ -166,10 +172,13 @@ export class NotificationsController {
       const appointmentTime = data.appointmentTime?.slice(0, 5) || 'hora no especificada';
       const email = this.getRecipientEmail(patientName, data.patientEmail);
 
-      const subject = ' Recordatorio de Cita - Piedrazul';
-      const html = `<h1>Hola ${patientName}</h1>
-                    <p>Te recordamos tu cita con <strong>${doctorName}</strong> <strong>mañana ${appointmentDate}</strong> a las <strong>${appointmentTime}</strong>.</p>
-                    <p>Por favor, llega 10 minutos antes.</p>`;
+      const subject = '🔔 Recordatorio de Cita - Piedrazul';
+      const html = this.templateService.buildReminderEmail({
+        patientName,
+        doctorName,
+        appointmentDate,
+        appointmentTime,
+      });
       await this.emailService.sendEmail(email, subject, html);
 
       if (patientPhone) {
@@ -214,10 +223,13 @@ export class NotificationsController {
       const appointmentTime = data.appointmentTime?.slice(0, 5) || 'hora no especificada';
       const email = this.getRecipientEmail(patientName, data.patientEmail);
 
-      const subject = ' Cita Reprogramada - Piedrazul';
-      const html = `<h1>Hola ${patientName}</h1>
-                    <p>Tu cita con <strong>${doctorName}</strong> ha sido <strong>reprogramada</strong> para el <strong>${appointmentDate}</strong> a las <strong>${appointmentTime}</strong>.</p>
-                    <p>Si no puedes asistir, cancela con al menos 2 horas de anticipación.</p>`;
+      const subject = '🔄 Cita Reprogramada - Piedrazul';
+      const html = this.templateService.buildRescheduledEmail({
+        patientName,
+        doctorName,
+        appointmentDate,
+        appointmentTime,
+      });
       await this.emailService.sendEmail(email, subject, html);
 
       if (patientPhone) {

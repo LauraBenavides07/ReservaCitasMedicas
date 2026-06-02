@@ -4,12 +4,14 @@ import { Observable } from 'rxjs';
 
 export interface Doctor {
   id: string;
+  document: string; 
   name: string;
   specialty: string;
+  email: string;
   scheduleStart: string;
   scheduleEnd: string;
   slotDuration: number;
-  activeDays: string;
+  activeDays: number[];
   lunchStart?: string;
   lunchEnd?: string;
 }
@@ -47,7 +49,14 @@ export class DoctorService {
     return this.http.post(`${this.apiUrl}/${doctorId}/exceptions`, data);
   }
 
-  removeException(exceptionId: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/exceptions/${exceptionId}`);
+  removeException(doctorId: string, exceptionId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${doctorId}/exceptions/${exceptionId}`);
+  }
+
+  resetPassword(doctorId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `http://localhost:3000/doctors/${doctorId}/reset-password`,
+      {}
+    );
   }
 }

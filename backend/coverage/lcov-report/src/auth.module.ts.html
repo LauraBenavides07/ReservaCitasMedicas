@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>0/22</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>0/20</span>
             </div>
         
             
@@ -87,7 +87,28 @@
 <a name='L22'></a><a href='#L22'>22</a>
 <a name='L23'></a><a href='#L23'>23</a>
 <a name='L24'></a><a href='#L24'>24</a>
-<a name='L25'></a><a href='#L25'>25</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -96,6 +117,27 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -115,24 +157,45 @@
 <span class="cstat-no" title="statement not covered" >import { JwtModule } from '@nestjs/jwt';</span>
 <span class="cstat-no" title="statement not covered" >import { PassportModule } from '@nestjs/passport';</span>
 <span class="cstat-no" title="statement not covered" >import { TypeOrmModule } from '@nestjs/typeorm';</span>
+<span class="cstat-no" title="statement not covered" >import { ConfigModule, ConfigService } from '@nestjs/config';</span>
 <span class="cstat-no" title="statement not covered" >import { Patient } from './domain/entities/patient.entity';</span>
 <span class="cstat-no" title="statement not covered" >import { User } from './domain/entities/user.entity';</span>
 <span class="cstat-no" title="statement not covered" >import { AuthService } from './application/services/auth.service';</span>
 <span class="cstat-no" title="statement not covered" >import { AuthController } from './presentation/controllers/auth.controller';</span>
 <span class="cstat-no" title="statement not covered" >import { JwtStrategy } from './infrastructure/auth/jwt.strategy';</span>
+<span class="cstat-no" title="statement not covered" >import { IPasswordHasher } from './application/abstractions/ipassword-hasher.interface';</span>
+<span class="cstat-no" title="statement not covered" >import { BcryptPasswordHasher } from './infrastructure/auth/bcrypt-password-hasher';</span>
+<span class="cstat-no" title="statement not covered" >import { IHttpClient } from './application/abstractions/ihttp-client.interface';</span>
+<span class="cstat-no" title="statement not covered" >import { AxiosHttpClient } from './infrastructure/auth/axios-http-client';</span>
+<span class="cstat-no" title="statement not covered" >import { KeycloakConfig } from './infrastructure/auth/keycloak-config';</span>
+<span class="cstat-no" title="statement not covered" >import { KeycloakService } from './infrastructure/auth/keycloak.service';</span>
+<span class="cstat-no" title="statement not covered" >import { IPatientRepository } from './application/ports/patient.repository';</span>
+<span class="cstat-no" title="statement not covered" >import { TypeOrmPatientRepository } from './infrastructure/persistence/typeorm-patient.repository';</span>
 &nbsp;
 @Module({
   imports: [
     TypeOrmModule.forFeature([Patient, User]),
     PassportModule,
-    JwtModule.register({
-      secret: 'PIEDRAZUL_SECRET_KEY', // Debe ser env var en producción
-      signOptions: { expiresIn: '1d' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: <span class="fstat-no" title="function not covered" >(c</span>onfig: ConfigService) =&gt; (<span class="cstat-no" title="statement not covered" >{</span>
+        secret: config.get&lt;string&gt;('JWT_SECRET', 'PIEDRAZUL_SECRET_KEY'),
+        signOptions: { expiresIn: '1d' },
+      }),
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    KeycloakConfig,
+    KeycloakService,
+    { provide: IPasswordHasher, useClass: BcryptPasswordHasher },
+    { provide: IHttpClient, useClass: AxiosHttpClient },
+    { provide: IPatientRepository, useClass: TypeOrmPatientRepository },
+  ],
   controllers: [AuthController],
-  exports: [AuthService],
+  exports: [AuthService, IPatientRepository],
 })
 export <span class="cstat-no" title="statement not covered" >class <span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" >AuthModule </span>{}</span></span>
 &nbsp;</pre></td></tr></table></pre>
@@ -142,7 +205,7 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-28T01:14:13.518Z
+                at 2026-05-23T19:25:14.043Z
             </div>
         <script src="../prettify.js"></script>
         <script>

@@ -28,20 +28,16 @@
 ## Project setup
 
 ```bash
-$ npm install @nestjs/config @nestjs/typeorm typeorm pg
-
-$ npm install nodemailer @types/nodemailer
-
-$ npm install -D jest @types/jest ts-jest
-
+$ npm install 
 
 ```
 
 ## Compile and run the project
 
 ```bash
-# development
-$ npm run start
+# development (compilacion manual )
+$ npx tsc
+$ node dist/main.js
 
 # watch mode
 $ npm run start:dev

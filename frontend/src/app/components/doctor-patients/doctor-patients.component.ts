@@ -1,17 +1,20 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { AppointmentService, Appointment } from '../../services/appointment.service';
 import { DoctorService } from '../../services/doctor.service';
+import { ButtonComponent } from '../../shared/atoms/button/button.component';
 
 interface PatientDisplay {
+  id: string;
   document: string;
   firstName: string;
   lastName: string;
   phone: string;
   lastVisit?: string;
+  nextVisit?: string;
   totalVisits: number;
   avatarColor: string;
   diagnosis?: string;
@@ -24,7 +27,7 @@ interface PatientDisplay {
 @Component({
   selector: 'app-doctor-patients',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [ButtonComponent, CommonModule, RouterModule, FormsModule],
   templateUrl: './doctor-patients.component.html',
   styleUrls: ['./doctor-patients.component.css']
 })
@@ -46,7 +49,7 @@ export class DoctorPatientsComponent implements OnInit {
   estables: number = 0;
 
   // Modal State
-  isEditingModalOpen: boolean = false;
+  @ViewChild('editModal') editModal!: ElementRef<HTMLDialogElement>;
   editingPatient: PatientDisplay | null = null;
   tempDiagnosis: string = '';
   tempObservation: string = '';
@@ -116,21 +119,30 @@ export class DoctorPatientsComponent implements OnInit {
         // Filtrar citas del doctor actual
         const doctorApts = appointments.filter(a => a.doctor?.id === this.doctorId);
         
-        // Extraer pacientes únicos
-        const patientMap = new Map<string, PatientDisplay>();
+        // ORDENAR por fecha de cita (más reciente primero)
+        const sortedApts = [...doctorApts].sort((a, b) => {
+          const dateA = a.appointmentDate || a.date || '';
+          const dateB = b.appointmentDate || b.date || '';
+          return dateB.localeCompare(dateA);
+        });
         
-        doctorApts.forEach(apt => {
+        const now = new Date();
+        const todayStr = now.toISOString().split('T')[0];
+        const patientMap = new Map<string, PatientDisplay>();
+
+        sortedApts.forEach(apt => {
           const doc = apt.patient.document;
           if (!patientMap.has(doc)) {
             patientMap.set(doc, {
+              id: (apt.patient as any).id || '',
               document: apt.patient.document,
               firstName: apt.patient.firstName,
               lastName: apt.patient.lastName,
               phone: apt.patient.phone,
               totalVisits: 0,
               avatarColor: '',
-              diagnosis: localStorage.getItem(`diagnosis_${doc}`) || 'Evaluado en la última visita',
-              observation: localStorage.getItem(`observation_${doc}`) || 'Paciente atendido satisfactoriamente. (Generado automáticamente)',
+              diagnosis: 'Sin diagnóstico previo',
+              observation: 'Sin observaciones previas',
               isEditingDiagnosis: false,
               isEditingObservation: false,
               hasConfirmedAppointment: false
@@ -140,21 +152,43 @@ export class DoctorPatientsComponent implements OnInit {
           const p = patientMap.get(doc)!;
           p.totalVisits += 1;
           
-          if (apt.status === 'confirmada') {
-              p.hasConfirmedAppointment = true;
+          // Guardar diagnóstico y observación SOLO si la cita TIENE datos
+          // y aún no se ha guardado ninguno (la primera que encuentra es la más reciente con datos)
+          const hasDiagnosis = apt.diagnosis && apt.diagnosis.trim() !== '' && apt.diagnosis !== 'Sin diagnóstico previo';
+          const hasObservation = apt.observations && apt.observations.trim() !== '' && apt.observations !== 'Sin observaciones previas';
+          
+          if ((hasDiagnosis || hasObservation) && p.diagnosis === 'Sin diagnóstico previo') {
+            if (hasDiagnosis) p.diagnosis = apt.diagnosis!;
+            if (hasObservation) p.observation = apt.observations!;
           }
           
-          // Actualizar última visita si esta cita es más reciente y ya pasó/completó
-          if (apt.status === 'completada' || apt.status === 'Confirmada') {
-            if (!p.lastVisit || new Date(apt.appointmentDate!) > new Date(p.lastVisit)) {
-              p.lastVisit = apt.appointmentDate;
+          if (apt.status === 'confirmada' || apt.status === 'agendada') {
+              p.hasConfirmedAppointment = true;
+          }
+
+          const aptDateValue = apt.appointmentDate || apt.date;
+          
+          // Próxima cita
+          if (apt.status === 'agendada' || apt.status === 'confirmada') {
+            if (aptDateValue && aptDateValue >= todayStr) {
+              if (!p.nextVisit || aptDateValue < p.nextVisit) {
+                p.nextVisit = aptDateValue;
+              }
+            }
+          }
+          
+          // Última cita con diagnóstico/observación
+          if ((hasDiagnosis || hasObservation)) {
+            const aptDateStr = aptDateValue || '';
+            if (!p.lastVisit || aptDateStr > p.lastVisit) {
+              p.lastVisit = aptDateStr;
             }
           }
         });
         
-        this.patients = Array.from(patientMap.values()).map((p, index) => {
+        this.patients = Array.from(patientMap.values());
+        this.patients.forEach((p, index) => {
             p.avatarColor = this.colors[index % this.colors.length];
-            return p;
         });
         
         localStorage.setItem('cached_patients_data', JSON.stringify(this.patients));
@@ -209,23 +243,55 @@ export class DoctorPatientsComponent implements OnInit {
       this.editingPatient = patient;
       this.tempDiagnosis = patient.diagnosis || '';
       this.tempObservation = patient.observation || '';
-      this.isEditingModalOpen = true;
+      this.editModal?.nativeElement?.showModal();
   }
 
   closeModal() {
-      this.isEditingModalOpen = false;
+      this.editModal?.nativeElement?.close();
+  }
+
+  onEditModalClose() {
       this.editingPatient = null;
+  }
+
+  onDialogClick(event: MouseEvent, dialog: HTMLDialogElement): void {
+    if (event.target === dialog) {
+      dialog.close();
+    }
   }
 
   saveModalData() {
       if (this.editingPatient) {
           this.editingPatient.diagnosis = this.tempDiagnosis;
           this.editingPatient.observation = this.tempObservation;
-          localStorage.setItem(`diagnosis_${this.editingPatient.document}`, this.tempDiagnosis);
-          localStorage.setItem(`observation_${this.editingPatient.document}`, this.tempObservation);
-          localStorage.setItem('cached_patients_data', JSON.stringify(this.patients));
+
+          if (this.editingPatient.id) {
+            this.appointmentService.updatePatientMedicalInfo(this.editingPatient.id, {
+              diagnosis: this.tempDiagnosis,
+              observations: this.tempObservation
+            }).subscribe({
+              next: () => {
+                localStorage.setItem(`diagnosis_${this.editingPatient!.document}`, this.tempDiagnosis);
+                localStorage.setItem(`observation_${this.editingPatient!.document}`, this.tempObservation);
+                localStorage.setItem('cached_patients_data', JSON.stringify(this.patients));
+                this.closeModal();
+              },
+              error: () => {
+                localStorage.setItem(`diagnosis_${this.editingPatient!.document}`, this.tempDiagnosis);
+                localStorage.setItem(`observation_${this.editingPatient!.document}`, this.tempObservation);
+                localStorage.setItem('cached_patients_data', JSON.stringify(this.patients));
+                this.closeModal();
+              }
+            });
+          } else {
+            localStorage.setItem(`diagnosis_${this.editingPatient.document}`, this.tempDiagnosis);
+            localStorage.setItem(`observation_${this.editingPatient.document}`, this.tempObservation);
+            localStorage.setItem('cached_patients_data', JSON.stringify(this.patients));
+            this.closeModal();
+          }
+      } else {
+        this.closeModal();
       }
-      this.closeModal();
   }
 
   logout() {

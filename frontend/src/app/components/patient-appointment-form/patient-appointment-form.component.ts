@@ -4,6 +4,11 @@ import { CommonModule } from '@angular/common';
 import { AppointmentService, CreateAppointmentDto } from '../../services/appointment.service';
 import { DoctorService, Doctor } from '../../services/doctor.service';
 import { AuthService } from '../../services/auth.service';
+import { ButtonComponent } from '../../shared/atoms/button/button.component';
+import { CardComponent } from '../../shared/atoms/card/card.component';
+import { AlertComponent } from '../../shared/atoms/alert/alert.component';
+import { DoctorCardComponent } from '../../shared/molecules/doctor-card/doctor-card.component';
+import { ConfigService } from '../../services/config.service';
 
 // Interfaz para representar una fecha en la interfaz de usuario
 interface UIDate {
@@ -11,12 +16,21 @@ interface UIDate {
   dayName: string;    // Nombre abreviado del día (LUN, MAR...)
   dayNum: number;     // Número del día (1-31)
   monthName: string;  // Nombre abreviado del mes (ene, feb...)
+  monthIndex: number;   
+  year: number; 
+  available:  boolean; 
+}
+
+interface UIMonth {
+  label: string;        // "Jun", "Jul", "Ago"
+  monthIndex: number;   // 0-11
+  year: number;
 }
 
 @Component({
   selector: 'app-patient-appointment-form',     // Selector HTML para usar el componente
   standalone: true,                            // Componente independiente
-  imports: [CommonModule],                     // Módulos importados
+  imports: [DoctorCardComponent, AlertComponent, ButtonComponent,CardComponent, CommonModule],                     // Módulos importados
   templateUrl: './patient-appointment-form.component.html',  // Plantilla HTML
   styleUrls: ['./patient-appointment-form.component.css']    // Estilos CSS
 })
@@ -28,7 +42,9 @@ export class PatientAppointmentFormComponent implements OnInit {
   auth = inject(AuthService);                          // Servicio de autenticación
   private appointmentService = inject(AppointmentService);  // Servicio de citas
   private doctorService = inject(DoctorService);       // Servicio de médicos
+  private configService = inject(ConfigService);
 
+  appointmentWindowDays = signal<number>(15); 
   // Señales para estado reactivo del componente
   step = signal<number>(1);                           // Paso actual del wizard (1-4)
   doctors = signal<Doctor[]>([]);                     // Lista de médicos disponibles
@@ -37,6 +53,9 @@ export class PatientAppointmentFormComponent implements OnInit {
   availableDates = signal<UIDate[]>([]);              // Fechas disponibles para el médico
   selectedDate = signal<UIDate | null>(null);         // Fecha seleccionada
 
+  availableMonths = signal<UIMonth[]>([]);
+  selectedMonth = signal<UIMonth | null>(null);
+  
   availableSlots = signal<string[]>([]);              // Horarios disponibles
   selectedTime = signal<string>('');                  // Horario seleccionado
 
@@ -48,26 +67,21 @@ export class PatientAppointmentFormComponent implements OnInit {
   ngOnInit(): void {
     // Carga la lista de médicos desde el servicio
     this.doctorService.getDoctors().subscribe(docs => this.doctors.set(docs));
+    this.configService.getConfig().subscribe(config => {
+    this.appointmentWindowDays.set(config.appointmentWindowDays);
+    });
   }
 
   // ============================================
   // Métodos auxiliares para formato y colores
   // ============================================
 
-  // Devuelve un color basado en el ID del médico para el avatar
-  getDoctorColor(id: string | number): string {
-    const colors = ['#2563eb', '#7c3aed', '#10b981', '#e11d48', '#f59e0b', '#06b6d4'];
-    const num = typeof id === 'string' ? id.charCodeAt(id.length - 1) : id;
-    return colors[num % colors.length];  // Selecciona color según módulo del ID
-  }
 
   // Formatea los días laborales para mostrar nombres abreviados
-  formatDays(daysStr: string): string {
-    if (!daysStr) return '';
-    // Mapeo de números de día a nombres abreviados
-    const map: any = { '1': 'Lun', '2': 'Mar', '3': 'Mié', '4': 'Jue', '5': 'Vie', '6': 'Sáb', '7': 'Dom' };
-    // Convierte cadena separada por comas en array de nombres
-    return daysStr.split(',').map(d => map[d.trim()]).filter(d => Boolean(d)).join(', ');
+  formatDays(days: number[]): string {
+    if (!days || days.length === 0) return '';
+    const map: Record<number, string> = { 1: 'Lun', 2: 'Mar', 3: 'Mié', 4: 'Jue', 5: 'Vie', 6: 'Sáb', 7: 'Dom' };
+    return days.map(d => map[d]).filter(Boolean).join(', ');
   }
 
   // ============================================
@@ -75,43 +89,80 @@ export class PatientAppointmentFormComponent implements OnInit {
   // ============================================
 
   // Selecciona un médico y genera las fechas disponibles
-  selectDoctor(doc: Doctor) {
-    this.selectedDoctor.set(doc);
-    this.generateDates(doc);     // Genera fechas según los días laborales del médico
-    this.step.set(2);            // Avanza al paso 2 (fecha)
+    selectDoctor(doc: Doctor) {
+      this.selectedDoctor.set(doc);
+      this.generateDates(doc);     // Genera fechas según los días laborales del médico
+      this.step.set(2);            // Avanza al paso 2 (fecha)
+    }
+
+    // Selecciona un mes del tab
+  selectMonth(month: UIMonth): void {
+    this.selectedMonth.set(month);
+    this.selectedDate.set(null); // Limpia la fecha seleccionada al cambiar mes
+  }
+
+  // Filtra los días del mes seleccionado
+  get datesOfSelectedMonth(): UIDate[] {
+    const m = this.selectedMonth();
+    if (!m) return [];
+    return this.availableDates().filter(
+      d => d.monthIndex === m.monthIndex && d.year === m.year
+    );
   }
 
   // Genera las fechas disponibles basadas en los días laborales del médico
   generateDates(doc: Doctor) {
-    const dates: UIDate[] = [];
+    const allDates: UIDate[] = [];
     const today = new Date();
-    // Array de días laborales, por defecto Lunes a Viernes si no está configurado
-    const workingDaysArray = doc.activeDays ? doc.activeDays.split(',').map(Number) : [1, 2, 3, 4, 5];
+    const workingDaysArray = doc.activeDays ?? [1, 2, 3, 4, 5];
 
-    // Arrays para nombres de días y meses en español
-    const dayNames = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'];
-    const monthNames = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const dayNames   = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'];
+    const monthNames = ['ene', 'feb', 'mar', 'abr', 'may', 'jun',
+                        'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
-    // Genera fechas para los próximos 28 días (incluyendo hoy)
-    for (let i = 0; i <= 28; i++) {
-      const d = new Date();
-      d.setDate(today.getDate() + i);
+    // ← usa el valor real del backend en lugar de un número fijo
+    const fechaLimite = new Date(today);
+    fechaLimite.setDate(fechaLimite.getDate() + this.appointmentWindowDays());
 
-      // Obtiene el día de la semana (0 domingo, 1 lunes...)
-      let dayOfWeek = d.getDay();
-      if (dayOfWeek === 0) dayOfWeek = 7;  // Convierte domingo de 0 a 7 para facilitar comparación
+    const cursor = new Date(today);
+    while (cursor <= fechaLimite) {
+      let dayOfWeek = cursor.getDay();
+      if (dayOfWeek === 0) dayOfWeek = 7;
 
-      // Incluye solo si el día está en los días laborales del médico
-      if (workingDaysArray.includes(dayOfWeek)) {
-        dates.push({
-          fullDate: d.toLocaleDateString('en-CA'),  // Formato YYYY-MM-DD local
-          dayName: dayNames[d.getDay()],
-          dayNum: d.getDate(),
-          monthName: monthNames[d.getMonth()]
+      allDates.push({
+        fullDate:   cursor.toLocaleDateString('en-CA'),
+        dayName:    dayNames[cursor.getDay()],
+        dayNum:     cursor.getDate(),
+        monthName:  monthNames[cursor.getMonth()],
+        monthIndex: cursor.getMonth(),
+        year:       cursor.getFullYear(),
+        available:  workingDaysArray.includes(dayOfWeek), // ← solo días del médico
+      });
+
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    this.availableDates.set(allDates);
+
+    // Meses únicos
+    const monthsMap = new Map<string, UIMonth>();
+    const monthLabels = ['Ene','Feb','Mar','Abr','May','Jun',
+                        'Jul','Ago','Sep','Oct','Nov','Dic'];
+
+    allDates.forEach(d => {
+      const key = `${d.year}-${d.monthIndex}`;
+      if (!monthsMap.has(key)) {
+        monthsMap.set(key, {
+          label:      monthLabels[d.monthIndex],
+          monthIndex: d.monthIndex,
+          year:       d.year,
         });
       }
-    }
-    this.availableDates.set(dates);
+    });
+
+    const months = Array.from(monthsMap.values());
+    this.availableMonths.set(months);
+    this.selectedMonth.set(months[0]);
   }
 
   // ============================================
@@ -138,6 +189,18 @@ export class PatientAppointmentFormComponent implements OnInit {
   // STEP 3 -> 4: Selección de hora
   // ============================================
 
+  formatSlot(slot: string): string {
+    if (!slot) return '';
+    try {
+      const [h, m] = slot.split(':').map(Number);
+      const period = h >= 12 ? 'PM' : 'AM';
+      const hour12 = h % 12 || 12;
+      return `${hour12}:${String(m).padStart(2, '0')} ${period}`;
+    } catch {
+      return slot;
+    }
+  }
+
   // Selecciona un horario y avanza al paso de confirmación
   selectTime(time: string) {
     this.selectedTime.set(time);
@@ -162,7 +225,7 @@ export class PatientAppointmentFormComponent implements OnInit {
       firstName: user.firstName,
       lastName: user.lastName,
       phone: user.phone || '0000000000',
-      gender: user.gender || 'Otro',
+      gender: user.gender || undefined,
       doctorId: this.selectedDoctor()!.id,
       date: this.selectedDate()!.fullDate,
       time: this.selectedTime()

@@ -1,0 +1,22 @@
+# ─── Development overrides ───────────────────────────────────────
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+# Expone puertos de infraestructura para herramientas de desarrollo
+# (DBeaver, pgAdmin, RabbitMQ Management UI, etc.)
+
+services:
+
+  postgres:
+    ports:
+      - '5432:5432'
+
+  postgres-notifications:
+    ports:
+      - '5433:5432'
+
+  rabbitmq:
+    ports:
+      - '15672:15672'
+
+  keycloak:
+    ports:
+      - '8080:8080'

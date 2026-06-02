@@ -67,27 +67,6 @@
   flex-shrink: 0;
 }
 
-/* Botón de cerrar */
-.btn-close {
-  position: absolute;
-  top: 1.25rem;
-  right: 1.25rem;
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: #ffffff;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 100;
-  transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
 .btn-close:hover {
   background: rgba(255, 255, 255, 0.2);
 }
@@ -188,20 +167,10 @@
 
 /* Cuerpo del modal con scroll */
 .auth-body {
-  padding: 2rem;
+  padding: 1.5rem;
   background: #ffffff;
   flex: 1;
   overflow-y: auto;
-}
-
-/* Scroll personalizada */
-.auth-body::-webkit-scrollbar {
-  width: 6px;
-}
-
-.auth-body::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
 }
 
 .auth-body::-webkit-scrollbar-thumb {
@@ -212,65 +181,12 @@
 /* Contenedor del formulario */
 form {
   display: grid;
-  gap: 1.25rem;
+  gap: 0.2rem;
+
 }
 
-/* Contenedor de cada campo del formulario */
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-/* Etiqueta del campo */
-.form-field label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Inputs y selects */
-.form-field input,
-.form-field select {
-  padding: 0.875rem 1rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-family: inherit;
-  transition: all 0.2s;
-  color: #0f172a;
-  min-height: 48px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Placeholder */
-.form-field input::placeholder {
-  color: #64748b;
-  opacity: 0.8;
-}
-
-/* Estado focus */
-.form-field input:focus,
-.form-field select:focus {
-  outline: none;
-  border-color: #1e3a6a;
-  box-shadow: 0 0 0 3px rgba(30, 58, 106, 0.1);
-}
-
-/* Clase para input con error */
-.input-error {
-  border-color: #ef4444 !important;
-}
-
-/* Mensaje de error */
-.error-message {
-  color: #ef4444;
-  font-size: 0.85rem;
-  font-weight: 500;
-  margin-top: -0.25rem;
+app-button {
+    margin-top: 0.2rem;
 }
 
 /* ============================================
@@ -309,47 +225,6 @@ form {
 }
 
 /* ============================================
-   BUTTONS
-   ============================================ */
-
-/* Clase base para botones */
-.btn {
-  padding: 0.875rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  min-height: 48px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Estado deshabilitado */
-.btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-/* Botón primario (submit) */
-.btn-primary {
-  background: #233e68;
-  color: #ffffff;
-  margin-top: 0.5rem;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #1a2f52;
-}
-
-/* Botón que ocupa todo el ancho */
-.btn-full {
-  width: 100%;
-}
-
-/* ============================================
    CHECKBOX STYLES
    ============================================ */
 
@@ -383,33 +258,6 @@ form {
 /* Efecto hover para el checkbox */
 .checkbox-container:hover {
   opacity: 0.8;
-}
-
-/* ============================================
-   ALERTS
-   ============================================ */
-
-/* Clase base para alertas */
-.alert {
-  padding: 1rem;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.95rem;
-  text-align: center;
-}
-
-/* Alerta de error */
-.alert-error {
-  background: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
-}
-
-/* Alerta de éxito */
-.alert-success {
-  background: #f0fdf4;
-  color: #15803d;
-  border: 1px solid #bbf7d0;
 }
 
 /* ============================================
@@ -604,4 +452,33 @@ form {
     font-size: 0.8rem;
     padding: 0.5rem 0;
   }
+}
+
+/* Botón cerrar circular */
+.btn-close-circle {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.btn-close-circle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.btn-close-circle .ti {
+    font-size: 1.2rem;
+    margin: 0;
 }

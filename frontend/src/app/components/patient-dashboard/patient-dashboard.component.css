@@ -32,82 +32,10 @@
     word-break: break-word;
 }
 
-/* ============================================
-   CARD CONTAINER
-   ============================================ */
-
-/* Contenedor de la tarjeta blanca */
-.card-container {
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* Header de la tarjeta */
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid #f1f5f9;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-/* Título de la tarjeta */
-.card-title {
-    margin: 0;
-    font-size: 1.3rem;
-    color: var(--primary-color, #3E7BA6);
-    font-family: 'Playfair Display', 'Georgia', serif;
-    font-weight: 700;
-}
 
 /* ============================================
    TABLE STYLES
    ============================================ */
-
-/* Tabla estilizada */
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-/* Encabezados de la tabla */
-.styled-table th {
-    text-align: left;
-    padding: 1rem 1.25rem;
-    background: var(--neutral-background, #F8F4F3);
-    color: var(--primary-color, #3E7BA6);
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-
-/* Celdas de la tabla */
-.styled-table td {
-    padding: 1rem 1.25rem;
-    color: var(--text-dark, #1f1f1f);
-    font-size: 0.9rem;
-    font-weight: 500;
-    border-bottom: 1px solid #f1f5f9;
-    vertical-align: middle;
-}
-
-/* Efecto hover en filas de la tabla */
-.styled-table tr:hover {
-    background: #fcfcfd;
-}
-
-/* Fila cancelada */
-.styled-table tr.cancelled td {
-    opacity: 0.6;
-}
-
 /* Celda de acciones - alineada a la derecha en desktop */
 .actions-cell {
     text-align: right;
@@ -122,15 +50,6 @@
     flex-wrap: wrap;
 }
 
-/* Inputs y selects dentro de la tabla */
-.styled-table input,
-.styled-table select {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    box-sizing: border-box;
-}
 
 .styled-table input {
     width: 130px;
@@ -142,90 +61,21 @@
 }
 
 /* ============================================
-   BADGES
-   ============================================ */
-
-/* Badge de estado de cita */
-.apt-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 1rem;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #ffffff;
-    white-space: nowrap;
-    line-height: 1.2;
-    width: fit-content;
-}
-
-/* Punto decorativo */
-.status-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: #ffffff;
-    flex-shrink: 0;
-}
-
-/* Badges por estado */
-.apt-status.badge-agendada,
-.apt-status.badge-pendiente {
-    background-color: #f59e0b;
-}
-
-.apt-status.badge-confirmada {
-    background-color: #10b981;
-}
-
-.apt-status.badge-completada {
-    background-color: #0d2c5b;
-}
-
-.apt-status.badge-cancelada {
-    background-color: #ef4444;
-}
-
-/* ============================================
    BUTTONS
    ============================================ */
 
-/* Clase base para botones */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-}
-
-/* Tamaños de botones desktop/tablet */
-.btn-sm {
-    padding: 0.45rem 1rem;
-    font-size: 0.75rem;
-}
-
-/* Botón principal */
-.btn-primary {
-    background: #3E7BA6;
-    color: #fff;
-}
 
 .btn-primary:hover:not(:disabled) {
     background: #2d5d80;
 }
 
-/* Botón de cancelar */
-.btn-cancel-red {
-    background: #c2410c;
-    color: #ffffff;
+
+.btn-patient-new:hover {
+    background-color: #0d2c5b !important;
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: 0 10px 15px -3px rgba(30, 58, 106, 0.4) !important;
 }
+
 
 .btn-cancel-red:hover {
     background: #9a3412;
@@ -290,7 +140,12 @@
 
     .styled-table th,
     .styled-table td {
-        padding: 1rem 1.25rem;
+        padding: 1.25rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .styled-table th {
+        font-size: 0.95rem;
     }
 
     .actions-container {
@@ -304,18 +159,14 @@
         padding-top: 0.75rem;
     }
 
-    .card-header {
-        padding: 1rem 1.25rem;
-    }
-
-    .card-title {
-        font-size: 1.2rem;
-    }
-
     .styled-table th,
     .styled-table td {
-        padding: 0.875rem 1rem;
-        font-size: 0.85rem;
+        padding: 1rem 1.125rem;
+        font-size: 0.95rem;
+    }
+
+    .styled-table th {
+        font-size: 0.9rem;
     }
 
     .actions-container {
@@ -328,8 +179,8 @@
     }
 
     .apt-status {
-        padding: 0.35rem 0.8rem;
-        font-size: 0.75rem;
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
     }
 
     .styled-table input {
@@ -392,10 +243,10 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.6rem 0;
+        padding: 0.75rem 0;
         border-bottom: 1px solid #f1f5f9;
         text-align: left;
-        font-size: 0.85rem;
+        font-size: 0.95rem;
     }
 
     .styled-table td:last-child {
@@ -406,8 +257,8 @@
     .styled-table td::before {
         content: attr(data-label);
         font-weight: 700;
-        color: var(--primary-color, #3E7BA6);
-        font-size: 0.7rem;
+        color: #1e3a6a;
+        font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         width: 85px;
@@ -447,8 +298,8 @@
 
     /* Badge */
     .apt-status {
-        padding: 0.3rem 0.8rem;
-        font-size: 0.75rem;
+        padding: 0.4rem 0.9rem;
+        font-size: 0.85rem;
     }
 
     .status-dot {
@@ -498,18 +349,18 @@
     }
 
     .styled-table td {
-        font-size: 0.8rem;
-        padding: 0.5rem 0;
+        font-size: 0.9rem;
+        padding: 0.6rem 0;
     }
 
     .styled-table td::before {
         width: 75px;
-        font-size: 0.65rem;
+        font-size: 0.75rem;
     }
 
     .apt-status {
-        padding: 0.25rem 0.6rem;
-        font-size: 0.7rem;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.8rem;
     }
 
     .status-dot {

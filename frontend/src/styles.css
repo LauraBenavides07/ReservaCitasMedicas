@@ -15,6 +15,7 @@
   --shadow-md: 0 6px 16px rgba(62, 123, 166, 0.15);
   --radius: 12px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color-scheme: light;
 }
 
 html {
@@ -62,56 +63,6 @@ select:focus {
   box-shadow: 0 0 0 4px rgba(27, 57, 113, 0.15);
 }
 
-/* Premium Buttons */
-button,
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: var(--radius);
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  text-decoration: none;
-}
-
-.btn:disabled {
-  opacity: 0.8;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-.btn-primary {
-  background: #0d2c5b;
-  color: #ffffff;
-  border-radius: 8px;
-  min-height: 48px;
-  border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #0d2c5b;
-  color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
-}
-
-.btn-secondary {
-  background-color: transparent;
-  color: var(--primary-color);
-  border: 2px solid var(--primary-color);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background-color: var(--soft-background);
-  color: var(--primary-hover);
-  border-color: var(--primary-hover);
-}
-
 /* Form Groups */
 .form-group {
   margin-bottom: 1.5rem;
@@ -131,19 +82,6 @@ button,
   display: block;
 }
 
-/* Cards for Premium Feel */
-.card {
-  background: white;
-  border-radius: var(--radius);
-  padding: 2rem;
-  box-shadow: var(--shadow-md);
-  transition: var(--transition);
-  border: 1px solid rgba(62, 123, 166, 0.1);
-}
-
-.card:hover {
-  box-shadow: 0 8px 24px rgba(62, 123, 166, 0.2);
-}
 
 .container {
   max-width: 1200px;
@@ -174,4 +112,107 @@ button,
 .bg-soft {
   background-color: var(--soft-background);
   color: var(--text-dark);
+}
+
+.swal-zindex-fix {
+  z-index: 100000 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   GLOBAL TABLE STYLES - Piedrazul Design
+   ============================================ */
+
+/* Base de la tabla */
+.piedrazul-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.piedrazul-table th,
+.piedrazul-table td {
+    vertical-align: middle;
+    padding: 12px 16px;
+}
+
+/* Encabezado - Azul con texto blanco */
+.piedrazul-table thead tr {
+    background: #1e3a6a;
+    border-bottom: none;
+}
+
+.piedrazul-table th {
+    color: white !important;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem 1.25rem;
+    text-align: left;
+    border-bottom: none;
+}
+
+/* Celdas del cuerpo */
+.piedrazul-table td {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #334155;
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+/* Última fila sin borde */
+.piedrazul-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Hover en filas */
+.piedrazul-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Responsive: en móvil seguirá el mismo patrón de cards */
+@media (max-width: 768px) {
+    .piedrazul-table thead {
+        display: none;
+    }
+    
+    .piedrazul-table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.75rem;
+    }
+    
+    .piedrazul-table td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    
+    .piedrazul-table td:last-child {
+        border-bottom: none;
+    }
+    
+    .piedrazul-table td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: #1e3a6a;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        width: 100px;
+        flex-shrink: 0;
+    }
 }

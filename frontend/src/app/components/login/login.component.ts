@@ -3,11 +3,14 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ButtonComponent } from '../../shared/atoms/button/button.component';
+import { FormFieldComponent } from '../../shared/atoms/form-field/form-field.component';
+import { AlertComponent } from '../../shared/atoms/alert/alert.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [AlertComponent,ButtonComponent,FormFieldComponent, CommonModule, ReactiveFormsModule, ButtonComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -63,11 +66,19 @@ export class LoginComponent {
     // Llamado al servicio de login
     this.auth.login(this.loginForm.value).subscribe({
       next: (response) => {
-        this.isLoading.set(false);
+      console.log('Login response:', response);
+      console.log('User role:', response.user?.role);
 
-        // Redirige según el rol del usuario
-        this.redirectByRole(response.user.role);
-      },
+      this.isLoading.set(false);
+
+      if (response.mustChangePassword) {
+       console.log('Emitiendo change-password');
+        this.navigate.emit('change-password');
+          return;
+        }
+
+      this.redirectByRole(response.user.role);
+    },
       error: (err) => {
         console.error('Login error:', err);
 
@@ -89,6 +100,7 @@ export class LoginComponent {
 
     // Normaliza el texto (minúsculas y sin espacios)
     const normalizedRole = role.toLowerCase().trim();
+    console.log('Redirigiendo por rol:', normalizedRole);
 
     if (normalizedRole === 'admin') {
       this.router.navigate(['/admin/config']);
@@ -97,7 +109,7 @@ export class LoginComponent {
       this.router.navigate(['/appointments/list']);
 
     } else if (normalizedRole === 'patient') {
-      this.router.navigate(['/appointments/list']);
+      this.router.navigate(['/patient/dashboard']);
 
     } else if (normalizedRole === 'doctor') {
       this.router.navigate(['/doctor/dashboard']);

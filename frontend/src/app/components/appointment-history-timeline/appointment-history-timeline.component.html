@@ -1,0 +1,55 @@
+<div class="timeline-container">
+    <div *ngIf="showHeader" class="timeline-header">
+        <h3>Historial de Cambios</h3>
+    </div>
+
+    <div *ngIf="loading" class="timeline-loading" role="status">Cargando historial...</div>
+    <div *ngIf="error" class="timeline-error">{{ error }}</div>
+
+    <div *ngIf="!loading && !error && history.length === 0" class="timeline-empty">
+        No hay cambios registrados para esta cita.
+    </div>
+
+    <div *ngIf="!loading && history.length > 0" class="timeline">
+        <div *ngFor="let entry of history" class="timeline-item">
+            <div class="timeline-marker">
+                <span class="timeline-icon">{{ getChangeIcon(entry.changeType) }}</span>
+            </div>
+            <div class="timeline-content">
+                <div class="timeline-head">
+                    <span class="timeline-badge" [class]="'badge-' + entry.changeType.toLowerCase()">
+                        {{ getChangeLabel(entry.changeType) }}
+                    </span>
+                    <span class="timeline-date">{{ formatDateTime(entry.changedAt) }}</span>
+                </div>
+                <div class="timeline-body">
+                    <div *ngIf="entry.changeType === 'RESCHEDULED'" class="timeline-diff">
+                        <div class="diff-old">
+                            <small>Anterior</small>
+                            <span>{{ formatDate(entry.previousDate) }} {{ formatTime(entry.previousTime) }}</span>
+                        </div>
+                        <span class="diff-arrow">→</span>
+                        <div class="diff-new">
+                            <small>Nuevo</small>
+                            <span>{{ formatDate(entry.newDate) }} {{ formatTime(entry.newTime) }}</span>
+                        </div>
+                    </div>
+                    <div *ngIf="entry.changeType !== 'RESCHEDULED'" class="timeline-diff">
+                        <div *ngIf="entry.previousStatus" class="diff-old">
+                            <small>Estado anterior</small>
+                            <span>{{ entry.previousStatus }}</span>
+                        </div>
+                        <span *ngIf="entry.previousStatus" class="diff-arrow">→</span>
+                        <div *ngIf="entry.newStatus" class="diff-new">
+                            <small>Estado nuevo</small>
+                            <span>{{ entry.newStatus }}</span>
+                        </div>
+                    </div>
+                    <div class="timeline-actor">
+                        <small>Por: {{ entry.changedBy }} ({{ getRoleLabel(entry.changedByRole) }})</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

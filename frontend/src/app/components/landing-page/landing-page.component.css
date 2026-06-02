@@ -297,33 +297,6 @@
 /* ============================================
    BOTONES
    ============================================ */
-/* Estilo base para botones de navegación */
-.btn-nav {
-  min-height: 44px;
-  padding: 0.6rem 1.5rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Botón con borde transparente */
-.btn-outline-light {
-  background: transparent;
-  border: 2px solid white;
-  color: white;
-  padding: 0.6rem 1.5rem;
-  border-radius: 40px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-height: 44px;
-}
 
 /* Efecto hover para botón outline */
 .btn-outline-light:hover {
@@ -331,20 +304,6 @@
   border-color: white;
   color: #1e3a5f;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-}
-
-/* Botón primario con fondo blanco */
-.btn-primary-light {
-  background: white;
-  color: #1e3a5f;
-  border: none;
-  padding: 0.6rem 1.5rem;
-  border-radius: 40px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-height: 44px;
   box-shadow: var(--shadow-sm);
 }
 
@@ -453,8 +412,8 @@
   gap: 1rem;
 }
 
-.mobile-nav-actions .btn-outline-light,
-.mobile-nav-actions .btn-primary-light {
+.mobile-nav-actions,
+.mobile-nav-actions {
   width: 100%;
   justify-content: center;
 }

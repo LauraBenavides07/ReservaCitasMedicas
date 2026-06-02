@@ -6,23 +6,26 @@ import { AuthService } from '../../services/auth.service';
 import { AppointmentService, Appointment } from '../../services/appointment.service';
 import { DoctorService } from '../../services/doctor.service';
 import Swal from 'sweetalert2';
+import { ButtonComponent } from '../../shared/atoms/button/button.component';
 
 interface HistoryDisplay {
   id: string;
   patientName: string;
   document: string;
+  phone: string;
   date: string;
   time: string;
   status: string;
   monthStr: string;
   dayStr: string;
+  yearStr: string;
   observation?: string;
 }
 
 @Component({
   selector: 'app-doctor-history',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [ButtonComponent, CommonModule, RouterModule, FormsModule],
   templateUrl: './doctor-history.component.html',
   styleUrls: ['./doctor-history.component.css']
 })
@@ -130,12 +133,14 @@ export class DoctorHistoryComponent implements OnInit {
                 id: a.id,
                 patientName: `${a.patient.firstName} ${a.patient.lastName}`,
                 document: a.patient.document,
+                phone: a.patient.phone || 'N/A',
                 date: actualDate,
                 time: actualTime,
                 status: a.status === 'agendada' && new Date(`${actualDate}T${actualTime}`) < now ? 'No asistió' : a.status,
                 monthStr: !isNaN(dateObj.getMonth()) ? monthNames[dateObj.getMonth()] : '---',
                 dayStr: !isNaN(dateObj.getDate()) ? dateObj.getDate().toString().padStart(2, '0') : '--',
-                observation: localStorage.getItem(`observation_${a.patient.document}`) || 'Paciente atendido satisfactoriamente. (Generado automáticamente)'
+                yearStr: !isNaN(dateObj.getFullYear()) ? dateObj.getFullYear().toString() : '----',
+                observation: a.observations || 'Sin observaciones registradas.'
             };
         });
         
@@ -195,9 +200,10 @@ export class DoctorHistoryComponent implements OnInit {
     
     
     // Generar CSV 
-    let csvContent = "Fecha,Hora,Paciente,Documento,Estado\n";
+    let csvContent = "sep=;\r\nFecha;Hora;Paciente;Documento;Estado\r\n";
     this.filteredAppointments.forEach(a => {
-        csvContent += `${a.date},${a.time},${a.patientName},${a.document},${a.status}\n`;
+        const cleanName = a.patientName ? a.patientName.replace(/"/g, '""') : '';
+        csvContent += `${a.date};${a.time};"${cleanName}";${a.document};${a.status}\r\n`;
     });
     
     const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -238,6 +244,18 @@ export class DoctorHistoryComponent implements OnInit {
           },
           confirmButtonText: 'Entendido'
       });
+  }
+
+  formatTime(timeStr: string): string {
+    if (!timeStr) return '';
+    try {
+      const [h, m] = timeStr.split(':').map(Number);
+      const period = h >= 12 ? 'PM' : 'AM';
+      const hour12 = h % 12 || 12;
+      return `${hour12}:${String(m).padStart(2, '0')} ${period}`;
+    } catch {
+      return timeStr;
+    }
   }
 
   getStatusClass(status: string): string {

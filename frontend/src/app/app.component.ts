@@ -1,5 +1,7 @@
-import { Component, signal, effect, inject } from '@angular/core';
+import { Component, signal, effect, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 import { AppointmentListComponent } from './components/appointment-list/appointment-list.component';
 import { AppointmentFormComponent } from './components/appointment-form/appointment-form.component';
@@ -13,11 +15,15 @@ import { PatientAppointmentFormComponent } from './components/patient-appointmen
 import { DoctorDashboardComponent } from './components/doctor-dashboard/doctor-dashboard.component';
 import { DoctorPatientsComponent } from './components/doctor-patients/doctor-patients.component';
 import { DoctorHistoryComponent } from './components/doctor-history/doctor-history.component';
+import { AdminAuditComponent } from './components/admin-audit/admin-audit.component';
+import { ButtonComponent } from './shared/atoms/button/button.component';
+import { ChangePasswordComponent } from './components/change-password/change-password.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
+    ButtonComponent,
     CommonModule,
     AppointmentListComponent,
     AppointmentFormComponent,
@@ -29,57 +35,82 @@ import { DoctorHistoryComponent } from './components/doctor-history/doctor-histo
     PatientAppointmentFormComponent,
     DoctorDashboardComponent,
     DoctorPatientsComponent,
-    DoctorHistoryComponent
+    DoctorHistoryComponent,
+    AdminAuditComponent,
+    ChangePasswordComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   // Inyección del servicio de autenticación
   auth = inject(AuthService);
+  private router = inject(Router);
 
   // Señal que controla la vista actual de la aplicación
-  // Posibles valores: 'landing', 'admin-list', 'admin-create', 'admin-config', 
-  // 'login', 'register', 'patient-dashboard', 'patient-create', 'doctor-dashboard', 'doctor-patients', 'doctor-history'
-  view = signal<'landing' | 'admin-list' | 'admin-create' | 'admin-config' | 'login' | 'register' | 'patient-dashboard' | 'patient-create' | 'doctor-dashboard' | 'doctor-patients' | 'doctor-history'>('landing');
-
+  view = signal<'landing' | 'admin-list' | 'admin-create' | 'admin-config' | 'admin-audit' | 'login' | 'register' | 'patient-dashboard' | 'patient-create' | 'doctor-dashboard' | 'doctor-create' | 'doctor-patients' | 'doctor-history' | 'doctor-search' | 'change-password'>('landing');
   // Estado para el menú móvil
   isMobileMenuOpen = signal(false);
 
+  private readonly routeMap: Record<string, string> = {
+    '/login': 'login',
+    '/change-password': 'change-password',
+    '/register': 'register',
+    '/appointments/list': 'admin-list',
+    '/appointments/create': 'admin-create',
+    '/admin/config': 'admin-config',
+    '/admin/audit': 'admin-audit',
+    '/patient/dashboard': 'patient-dashboard',
+    '/patient/appointments/create': 'patient-create',
+    '/doctor/dashboard': 'doctor-dashboard',
+    '/doctor/patients': 'doctor-patients',
+    '/doctor/history': 'doctor-history',
+  };
+
+  ngOnInit(): void {
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd)
+    ).subscribe((e: NavigationEnd) => {
+      const mapped = this.routeMap[e.urlAfterRedirects];
+      if (mapped) {
+        this.view.set(mapped as any);
+      }
+    });
+  }
+
   constructor() {
-    // Efecto reactivo que se ejecuta cada vez que cambia el usuario autenticado
     effect(() => {
       const user = this.auth.user();
 
-      // Caso: usuario no autenticado
       if (!user) {
         const v = this.view();
-        // Si la vista actual no es login, register o landing, redirige a landing
-        if (v !== 'login' && v !== 'register' && v !== 'landing') {
+        if (v !== 'login' && v !== 'register' && v !== 'landing' && v !== 'change-password') {
           this.view.set('landing');
+          this.router.navigate(['/']);
         }
         return;
       }
 
-      // Caso: usuario autenticado recién logueado
-      // Si está en una vista de autenticación o landing, redirige según su rol
       const currentView = this.view();
-      if (currentView === 'login' || currentView === 'register' || currentView === 'landing') {
+      if (currentView === 'login' || currentView === 'register' || currentView === 'landing' || currentView === 'change-password') {
         if (user.role === 'patient') {
           this.view.set('patient-dashboard');
+          this.router.navigate(['/patient/dashboard']);
         } else if (user.role === 'doctor') {
           this.view.set('doctor-dashboard');
+          this.router.navigate(['/doctor/dashboard']);
         } else {
           this.view.set('admin-list');
+          this.router.navigate(['/appointments/list']);
         }
       }
     });
   }
 
-  // Método para cerrar sesión
   logout(): void {
     this.auth.logout();
     this.view.set('landing');
+    this.router.navigate(['/']);
   }
 
   // Método seguro para cambiar de vista desde HTML sin problemas de tipos estrictos
@@ -92,4 +123,17 @@ export class AppComponent {
   toggleMobileMenu(): void {
     this.isMobileMenuOpen.set(!this.isMobileMenuOpen());
   }
+
+  // Agrega esta variable
+showChangePasswordModal = signal(false);
+
+// Agrega estos métodos
+openChangePasswordModal(): void {
+  this.showChangePasswordModal.set(true);
+  this.isMobileMenuOpen.set(false);
+}
+
+closeChangePasswordModal(): void {
+  this.showChangePasswordModal.set(false);
+}
 }

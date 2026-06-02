@@ -1,0 +1,403 @@
+/* ============================================
+   BUTTON COMPONENT - ESTILOS ORIGINALES PRESERVADOS
+   ============================================ */
+
+/* Estilos base del botón */
+.app-button {
+  position: relative;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  white-space: nowrap;
+  text-decoration: none;
+  user-select: none;
+}
+
+/* Estado focus (accesibilidad) */
+.app-button:focus-visible {
+  outline: 2px solid #233e68;
+  outline-offset: 2px;
+}
+
+/* Estado deshabilitado */
+.app-button.btn-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  pointer-events: none;
+}
+
+/* Estado loading */
+.app-button.btn-loading {
+  pointer-events: none;
+  position: relative;
+}
+
+/* ============================================
+   VARIANTE: PRIMARY (Azul oscuro #0d2c5b)
+   ============================================ */
+.app-button.btn-primary {
+  background-color: #1e3b7e;
+  color: #ffffff !important;  /* Forzar color blanco */
+  border: 2px solid #0d2c5b !important;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra para destacar */
+}
+
+.app-button.btn-primary:hover:not(.btn-disabled) {
+  background-color: #1e3f6f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.app-button.btn-primary:active:not(.btn-disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+/* Estado deshabilitado */
+.app-button.btn-primary.btn-disabled {
+  background-color: #6c757d;
+  color: #e0e0e0 !important;
+  opacity: 0.7;
+}
+
+/* ============================================
+   VARIANTE: SECONDARY (Borde azul, texto azul, fondo transparente)
+   ============================================ */
+.app-button.btn-secondary {
+  background-color: #f7f7f7 !important;
+  color: #0d2c5b !important;
+  border: 2px solid #0d2c5b !important;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.app-button.btn-secondary:hover:not(.btn-disabled) {
+  background-color: #0d2c5b !important;
+  transform: translateY(-1px);
+  border-color: #194280 !important;
+  color: #ffffff !important;
+}
+
+.app-button.btn-secondary:active:not(.btn-disabled) {
+  transform: translateY(0);
+}
+
+/* ============================================
+   VARIANTE: DANGER (Rojo - para eliminar/cancelar)
+   ============================================ */
+.app-button.btn-danger {
+  background-color: #fff1f0;
+  color: #d32f2f;
+  border: 1px solid #d32f2f;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.app-button.btn-danger:hover:not(.btn-disabled) {
+  background-color: #d32f2f;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.app-button.btn-danger:active:not(.btn-disabled) {
+  transform: translateY(0);
+}
+
+/* ============================================
+   VARIANTE: SUCCESS (Verde - para completar)
+   ============================================ */
+.app-button.btn-success {
+  background-color: #10b981;
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.app-button.btn-success:hover:not(.btn-disabled) {
+  background-color: #059669;
+  transform: translateY(-1px);
+}
+
+.app-button.btn-success:active:not(.btn-disabled) {
+  transform: translateY(0);
+}
+
+/* ============================================
+   VARIANTE: OUTLINE-LIGHT (Para landing page - blanco transparente)
+   ============================================ */
+.app-button.btn-outline-light {
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  border-radius: 40px;
+  font-weight: 600;
+}
+
+.app-button.btn-outline-light:hover:not(.btn-disabled) {
+  background: white;
+  color: #1e3a5f;
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   VARIANTE: WARNING (Naranja - advertencias)
+   ============================================ */
+.app-button.btn-warning {
+  background-color: #f57c00;
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.app-button.btn-warning:hover:not(.btn-disabled) {
+  background-color: #e65100;
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   VARIANTE: VIEW (Para botones de vista tipo toggle)
+   ============================================ */
+.app-button.btn-view {
+  background: transparent;
+  border: 2px solid #1e3a6a;
+  color: #1e3a6a;
+  padding: 0.7rem 1.6rem;
+  border-radius: 50px;
+  font-weight: 600;
+}
+
+.app-button.btn-view.active {
+  background: #1e3a6a;
+  color: white;
+}
+
+.app-button.btn-view:hover:not(.btn-disabled):not(.active) {
+  background: rgba(30, 58, 106, 0.08);
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   VARIANTE: LOGOUT (Para cerrar sesión - sidebar)
+   ============================================ */
+.app-button.btn-logout {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  width: 100%;
+}
+
+.app-button.btn-logout:hover:not(.btn-disabled) {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* ============================================
+   VARIANTE: PRIMARY-LIGHT (Para landing page - botón blanco)
+   ============================================ */
+.app-button.btn-primary-light {
+  background: white;
+  color: #1e3a5f;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 40px;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-button.btn-primary-light:hover:not(.btn-disabled) {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   TAMAÑOS
+   ============================================ */
+
+/* SMALL: Para botones en tablas y espacios reducidos */
+.app-button.btn-sm {
+  padding: 0.45rem 1rem;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  min-height: 32px;
+}
+
+/* MEDIUM: Estándar (por defecto) */
+.app-button.btn-md {
+  padding: 0.6rem 1.5rem;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  min-height: 44px;
+}
+
+/* LARGE: Para botones destacados */
+.app-button.btn-lg {
+  padding: 0.875rem 1.75rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  min-height: 52px;
+}
+
+/* ============================================
+   BOTÓN DE BÚSQUEDA (variante especial)
+   ============================================ */
+.app-button.btn-search {
+  background: linear-gradient(135deg, #1e3a6a 0%, #0d2c5b 100%);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  min-width: 100px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-button.btn-search:hover:not(.btn-disabled) {
+  background: linear-gradient(135deg, #0d2c5b 0%, #081d3a 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.app-button.btn-search:active:not(.btn-disabled) {
+  transform: translateY(0);
+}
+
+.app-button.btn-search.btn-disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* ============================================
+   FULL WIDTH
+   ============================================ */
+.app-button.btn-full-width {
+  width: 100%;
+}
+
+/* ============================================
+   SPINNER PARA LOADING
+   ============================================ */
+.btn-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+}
+
+.spinner-ring {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.app-button.btn-secondary .spinner-ring,
+.app-button.btn-danger .spinner-ring,
+.app-button.btn-outline-light .spinner-ring {
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-top-color: currentColor;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.app-button.btn-loading .btn-content {
+
+  opacity: 0.7;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .app-button.btn-md {
+    min-height: 44px;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .app-button.btn-sm {
+    min-height: 36px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.75rem;
+  }
+  
+  .app-button.btn-search {
+    min-height: 42px;
+    padding: 0 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-button.btn-md {
+    min-height: 40px;
+    padding: 0.45rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .app-button.btn-sm {
+    min-height: 32px;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* ============================================
+   ACCESIBILIDAD
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .app-button {
+    transition: none;
+  }
+  
+  .app-button:hover:not(.btn-disabled) {
+    transform: none !important;
+  }
+  
+  .spinner-ring {
+    animation: none;
+  }
+}

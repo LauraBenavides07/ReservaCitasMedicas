@@ -1,19 +1,37 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from './services/auth.service';
+import { catchError, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  const token = authService.getToken();
 
-  console.log('Token en interceptor:', token ? 'Existe' : 'No existe');
-  
+  // Para change-password usar el token temporal si existe
+  const isChangePassword = req.url.includes('/auth/change-password');
+  const token = isChangePassword
+    ? (authService.getTempToken() ?? authService.getToken())
+    : authService.getToken();
+
+  let request = req;
   if (token) {
-    const cloned = req.clone({
+    request = req.clone({
       headers: req.headers.set('Authorization', `Bearer ${token}`),
     });
-    return next(cloned);
   }
 
-  return next(req);
+  return next(request).pipe(
+    catchError((error: HttpErrorResponse) => {
+      // No cerrar sesión si estamos en change-password o en rutas auth
+      if (
+        error.status === 401 &&
+        !req.url.includes('/auth/') &&
+        !req.url.includes('/change-password')
+      ) {
+        console.warn('Sesión expirada (401). Cerrando sesión...');
+        authService.logout();
+        location.reload();
+      }
+      return throwError(() => error);
+    })
+  );
 };

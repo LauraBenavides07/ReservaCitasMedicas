@@ -1,0 +1,188 @@
+/* ============================================
+   DOCTOR-CARD MOLECULE
+   ============================================ */
+:host {
+  display: block;
+  width: 100%;
+}
+/* Contenedor — botón que actúa como card */
+.doctor-card {
+  background: #ffffff;
+  border: 2px solid #9dbde9;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+/* Hover */
+.doctor-card:hover {
+  border-color: #9bbfd7;
+  box-shadow: 0 4px 12px rgba(155, 191, 215, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Estado seleccionado */
+.doctor-card--selected {
+  background: #f8fafc;
+  border-color: #1a3972;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+              0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.doctor-card--selected:hover {
+  transform: none;
+}
+
+/* ============================================
+   AVATAR
+   ============================================ */
+
+.doctor-card__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   INFO
+   ============================================ */
+
+.doctor-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.doctor-card__name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.doctor-card__specialty {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+/* Tablet */
+@media (min-width: 768px) {
+  .doctor-card {
+    padding: 1.25rem;
+  }
+
+  .doctor-card__avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 1.1rem;
+  }
+
+  .doctor-card__name {
+    font-size: 1rem;
+  }
+
+  .doctor-card__specialty {
+    font-size: 0.85rem;
+  }
+}
+
+/* Móvil pequeño */
+@media (max-width: 480px) {
+  .doctor-card {
+    padding: 0.75rem;
+  }
+
+  .doctor-card__avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+
+  .doctor-card__name {
+    font-size: 0.85rem;
+  }
+
+  .doctor-card__specialty {
+    font-size: 0.7rem;
+  }
+}
+/* ============================================
+   VARIANTE HORIZONTAL (con info de horario)
+   ============================================ */
+
+.doctor-card--horizontal {
+  flex-direction: row;
+  text-align: left;
+  align-items: flex-start;
+  padding: 1.25rem;
+  width: 100%;
+  border: 2px solid #9dbde9;
+  
+}
+
+.doctor-card--horizontal .doctor-card__avatar {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.doctor-card--horizontal .doctor-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  align-items: flex-start;
+}
+
+/* Hover especial para la variante horizontal */
+.doctor-card--horizontal:hover {
+  border: 2px solid transparent;
+  background-image:
+    linear-gradient(#ffffff, #ffffff),
+    linear-gradient(135deg, #3b82f6, #1e40af);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  transform: none;
+}
+
+/* Horario */
+.doctor-card__schedule {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.3rem 0 0 0;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.doctor-card__schedule svg {
+  flex-shrink: 0;
+}
+
+/* Días activos */
+.doctor-card__days {
+  margin: 0.15rem 0 0 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1e3a6a;
+}

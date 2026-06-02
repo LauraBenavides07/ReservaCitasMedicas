@@ -1,38 +1,62 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { passportJwtSecret } from 'jwks-rsa';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Patient } from '../../domain/entities/patient.entity';
+import { Repository, FindOptionsWhere } from 'typeorm';
+import type { Request } from 'express';
 import { User } from '../../domain/entities/user.entity';
+import { Patient } from '../../domain/entities/patient.entity';
 import { DecodedToken } from '../../domain/types/keycloak.types';
+import { KeycloakConfig } from './keycloak-config';
+import { IPatientRepository } from '../../application/ports/patient.repository';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    @InjectRepository(Patient)
-    private patientRepository: Repository<Patient>,
+    @Inject(IPatientRepository)
+    private patientRepository: IPatientRepository,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    keycloakConfig: KeycloakConfig,
   ) {
-    // URL base de Keycloak. Por defecto es localhost:8080.
-    const keycloakUrl = process.env.KEYCLOAK_URL || 'http://127.0.0.1:8080';
-    const realm = process.env.KEYCLOAK_REALM || 'piedrazul';
+    const keycloakSecretProvider = passportJwtSecret({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: keycloakConfig.jwksUri,
+    });
 
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      // Usamos jwks-rsa para obtener la llave pública de Keycloak y validar la firma del token
-      secretOrKeyProvider: passportJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: `${keycloakUrl}/realms/${realm}/protocol/openid-connect/certs`,
-      }),
-      // Opcional: Validar el emisor
-      issuer: `${keycloakUrl}/realms/${realm}`,
-      algorithms: ['RS256'],
+      secretOrKeyProvider: (
+        request: Request,
+        rawJwtToken: string | undefined,
+        done: (err: any, secret?: any) => void,
+      ) => {
+        if (rawJwtToken) {
+          const parts = rawJwtToken.split('.');
+          if (parts.length === 3) {
+            try {
+              const header = JSON.parse(
+                Buffer.from(parts[0], 'base64').toString(),
+              ) as Record<string, unknown>;
+
+              if (header.alg === 'HS256') {
+                return done(
+                  null,
+                  process.env.JWT_SECRET || 'PIEDRAZUL_SECRET_KEY',
+                );
+              }
+            } catch {
+              // fall through to Keycloak JWKS secret provider
+            }
+          }
+        }
+        return keycloakSecretProvider(request, rawJwtToken, done);
+      },
+      algorithms: ['RS256', 'HS256'],
     });
   }
 
@@ -41,32 +65,40 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Token inválido.');
     }
 
-    const roles = payload.realm_access?.roles || [];
-    const username = payload.preferred_username; // En nuestro caso, CC para pacientes o Email para staff
+    let localId = payload.sub;
+    const customRole = (payload as unknown as Record<string, unknown>).role as
+      | string
+      | undefined;
+    let localRole = customRole;
 
-    // Buscamos estrictamente por keycloakId (Identity Linking Profesional)
-    let localId = payload.sub; // Fallback
-
-    const patient = await this.patientRepository.findOneBy({
-      keycloakId: payload.sub,
-    });
+    const patient = await this.patientRepository.findOneBy([
+      { keycloakId: payload.sub },
+      { id: payload.sub },
+    ] as FindOptionsWhere<Patient>[]);
     if (patient) {
       localId = patient.id;
+      localRole = 'patient';
     } else {
-      const staff = await this.userRepository.findOneBy({
-        keycloakId: payload.sub,
-      });
+      const staff = await this.userRepository.findOneBy([
+        { keycloakId: payload.sub },
+        { id: payload.sub },
+      ] as FindOptionsWhere<User>[]);
       if (staff) {
         localId = staff.id;
+        localRole = staff.role;
       }
     }
+
+    const roles = payload.realm_access?.roles || (localRole ? [localRole] : []);
 
     return {
       id: localId,
       keycloakId: payload.sub,
       email: payload.email,
-      document: username,
-      roles: roles,
+      document:
+        payload.preferred_username || (patient ? patient.document : undefined),
+      roles,
+      localRole,
     };
   }
 }

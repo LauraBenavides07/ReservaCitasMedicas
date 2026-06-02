@@ -2,56 +2,57 @@ import {
   Injectable,
   UnauthorizedException,
   ConflictException,
-  InternalServerErrorException,
+  Inject,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Patient } from '../../domain/entities/patient.entity';
 import { User } from '../../domain/entities/user.entity';
 import { LoginDto } from '../../presentation/dto/login.dto';
 import { RegisterDto } from '../../presentation/dto/register.dto';
-import * as bcrypt from 'bcrypt';
-import axios from 'axios';
 import { JwtService } from '@nestjs/jwt';
-import {
-  DecodedToken,
-  KeycloakTokenResponse,
-  AxiosErrorResponse,
-  UserData,
-  DbUser,
-} from '../../domain/types/keycloak.types';
+import { IPasswordHasher } from '../abstractions/ipassword-hasher.interface';
+import { KeycloakService } from '../../infrastructure/auth/keycloak.service';
+import { IPatientRepository } from '../ports/patient.repository';
+import { UserData, DbUser } from '../../domain/types/keycloak.types';
+import { Doctor } from '../../domain/entities/doctor.entity';
 
 @Injectable()
 export class AuthService {
-  private keycloakUrl = process.env.KEYCLOAK_URL || 'http://127.0.0.1:8080';
-  private realm = process.env.KEYCLOAK_REALM || 'piedrazul';
-  private clientId = process.env.KEYCLOAK_CLIENT_ID || 'piedrazul-app';
-  // En producción, usa un cliente confidencial con Client Secret
-  // private clientSecret = process.env.KEYCLOAK_CLIENT_SECRET || 'secret';
-
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @InjectRepository(Patient)
-    private patientRepository: Repository<Patient>,
+    @Inject(IPatientRepository)
+    private patientRepository: IPatientRepository,
+    @InjectRepository(Doctor)
+    private doctorRepository: Repository<Doctor>,
     private jwtService: JwtService,
+    private passwordHasher: IPasswordHasher,
+    private keycloakService: KeycloakService,
+  
   ) {}
 
+
   async register(dto: RegisterDto) {
-    // 1. Validar si ya existe localmente
-    const existing = await this.patientRepository.findOneBy({
-      document: dto.document,
+    // Verificar si el documento ya existe en patients
+    const existingPatient = await this.patientRepository.findOne({
+        where: { document: dto.document }
     });
-    if (existing) {
-      throw new ConflictException('El documento ya está registrado.');
+    if (existingPatient) {
+        throw new ConflictException('El documento ya está registrado.');
     }
 
-    // Opcional: Aquí podrías hacer una petición HTTP POST al Admin API de Keycloak
-    // para crear al usuario allá también. Por ahora, asumimos que se registra local.
-    // (Ver documentación de Keycloak Admin REST API)
+    // Si tiene email, verificar que no esté duplicado
+    if (dto.email) {
+        const existingUser = await this.userRepository.findOne({
+        where: { email: dto.email.toLowerCase().trim() }
+        });
+        if (existingUser) {
+        throw new ConflictException('El correo electrónico ya está registrado.');
+        }
+    }
 
-    // Hash local (solo por seguridad si alguna vez apagas Keycloak)
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const hashedPassword = await this.passwordHasher.hash(dto.password);
     const patient = this.patientRepository.create({
       ...dto,
       password: hashedPassword,
@@ -59,206 +60,302 @@ export class AuthService {
 
     await this.patientRepository.save(patient);
 
-    // AUTO-PROVISIONING: Sincronizar automáticamente con Keycloak
-    // Esto evita que el usuario tenga que ser creado manualmente por el admin
     try {
-      // 1. Obtener token de administrador de Keycloak (usando las credenciales locales de dev)
-      const adminTokenUrl = `${this.keycloakUrl}/realms/master/protocol/openid-connect/token`;
-      const adminParams = new URLSearchParams();
-      adminParams.append('client_id', 'admin-cli');
-      adminParams.append('grant_type', 'password');
-      adminParams.append('username', process.env.KEYCLOAK_ADMIN || 'admin');
-      adminParams.append(
-        'password',
-        process.env.KEYCLOAK_ADMIN_PASSWORD || 'admin',
-      );
-
-      const adminTokenRes = await axios.post<KeycloakTokenResponse>(
-        adminTokenUrl,
-        adminParams,
-      );
-      const adminToken = adminTokenRes.data.access_token;
-
-      // 2. Crear usuario en el Realm 'piedrazul'
-      const usersUrl = `${this.keycloakUrl}/admin/realms/${this.realm}/users`;
-      await axios.post(
-        usersUrl,
-        {
-          username: dto.document, // En nuestro sistema, el documento es el username de Keycloak
-          enabled: true,
-          firstName: dto.firstName,
-          lastName: dto.lastName,
-          email: dto.email,
-          credentials: [
-            {
-              type: 'password',
-              value: dto.password,
-              temporary: false, // Muy importante para que el login directo funcione
-            },
-          ],
-        },
-        {
-          headers: { Authorization: `Bearer ${adminToken}` },
-        },
-      );
-      console.log(
-        `[Auto-Provisioning] Paciente ${dto.document} sincronizado con Keycloak exitosamente.`,
-      );
+      await this.keycloakService.createUser({
+        username: dto.document,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        email: dto.email,
+        password: dto.password,
+      });
     } catch (kcError) {
-      const errorResponse = kcError as AxiosErrorResponse;
       console.error(
         '[Auto-Provisioning] Advertencia: No se pudo crear el usuario en Keycloak automáticamente.',
-        errorResponse?.response?.data?.message || errorResponse?.message,
+        kcError instanceof Error ? kcError.message : String(kcError),
       );
-      // No detenemos el flujo, pero el login subsiguiente va a fallar si Keycloak no lo tiene.
     }
 
-    // 2. Intentar loguearse
-    return this.login({ login: dto.document, password: dto.password });
+   return { message: 'Paciente registrado exitosamente.' };
   }
+  async resetDoctorPassword(doctorId: string): Promise<{ message: string }> {
+    // Buscar el doctor para obtener su userId
+    const doctor = await this.doctorRepository.findOne({
+        where: { id: doctorId }
+    });
+
+    if (!doctor) {
+        throw new NotFoundException('Médico no encontrado');
+    }
+
+    if (!doctor.userId) {
+        throw new NotFoundException('Este médico no tiene usuario asociado');
+    }
+
+    const defaultPassword = '12345678';
+    const hashedPassword = await this.passwordHasher.hash(defaultPassword);
+
+    await this.userRepository.update(doctor.userId, {
+        password: hashedPassword,
+        mustChangePassword: true,
+    });
+
+    return { message: `Contraseña del médico restablecida a 12345678` };
+  }
+  
+  async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<{ message: string }> {
+    const user = await this.userRepository.findOne({ 
+        where: { id: userId },
+        select: {
+              id: true,
+              password: true,
+              mustChangePassword: true
+          }
+    });
+    
+    if (!user) {
+        throw new NotFoundException('Usuario no encontrado');
+    }
+    
+    const isPasswordValid = await this.passwordHasher.compare(currentPassword, user.password);
+    if (!isPasswordValid) {
+        throw new UnauthorizedException('Contraseña actual incorrecta');
+    }
+    
+    const hashedPassword = await this.passwordHasher.hash(newPassword);
+    user.password = hashedPassword;
+    user.mustChangePassword = false;
+    
+    await this.userRepository.save(user);
+    
+    return { message: 'Contraseña actualizada exitosamente' };
+}
 
   async login(
     dto: LoginDto,
-  ): Promise<{ access_token: string; user: UserData | null; source: string }> {
+    ): Promise<{ access_token: string; user: UserData | null; source: string; mustChangePassword?: boolean }> {
+        const normalizedLogin = dto.login.toLowerCase().trim();
+    
+    console.log('Login normalizado:', normalizedLogin);
+    
     try {
-      // Delegamos la autenticación a Keycloak (Direct Access Grants)
-      const tokenUrl = `${this.keycloakUrl}/realms/${this.realm}/protocol/openid-connect/token`;
-
-      const params = new URLSearchParams();
-      params.append('client_id', this.clientId);
-      params.append('grant_type', 'password');
-      params.append('username', dto.login);
-      params.append('password', dto.password);
-
-      const response = await axios.post<KeycloakTokenResponse>(
-        tokenUrl,
-        params,
-        {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        },
-      );
-
-      // Keycloak nos devuelve el access_token
-      const accessToken = response.data.access_token;
-
-      // Decodificar el token para obtener el 'sub' (Keycloak UUID)
-      const decodedToken: DecodedToken = this.jwtService.decode(accessToken);
-      const keycloakSub = decodedToken?.sub;
-
-      // 2. Buscar datos extendidos en nuestra BD local (Híbrido)
-      let userData: UserData | null = null;
-
-      // Intentar buscar como paciente (usando el login que suele ser el documento o email)
-      const patient = await this.patientRepository.findOneBy([
-        { document: dto.login },
-        { email: dto.login },
-      ]);
-
-      if (patient) {
-        // LAZY IDENTITY LINKING: Si encontramos al paciente local pero no tiene keycloakId, lo vinculamos
-        if (!patient.keycloakId && keycloakSub) {
-          patient.keycloakId = keycloakSub;
-          await this.patientRepository.save(patient);
-        }
-
-        userData = {
-          id: patient.id,
-          document: patient.document,
-          firstName: patient.firstName,
-          lastName: patient.lastName,
-          email: patient.email,
-          role: 'patient',
-        };
-      } else {
-        // Si no es paciente, buscar en la tabla de usuarios administrativos (Admin, Doctor, Staff)
-        const staffUser = await this.userRepository.findOneBy({
-          email: dto.login,
-        });
-        if (staffUser) {
-          // LAZY IDENTITY LINKING: Para el staff
-          if (!staffUser.keycloakId && keycloakSub) {
-            staffUser.keycloakId = keycloakSub;
-            await this.userRepository.save(staffUser);
-          }
-
-          userData = {
-            id: staffUser.id,
-            email: staffUser.email,
-            firstName: staffUser.firstName,
-            lastName: staffUser.lastName,
-            role: staffUser.role,
-          };
-        }
-      }
-
-      if (!userData) {
-        throw new UnauthorizedException(
-          'Usuario autenticado en Keycloak pero no encontrado en BD local.',
+        const tokenResponse = await this.keycloakService.login(
+            dto.password,
+            normalizedLogin,
         );
-      }
+        const accessToken = tokenResponse.access_token;
+        const rawDecoded: unknown = this.jwtService.decode(accessToken);
+        const decodedToken =
+            rawDecoded != null && typeof rawDecoded === 'object'
+                ? (rawDecoded as Record<string, unknown>)
+                : null;
+        const keycloakSub = decodedToken?.sub as string | undefined;
 
-      return {
-        access_token: accessToken,
-        user: userData,
-        source: 'keycloak',
-      };
+        let userData: UserData | null = null;
+        let mustChangePassword = false;
+       
+        const patient = await this.patientRepository.findOneBy([
+            { document: dto.login },
+            { email: dto.login },
+        ]);
+
+        if (patient) {
+            if (!patient.keycloakId && keycloakSub) {
+                patient.keycloakId = keycloakSub;
+                await this.patientRepository.save(patient);
+            }
+
+            userData = {
+                id: patient.id,
+                document: patient.document,
+                firstName: patient.firstName,
+                lastName: patient.lastName,
+                email: patient.email,
+                role: 'patient',
+            };
+            
+            if (patient.email) {
+                const userRecord = await this.userRepository.findOne({
+                    where: { email: patient.email },
+                    select: { mustChangePassword: true }
+                });
+                mustChangePassword = userRecord?.mustChangePassword === true;
+            }
+        } else {
+            const staffUser = await this.userRepository.findOneBy({
+                email: dto.login,
+            });
+            if (staffUser) {
+                if (!staffUser.keycloakId && keycloakSub) {
+                    staffUser.keycloakId = keycloakSub;
+                    await this.userRepository.save(staffUser);
+                }
+
+                userData = {
+                    id: staffUser.id,
+                    email: staffUser.email,
+                    firstName: staffUser.firstName,
+                    lastName: staffUser.lastName,
+                    role: staffUser.role,
+                };
+                
+                
+                mustChangePassword = staffUser.mustChangePassword === true;
+            }
+        }
+
+        if (!userData) {
+            throw new UnauthorizedException(
+                'Usuario autenticado pero no encontrado en la base de datos local.',
+            );
+        }
+
+        return {
+            access_token: accessToken,
+            user: userData,
+            source: 'keycloak',
+            mustChangePassword 
+        };
     } catch (error) {
-      const errorResponse = error as AxiosErrorResponse;
-      console.error(
-        'Error autenticando con Keycloak:',
-        errorResponse?.response?.data?.message || errorResponse?.message,
-      );
-
-      // Fallback: Si Keycloak falla o no está configurado, podemos intentar con la BD Local (Opcional)
-      // Si quieres que SOLO funcione con Keycloak, borra este bloque.
-      return this.localLoginFallback(dto);
+        console.error(
+            'Error autenticando con Keycloak:',
+            error instanceof Error ? error.message : String(error),
+        );
+        return this.localLoginFallback({ ...dto, login: normalizedLogin });
     }
   }
 
-  private async localLoginFallback(dto: LoginDto): Promise<never> {
-    console.warn('⚠️ Usando BD Local para Login (Fallback)');
+  private async localLoginFallback(
+    dto: LoginDto,
+): Promise<{ access_token: string; user: UserData | null; source: string; mustChangePassword?: boolean }> {
+    console.log('=== LOCAL LOGIN FALLBACK ===');
+    
+    // Normalizar login a minúsculas
+    const normalizedLogin = dto.login.toLowerCase().trim();
+    console.log('Buscando usuario con email (normalizado):', normalizedLogin);
+    
+    // Buscar en users con email normalizado
+    const user = await this.userRepository.findOne({
+        where: { email: normalizedLogin },
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            password: true,
+            email: true,
+            role: true,
+            mustChangePassword: true,
+        },
+    });
+    
+    console.log('Usuario encontrado en users:', user ? 'SÍ' : 'NO');
+    
+    if (user && user.password) {
+        const isPasswordValid = await this.passwordHasher.compare(dto.password, user.password);
+        console.log('Contraseña válida:', isPasswordValid);
+        
+        if (isPasswordValid) {
+            const userData: UserData = {
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role,
+            };
+            
+            const access_token = this.jwtService.sign({
+                sub: user.id,
+                email: user.email,
+                role: user.role,
+            });
 
-    // 1. Buscar en Pacientes
-    let dbUser: DbUser | null = await this.patientRepository.findOne({
-      where: [{ document: dto.login }, { email: dto.login }],
-      select: ['id', 'firstName', 'lastName', 'password', 'document', 'email'],
+            const mustChangePassword = user.mustChangePassword === true;
+            console.log('Enviando mustChangePassword:', mustChangePassword);
+            
+            return {
+                access_token,
+                user: userData,
+                source: 'local',
+                mustChangePassword
+            };
+        }
+    }
+    
+    // Buscar en patients con email o documento normalizado
+    const isEmail = normalizedLogin.includes('@');
+    const patient = isEmail
+  ? await this.patientRepository.findOne({
+      where: { email: normalizedLogin },
+      select: {
+        id: true,
+        document: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        password: true,
+      },
+    })
+  : await this.patientRepository.findOne({
+      where: { document: normalizedLogin },
+      select: {
+        id: true,
+        document: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        password: true,
+      },
     });
 
-    // 2. Si no es paciente, buscar en Usuarios Administrativos
-    if (!dbUser) {
-      dbUser = await this.userRepository.findOne({
-        where: { email: dto.login },
-        select: ['id', 'firstName', 'lastName', 'password', 'email', 'role'],
-      });
-    }
+    console.log('Paciente encontrado:', patient ? 'SÍ' : 'NO');
 
-    if (
-      dbUser &&
-      dbUser.password &&
-      (await bcrypt.compare(dto.password, dbUser.password))
-    ) {
-      // Como estamos en un flujo Keycloak, el fallback local sin Keycloak
-      // solo sirve para validar que el usuario existe, pero no podemos dar un token válido.
-      throw new InternalServerErrorException(
-        'Autenticación local exitosa, pero Keycloak no respondió. No se puede generar una sesión segura.',
-      );
+if (patient) {
+    console.log('Tiene password:', !!patient.password);
+}
+
+    if (patient && patient.password) {
+        const isPasswordValid = await this.passwordHasher.compare(dto.password, patient.password);
+        if (isPasswordValid) {
+            const userData: UserData = {
+                id: patient.id,
+                email: patient.email,
+                firstName: patient.firstName,
+                lastName: patient.lastName,
+                document: patient.document,
+                role: 'patient',
+            };
+            
+            const access_token = this.jwtService.sign({
+                sub: patient.id,
+                email: patient.email,
+                role: 'patient',
+            });
+            
+            return {
+                access_token,
+                user: userData,
+                source: 'local',
+                mustChangePassword: false
+            };
+        }
     }
+    
+    console.log(' Login fallido');
     throw new UnauthorizedException('Credenciales inválidas.');
-  }
+}
 
   async getPatientByDocument(document: string) {
     const patient = await this.patientRepository.findOne({
       where: { document },
-      select: [
-        'id',
-        'firstName',
-        'lastName',
-        'document',
-        'phone',
-        'gender',
-        'birthDate',
-        'email',
-      ],
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        document: true,
+        phone: true,
+        gender: true,
+        birthDate: true,
+        email: true,
+      },
     });
 
     if (!patient) {
@@ -267,4 +364,23 @@ export class AuthService {
 
     return patient;
   }
+
+  async existeDocumento(document: string): Promise<boolean> {
+    const patient = await this.patientRepository.findOneBy({ document });
+    return !!patient;
+    }
+
+  async existeEmail(email: string): Promise<boolean> {
+    const normalizedEmail = email.toLowerCase().trim();
+    
+    const enUsers = await this.userRepository.findOne({
+        where: { email: normalizedEmail }
+    });
+    if (enUsers) return true;
+
+    const enPatients = await this.patientRepository.findOne({
+        where: { email: normalizedEmail }
+    });
+    return !!enPatients;
+    }
 }

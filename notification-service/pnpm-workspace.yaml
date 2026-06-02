@@ -1,0 +1,12 @@
+allowBuilds:
+  '@nestjs/core': set this to true or false
+  unrs-resolver: set this to true or false
+minimumReleaseAgeExclude:
+  - '@nestjs/common@11.1.23'
+  - '@nestjs/core@11.1.23'
+  - '@nestjs/microservices@11.1.23'
+  - '@nestjs/platform-express@11.1.23'
+  - '@nestjs/platform-socket.io@11.1.23'
+  - '@nestjs/testing@11.1.23'
+  - '@nestjs/websockets@11.1.23'
+  - ts-jest@29.4.11

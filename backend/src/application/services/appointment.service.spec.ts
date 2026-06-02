@@ -1,16 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppointmentService } from './appointment.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Appointment } from '../../domain/entities/appointment.entity';
-import { Patient } from '../../domain/entities/patient.entity';
-import { Doctor } from '../../domain/entities/doctor.entity';
-import { DoctorException } from '../../domain/entities/doctor-exception.entity';
 import { ConfigService } from './config.service';
+import { AvailabilityService } from './availability.service';
+import { PatientService } from './patient.service';
+import { NotificationService } from './notification.service';
 import { CreateAppointmentDto } from '../../presentation/dto/create-appointment.dto';
-import { NOTIFICATION_SERVICE } from '../../infrastructure/messaging/notifications-client.module';
+import {
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { IAppointmentRepository } from '../ports/appointment.repository';
+import { IDoctorRepository } from '../ports/doctor.repository';
+import { IAppointmentHistoryRepository } from '../ports/appointment-history.repository';
 
 describe('AppointmentService', () => {
   let service: AppointmentService;
+  let module: TestingModule;
+  let mockAvailability: Record<string, jest.Mock>;
+  let mockPatientSvc: Record<string, jest.Mock>;
+  let mockNotificationSvc: Record<string, jest.Mock>;
+  let mockQueryBuilder: Record<string, jest.Mock>;
+  let mockHistoryRepo: {
+    create: jest.Mock;
+    save: jest.Mock;
+    createQueryBuilder: jest.Mock;
+  };
 
   const mockAppointmentRepository = {
     findAndCount: jest.fn(),
@@ -21,19 +36,9 @@ describe('AppointmentService', () => {
     find: jest.fn(),
   };
 
-  const mockPatientRepository = {
-    findOneBy: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
-  };
-
   const mockDoctorRepository = {
     findOneBy: jest.fn(),
     find: jest.fn(),
-  };
-
-  const mockDoctorExceptionRepository = {
-    findOneBy: jest.fn(),
   };
 
   const mockConfigService = {
@@ -42,277 +47,443 @@ describe('AppointmentService', () => {
       .mockResolvedValue({ minAdvanceHours: 2, appointmentWindowDays: 15 }),
   };
 
-  const mockNotificationClient = {
-    emit: jest.fn(),
-  };
-
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    mockAvailability = {
+      validateTimeWindow: jest.fn().mockResolvedValue(undefined),
+      validateDoctorException: jest.fn().mockResolvedValue(undefined),
+      assertSlotAvailable: jest.fn().mockResolvedValue(undefined),
+    };
+    mockPatientSvc = {
+      findByDocumentOrCreate: jest.fn(),
+      findByDocument: jest.fn(),
+    };
+    mockNotificationSvc = {
+      emit: jest.fn(),
+    };
+
+    mockHistoryRepo = {
+      create: jest.fn(),
+      save: jest.fn(),
+      createQueryBuilder: jest.fn(),
+    };
+
+    module = await Test.createTestingModule({
       providers: [
         AppointmentService,
         {
-          provide: getRepositoryToken(Appointment),
+          provide: IAppointmentRepository,
           useValue: mockAppointmentRepository,
         },
-        {
-          provide: getRepositoryToken(Patient),
-          useValue: mockPatientRepository,
-        },
-        { provide: getRepositoryToken(Doctor), useValue: mockDoctorRepository },
-        {
-          provide: getRepositoryToken(DoctorException),
-          useValue: mockDoctorExceptionRepository,
-        },
+        { provide: IDoctorRepository, useValue: mockDoctorRepository },
         { provide: ConfigService, useValue: mockConfigService },
-        { provide: NOTIFICATION_SERVICE, useValue: mockNotificationClient },
+        { provide: AvailabilityService, useValue: mockAvailability },
+        { provide: PatientService, useValue: mockPatientSvc },
+        { provide: NotificationService, useValue: mockNotificationSvc },
+        {
+          provide: IAppointmentHistoryRepository,
+          useValue: mockHistoryRepo,
+        },
       ],
     }).compile();
 
     service = module.get<AppointmentService>(AppointmentService);
-  });
-
-  afterEach(() => {
     jest.clearAllMocks();
-  });
-
-  // 1. Crear cita correctamente
-  it('debería crear una cita válida', async () => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toISOString().split('T')[0];
-
-    mockDoctorRepository.findOneBy.mockResolvedValue({ id: '1', name: 'Dr. Smith' });
-    mockPatientRepository.findOneBy.mockResolvedValue({ 
-      id: '1', 
-      firstName: 'Juan', 
-      lastName: 'Perez',
-      phone: '3001234567' 
+    mockConfigService.getConfig.mockResolvedValue({
+      minAdvanceHours: 2,
+      appointmentWindowDays: 15,
     });
-    mockAppointmentRepository.findOneBy.mockResolvedValue(null);
-    mockAppointmentRepository.save.mockResolvedValue({ 
-      id: '10',
-      appointmentDate: tomorrowStr,
-      appointmentTime: '10:00'
-    });
-
-    const dto: CreateAppointmentDto = {
-      patientDocument: '123',
-      firstName: 'Juan',
-      lastName: 'Perez',
-      phone: '3001234567',
-      gender: 'M',
-      doctorId: '1',
-      date: tomorrowStr,
-      time: '10:00',
+    mockQueryBuilder = {
+      leftJoinAndSelect: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      getManyAndCount: jest.fn(),
     };
-
-    const result = await service.create(dto);
-
-    expect(result).toBeDefined();
+    mockHistoryRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
   });
 
-  // 2. Error si el médico no existe
-  it('debería fallar si el médico no existe', async () => {
-    mockDoctorRepository.findOneBy.mockResolvedValue(null);
+  describe('findAllByDoctorAndDate', () => {
+    it('debería listar citas sin fecha', async () => {
+      mockAppointmentRepository.findAndCount.mockResolvedValue([[], 0]);
+      const result = await service.findAllByDoctorAndDate('d1');
+      expect(result.total).toBe(0);
+      expect(mockAppointmentRepository.findAndCount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { doctor: { id: 'd1' } },
+        }),
+      );
+    });
 
-    await expect(
-      service.create({
-        doctorId: '99',
+    it('debería listar citas con fecha', async () => {
+      mockAppointmentRepository.findAndCount.mockResolvedValue([[], 0]);
+      await service.findAllByDoctorAndDate('d1', '2026-10-10');
+      expect(mockAppointmentRepository.findAndCount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { doctor: { id: 'd1' }, appointmentDate: '2026-10-10' },
+        }),
+      );
+    });
+  });
+
+  describe('create', () => {
+    it('debería crear una cita válida', async () => {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+      mockDoctorRepository.findOneBy.mockResolvedValue({
+        id: 'd1',
+        name: 'Dr. S',
+      });
+      mockPatientSvc.findByDocumentOrCreate.mockResolvedValue({
+        id: 'p1',
+        firstName: 'J',
+        lastName: 'P',
+        phone: '123',
+      });
+      mockAppointmentRepository.create.mockReturnValue({ id: 'a1' });
+      mockAppointmentRepository.save.mockResolvedValue({
+        id: 'a1',
+        appointmentDate: tomorrowStr,
+        appointmentTime: '10:00',
+      });
+
+      const dto: CreateAppointmentDto = {
         patientDocument: '123',
-        firstName: 'Juan',
-        lastName: 'Perez',
-        phone: '3001234567',
+        firstName: 'J',
+        lastName: 'P',
+        phone: '123',
         gender: 'M',
-        date: '2026-05-10',
+        doctorId: 'd1',
+        date: tomorrowStr,
         time: '10:00',
-      } as CreateAppointmentDto)
-    ).rejects.toThrow();
-  });
+      };
 
-  // 3. Rechazar cita con poca anticipación
-  it('debería rechazar citas con anticipación insuficiente', async () => {
-    const nearDate = new Date();
-    nearDate.setMinutes(nearDate.getMinutes() + 20);
+      const result = await service.create(dto);
+      expect(result).toBeDefined();
+      expect(mockNotificationSvc.emit).toHaveBeenCalledWith(
+        'appointment.created',
+        expect.any(Object),
+      );
+    });
 
-    mockDoctorRepository.findOneBy.mockResolvedValue({ id: '1' });
+    it('debería crear el paciente si no existe', async () => {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-    await expect(
-      service.create({
-        doctorId: '1',
-        patientDocument: '123',
-        firstName: 'Juan',
-        lastName: 'Perez',
-        phone: '3001234567',
+      mockDoctorRepository.findOneBy.mockResolvedValue({
+        id: 'd1',
+        name: 'Dr. S',
+      });
+      mockPatientSvc.findByDocumentOrCreate.mockResolvedValue({
+        id: 'p1',
+        firstName: 'New',
+        lastName: 'P',
+        phone: '123',
+      });
+      mockAppointmentRepository.create.mockReturnValue({ id: 'a1' });
+      mockAppointmentRepository.save.mockResolvedValue({ id: 'a1' });
+
+      await service.create({
+        patientDocument: '999',
+        firstName: 'New',
+        lastName: 'P',
+        phone: '123',
         gender: 'M',
-        date: nearDate.toISOString().split('T')[0],
-        time: nearDate.toTimeString().substring(0, 5)
-      } as CreateAppointmentDto)
-    ).rejects.toThrow();
-  });
+        doctorId: 'd1',
+        date: tomorrowStr,
+        time: '10:00',
+      });
 
-  // 4. Rechazar cita fuera del horizonte máximo
-  it('debería rechazar citas demasiado lejanas', async () => {
-    const farDate = new Date();
-    farDate.setDate(farDate.getDate() + 500);
-
-    mockDoctorRepository.findOneBy.mockResolvedValue({ id: '1' });
-
-    await expect(
-      service.create({
-        doctorId: '1',
-        patientDocument: '123',
-        firstName: 'Juan',
-        lastName: 'Perez',
-        phone: '3001234567',
-        gender: 'M',
-        date: farDate.toISOString().split('T')[0],
-        time: '10:00'
-      } as CreateAppointmentDto)
-    ).rejects.toThrow();
-  });
-
-  // 5. Evitar citas duplicadas
-  it('debería impedir conflicto de horario', async () => {
-    const futureDate = new Date();
-    futureDate.setHours(futureDate.getHours() + 5);
-
-    mockDoctorRepository.findOneBy.mockResolvedValue({ id: '1' });
-    mockAppointmentRepository.findOneBy.mockResolvedValue({ id: 'existing' });
-
-    await expect(
-      service.create({
-        doctorId: '1',
-        patientDocument: '123',
-        firstName: 'Juan',
-        lastName: 'Perez',
-        phone: '3001234567',
-        gender: 'M',
-        date: futureDate.toISOString().split('T')[0],
-        time: '10:00'
-      } as CreateAppointmentDto)
-    ).rejects.toThrow();
-  });
-
-  // 6. Obtener horarios disponibles
-  it('debería retornar horarios disponibles', async () => {
-    mockDoctorRepository.findOneBy.mockResolvedValue({
-      id: '1',
-      scheduleStart: '08:00',
-      scheduleEnd: '17:00'
+      expect(mockPatientSvc.findByDocumentOrCreate).toHaveBeenCalled();
     });
 
-    mockAppointmentRepository.find.mockResolvedValue([]);
-
-    const result = await service.getAvailableSlots('1', '2026-05-10');
-
-    expect(result).toBeDefined();
-    expect(Array.isArray(result)).toBe(true);
+    it('debería fallar si el doctor no existe', async () => {
+      mockDoctorRepository.findOneBy.mockResolvedValue(null);
+      await expect(
+        service.create({ doctorId: 'invalid' } as any),
+      ).rejects.toThrow(NotFoundException);
+    });
   });
 
-  // 7. Cancelar cita
-  it.skip('debería cancelar una cita existente', async () => {
-    const appointmentData = {
-      id: '1',
-      status: 'ACTIVE',
-      appointmentDate: '2026-05-10',
-      appointmentTime: '10:00',
-      patient: { id: 'patient1', firstName: 'Juan', lastName: 'Perez', phone: '3001234567' },
-      doctor: { id: 'doctor1', name: 'Dr. Smith' }
-    };
+  describe('cancelAppointment', () => {
+    it('debería cancelar una cita con éxito', async () => {
+      const future = new Date();
+      future.setDate(future.getDate() + 1);
+      const dateStr = future.toISOString().split('T')[0];
 
-    mockAppointmentRepository.findOne.mockResolvedValue(appointmentData);
-    mockAppointmentRepository.save.mockResolvedValue({
-      ...appointmentData,
-      status: 'cancelada'
+      const app = {
+        id: 'a1',
+        status: 'agendada',
+        appointmentDate: dateStr,
+        appointmentTime: '10:00',
+        patient: { id: 'p1', firstName: 'J', lastName: 'P', phone: '1' },
+        doctor: { name: 'D' },
+        isOwnedBy: jest.fn().mockReturnValue(true),
+        canBeCancelled: jest.fn().mockReturnValue(true),
+        cancel: jest.fn(),
+      };
+      mockAppointmentRepository.findOne.mockResolvedValue(app);
+      mockAppointmentRepository.save.mockResolvedValue({
+        ...app,
+        status: 'cancelada',
+      });
+
+      const result = await service.cancelAppointment('a1', 'p1');
+      expect(result.status).toBe('cancelada');
+      expect(mockNotificationSvc.emit).toHaveBeenCalledWith(
+        'appointment.cancelled',
+        expect.any(Object),
+      );
     });
 
-    const result = await service.cancelAppointment('1', 'patient1');
-
-    expect(result.status).toBe('cancelada');
-  });
-
-  // 8. Reprogramar cita
-  it('debería reprogramar una cita exitosamente', async () => {
-    const futureDate = new Date();
-    futureDate.setHours(futureDate.getHours() + 24);
-
-    mockAppointmentRepository.findOne.mockResolvedValue({
-      id: '1',
-      doctor: { id: '1' },
-      patient: { id: 'patient1' }
+    it('debería fallar si la cita no existe', async () => {
+      mockAppointmentRepository.findOne.mockResolvedValue(null);
+      await expect(service.cancelAppointment('a1', 'p1')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
-    mockAppointmentRepository.findOneBy.mockResolvedValue(null);
-
-    mockAppointmentRepository.save.mockResolvedValue({
-      id: '1',
-      appointmentTime: '15:00'
+    it('debería fallar si el paciente no tiene permiso', async () => {
+      mockAppointmentRepository.findOne.mockResolvedValue({
+        id: 'a1',
+        patient: { id: 'p1', keycloakId: 'k1' },
+        isOwnedBy: jest.fn().mockReturnValue(false),
+      });
+      await expect(service.cancelAppointment('a1', 'other')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
-    const result = await service.reschedule(
-      '1',
-      'patient1',
-      futureDate.toISOString().split('T')[0],
-      '15:00'
-    );
+    it('debería fallar si la cita es pasada', async () => {
+      const past = new Date();
+      past.setDate(past.getDate() - 1);
+      const dateStr = past.toISOString().split('T')[0];
 
-    expect(result.appointmentTime).toBe('15:00');
+      mockAppointmentRepository.findOne.mockResolvedValue({
+        id: 'a1',
+        appointmentDate: dateStr,
+        appointmentTime: '10:00',
+        patient: { id: 'p1' },
+        isOwnedBy: jest.fn().mockReturnValue(true),
+        canBeCancelled: jest.fn().mockReturnValue(false),
+      });
+      await expect(service.cancelAppointment('a1', 'p1')).rejects.toThrow(
+        BadRequestException,
+      );
+    });
   });
 
-  // 3. Obtener lista de citas
-  it('debería retornar una lista de citas', async () => {
-    mockAppointmentRepository.find.mockResolvedValue([
-      { id: '1', patient: { id: '1' } },
-      { id: '2', patient: { id: '2' } },
-    ]);
+  describe('reschedule', () => {
+    it('debería permitir reagendar si hay disponibilidad', async () => {
+      const app = {
+        id: 'a1',
+        patient: { id: 'p1' },
+        doctor: { id: 'd1', name: 'D' },
+        isOwnedBy: jest.fn().mockReturnValue(true),
+        reschedule: jest.fn(),
+      };
+      mockAppointmentRepository.findOne.mockResolvedValue(app);
+      mockAppointmentRepository.save.mockResolvedValue({
+        id: 'a1',
+        appointmentTime: '11:00',
+      });
 
-    const result = await service.findAll();
-
-    expect(result.length).toBe(2);
-  });
-
-  // 4. Lista vacía de citas
-  it('debería retornar lista vacía si no hay citas', async () => {
-    mockAppointmentRepository.find.mockResolvedValue([]);
-
-    const result = await service.findAll();
-
-    expect(result).toEqual([]);
-  });
-
-  // 5. Buscar cita por ID (existe)
-  it('debería encontrar una cita por id', async () => {
-    mockAppointmentRepository.findOneBy.mockResolvedValue({
-      id: '1',
-      patient: { id: '1' },
+      const future = new Date();
+      future.setDate(future.getDate() + 5);
+      const result = await service.reschedule(
+        'a1',
+        'p1',
+        future.toISOString().split('T')[0],
+        '11:00',
+        'staff',
+      );
+      expect(result.appointmentTime).toBe('11:00');
     });
 
-    const result = await service.findById('1');
-
-    expect(result).toBeDefined();
-    expect(result!.id).toBe('1');
-  });
-
-  // 6. Buscar paciente por documento (existe)
-  it('debería encontrar un paciente por documento', async () => {
-    mockPatientRepository.findOneBy.mockResolvedValue({
-      id: 'p1',
-      document: '12345678',
-      firstName: 'Juan',
-      lastName: 'Perez',
+    it('debería fallar si la cita no existe', async () => {
+      mockAppointmentRepository.findOne.mockResolvedValue(null);
+      await expect(
+        service.reschedule('a1', 'p1', '2026-10-10', '10:00'),
+      ).rejects.toThrow(NotFoundException);
     });
 
-    const result = await service.findPatientByDocument('12345678');
-
-    expect(result).toBeDefined();
-    expect(result.document).toBe('12345678');
-    expect(result.firstName).toBe('Juan');
+    it('debería fallar si el paciente no tiene permiso', async () => {
+      mockAppointmentRepository.findOne.mockResolvedValue({
+        id: 'a1',
+        patient: { id: 'p1' },
+        isOwnedBy: jest.fn().mockReturnValue(false),
+      });
+      await expect(
+        service.reschedule('a1', 'p2', '2026-10-10', '10:00'),
+      ).rejects.toThrow(UnauthorizedException);
+    });
   });
 
-  // 7. Buscar paciente por documento (no existe)
-  it('debería lanzar NotFoundException si el paciente no existe', async () => {
-    mockPatientRepository.findOneBy.mockResolvedValue(null);
+  describe('Consultas', () => {
+    it('findAllByPatient debería retornar citas del paciente', async () => {
+      mockAppointmentRepository.find.mockResolvedValue([{ id: 'a1' }]);
+      const result = await service.findAllByPatient('p1', 'doc1');
+      expect(result).toHaveLength(1);
+    });
 
-    await expect(service.findPatientByDocument('00000000')).rejects.toThrow();
+    it('findAll debería retornar todas las citas', async () => {
+      mockAppointmentRepository.find.mockResolvedValue([]);
+      await service.findAll();
+      expect(mockAppointmentRepository.find).toHaveBeenCalled();
+    });
+
+    it('findById debería retornar una cita', async () => {
+      mockAppointmentRepository.findOneBy.mockResolvedValue({ id: 'a1' });
+      const result = await service.findById('a1');
+      expect(result?.id).toBe('a1');
+    });
+
+    it('findPatientByDocument debería retornar un paciente', async () => {
+      mockPatientSvc.findByDocument.mockResolvedValue({ document: '123' });
+      const result = await service.findPatientByDocument('123');
+      expect(result.document).toBe('123');
+    });
+
+    it('findPatientByDocument debería fallar si no existe', async () => {
+      mockPatientSvc.findByDocument.mockRejectedValue(new NotFoundException());
+      await expect(service.findPatientByDocument('999')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
+  describe('Confirmación', () => {
+    it('confirmAppointment debería cambiar estado a confirmada', async () => {
+      mockAppointmentRepository.findOne.mockResolvedValue({
+        id: '1',
+        status: 'agendada',
+        isCancelled: jest.fn().mockReturnValue(false),
+        confirm: jest.fn(),
+      });
+      mockAppointmentRepository.save.mockImplementation((a) =>
+        Promise.resolve({ ...a, status: 'confirmada' }),
+      );
+      const result = await service.confirmAppointment('1');
+      expect(result.status).toBe('confirmada');
+    });
+
+    it('confirmAppointment debería fallar si no existe', async () => {
+      mockAppointmentRepository.findOne.mockResolvedValue(null);
+      await expect(service.confirmAppointment('1')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('confirmAppointment debería fallar si está cancelada', async () => {
+      mockAppointmentRepository.findOne.mockResolvedValue({
+        id: '1',
+        status: 'cancelada',
+        isCancelled: jest.fn().mockReturnValue(true),
+      });
+      await expect(service.confirmAppointment('1')).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+  });
+
+  describe('getAllHistory', () => {
+    beforeEach(() => {
+      mockQueryBuilder = {
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn(),
+      };
+      mockHistoryRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+    });
+
+    it('debería retornar historial completo sin filtros', async () => {
+      const mockEntries = [
+        {
+          id: 'h1',
+          appointment: {
+            id: 'a1',
+            doctor: { name: 'Dr. Pérez' },
+            patient: { firstName: 'Juan', lastName: 'López' },
+          },
+          changeType: 'CREATED',
+          previousDate: null,
+          previousTime: null,
+          previousStatus: null,
+          newDate: null,
+          newTime: null,
+          newStatus: 'PENDING',
+          changedBy: 'patient@test.com',
+          changedByRole: 'patient',
+          reason: null,
+          changedAt: new Date('2026-05-25T10:00:00Z'),
+        },
+      ];
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([mockEntries, 1]);
+
+      const result = await service.getAllHistory({ limit: 50 });
+
+      expect(result.total).toBe(1);
+      expect(result.history[0].doctorName).toBe('Dr. Pérez');
+      expect(result.history[0].patientName).toBe('Juan López');
+      expect(mockQueryBuilder.leftJoinAndSelect).toHaveBeenCalled();
+      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith(
+        'h.changedAt',
+        'DESC',
+      );
+      expect(mockQueryBuilder.take).toHaveBeenCalledWith(50);
+    });
+
+    it('debería aplicar filtro por changeType', async () => {
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+      await service.getAllHistory({ changeType: 'CONFIRMED', limit: 50 });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
+        'h.changeType = :changeType',
+        { changeType: 'CONFIRMED' },
+      );
+    });
+
+    it('debería aplicar filtro por doctorId', async () => {
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+      await service.getAllHistory({ doctorId: 'd1', limit: 50 });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
+        'd.id = :doctorId',
+        { doctorId: 'd1' },
+      );
+    });
+
+    it('debería aplicar filtro por fecha', async () => {
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+      await service.getAllHistory({ date: '2026-05-25', limit: 50 });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
+        'a.appointmentDate = :date',
+        { date: '2026-05-25' },
+      );
+    });
+
+    it('debería aplicar filtro de búsqueda por paciente', async () => {
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+      await service.getAllHistory({ search: 'Juan', limit: 50 });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
+        expect.stringContaining('ILIKE'),
+        { search: '%Juan%' },
+      );
+    });
+
+    it('debería combinar múltiples filtros', async () => {
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+      await service.getAllHistory({
+        changeType: 'RESCHEDULED',
+        doctorId: 'd1',
+        date: '2026-05-25',
+        search: 'Ana',
+        limit: 10,
+      });
+      expect(mockQueryBuilder.take).toHaveBeenCalledWith(10);
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledTimes(4);
+    });
   });
 });

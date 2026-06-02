@@ -1,0 +1,578 @@
+.audit-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.audit-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.audit-header h2 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.audit-description {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.audit-filters-panel {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e2e8f0;
+}
+
+.filters-row {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 180px;
+    flex: 1;
+}
+
+.filter-group-wide {
+    flex: 2;
+    min-width: 220px;
+}
+
+.filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: center;
+}
+
+.filter-group label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: white;
+    min-height: 42px;
+    min-width: 100px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+.btn-clear {
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    min-height: 42px;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-clear:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+}
+
+.btn-success {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+}
+
+.btn-success:hover {
+    background: #059669;
+}
+
+.btn-export {
+    background: #f8fafc;
+    border: 1px solid #1e293b;
+    color: #1e293b;
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.btn-export:hover {
+    background: #1e3a6a;
+    border-color: #1e3a6a;
+    color: white;
+}
+
+.btn-export:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.loading-state {
+    text-align: center;
+    padding: 3rem;
+    background: #f8fafc;
+    border-radius: 16px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #1e3a6a;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+/* Iconos en general */
+.ti {
+    font-size: 1.1rem;
+    line-height: 1;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Wrapper para input con icono de búsqueda */
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.search-input-wrapper .ti-search {
+    position: absolute;
+    left: 12px;
+    color: #94a3b8;
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+.search-input-wrapper input {
+    padding: 0.6rem 0.75rem 0.6rem 2.3rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: white;
+    min-height: 42px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Iconos en botones */
+.btn-clear .ti,
+app-button .ti {
+    margin-right: 0.25rem;
+}
+
+.btn-export .ti {
+    margin-right: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.results-count .ti {
+    margin-right: 0.35rem;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+/* Icono de error */
+.error-icon {
+    font-size: 2.5rem;
+    color: #dc2626;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Icono de estado vacío */
+.empty-icon {
+    font-size: 3.5rem;
+    color: #94a3b8;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.error-state {
+    text-align: center;
+    padding: 3rem;
+    background: #fef2f2;
+    border-radius: 16px;
+    color: #dc2626;
+}
+
+.error-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.audit-results {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.results-count {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.results-count strong {
+    color: #1e3a6a;
+    font-size: 1rem;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+
+.date-cell {
+    font-family: monospace;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.patient-cell strong {
+    color: #1e293b;
+}
+
+.id-hint {
+    display: block;
+    font-size: 0.65rem;
+    color: #94a3b8;
+    margin-top: 0.2rem;
+}
+
+.old-value {
+    color: #dc2626;
+    font-size: 0.8rem;
+}
+
+.new-value {
+    color: #10b981;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+/* Columna RESPONSABLE - alineación vertical */
+.responsible-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.responsible-name {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.responsible-cell small {
+    font-size: 0.7rem;
+    color: #64748b;
+}
+
+.badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.badge-created { background: #dbeafe; color: #1d4ed8; }
+.badge-rescheduled { background: #fef3c7; color: #b45309; }
+.badge-cancelled { background: #fee2e2; color: #dc2626; }
+.badge-confirmed { background: #d1fae5; color: #059669; }
+.badge-completed { background: #e0e7ff; color: #4338ca; }
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: #f8fafc;
+    border-radius: 16px;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    margin: 0 0 0.5rem 0;
+    color: #1e293b;
+}
+
+.empty-state p {
+    color: #64748b;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .filters-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .filter-group-wide {
+        min-width: unset;
+    }
+
+    .filter-actions {
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+        gap: 0.5rem;
+    }
+
+    .filter-actions app-button,
+    .filter-actions button {
+        flex: 1;
+    }
+
+    .results-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+}
+/* ============================================
+   APPOINTMENT TYPE BADGES
+   ============================================ */
+
+.appointment-type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+/* Medicina General */
+.type-general {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+/* Terapia Neural */
+.type-therapy {
+    background-color: #f3e8ff;
+    color: #6b21a5;
+}
+
+/* Quiropraxia */
+.type-chiro {
+    background-color: #fed7aa;
+    color: #9a3412;
+}
+
+/* Fisioterapia */
+.type-physio {
+    background-color: #ccfbf1;
+    color: #0f766e;
+}
+
+/* Control / Seguimiento */
+.type-followup {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+/* ============================================
+   RESPONSABLE CELL - ALINEACIÓN VERTICAL
+   ============================================ */
+
+.responsible-cell {
+    vertical-align: middle;
+    padding: 12px 16px !important;
+}
+
+.responsible-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    line-height: 1.4;
+}
+
+.responsible-id {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.responsible-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #334155;
+}
+
+.responsible-role {
+    font-size: 0.7rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+/* ============================================
+   ESTILOS GLOBALES DE TABLA - ALINEACIÓN
+   ============================================ */
+
+
+/* Asegurar que todas las filas tengan la misma altura */
+.piedrazul-table tr {
+    height: auto;
+}
+
+
+/* Badge para mostrar la especialidad */
+.type-specialty {
+    background-color: #e0e7ff;
+    color: #3730a3;
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Wrapper para input con icono de búsqueda */
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.search-input-wrapper .ti-search {
+    position: absolute;
+    left: 12px;
+    color: #94a3b8;
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.search-input-wrapper input {
+    padding: 0.6rem 0.75rem 0.6rem 2.3rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: white;
+    min-height: 42px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.search-input-wrapper input:focus {
+    border-color: #1e3a6a;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(30, 58, 106, 0.1);
+}
+
+/* Icono spinner animado */
+.spinner-icon {
+    font-size: 2rem;
+    color: var(--primary-color, #1e3a6a);
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Iconos en botones */
+.filter-actions .ti,
+.btn-clear .ti,
+.btn-export .ti,
+.btn-primary .ti {
+    margin-right: 0.35rem;
+    font-size: 0.9rem;
+}
+
+/* Resultados count */
+.results-count .ti {
+    margin-right: 0.35rem;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+/* Ajuste del loading-state */
+.loading-state {
+    text-align: center;
+    padding: 3rem;
+    background: #f8fafc;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Estado de error */
+.error-state .ti {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.error-state button .ti {
+    font-size: 0.9rem;
+    margin-right: 0.35rem;
+}

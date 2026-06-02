@@ -72,6 +72,76 @@ textarea {
     border-bottom-color: var(--primary-color);
 }
 
+/* Asegurar que los iconos de Tabler Icons tengan el tamaño correcto */
+.ti {
+    font-size: 1.3rem !important;
+    line-height: 1.5;
+    vertical-align: middle;
+}
+
+/* Ajuste específico para botones con iconos */
+.app-button .ti,
+app-button .ti,
+button .ti {
+    margin-right: 0.25rem;
+    font-size: 1.1em;
+}
+
+/* Para el botón de eliminar excepción sin texto */
+.btn-icon .ti {
+    margin-right: 0;
+    font-size: 1.2rem;
+}
+
+/* Ajuste para la pestaña */
+.tab-btn .ti {
+    font-size: 1.1rem;
+}
+
+/* Buscador sin emoji */
+.search-input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+/* Wrapper para buscador con icono */
+.search-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 300px;
+}
+/* Icono de lupa */
+.search-wrapper .ti-search {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 1.1rem;
+    pointer-events: none;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Input con padding izquierdo para el icono */
+.search-wrapper .search-input {
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    width: 100%;
+    border: 1.5px solid #acc9f0;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+    margin: 1rem 0 1rem 0;
+}
+
+.search-wrapper .search-input:focus {
+    border-color: #1e3a6a;
+}
+
 /* ============================================
    ACTIONS BAR
    ============================================ */
@@ -157,6 +227,7 @@ textarea {
     gap: 0.5rem;
 }
 
+
 /* Bloque de información individual */
 .info-block {
     display: flex;
@@ -193,6 +264,29 @@ textarea {
     padding: 0.5rem 1rem;
     font-size: 0.8rem;
 }
+/* ── Cabecera sección pacientes ── */
+.search-input {
+    padding: 1rem 1rem;
+    border: 1.5px solid #acc9f0;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    min-width: 240px;
+    outline: none;
+    transition: border-color 0.2s;
+    margin : 0 0 1.5rem 0;
+}
+.search-input:focus { border-color: #1e3a6a; }
+
+/* ── Badge de género ── */
+.gender-badge {
+    font-size: 0.72rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 99px;
+    background: #f1f5f9; color: #64748b;
+}
+.gender-badge.male   { background: #dbeafe; color: #1d4ed8; }
+.gender-badge.female { background: #fce7f3; color: #be185d; }
+
+.date-cell { font-size: 0.82rem; color: #94a3b8; }
 
 /* ============================================
    STATISTICS (ESTADÍSTICAS) — MOBILE FIRST
@@ -285,61 +379,20 @@ textarea {
    TABLES (TABLAS)
    ============================================ */
 
-/* Contenedor de tabla — card con scroll interno */
-.table-card {
-    background: white;
-    border-radius: 12px;
-    border: 1px solid rgba(62, 123, 166, 0.08);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-    padding: 1rem;
-    width: 100%;
-    box-sizing: border-box;
-}
-
 /* Wrapper de scroll horizontal para la tabla */
 .table-responsive {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE / Edge antiguo */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE / Edge antiguo */
 }
 
 .table-responsive::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-}
-
-/* Título de la tarjeta/tabla */
-.card-title {
-    margin: 0 0 1rem 0;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--primary-color);
-}
-
-/* Tabla estilizada */
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 320px;
-}
-
-/* Encabezados de la tabla */
-.styled-table th {
-    text-align: left;
-    padding: 0.75rem;
-    background: var(--neutral-background);
-    color: var(--primary-color);
-    font-size: 0.75rem;
-    font-weight: 700;
-    border-bottom: 2px solid var(--soft-background);
-}
-
-/* Celdas de la tabla */
-.styled-table td {
-    padding: 0.875rem 0.75rem;
-    border-bottom: 1px solid var(--soft-background);
-    font-size: 0.8rem;
+    display: none;
+    /* Chrome, Safari, Opera */
 }
 
 /* Celda de proporción para barras de progreso */
@@ -365,38 +418,28 @@ textarea {
    MODALS (VENTANAS MODALES)
    ============================================ */
 
-/* Capa de fondo del modal */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(31, 31, 31, 0.7);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    z-index: 9999;
-    padding: 0;
-}
-
-/* Contenedor del modal (sale desde abajo en móvil) */
-.modal {
+/* Modal dialog */
+dialog.modal {
     background: white;
     width: 100%;
+    max-width: 500px;
     max-height: 85vh;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+    border-radius: 20px;
     padding: 1.5rem;
     overflow-y: auto;
     box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.1);
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE / Edge antiguo */
+    border: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
-.modal::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+dialog.modal::-webkit-scrollbar {
+    display: none;
+}
+
+dialog::backdrop {
+    background: rgba(31, 31, 31, 0.7);
+    backdrop-filter: blur(8px);
 }
 
 /* Título del modal */
@@ -406,11 +449,104 @@ textarea {
     font-size: 1.3rem;
 }
 
+/* Mensajes inline dentro del modal */
+.inline-message {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.inline-error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.inline-success {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
 /* Grid del formulario dentro del modal */
 .form-grid {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+}
+
+/* Asterisco de campos obligatorios */
+.required {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+/* Borde rojo en campos inválidos */
+.field-invalid {
+    border-color: #dc2626 !important;
+}
+
+.field-invalid:focus {
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15) !important;
+}
+
+/* Mensaje de error */
+.field-error {
+    color: #dc2626;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Hint de formato */
+.field-hint {
+    color: #94a3b8;
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
+    display: block;
+}
+
+/* Checklist de días laborales */
+.day-checklist {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.day-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 0.4rem 0.7rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    color: #64748b;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.day-chip:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.day-selected {
+    background: #0d2c5b;
+    color: white;
+    border-color: #0d2c5b;
+}
+
+.day-selected:hover {
+    background: #1e3f6f;
+    border-color: #1e3f6f;
+    color: white;
 }
 
 /* Fila responsiva del formulario */
@@ -428,23 +564,12 @@ textarea {
     margin-top: 1.5rem;
 }
 
-/* Botón de eliminar */
-.btn-delete {
-    background-color: #fff1f0;
-    color: var(--danger-color);
-    border: 1px solid var(--danger-color);
-}
 
 .btn-delete:hover {
     background-color: var(--danger-color);
     color: white;
 }
 
-/* Botón de cancelar */
-.btn-cancel {
-    background: transparent;
-    color: var(--text-muted);
-}
 
 /* ============================================
    RESPONSIVE BREAKPOINTS
@@ -472,10 +597,6 @@ textarea {
 
     .modal-actions {
         grid-template-columns: 1fr 1fr;
-    }
-
-    .btn-delete {
-        grid-column: span 2;
     }
 
     .tabs {
@@ -507,10 +628,6 @@ textarea {
         justify-content: flex-end;
     }
 
-    .btn-delete {
-        margin-right: auto;
-        grid-column: auto;
-    }
 
     .tabs {
         gap: 1rem;
@@ -553,10 +670,6 @@ textarea {
     .stat-label {
         font-size: 0.68rem;
     }
-
-    .table-card {
-        padding: 1.25rem;
-    }
 }
 
 /* Desktop (ancho mínimo 1024px) */
@@ -591,10 +704,6 @@ textarea {
 
     .label {
         min-width: 70px;
-    }
-
-    .btn-edit-dark {
-        width: auto;
     }
 
     .tabs {
@@ -720,6 +829,7 @@ textarea {
         font-size: 0.6rem;
     }
 }
+
 /* ============================================
     SWEETALERT2
    ============================================ */
@@ -783,4 +893,168 @@ textarea {
 .swal2-html-container.custom-html {
     color: #475569 !important;
     font-size: 0.95rem !important;
+}
+
+/* ============================================
+   PACIENTES - ESTILOS
+   ============================================ */
+
+.patient-form-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.form-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-close:hover {
+    color: #1e293b;
+}
+
+.patients-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.patient-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s;
+}
+
+.patient-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.patient-info {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+.patient-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.patient-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.patient-name {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.patient-document,
+.patient-phone,
+.patient-email,
+.patient-gender {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+    color: #64748b;
+    word-break: break-word;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #94a3b8;
+    font-size: 1rem;
+    background: white;
+    border-radius: 12px;
+    border: 1px dashed #cbd5e1;
+}
+
+.initial-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: linear-gradient(135deg, #f0f4fa 0%, #e8eef5 100%);
+    border-radius: 12px;
+    border: 1px solid #cbd5e1;
+}
+
+.initial-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.initial-message p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #475569;
+    font-weight: 500;
+}
+
+.initial-message small {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .patients-list {
+        grid-template-columns: 1fr;
+    }
+
+    .patient-form-container {
+        padding: 1rem;
+    }
+
+    .form-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+    }
 }

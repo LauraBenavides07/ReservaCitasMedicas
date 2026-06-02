@@ -4,28 +4,40 @@
     <!-- Stepper Navigation: Indicador visual del progreso -->
     <div class="stepper">
         <!-- Paso 1: Médico -->
-        <div class="step" [class.active]="step() === 1" [class.completed]="step() > 1" (click)="goToStep(1)">
+        <button type="button" class="step" [class.active]="step() === 1" [class.completed]="step() > 1" (click)="goToStep(1)">
             <div class="step-circle" *ngIf="step() <= 1">1</div>
-            <div class="step-circle checked" *ngIf="step() > 1">✓</div>
+            <div class="step-circle checked" *ngIf="step() > 1">
+                <i class="ti ti-check" aria-hidden="true"></i>
+            </div>
             <span class="step-label">Médico</span>
+        </button>
+        <div class="step-divider">
+            <i class="ti ti-chevron-right" aria-hidden="true"></i>
         </div>
-        <div class="step-divider">›</div>
 
         <!-- Paso 2: Fecha -->
-        <div class="step" [class.active]="step() === 2" [class.completed]="step() > 2" (click)="goToStep(2)">
+        <button type="button" class="step" [class.active]="step() === 2" [class.completed]="step() > 2" (click)="goToStep(2)">
             <div class="step-circle" *ngIf="step() <= 2">2</div>
-            <div class="step-circle checked" *ngIf="step() > 2">✓</div>
+            <div class="step-circle checked" *ngIf="step() > 2">
+                <i class="ti ti-check" aria-hidden="true"></i>
+            </div>
             <span class="step-label">Fecha</span>
+        </button>
+        <div class="step-divider">
+            <i class="ti ti-chevron-right" aria-hidden="true"></i>
         </div>
-        <div class="step-divider">›</div>
 
         <!-- Paso 3: Hora -->
-        <div class="step" [class.active]="step() === 3" [class.completed]="step() > 3" (click)="goToStep(3)">
+        <button type="button" class="step" [class.active]="step() === 3" [class.completed]="step() > 3" (click)="goToStep(3)">
             <div class="step-circle" *ngIf="step() <= 3">3</div>
-            <div class="step-circle checked" *ngIf="step() > 3">✓</div>
+            <div class="step-circle checked" *ngIf="step() > 3">
+                <i class="ti ti-check" aria-hidden="true"></i>
+            </div>
             <span class="step-label">Hora</span>
+        </button>
+        <div class="step-divider">
+            <i class="ti ti-chevron-right" aria-hidden="true"></i>
         </div>
-        <div class="step-divider">›</div>
 
         <!-- Paso 4: Confirmar -->
         <div class="step" [class.active]="step() === 4" [class.completed]="step() > 4">
@@ -35,7 +47,7 @@
     </div>
 
     <!-- MAIN CONTENT CARD -->
-    <div class="card wizard-card">
+    <app-card padding="none" overflow="hidden" class="wizard-card">
 
         <!-- ==================== STEP 1: MÉDICO ==================== -->
         <ng-container *ngIf="step() === 1">
@@ -44,25 +56,18 @@
             </div>
             <div class="card-body">
                 <div class="doctors-grid">
-                    <div class="doctor-box" *ngFor="let doctor of doctors()" (click)="selectDoctor(doctor)">
-                        <div class="doctor-avatar" [ngStyle]="{'background-color': getDoctorColor(doctor.id)}">
-                            {{ doctor.name.substring(0,2).toUpperCase() }}
-                        </div>
-                        <div class="doctor-info">
-                            <h4>Dr(a). {{ doctor.name }}</h4>
-                            <p class="specialty">{{ doctor.specialty }}</p>
-                            <p class="schedule-info">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <polyline points="12 6 12 12 16 14"></polyline>
-                                </svg>
-                                {{ doctor.scheduleStart | slice:0:5 }}–{{ doctor.scheduleEnd | slice:0:5 }} · {{
-                                doctor.slotDuration }}min
-                            </p>
-                            <p class="schedule-days">{{ formatDays(doctor.activeDays) }}</p>
-                        </div>
-                    </div>
+                    <app-doctor-card
+                        *ngFor="let doctor of doctors()"
+                        [doctorId]="doctor.id"
+                        [doctorName]="doctor.name"
+                        [specialty]="doctor.specialty"
+                        [selected]="selectedDoctor()?.id === doctor.id"
+                        [scheduleStart]="doctor.scheduleStart"
+                        [scheduleEnd]="doctor.scheduleEnd"
+                        [slotDuration]="doctor.slotDuration"
+                        [activeDays]="formatDays(doctor.activeDays)"
+                        (selectDoctor)="selectDoctor(doctor)">
+                    </app-doctor-card>
                 </div>
             </div>
         </ng-container>
@@ -71,36 +76,46 @@
         <ng-container *ngIf="step() === 2">
             <div class="card-header space-between">
                 <h3 class="step-title">Selecciona una fecha</h3>
-                <button class="btn-link" (click)="goToStep(1)">← Cambiar</button>
+                <app-button variant="secondary" size="sm" (clicked)="goToStep(1)">
+                    <i class="ti ti-arrow-left" aria-hidden="true"></i> Cambiar
+                </app-button>
             </div>
             <div class="card-body">
-                <!-- Banner con información del médico seleccionado -->
+
+                <!-- Banner médico seleccionado -->
                 <div class="selected-context-banner">
                     Especialista: Dr(a). {{ selectedDoctor()?.name }}
                 </div>
 
-                <!-- VERSIÓN DESKTOP: Carrusel horizontal -->
-                <div class="dates-carousel desktop-view">
-                    <div class="date-box" *ngFor="let d of availableDates()" (click)="selectDate(d)"
-                        [class.selected]="selectedDate() === d">
+                <!-- TABS DE MESES -->
+                <div class="month-tabs">
+                    <button
+                        type="button"
+                        class="month-tab"
+                        *ngFor="let month of availableMonths()"
+                        [class.month-tab--active]="selectedMonth()?.monthIndex === month.monthIndex
+                                                && selectedMonth()?.year === month.year"
+                        (click)="selectMonth(month)">
+                        {{ month.label }}
+                    </button>
+                </div>
+
+                <!-- GRID DE DÍAS -->
+                <div class="dates-carousel">
+                    <button
+                        type="button"
+                        class="date-box"
+                        *ngFor="let d of datesOfSelectedMonth"
+                        (click)="d.available && selectDate(d)"
+                        [class.selected]="selectedDate()?.fullDate === d.fullDate"
+                        [class.date-box--disabled]="!d.available"
+                        [disabled]="!d.available">
                         <span class="day-name">{{ d.dayName }}</span>
                         <span class="day-num">{{ d.dayNum }}</span>
                         <span class="month-name">{{ d.monthName }}</span>
-                    </div>
+                    </button>
                 </div>
 
-                <!-- VERSIÓN MÓVIL/TABLET: Grid vertical -->
-                <div class="dates-grid mobile-view">
-                    <div class="date-item" *ngFor="let d of availableDates()" (click)="selectDate(d)"
-                        [class.selected]="selectedDate() === d">
-                        <div class="date-info">
-                            <span class="date-day">{{ d.dayName }}</span>
-                            <span class="date-number">{{ d.dayNum }}</span>
-                            <span class="date-month">{{ d.monthName }}</span>
-                        </div>
-                        <div class="date-arrow">→</div>
-                    </div>
-                </div>
             </div>
         </ng-container>
 
@@ -108,7 +123,9 @@
         <ng-container *ngIf="step() === 3">
             <div class="card-header space-between">
                 <h3 class="step-title">Elige franja horaria</h3>
-                <button class="btn-link" (click)="goToStep(2)">← Cambiar</button>
+                <app-button variant="secondary" size="sm" (clicked)="goToStep(2)">
+                    <i class="ti ti-arrow-left" aria-hidden="true"></i> Cambiar
+                </app-button>
             </div>
             <div class="card-body">
                 <div class="selected-context-banner">
@@ -118,11 +135,12 @@
                 <div class="slots-grid" *ngIf="availableSlots().length > 0">
                     <button class="slot-btn" *ngFor="let slot of availableSlots()" (click)="selectTime(slot)"
                         [class.selected]="selectedTime() === slot">
-                        {{ slot }}
+                        {{ formatSlot(slot) }}
                     </button>
                 </div>
 
                 <div class="empty-state" *ngIf="availableSlots().length === 0">
+                    <i class="ti ti-clock-off" aria-hidden="true"></i>
                     <p>No hay franjas disponibles para esta fecha.</p>
                 </div>
             </div>
@@ -132,39 +150,57 @@
         <ng-container *ngIf="step() === 4">
             <div class="card-header space-between">
                 <h3 class="step-title">Confirmar cita</h3>
-                <button class="btn-link" (click)="goToStep(3)" *ngIf="!isSubmitting()">← Cambiar</button>
+                <app-button variant="secondary" size="sm" (clicked)="goToStep(3)" *ngIf="!isSubmitting()">
+                    <i class="ti ti-arrow-left" aria-hidden="true"></i> Cambiar
+                </app-button>
             </div>
             <div class="card-body">
                 <div class="summary-banner">
                     <div class="summary-row space-between p-bot">
                         <div class="summary-doctor">
-                            <span class="icon">🧑‍⚕️</span> Dr(a). {{ selectedDoctor()?.name }}
+                            <i class="ti ti-stethoscope" aria-hidden="true"></i>
+                            Dr(a). {{ selectedDoctor()?.name }}
                         </div>
                         <div class="summary-time">
                             <strong>{{ selectedTime() }}</strong>
                         </div>
                     </div>
                     <div class="summary-row date-row">
-                        <span class="icon">📅</span> {{ getFullDateHuman() }} a las {{ selectedTime() }}
+                        <i class="ti ti-calendar" aria-hidden="true"></i>
+                        {{ getFullDateHuman() }} a las {{ selectedTime() }}
                     </div>
                 </div>
 
                 <div class="patient-box">
-                    <h4>{{ auth.user()?.firstName }} {{ auth.user()?.lastName }}</h4>
-                    <p>Doc: {{ auth.user()?.document }} · {{ auth.user()?.phone }}</p>
+                    <h4>
+                        <i class="ti ti-user" aria-hidden="true"></i>
+                        {{ auth.user()?.firstName }} {{ auth.user()?.lastName }}
+                    </h4>
+                    <p>
+                        <i class="ti ti-id" aria-hidden="true"></i>
+                        Doc: {{ auth.user()?.document || 'No registrado' }}
+                    </p>
                 </div>
 
-                <div *ngIf="errorMessage()" class="alert alert-error">{{ errorMessage() }}</div>
-                <div *ngIf="successMessage()" class="alert alert-success">{{ successMessage() }}</div>
+                <app-alert
+                    type="error"
+                    [message]="errorMessage()"
+                    [show]="!!errorMessage()">
+                </app-alert>
+                <app-alert
+                    type="success"
+                    [message]="successMessage()"
+                    [show]="!!successMessage()">
+                </app-alert>
 
                 <div class="form-actions">
-                    <button class="btn btn-primary full-width" (click)="confirmAppointment()"
-                        [disabled]="isSubmitting() || successMessage() !== ''">
-                        {{ isSubmitting() ? 'Procesando...' : '✓ Confirmar cita' }}
-                    </button>
+                    <app-button variant="primary" [fullWidth]="true" (clicked)="confirmAppointment()" [disabled]="isSubmitting() || successMessage() !== ''">
+                        <i class="ti ti-calendar-check" aria-hidden="true"></i>
+                        {{ isSubmitting() ? 'Procesando...' : 'Confirmar cita' }}
+                    </app-button>
                 </div>
             </div>
         </ng-container>
 
-    </div>
+    </app-card>
 </div>

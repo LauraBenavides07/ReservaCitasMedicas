@@ -1,13 +1,24 @@
 <div class="appointment-form-wrapper">
 
-    <!-- Mensajes de estado (arriba para visibilidad inmediata en móvil) -->
-    <div *ngIf="successMessage()" class="alert alert-success">
-        ✅ {{ successMessage() }}
-    </div>
+    <!-- Banner de anticipación -->
+    <app-alert
+        type="info"
+        [message]="'Las citas deben agendarse con <strong>mínimo ' + minAdvanceHours + ' horas de anticipación</strong> y <strong>máximo ' + maxAppointmentDays + ' días de anticipación</strong>.'"
+        [show]="true">
+    </app-alert>
 
-    <div *ngIf="errorMessage()" class="alert alert-error">
-        ❌ {{ errorMessage() }}
-    </div>
+    <!-- Mensajes de estado (arriba para visibilidad inmediata en móvil) -->
+    <app-alert
+        type="success"
+        [message]="successMessage()"
+        [show]="!!successMessage()">
+    </app-alert>
+
+    <app-alert
+        type="error"
+        [message]="errorMessage()"
+        [show]="!!errorMessage()">
+    </app-alert>
 
     <!-- Formulario principal -->
     <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="two-column-layout">
@@ -15,89 +26,90 @@
         <!-- COLUMNA IZQUIERDA: DATOS DEL PACIENTE -->
         <div class="column-left">
 
-            <div class="card data-card">
-                <h3 class="card-title">1. Datos del Paciente</h3>
+            <app-card padding="md">
+            <h3 class="card-title">1. Datos del Paciente</h3>
 
                 <div class="form-grid">
 
                     <!-- Documento -->
-                    <div class="form-field full-width">
-                        <label>DOCUMENTO DE IDENTIDAD *</label>
-
+                    <app-form-field 
+                        class="full-width"
+                        label="DOCUMENTO DE IDENTIDAD"
+                        inputId="doc-input"
+                        [required]="true"
+                        [error]="f['patientDocument'].touched && f['patientDocument'].invalid ? 'El documento es necesario' : ''">
                         <div class="input-with-button">
-                            <input type="text" formControlName="patientDocument" placeholder="Ej: 12345678"
+                            <input type="text" id="doc-input" formControlName="patientDocument" placeholder="Ej: 12345678"
                                 [class.input-error]="f['patientDocument'].touched && f['patientDocument'].errors">
-
-                            <!-- Botón con lógica de búsqueda -->
-                            <button type="button" class="btn-buscar" (click)="searchPatient()">🔍 Buscar</button>
+                            <app-button variant="secondary" size="sm" (clicked)="searchPatient()">
+                                <i class="ti ti-search" aria-hidden="true"></i> Buscar
+                            </app-button>
                         </div>
-                        <span class="validation-message"
-                            *ngIf="f['patientDocument'].touched && f['patientDocument'].invalid">
-                            El documento es necesario
-                        </span>
-                    </div>
+                    </app-form-field>
 
-                    <!-- Nombre y apellido -->
-                    <div class="form-field full-width">
-                        <label>NOMBRES Y APELLIDOS *</label>
-
+                    <!-- Nombre y apellido - Este es especial porque tiene dos inputs -->
+                    <app-form-field 
+                        class="full-width"
+                        label="NOMBRES Y APELLIDOS"
+                        [required]="true"
+                        [error]="(f['firstName'].touched && f['firstName'].invalid) || (f['lastName'].touched && f['lastName'].invalid) ? 'Ambos nombres y apellidos son requeridos' : ''">
                         <div class="split-inputs">
                             <div>
                                 <input type="text" formControlName="firstName" placeholder="Nombres"
                                     [class.input-error]="f['firstName'].touched && f['firstName'].invalid">
-                                <span class="validation-message"
-                                    *ngIf="f['firstName'].touched && f['firstName'].invalid">Requerido</span>
                             </div>
                             <div>
                                 <input type="text" formControlName="lastName" placeholder="Apellidos"
                                     [class.input-error]="f['lastName'].touched && f['lastName'].invalid">
-                                <span class="validation-message"
-                                    *ngIf="f['lastName'].touched && f['lastName'].invalid">Requerido</span>
                             </div>
                         </div>
-                    </div>
+                    </app-form-field>
 
-                    <!-- Celular y género -->
+                    <!-- Celular y género (2 columnas) -->
                     <div class="form-row">
-                        <div class="form-field">
-                            <label>CELULAR *</label>
-                            <input type="tel" formControlName="phone" placeholder="300 000 0000"
+                        <app-form-field
+                            label="CELULAR"
+                            inputId="phone-input"
+                            [required]="true"
+                            [error]="f['phone'].touched && f['phone'].invalid ? 'El celular es obligatorio' : ''">
+                            <input type="tel" id="phone-input" formControlName="phone" placeholder="300 000 0000"
                                 [class.input-error]="f['phone'].touched && f['phone'].invalid">
-                            <span class="validation-message"
-                                *ngIf="f['phone'].touched && f['phone'].invalid">Obligatorio</span>
-                        </div>
+                        </app-form-field>
 
-                        <div class="form-field">
-                            <label>GÉNERO *</label>
-                            <select formControlName="gender"
+                        <app-form-field
+                            label="GÉNERO"
+                            inputId="gender-input"
+                            [required]="true"
+                            [error]="f['gender'].touched && f['gender'].invalid ? 'Debe seleccionar un género' : ''">
+                            <select id="gender-input" formControlName="gender"
                                 [class.input-error]="f['gender'].touched && f['gender'].invalid">
                                 <option value="">Seleccionar...</option>
                                 <option value="M">Masculino</option>
                                 <option value="F">Femenino</option>
                                 <option value="O">Otro</option>
                             </select>
-                            <span class="validation-message"
-                                *ngIf="f['gender'].touched && f['gender'].invalid">Obligatorio</span>
-                        </div>
+                        </app-form-field>
                     </div>
 
                     <!-- Correo -->
-                    <div class="form-field full-width">
-                        <label>CORREO ELECTRÓNICO</label>
-                        <input type="email" formControlName="email" placeholder="paciente@ejemplo.com"
+                    <app-form-field 
+                        class="full-width"
+                        label="CORREO ELECTRÓNICO"
+                        inputId="email-input"
+                        [required]="false"
+                        [error]="f['email'].touched && f['email'].invalid ? 'Correo electrónico inválido' : ''">
+                        <input type="email" id="email-input" formControlName="email" placeholder="paciente@ejemplo.com"
                             [class.input-error]="f['email'].touched && f['email'].invalid">
-                        <span class="validation-message" *ngIf="f['email'].touched && f['email'].invalid">Correo
-                            inválido</span>
-                    </div>
+                    </app-form-field>
 
                 </div>
-            </div>
+            </app-card>
         </div>
 
         <!-- COLUMNA DERECHA: MÉDICO Y HORARIO -->
         <div class="column-right">
 
-            <div class="card doctor-card-container">
+            <app-card padding="md">
                 <h3 class="card-title">2. Selección de Especialista</h3>
 
                 <!-- Campo oculto -->
@@ -105,18 +117,14 @@
 
                 <!-- Lista de doctores -->
                 <div class="doctors-grid">
-                    <div class="doctor-box" *ngFor="let doctor of doctors()"
-                        [class.selected]="f['doctorId'].value === doctor.id" (click)="selectDoctor(doctor.id)">
-
-                        <div class="doctor-avatar" [ngStyle]="{'background-color': getDoctorColor(doctor.id)}">
-                            {{ doctor.name.substring(0,2).toUpperCase() }}
-                        </div>
-
-                        <div class="doctor-info">
-                            <h4>Dr(a). {{ doctor.name }}</h4>
-                            <p class="specialty">{{ doctor.specialty }}</p>
-                        </div>
-                    </div>
+                    <app-doctor-card
+                        *ngFor="let doctor of doctors()"
+                        [doctorId]="doctor.id"
+                        [doctorName]="doctor.name"
+                        [specialty]="doctor.specialty"
+                        [selected]="f['doctorId'].value === doctor.id"
+                        (selectDoctor)="selectDoctor(doctor.id)">
+                    </app-doctor-card>
                 </div>
 
                 <!-- Sección de agendamiento -->
@@ -125,43 +133,41 @@
                     <h3 class="card-title mt-1.5rem">3. Fecha y Hora</h3>
 
                     <div class="form-row">
-                        <div class="form-field">
-                            <label>DÍA DE CITA *</label>
-                            <input type="date" formControlName="date" (change)="onDateChange()" [min]="today"
+                        <app-form-field
+                            label="DÍA DE CITA"
+                            inputId="date-input"
+                            [required]="true"
+                            [error]="f['date'].touched && f['date'].invalid ? 'Debe seleccionar una fecha' : 
+                                    (f['date'].value && isDateDisabled(f['date'].value) ? getDisabledDateReason(f['date'].value) : '')">
+                            <input type="date" id="date-input" formControlName="date" (change)="onDateChange()" [min]="today"
                                 [class.input-error]="f['date'].touched && f['date'].invalid">
-                            <span class="validation-message"
-                                *ngIf="f['date'].touched && f['date'].invalid">Obligatorio</span>
-                        </div>
+                        </app-form-field>
 
-                        <div class="form-field">
-                            <label>HORARIO *</label>
-                            <select formControlName="time" [class.input-error]="f['time'].touched && f['time'].invalid">
+                        <app-form-field
+                            label="HORARIO"
+                            inputId="time-input"
+                            [required]="true"
+                            [error]="f['time'].touched && f['time'].invalid ? 'Debe seleccionar una hora' : ''">
+                            <select id="time-input" formControlName="time"
+                                [class.input-error]="f['time'].touched && f['time'].invalid">
                                 <option value="">Ver turnos...</option>
                                 <option *ngFor="let slot of availableSlots()" [value]="slot">
-                                    {{ slot }}
+                                    {{ formatSlot(slot) }}
                                 </option>
                             </select>
-                            <span class="validation-message" *ngIf="f['time'].touched && f['time'].invalid">Seleccione
-                                una hora</span>
-                        </div>
-                    </div>
-
-                    <!-- Mensaje si no hay horarios -->
-                    <div *ngIf="availableSlots().length === 0 && f['date'].value" class="alert alert-error">
-                        No hay turnos disponibles para esta fecha.
+                        </app-form-field>
                     </div>
 
                 </div>
 
                 <!-- Botón de envío -->
                 <div class="form-actions mt-1.5rem">
-                    <button type="submit" class="btn btn-primary full-width"
-                        [disabled]="appointmentForm.invalid || isSubmitting()">
-                        {{ isSubmitting() ? 'Procesando...' : 'Confirmar Cita Médica' }}
-                    </button>
+                    <app-button type="submit" variant="primary" [fullWidth]="true" [disabled]="appointmentForm.invalid || isSubmitting()">
+                         {{ isSubmitting() ? 'Procesando...' : 'Confirmar Cita Médica' }}
+                    </app-button>
                 </div>
 
-            </div>
+            </app-card>
         </div>
 
     </form>

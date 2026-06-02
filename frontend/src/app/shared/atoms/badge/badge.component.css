@@ -1,0 +1,129 @@
+/* ============================================
+   BADGE ATOM
+   ============================================ */
+
+/* Base común a los dos estilos */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  width: fit-content;
+  line-height: 1.2;
+}
+
+/* ============================================
+   VARIANTE OUTLINE
+   Fondo claro, texto de color (appointment-list)
+   ============================================ */
+
+.badge--outline {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.7rem;
+}
+
+/* Agendada / Pendiente */
+.badge--outline.badge--agendada,
+.badge--outline.badge--pendiente {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+/* Confirmada */
+.badge--outline.badge--confirmada {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+/* Completada */
+.badge--outline.badge--completada {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+/* Cancelada */
+.badge--outline.badge--cancelada {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Desconocido / fallback */
+.badge--outline.badge--desconocido {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+/* ============================================
+   VARIANTE SOLID
+   Fondo de color, texto blanco + punto
+   (doctor-dashboard, patient-dashboard)
+   ============================================ */
+
+.badge--solid {
+  padding: 0.4rem 1.2rem;
+  font-size: 0.8rem;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Punto decorativo */
+.badge__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.85);
+  flex-shrink: 0;
+}
+
+/* Agendada / Pendiente */
+.badge--solid.badge--agendada,
+.badge--solid.badge--pendiente {
+  background-color: #f59e0b;
+}
+
+/* Confirmada */
+.badge--solid.badge--confirmada {
+  background-color: #10b981;
+}
+
+/* Completada */
+.badge--solid.badge--completada {
+  background-color: #0d2c5b;
+}
+
+/* Cancelada */
+.badge--solid.badge--cancelada {
+  background-color: #ef4444;
+}
+
+/* Desconocido / fallback */
+.badge--solid.badge--desconocido {
+  background-color: #6b7280;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .badge--outline {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.65rem;
+  }
+
+  .badge--solid {
+    padding: 0.35rem 0.9rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .badge--solid {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.7rem;
+  }
+}

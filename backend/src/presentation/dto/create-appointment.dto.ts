@@ -25,8 +25,8 @@ export class CreateAppointmentDto {
   phone: string;
 
   @IsString()
-  @IsNotEmpty()
-  gender: string;
+  @IsOptional()
+  gender?: string;
 
   @IsDateString()
   @IsOptional()

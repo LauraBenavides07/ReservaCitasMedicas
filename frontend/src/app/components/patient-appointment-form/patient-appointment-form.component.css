@@ -62,15 +62,34 @@
     color: #94a3b8;
     font-weight: 600;
     font-size: 0.85rem;
-    transition: all 0.2s;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s;
     white-space: nowrap;
     flex-shrink: 0;
+    background: transparent;
+    border: none;
+    padding: 0.55rem 0.75rem;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.step:hover {
+    background: rgba(13, 44, 91, 0.08);
+    color: #0d2c5b;
+    transform: translateY(-1px);
+}
+
+.step:focus-visible {
+    outline: 2px solid rgba(13, 44, 91, 0.35);
+    outline-offset: 3px;
 }
 
 .step.completed,
 .step.active {
-    color: #1a3972;
-    cursor: pointer;
+    color: #0d2c5b;
+}
+
+.step.active {
+    background: rgba(13, 44, 91, 0.12);
 }
 
 .step-circle {
@@ -107,20 +126,6 @@
    WIZARD MAIN CARD
    ============================================ */
 
-.wizard-card {
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    overflow: hidden;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.card-header {
-    padding: 1rem;
-    border-bottom: 1px solid #f1f5f9;
-}
-
 .card-header.space-between {
     display: flex;
     justify-content: space-between;
@@ -137,87 +142,17 @@
     font-weight: 600;
 }
 
-.card-body {
-    padding: 1rem;
-    width: 100%;
-    box-sizing: border-box;
-    overflow: hidden;
-}
 
 /* ============================================
    STEP 1: DOCTORS
    ============================================ */
 
 .doctors-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
 }
-
-.doctor-box {
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 1rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: #ffffff;
-    width: 100%;
-}
-
-.doctor-box:hover {
-    border-color: #9bbfd7;
-    box-shadow: 0 4px 12px rgba(155, 191, 215, 0.2);
-}
-
-.doctor-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 8px;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 1rem;
-    flex-shrink: 0;
-}
-
-.doctor-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.doctor-info h4 {
-    margin: 0 0 0.25rem 0;
-    font-size: 0.95rem;
-    color: #0f172a;
-    font-weight: 700;
-    word-break: break-word;
-}
-
-.specialty {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.75rem;
-    color: #64748b;
-    word-break: break-word;
-}
-
-.schedule-info,
-.schedule-days {
-    margin: 0;
-    font-size: 0.7rem;
-    color: #94a3b8;
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    flex-wrap: wrap;
-}
-
 .schedule-days {
     margin-top: 0.2rem;
     font-weight: 600;
@@ -427,7 +362,7 @@
 .summary-row {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.3rem;
     font-size: 0.9rem;
     flex-wrap: wrap;
 }
@@ -475,31 +410,11 @@
     word-break: break-word;
 }
 
-.btn-link {
-    background: transparent;
-    border: none;
-    color: #1a3972;
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-}
 
 .btn-link:hover {
     text-decoration: underline;
 }
 
-.btn-primary {
-    background: #1a3972;
-    color: #ffffff;
-    border: none;
-    padding: 0.875rem 1.25rem;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    width: 100%;
-}
 
 .btn-primary:hover:not(:disabled) {
     background: #0d2c5b;
@@ -518,32 +433,63 @@
    ALERTS
    ============================================ */
 
-.alert {
-    padding: 0.75rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 1rem;
-    width: 100%;
-    word-break: break-word;
-}
-
-.alert-error {
-    background: #fef2f2;
-    color: #b91c1c;
-    border: 1px solid #fecaca;
-}
-
-.alert-success {
-    background: #f0fdf4;
-    color: #15803d;
-    border: 1px solid #bbf7d0;
-}
-
 .empty-state {
     text-align: center;
     padding: 1.5rem;
     color: #64748b;
+}
+/* ============================================
+   MONTH TABS
+   ============================================ */
+
+.month-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.month-tab {
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.month-tab:hover {
+  border-color: #1a3972;
+  color: #1a3972;
+}
+
+.month-tab--active {
+  background: #1a3972;
+  border-color: #1a3972;
+  color: #ffffff;
+}
+
+/* ============================================
+   DATE-BOX DESHABILITADO
+   ============================================ */
+
+.date-box--disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Forzar el carrusel visible siempre (no solo en desktop) */
+.dates-carousel {
+  display: flex !important;
+  flex-wrap: wrap;        /* ← wrap para que pasen a la siguiente fila */
+  gap: 0.75rem;
+  padding: 0.75rem;
+  margin-top: 2rem;
 }
 
 /* ============================================
@@ -552,14 +498,7 @@
 
 /* Tablet y desktop (768px o más) */
 @media (min-width: 768px) {
-    .card-header {
-        padding: 1.5rem 2rem;
-    }
 
-    .card-body {
-        padding: 1.5rem 2rem;
-        overflow: visible; /* permite que el carrusel haga scroll interno */
-    }
 
     .step-title {
         font-size: 1.3rem;
@@ -587,7 +526,8 @@
     .doctors-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
+        gap: 1.5rem;
+        width: 100%;
     }
 
     .doctor-box {
@@ -663,16 +603,6 @@
         font-size: 0.85rem;
     }
 
-    .doctor-avatar {
-        width: 36px;
-        height: 36px;
-        font-size: 0.85rem;
-    }
-
-    .doctor-info h4 {
-        font-size: 0.85rem;
-    }
-
     .step {
         font-size: 0.7rem;
     }
@@ -682,4 +612,56 @@
         height: 20px;
         font-size: 0.65rem;
     }
+}
+
+/* Iconos en general */
+.ti {
+    font-size: 1rem;
+    line-height: 1;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Iconos en botones */
+app-button .ti,
+button .ti {
+    margin-right: 0.35rem;
+}
+
+/* Iconos en step-circle checked */
+.step-circle .ti {
+    font-size: 0.7rem;
+    margin: 0;
+}
+
+/* Iconos en step-divider */
+.step-divider .ti {
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+
+/* Iconos en banners */
+.selected-context-banner .ti {
+    margin-right: 0.35rem;
+}
+
+/* Iconos en summary */
+.summary-doctor .ti,
+.summary-row .ti {
+    margin-right: 0.35rem;
+}
+
+/* Iconos en patient-box */
+.patient-box .ti {
+    margin-right: 0.35rem;
+    font-size: 0.85rem;
+}
+
+/* Icono en empty state */
+.empty-state .ti-clock-off {
+    font-size: 2rem;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+    display: inline-block;
 }

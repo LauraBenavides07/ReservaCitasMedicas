@@ -1,0 +1,119 @@
+/* ============================================
+   FORM-FIELD ATOM - Diseño unificado
+   ============================================ */
+
+/* Contenedor del campo */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Etiqueta */
+.form-field label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Asterisco de campo obligatorio */
+.required-mark {
+  color: #ef4444;
+}
+/* Mensaje de error */
+.field-validating {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-style: italic;
+    display: block;
+    margin-top: 0.25rem;
+}
+/* Inputs y selects que vengan dentro del form-field */
+:host ::ng-deep input,
+:host ::ng-deep select {
+  padding: 0.875rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s;
+  color: #0f172a;
+  min-height: 48px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+
+/* Placeholder */
+:host ::ng-deep input::placeholder {
+  color: #64748b;
+  opacity: 0.8;
+}
+
+/* Estado focus */
+:host ::ng-deep input:focus,
+:host ::ng-deep select:focus {
+  outline: none;
+  border-color: #1e3a6a;
+  box-shadow: 0 0 0 3px rgba(30, 58, 106, 0.1);
+}
+
+/* Input con error (clase que se aplica desde el padre) */
+:host ::ng-deep .input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Mensaje de error */
+.field-error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Texto de ayuda */
+.field-hint {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  :host ::ng-deep input,
+  :host ::ng-deep select {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.95rem;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-field label {
+    font-size: 0.65rem;
+  }
+
+  :host ::ng-deep input,
+  :host ::ng-deep select {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.85rem;
+    min-height: 40px;
+  }
+}
+
+:host {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+:host.full-width {
+  width: 100%;
+}
+
+:host.full-width .form-field-container {
+  width: 100%;
+}

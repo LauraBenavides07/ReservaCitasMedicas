@@ -1,81 +1,196 @@
 services:
+
+  # ─── Backend (NestJS) ──────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      target: runtime
+    container_name: piedrazul-backend
+    env_file:
+      - ./backend/.env
+      - ./.env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      KEYCLOAK_URL: http://keycloak:8080
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672
+    ports:
+      - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    networks:
+      - frontend
+      - backend
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  # ─── Frontend (Angular + Nginx) ────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      target: runtime
+    container_name: piedrazul-frontend
+    ports:
+      - '80:80'
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - frontend
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  # ─── PostgreSQL Principal ──────────────────────────────────────
   postgres:
     image: postgres:15-alpine
     container_name: piedrazul-postgres
+    env_file: ./.env
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: piedrazul
-    ports:
-      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - backend
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 256M
 
+  # ─── PostgreSQL Notificaciones ─────────────────────────────────
   postgres-notifications:
     image: postgres:15-alpine
     container_name: piedrazul-postgres-notifications
+    env_file: ./.env
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: notifications_db
-    ports:
-      - '5433:5432'
     volumes:
       - postgres_notifications_data:/var/lib/postgresql/data
+    networks:
+      - backend
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
 
+  # ─── RabbitMQ ──────────────────────────────────────────────────
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: piedrazul-rabbitmq
-    ports:
-      - '5672:5672'
-      - '15672:15672'
+    env_file: ./.env
     environment:
-      RABBITMQ_DEFAULT_USER: piedrazul
-      RABBITMQ_DEFAULT_PASS: piedrazul_pass
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - backend
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
 
+  # ─── Keycloak ──────────────────────────────────────────────────
   keycloak:
     image: keycloak/keycloak:22.0.5
     container_name: piedrazul-keycloak
+    command: start --import-realm
+    env_file: ./.env
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
-      KC_DB_USERNAME: postgres
-      KC_DB_PASSWORD: postgres
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_HOSTNAME: localhost
-    command: start-dev
-    ports:
-      - '8080:8080'
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT: false
+      KC_PROXY: edge
+      KC_HEALTH_ENABLED: true
     volumes:
       - keycloak_data:/opt/keycloak/data
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - backend
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 2 bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080' 2>/dev/null && echo OK || exit 1"]
+      interval: 15s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
 
+# ─── Volumes ────────────────────────────────────────────────────
 volumes:
   postgres_data:
   postgres_notifications_data:
   rabbitmq_data:
   keycloak_data:
+
+# ─── Networks ───────────────────────────────────────────────────
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: true

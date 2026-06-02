@@ -5,11 +5,15 @@
     <nav class="tabs">
         <!-- Pestaña Horarios -->
         <button [class.active]="activeTab() === 'horarios'" (click)="activeTab.set('horarios')" class="tab-btn">
-            <span class="icon">⚙️</span> Horarios
+            <i class="ti ti-settings" aria-hidden="true"></i> Horarios
         </button>
         <!-- Pestaña Estadísticas -->
         <button [class.active]="activeTab() === 'estadisticas'" (click)="activeTab.set('estadisticas')" class="tab-btn">
-            <span class="icon">📊</span> Estadísticas
+            <i class="ti ti-chart-bar" aria-hidden="true"></i> Estadísticas
+        </button>
+        <!-- Pestaña Pacientes -->
+        <button [class.active]="activeTab() === 'pacientes'" (click)="activeTab.set('pacientes')" class="tab-btn">
+            <i class="ti ti-users" aria-hidden="true"></i> Pacientes
         </button>
     </nav>
 
@@ -17,12 +21,12 @@
     <section *ngIf="activeTab() === 'horarios'" class="tab-content">
         <!-- Barra de acciones con botones para configuraciones globales y añadir médico -->
         <div class="actions-bar">
-            <button class="btn btn-secondary" (click)="showGlobalConfig.set(true)">
-                <span>⚙️</span> Configuración Global
-            </button>
-            <button class="btn btn-primary" (click)="openDoctorForm()">
-                <span>+</span> Añadir Médico
-            </button>
+            <app-button variant="secondary" (clicked)="openConfigModal()">
+                <i class="ti ti-settings" aria-hidden="true"></i> Configuración Global
+            </app-button>
+            <app-button variant="primary" (clicked)="openDoctorForm()">
+                <i class="ti ti-plus" aria-hidden="true"></i> Añadir Médico
+            </app-button>
         </div>
 
         <!-- Lista de tarjetas de médicos -->
@@ -36,6 +40,7 @@
                     <div class="doc-details">
                         <h4 class="doc-name">Dr(a). {{ doctor.name }}</h4>
                         <p class="doc-specialty">{{ doctor.specialty }}</p>
+                        <p class="doc-document" style="font-size: 0.7rem; color: #64748b;">CC: {{ doctor.document }}</p>
                     </div>
                 </div>
 
@@ -66,12 +71,12 @@
 
                 <!-- Acción: botón para editar -->
                 <div class="doc-actions">
-                    <button class="btn btn-secondary btn-sm" (click)="openExceptions(doctor)">
-                        📅 Excepciones
-                    </button>
-                    <button class="btn btn-primary btn-edit-dark" (click)="openDoctorForm(doctor)">
-                        ✏️ Editar
-                    </button>
+                    <app-button variant="secondary" size="sm" (clicked)="openExceptions(doctor)">
+                        <i class="ti ti-calendar-exclamation" aria-hidden="true"></i> Excepciones
+                    </app-button>
+                    <app-button variant="primary" size="sm" (clicked)="openDoctorForm(doctor)">
+                        <i class="ti ti-edit" aria-hidden="true"></i> Editar
+                    </app-button>
                 </div>
             </div>
         </div>
@@ -139,10 +144,11 @@
         </div>
 
         <!-- Tabla de citas por médico -->
-        <div class="card table-card">
+        <app-card padding="sm">
             <h3 class="card-title">Distribución por Médico</h3>
-            <div class="table-responsive">
-                <table class="styled-table">
+            <div *ngIf="patients().length > 0" class="table-responsive" style="margin-top: 1.25rem;">
+
+                <table class="piedrazul-table">
                     <thead>
                         <tr>
                             <th>MÉDICO</th>
@@ -152,9 +158,9 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let ds of doctorStats">
-                            <td>{{ ds.name }}</td>
-                            <td>{{ ds.count }}</td>
-                            <td class="proportion-cell">
+                            <td data-label="MÉDICO">{{ ds.name }}</td>
+                            <td data-label="CITAS">{{ ds.count }}</td>
+                            <td data-label="PROPORCIÓN" class="proportion-cell">
                                 <div class="progress-bar-container">
                                     <div class="progress-bar-fill" [style.width.%]="ds.percentage"></div>
                                 </div>
@@ -163,134 +169,263 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </app-card>
     </section>
 
     <!-- Modal Médico -->
-    <div *ngIf="showDoctorForm()" class="modal-overlay" (click)="showDoctorForm.set(false)">
-        <div class="modal" (click)="$event.stopPropagation()">
-            <h3 class="modal-title">
-                {{ selectedDoctor() ? 'Editar Médico' : 'Añadir Médico' }}
-            </h3>
-            <form [formGroup]="doctorForm" (ngSubmit)="saveDoctor()" class="form-grid">
-                <div class="form-field">
-                    <label for="doctor-name">Nombre Completo</label>
-                    <input id="doctor-name" formControlName="name" placeholder="Ej: Juan Perez" />
-                </div>
-
-                <div class="form-field">
-                    <label for="doctor-specialty">Especialidad</label>
-                    <select id="doctor-specialty" formControlName="specialty">
-                        <option value="">Seleccione una especialidad</option>
-                        <option *ngFor="let s of specialties" [value]="s">{{ s }}</option>
-                    </select>
-                </div>
-
-                <div class="form-row-responsive">
-                    <div class="form-field">
-                        <label for="doctor-startTime">Hora Inicio</label>
-                        <input id="doctor-startTime" type="time" formControlName="scheduleStart" />
-                    </div>
-                    <div class="form-field">
-                        <label for="doctor-endTime">Hora Fin</label>
-                        <input id="doctor-endTime" type="time" formControlName="scheduleEnd" />
-                    </div>
-                </div>
-
-                <div class="form-row-responsive">
-                    <div class="form-field">
-                        <label for="doctor-duration">Duración (min)</label>
-                        <input id="doctor-duration" type="number" formControlName="slotDuration" />
-                    </div>
-                    <div class="form-field">
-                        <label for="doctor-workingDays">Días (1-7)</label>
-                        <input id="doctor-workingDays" formControlName="activeDays" placeholder="Ej: 1,2,3,4,5" />
-                    </div>
-                </div>
-
-                <div class="form-row-responsive">
-                    <div class="form-field">
-                        <label for="doctor-breakStart">Inicio Descanso</label>
-                        <input id="doctor-breakStart" type="time" formControlName="lunchStart" />
-                    </div>
-                    <div class="form-field">
-                        <label for="doctor-breakEnd">Fin Descanso</label>
-                        <input id="doctor-breakEnd" type="time" formControlName="lunchEnd" />
-                    </div>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" [disabled]="doctorForm.invalid">Guardar
-                        Cambios</button>
-                    <button type="button" *ngIf="selectedDoctor()" (click)="deleteDoctor(selectedDoctor()!.id)"
-                        class="btn btn-delete">Eliminar Médico</button>
-                    <button type="button" (click)="showDoctorForm.set(false)" class="btn btn-cancel">Cancelar</button>
-                </div>
-            </form>
+    <dialog #doctorModal class="modal" aria-labelledby="doctor-modal-title" (close)="onDoctorModalClose()" (click)="onDialogClick($event, doctorModal)">
+        <h3 id="doctor-modal-title" class="modal-title">
+            {{ selectedDoctor() ? 'Editar Médico' : 'Añadir Médico' }}
+        </h3>
+        <div *ngIf="doctorFormMessage()" class="inline-message" [class.inline-error]="doctorFormMessage()!.type === 'error'" [class.inline-success]="doctorFormMessage()!.type === 'success'">
+            {{ doctorFormMessage()!.text }}
         </div>
-    </div>
+        <form [formGroup]="doctorForm" (ngSubmit)="saveDoctor()" class="form-grid">
+            <!-- Campo Cedula -->
+            <div class="form-field">
+                <label for="doctor-document">Cedula <span class="required">*</span></label>
+                <input id="doctor-document" type="text" formControlName="document" 
+                    placeholder="Ej: 12345678"
+                    [class.field-invalid]="doctorForm.get('document')?.invalid && doctorForm.get('document')?.touched" />
+                <small class="field-error" *ngIf="doctorForm.get('document')?.invalid && doctorForm.get('document')?.touched">
+                    La cédula es obligatoria (6-20 dígitos)
+                </small>
+            </div>
+            
+             <!-- Campo Nombre -->   
+            <div class="form-field">
+                <label for="doctor-name">Nombre Completo <span class="required">*</span></label>
+                <input id="doctor-name" formControlName="name" placeholder="Ej: Juan Perez"
+                    [class.field-invalid]="doctorForm.get('name')?.invalid && doctorForm.get('name')?.touched" />
+                <small class="field-error" *ngIf="doctorForm.get('name')?.invalid && doctorForm.get('name')?.touched">
+                    El nombre es obligatorio
+                </small>
+            </div>
+            <!--  CAMPO: Email -->
+              <div class="form-field">
+                <label for="doctor-email">correo electrónico <span class="required">*</span></label>
+                <input id="doctor-email" type="email" formControlName="email" 
+                    placeholder="doctor@ejemplo.com"
+                    [class.field-invalid]="doctorForm.get('email')?.invalid && doctorForm.get('email')?.touched" />
+                <small class="field-hint">El médico usará este correo para iniciar sesión</small>
+                <small class="field-error" *ngIf="doctorForm.get('email')?.invalid && doctorForm.get('email')?.touched">
+                    Ingrese un correo electrónico válido
+                </small>
+            </div>
+            
+            <div class="form-field">
+                <label for="doctor-specialty">Especialidad <span class="required">*</span></label>
+                <select id="doctor-specialty" formControlName="specialty"
+                    [class.field-invalid]="doctorForm.get('specialty')?.invalid && doctorForm.get('specialty')?.touched">
+                    <option value="">Seleccione una especialidad</option>
+                    <option *ngFor="let s of specialties" [value]="s">{{ s }}</option>
+                </select>
+                <small class="field-error" *ngIf="doctorForm.get('specialty')?.invalid && doctorForm.get('specialty')?.touched">
+                    La especialidad es obligatoria
+                </small>
+            </div>
 
-    <!-- Modal Configuración Global -->
-    <div *ngIf="showGlobalConfig()" class="modal-overlay" (click)="showGlobalConfig.set(false)">
-        <div class="modal" (click)="$event.stopPropagation()">
-            <h3 class="modal-title">Reglas Globales</h3>
-            <p class="text-muted" style="margin-bottom: 1.5rem;">
-                Configura los parámetros generales para todos los médicos del sistema.
-            </p>
-
-            <form [formGroup]="configForm" (ngSubmit)="saveConfig()" class="form-grid">
+            <div class="form-row-responsive">
                 <div class="form-field">
-                    <label for="config-minAdvance">Antelación Mínima (Horas)</label>
-                    <input id="config-minAdvance" type="number" formControlName="minAdvanceHours" />
+                    <label for="doctor-startTime">Hora Inicio <span class="required">*</span></label>
+                    <input id="doctor-startTime" type="time" formControlName="scheduleStart"
+                        [class.field-invalid]="doctorForm.get('scheduleStart')?.invalid && doctorForm.get('scheduleStart')?.touched" />
+                    <small class="field-hint">Formato 24hrs</small>
                 </div>
                 <div class="form-field">
-                    <label for="config-window">Ventana de Citas (Días)</label>
-                    <input id="config-window" type="number" formControlName="appointmentWindowDays" />
-                </div>
-
-                <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" [disabled]="configForm.invalid">Actualizar
-                        Reglas</button>
-                    <button type="button" (click)="showGlobalConfig.set(false)" class="btn btn-cancel">Cerrar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Excepciones -->
-    <div *ngIf="showExceptionForm()" class="modal-overlay" (click)="showExceptionForm.set(false)">
-        <div class="modal" (click)="$event.stopPropagation()">
-            <h3 class="modal-title">Días No Laborables - Dr(a). {{ selectedDoctor()?.name }}</h3>
-
-            <div class="exceptions-list" *ngIf="exceptions().length > 0" style="margin-bottom: 1.5rem;">
-                <div class="exception-item" *ngFor="let ex of exceptions()"
-                    style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid #eee;">
-                    <span><strong>{{ ex.date | date:'dd/MM/yyyy' }}</strong>: {{ ex.reason }}</span>
-                    <button class="btn-icon" (click)="removeException(ex.id)"
-                        style="border: none; background: none; cursor: pointer;">🗑️</button>
+                    <label for="doctor-endTime">Hora Fin <span class="required">*</span></label>
+                    <input id="doctor-endTime" type="time" formControlName="scheduleEnd"
+                        [class.field-invalid]="doctorForm.get('scheduleEnd')?.invalid && doctorForm.get('scheduleEnd')?.touched" />
+                    <small class="field-hint">Formato 24hrs</small>
                 </div>
             </div>
 
-            <p *ngIf="exceptions().length === 0" class="text-muted" style="margin-bottom: 1.5rem;">No hay excepciones
-                registradas.</p>
-
-            <h4 class="card-title">Añadir Nueva Excepción</h4>
-            <form [formGroup]="exceptionForm" (ngSubmit)="addException()" class="form-grid">
+            <div class="form-row-responsive">
                 <div class="form-field">
-                    <label>Fecha</label>
-                    <input type="date" formControlName="date" />
+                    <label for="doctor-duration">Duración de citas (min) <span class="required">*</span></label>
+                    <input id="doctor-duration" type="number" formControlName="slotDuration" min="1"
+                        [class.field-invalid]="doctorForm.get('slotDuration')?.invalid && doctorForm.get('slotDuration')?.touched" />
+                    <small class="field-error" *ngIf="doctorForm.get('slotDuration')?.invalid && doctorForm.get('slotDuration')?.touched">
+                        Mínimo 10 minutos
+                    </small>
                 </div>
                 <div class="form-field">
-                    <label>Motivo</label>
-                    <input type="text" formControlName="reason" placeholder="Ej: Vacaciones" />
+                    <label>Días Laborales <span class="required">*</span></label>
+                    <div class="day-checklist">
+                        <button type="button" *ngFor="let day of dayList"
+                            class="day-chip" [class.day-selected]="isDaySelected(day.value)"
+                            (click)="toggleDay(day.value)">
+                            {{ day.label }}
+                        </button>
+                    </div>
+                    <small class="field-error" *ngIf="selectedDays.length === 0">
+                        Selecciona al menos un día laboral
+                    </small>
+                    <input type="hidden" formControlName="activeDays" />
                 </div>
+            </div>
 
-                <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" [disabled]="exceptionForm.invalid">Bloquear
-                        Día</button>
-                    <button type="button" (click)="showExceptionForm.set(false)" class="btn btn-cancel">Cerrar</button>
+            <div class="form-row-responsive">
+                <div class="form-field">
+                    <label for="doctor-breakStart">Inicio Descanso</label>
+                    <input id="doctor-breakStart" type="time" formControlName="lunchStart" />
+                    <small class="field-hint">Formato 24hrs</small>
                 </div>
-            </form>
+                <div class="form-field">
+                    <label for="doctor-breakEnd">Fin Descanso</label>
+                    <input id="doctor-breakEnd" type="time" formControlName="lunchEnd" />
+                    <small class="field-hint">Formato 24hrs</small>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+            <app-button type="submit" variant="primary" [disabled]="doctorForm.invalid">Guardar Cambios</app-button>
+            <app-button *ngIf="selectedDoctor()" variant="danger" (clicked)="deleteDoctor(selectedDoctor()!.id)">Eliminar Médico</app-button>
+            <app-button variant="secondary" (clicked)="closeDoctorModal()">Cancelar</app-button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Modal Configuración Global -->
+    <dialog #configModal class="modal" aria-labelledby="config-modal-title" (close)="onConfigModalClose()" (click)="onDialogClick($event, configModal)">
+        <h3 id="config-modal-title" class="modal-title">Reglas Globales</h3>
+        <p class="text-muted" style="margin-bottom: 1.5rem;">
+            Configura los parámetros generales para todos los médicos del sistema.
+        </p>
+
+        <div *ngIf="configFormMessage()" class="inline-message" [class.inline-error]="configFormMessage()!.type === 'error'" [class.inline-success]="configFormMessage()!.type === 'success'">
+            {{ configFormMessage()!.text }}
         </div>
-    </div>
+        <form [formGroup]="configForm" (ngSubmit)="saveConfig()" class="form-grid">
+            <div class="form-field">
+                <label for="config-minAdvance">Antelación Mínima (Horas) <span class="required">*</span></label>
+                <input id="config-minAdvance" type="number" formControlName="minAdvanceHours" min="1" step="1"
+                    [class.field-invalid]="configForm.get('minAdvanceHours')?.invalid && configForm.get('minAdvanceHours')?.touched" />
+                <small class="field-error" *ngIf="configForm.get('minAdvanceHours')?.invalid && configForm.get('minAdvanceHours')?.touched">
+                    Debe ser un número entero positivo
+                </small>
+            </div>
+            <div class="form-field">
+                <label for="config-window">Ventana de Citas (Días) <span class="required">*</span></label>
+                <input id="config-window" type="number" formControlName="appointmentWindowDays" min="1" step="1"
+                    [class.field-invalid]="configForm.get('appointmentWindowDays')?.invalid && configForm.get('appointmentWindowDays')?.touched" />
+                <small class="field-error" *ngIf="configForm.get('appointmentWindowDays')?.invalid && configForm.get('appointmentWindowDays')?.touched">
+                    Debe ser un número entero positivo
+                </small>
+            </div>
+
+            <div class="modal-actions">
+                <app-button type="submit" variant="primary" [disabled]="configForm.invalid">Guardar Cambios</app-button>
+                <app-button variant="secondary" (clicked)="closeConfigModal()">Cancelar</app-button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Modal Excepciones -->
+    <dialog #exceptionsModal class="modal" aria-labelledby="exceptions-modal-title" (close)="onExceptionsModalClose()" (click)="onDialogClick($event, exceptionsModal)">
+        <h3 id="exceptions-modal-title" class="modal-title">Días No Laborables - Dr(a). {{ selectedDoctor()?.name }}</h3>
+
+        <div class="exceptions-list" *ngIf="exceptions().length > 0" style="margin-bottom: 1.5rem;">
+            <div class="exception-item" *ngFor="let ex of exceptions()"
+                style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid #eee;">
+                <span><strong>{{ ex.date | date:'dd/MM/yyyy' }}</strong>: {{ ex.reason }}</span>
+                <button class="btn-icon" (click)="removeException(ex.id)"
+                    style="border: none; background: none; cursor: pointer;">🗑️</button>
+            </div>
+        </div>
+
+        <p *ngIf="exceptions().length === 0" class="text-muted" style="margin-bottom: 1.5rem;">No hay excepciones
+            registradas.</p>
+
+        <h4 class="card-title">Añadir Nueva Excepción</h4>
+        <form [formGroup]="exceptionForm" (ngSubmit)="addException()" class="form-grid">
+            <div class="form-field">
+                <label>Fecha <span class="required">*</span></label>
+                <input type="date" formControlName="date"
+                    [class.field-invalid]="exceptionForm.get('date')?.invalid && exceptionForm.get('date')?.touched" />
+                <small class="field-error" *ngIf="exceptionForm.get('date')?.invalid && exceptionForm.get('date')?.touched">
+                    La fecha es obligatoria
+                </small>
+            </div>
+            <div class="form-field">
+                <label>Motivo <span class="required">*</span></label>
+                <input type="text" formControlName="reason" placeholder="Ej: Vacaciones"
+                    [class.field-invalid]="exceptionForm.get('reason')?.invalid && exceptionForm.get('reason')?.touched" />
+                <small class="field-error" *ngIf="exceptionForm.get('reason')?.invalid && exceptionForm.get('reason')?.touched">
+                    El motivo es obligatorio
+                </small>
+            </div>
+
+            <div class="modal-actions">
+                <app-button type="submit" variant="primary" [disabled]="exceptionForm.invalid">Bloquear Día</app-button>
+                <app-button variant="secondary" (clicked)="closeExceptionsModal()">Cerrar</app-button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- PESTAÑA PACIENTES -->
+    <section *ngIf="activeTab() === 'pacientes'" class="tab-content">
+
+        <!-- Cabecera con título y buscador -->
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Lista de Pacientes</h2>
+                <p class="section-subtitle">{{ patients().length }} paciente(s) registrados</p>
+            </div>
+            <div class="search-wrapper">
+                <i class="ti ti-search" aria-hidden="true"></i>
+                <input
+                    class="search-input"
+                    type="text"
+                    placeholder="Buscar por nombre, cédula..."
+                    [value]="patientSearch()"
+                    (input)="patientSearch.set($any($event.target).value)">
+            </div>
+        </div>
+
+        <!-- Estado vacío -->
+        <div *ngIf="patients().length === 0" class="empty-state">
+            <p>⏳ Cargando pacientes...</p>
+        </div>
+
+        <!-- Tabla de pacientes -->
+        <div *ngIf="patients().length > 0" class="table-responsive">
+            <table class="piedrazul-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Paciente</th>
+                        <th>Cédula</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Género</th>
+                        <th>Registrado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let patient of filteredPatients(); let i = index">
+                        <td>
+                            <div style="display:flex; align-items:center; gap:0.6rem;">
+                                <span style="font-size:0.82rem; color:#193358; min-width:18px;">{{ i + 1 }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <strong>{{ patient.firstName }} {{ patient.lastName }}</strong>
+                        </td>
+                        <td>{{ patient.document }}</td>
+                        <td>{{ patient.phone || '—' }}</td>
+                        <td>{{ patient.email || '—' }}</td>
+                        <td>
+                            <span class="gender-badge"
+                                [class.male]="patient.gender === 'M'"
+                                [class.female]="patient.gender === 'F'">
+                                {{ patient.gender === 'M' ? 'Masculino' : patient.gender === 'F' ? 'Femenino' : 'Otro' }}
+                            </span>
+                        </td>
+                        <td class="date-cell" style="font-size:0.82rem; color:#193358; min-width:18px;">{{ patient.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>

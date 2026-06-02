@@ -15,8 +15,12 @@
   <app-register (navigate)="view.set($event)"></app-register>
 </ng-container>
 
+<ng-container *ngIf="view() === 'change-password'">
+  <app-change-password></app-change-password>
+</ng-container>
+
 <!-- DASHBOARD: se muestra cuando el usuario está autenticado y no está en vistas de autenticación -->
-<ng-container *ngIf="view() !== 'landing' && view() !== 'login' && view() !== 'register'">
+<ng-container *ngIf="view() !== 'landing' && view() !== 'login' && view() !== 'register' && view() !== 'change-password'">
   <div class="dashboard-layout">
 
     <!-- BARRA LATERAL (SIDEBAR) -->
@@ -24,7 +28,7 @@
       <!-- Logo y nombre del centro médico -->
       <div class="sidebar-brand">
         <div style="display: flex; align-items: center; gap: 1rem;">
-          <img src="img/logo.png" alt="Piedrazul Logo" class="logo-img">
+          <img src="img/logo.png" alt="Piedrazul Logo" class="logo-img" width="70" height="70" loading="lazy">
           <div class="logo-text">
             <span class="brand-name">Piedrazul</span>
             <span class="brand-sub">CENTRO MÉDICO</span>
@@ -64,6 +68,22 @@
               </svg>
             </span>
             Nueva Cita
+          </button>
+
+          <!-- Botón de auditoría (solo visible para administradores) -->
+          <button *ngIf="auth.user()?.role === 'admin'" class="nav-item" (click)="changeView('admin-audit')"
+            [class.active]="view() === 'admin-audit'">
+            <span class="icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </span>
+            Auditoría
           </button>
 
           <!-- Botón de configuración (solo visible para administradores) -->
@@ -129,6 +149,28 @@
             Mi Agenda
           </button>
 
+          <button class="nav-item" (click)="changeView('doctor-search')" [class.active]="view() === 'doctor-search'">
+            <span class="icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            Buscar Citas
+          </button>
+
+          <button class="nav-item" (click)="changeView('doctor-create')" [class.active]="view() === 'doctor-create'">
+            <span class="icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </span>
+            Nueva Cita
+          </button>
+
           <button class="nav-item" (click)="changeView('doctor-patients')"
             [class.active]="view() === 'doctor-patients'">
             <span class="icon">
@@ -174,22 +216,31 @@
           </svg>
         </button>
 
-        <!-- Avatar con inicial del nombre -->
-        <div class="user-avatar">{{ auth.user()?.firstName?.[0] || 'U' }}</div>
-        <div class="user-details">
-          <span class="user-name">{{ auth.user()?.firstName }} {{ auth.user()?.lastName }}</span>
-          <span class="user-role">{{ auth.user()?.role === 'admin' ? 'Administrador' : (auth.user()?.role === 'doctor' ?
-            'Médico' : (auth.user()?.role === 'patient' ? 'Paciente' : 'Agendador')) }}</span>
+        <div class="user-info-row">
+          <!-- Avatar con inicial del nombre -->
+          <div class="user-avatar">{{ auth.user()?.firstName?.[0] || 'U' }}</div>
+          <div class="user-details">
+            <span class="user-name">{{ auth.user()?.firstName }} {{ auth.user()?.lastName }}</span>
+            <span class="user-role">{{ auth.user()?.role === 'admin' ? 'Administrador' : (auth.user()?.role === 'doctor' ?
+              'Médico' : (auth.user()?.role === 'patient' ? 'Paciente' : 'Agendador')) }}</span>
+          </div>
         </div>
+
+        <!-- Botón para cambiar contraseña -->
+        <div class="change-pwd-wrapper">
+          <button class="change-pwd-btn" (click)="openChangePasswordModal()" aria-label="Cambiar contraseña">
+            <i class="ti ti-key"></i>
+          </button>
+          <span class="tooltip">Cambiar contraseña</span>
+        </div>
+
         <!-- Botón para cerrar sesión -->
-        <button class="btn-logout-icon" (click)="logout()" title="Cerrar sesión">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <polyline points="16 17 21 12 16 7"></polyline>
-            <line x1="21" y1="12" x2="9" y2="12"></line>
-          </svg>
-        </button>
+        <div class="logout-wrapper">
+          <button class="logout-btn" (click)="logout()" aria-label="Cerrar sesión">
+            <i class="ti ti-logout"></i>
+          </button>
+          <span class="tooltip">Cerrar sesión</span>
+        </div>
       </div>
     </aside>
 
@@ -201,8 +252,11 @@
           <ng-container *ngIf="view() === 'admin-list'">Buscar Citas</ng-container>
           <ng-container *ngIf="view() === 'admin-create' || view() === 'patient-create'">Nueva Cita</ng-container>
           <ng-container *ngIf="view() === 'admin-config'">Configuración</ng-container>
+          <ng-container *ngIf="view() === 'admin-audit'">Auditoría de Citas</ng-container>
           <ng-container *ngIf="view() === 'patient-dashboard'">Mis Citas</ng-container>
-          <ng-container *ngIf="view() === 'doctor-dashboard'">Panel del Médico</ng-container>
+          <ng-container *ngIf="view() === 'doctor-dashboard'">Mi Agenda</ng-container>
+          <ng-container *ngIf="view() === 'doctor-search'">Buscar Citas</ng-container>
+          <ng-container *ngIf="view() === 'doctor-create'">Nueva Cita</ng-container>
           <ng-container *ngIf="view() === 'doctor-patients'">Mis Pacientes</ng-container>
           <ng-container *ngIf="view() === 'doctor-history'">Historial Médico</ng-container>
         </h2>
@@ -223,6 +277,11 @@
           <app-admin-config></app-admin-config>
         </div>
 
+        <!-- VISTA DE AUDITORÍA -->
+        <div *ngIf="view() === 'admin-audit'">
+          <app-admin-audit></app-admin-audit>
+        </div>
+
         <!-- VISTAS DE PACIENTE -->
         <div *ngIf="view() === 'patient-dashboard'">
           <app-patient-dashboard (navigate)="changeView($event)"></app-patient-dashboard>
@@ -235,13 +294,36 @@
         <div *ngIf="view() === 'doctor-dashboard'">
           <app-doctor-dashboard (navigate)="changeView($event)"></app-doctor-dashboard>
         </div>
+        <div *ngIf="view() === 'doctor-search'">
+          <app-appointment-list></app-appointment-list>
+        </div>
+        <div *ngIf="view() === 'doctor-create'">
+          <app-appointment-form></app-appointment-form>
+        </div>
         <div *ngIf="view() === 'doctor-patients'">
           <app-doctor-patients (navigate)="changeView($event)"></app-doctor-patients>
         </div>
         <div *ngIf="view() === 'doctor-history'">
           <app-doctor-history (navigate)="changeView($event)"></app-doctor-history>
         </div>
+        <!-- VISTA CAMBIO DE CONTRASEÑA -->
+        <div *ngIf="view() === 'change-password'">
+          <app-change-password></app-change-password>
+        </div>
       </div>
     </main>
+  </div>
+
+ <!-- MODAL DE CAMBIO DE CONTRASEÑA -->
+  <div class="modal-overlay" *ngIf="showChangePasswordModal()" (click)="closeChangePasswordModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <!-- Solo botón cerrar, sin título -->
+      <button class="modal-close" (click)="closeChangePasswordModal()">
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
+      <div class="modal-body">
+        <app-change-password (onSuccess)="closeChangePasswordModal()"></app-change-password>
+      </div>
+    </div>
   </div>
 </ng-container>
