@@ -5,7 +5,9 @@
   aria-live="polite">
 
   <!-- Icono del tipo -->
-  <span class="alert__icon" aria-hidden="true">{{ icon }}</span>
+  <span class="alert__icon" aria-hidden="true">
+    <i [class]="getIconClass()" aria-hidden="true"></i>
+  </span>
 
   <!-- Mensaje (soporta HTML con innerHTML para el caso info con <strong>) -->
   <span class="alert__message" [innerHTML]="message"></span>
@@ -17,7 +19,7 @@
     (click)="dismiss()"
     aria-label="Cerrar alerta"
     type="button">
-    ×
+    <i class="ti ti-x" aria-hidden="true"></i>
   </button>
 
 </div>

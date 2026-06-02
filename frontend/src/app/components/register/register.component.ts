@@ -68,7 +68,7 @@ export class RegisterComponent {
       email: ['', [Validators.required, Validators.email, validarEmailDominio()], [emailDuplicadoValidator(this.http)]],
 
       // Contraseña con longitud mínima
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      password: ['', [Validators.required, this.validarContraseñaSegura()]],
     });
   }
 
@@ -153,5 +153,86 @@ export class RegisterComponent {
   // Alterna visibilidad de contraseña
   togglePassword(): void {
     this.showPassword.update((v) => !v);
+  }
+
+  // Validador de contraseña segura
+  validarContraseñaSegura() {
+    return (control: any) => {
+      const value = control.value || '';
+      const errors: any = {};
+      
+      // Mínimo 8 caracteres
+      if (value.length < 8) {
+        errors.minlength = true;
+      }
+      
+      // Al menos una letra mayúscula
+      if (!/[A-Z]/.test(value)) {
+        errors.mayuscula = true;
+      }
+      
+      // Al menos una letra minúscula
+      if (!/[a-z]/.test(value)) {
+        errors.minuscula = true;
+      }
+      
+      // Al menos un número
+      if (!/[0-9]/.test(value)) {
+        errors.numero = true;
+      }
+      
+      return Object.keys(errors).length === 0 ? null : { contraseñaInsegura: errors };
+    };
+  }
+
+  // Getters para validar requisitos en tiempo real
+  get newPass(): string { 
+    return this.registerForm.get('password')?.value || ''; 
+  }
+
+  hasMinLength(): boolean { 
+    return this.newPass.length >= 8; 
+  }
+
+  hasUppercase(): boolean { 
+    return /[A-Z]/.test(this.newPass); 
+  }
+
+  hasLowercase(): boolean { 
+    return /[a-z]/.test(this.newPass); 
+  }
+
+  hasNumber(): boolean { 
+    return /\d/.test(this.newPass); 
+  }
+
+  // Fortaleza de la contraseña
+  strengthClass(): string {
+    const score = [this.hasMinLength(), this.hasUppercase(), this.hasLowercase(), this.hasNumber()]
+      .filter(Boolean).length;
+    if (score <= 2) return 'weak';
+    if (score === 3) return 'medium';
+    return 'strong';
+  }
+
+  strengthLabel(): string {
+    const map: Record<string, string> = { weak: 'Débil', medium: 'Media', strong: 'Fuerte' };
+    return map[this.strengthClass()];
+  }
+
+  // Método para obtener el mensaje de error de contraseña
+  getPasswordError(): string {
+    const control = this.f['password'];
+    if (!control.invalid || !control.touched) return '';
+    
+    const errors = control.errors?.['contraseñaInsegura'];
+    if (!errors) return 'La contraseña es obligatoria.';
+    
+    if (errors.minlength) return 'La contraseña debe tener al menos 8 caracteres.';
+    if (errors.mayuscula) return 'La contraseña debe tener al menos una letra mayúscula.';
+    if (errors.minuscula) return 'La contraseña debe tener al menos una letra minúscula.';
+    if (errors.numero) return 'La contraseña debe tener al menos un número.';
+    
+    return 'La contraseña no es segura.';
   }
 }

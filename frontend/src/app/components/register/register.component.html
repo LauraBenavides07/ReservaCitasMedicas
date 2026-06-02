@@ -127,9 +127,7 @@
                     label="CONTRASEÑA"
                     inputId="reg-password"
                     [required]="true"
-                    [error]="f['password'].invalid && f['password'].touched ?
-                        (f['password'].errors?.['required'] ? 'La contraseña es obligatoria.' :
-                         f['password'].errors?.['minlength'] ? 'La contraseña debe tener al menos 8 caracteres.' : '') : ''">
+                    [error]="getPasswordError()">
                     <div class="password-field-wrapper">
                         <input [type]="showPassword() ? 'text' : 'password'" id="reg-password" formControlName="password"
                             placeholder="Mínimo 8 caracteres"
@@ -139,6 +137,37 @@
                         <input type="checkbox" id="show-password-reg" [checked]="showPassword()"
                             (change)="togglePassword()">
                         <label for="show-password-reg">Mostrar contraseña</label>
+                    </div>
+                    
+                    <!-- Barra de fortaleza -->
+                    <div class="strength-bar" *ngIf="f['password'].value">
+                        <div class="strength-track">
+                            <div class="strength-fill" [class]="strengthClass()"></div>
+                        </div>
+                        <span class="strength-label">{{ strengthLabel() }}</span>
+                    </div>
+                    
+                    <!-- Requisitos -->
+                    <div class="requirements">
+                        <p class="req-title">La contraseña debe tener:</p>
+                        <ul>
+                            <li [class.ok]="hasMinLength()">
+                                <i class="ti ti-check" aria-hidden="true"></i>
+                                Mínimo 8 caracteres
+                            </li>
+                            <li [class.ok]="hasUppercase()">
+                                <i class="ti ti-check" aria-hidden="true"></i>
+                                Al menos una mayúscula
+                            </li>
+                            <li [class.ok]="hasLowercase()">
+                                <i class="ti ti-check" aria-hidden="true"></i>
+                                Al menos una minúscula
+                            </li>
+                            <li [class.ok]="hasNumber()">
+                                <i class="ti ti-check" aria-hidden="true"></i>
+                                Al menos un número
+                            </li>
+                        </ul>
                     </div>
                 </app-form-field>
 

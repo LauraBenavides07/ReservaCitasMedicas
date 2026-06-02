@@ -28,6 +28,7 @@
   flex-shrink: 0;
   font-size: 1rem;
   line-height: 1.4;
+  margin-bottom: 0.25rem;
 }
 
 /* Texto del mensaje */
@@ -35,6 +36,7 @@
   flex: 1;
   line-height: 1.5;
   text-align: left;
+  margin-top: 0.1rem;
 }
 
 /* Botón de cerrar */
@@ -70,7 +72,7 @@
 /* Éxito */
 .alert--success {
   background: #f0fdf4;
-  color: #15803d;
+  color: #28cc64;
   border: 1px solid #bbf7d0;
 }
 
@@ -104,4 +106,18 @@
     font-size: 0.85rem;
     padding: 0.75rem;
   }
+}
+
+/* Ajuste para iconos */
+.alert__icon .ti {
+  font-size: 1.25rem;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+/* Ajuste para botón cerrar */
+.alert__close .ti {
+  font-size: 1rem;
+  margin: 0;
+  vertical-align: middle;
 }

@@ -12,45 +12,31 @@ export type AlertType = 'error' | 'success' | 'info' | 'warning';
 })
 export class AlertComponent implements OnChanges {
 
-  // Tipo de alerta: error | success | info | warning
   @Input() type: AlertType = 'info';
-
-  // Mensaje a mostrar
   @Input() message = '';
-
-  // Si es true, muestra un botón de cerrar (×)
   @Input() dismissible = false;
-
-  // Controla si la alerta es visible desde el padre
-  // Si el mensaje está vacío, la alerta se oculta automáticamente
   @Input() show = true;
-
-  // Evento que emite cuando el usuario cierra la alerta
   @Output() dismissed = new EventEmitter<void>();
 
-  // Icono por tipo
-  readonly iconMap: Record<AlertType, string> = {
-    error:   '✕',
-    success: '✓',
-    info:    'ℹ️',
-    warning: '⚠️',
-  };
-
-  // Clase CSS por tipo
   alertClasses: Record<string, boolean> = {};
 
-  get icon(): string {
-    return this.iconMap[this.type];
-  }
-
-  // La alerta es visible si show=true Y hay mensaje
   get isVisible(): boolean {
     return this.show && !!this.message;
   }
 
+  getIconClass(): string {
+    const iconMap: Record<AlertType, string> = {
+      error:   'ti ti-circle-x',
+      success: 'ti ti-circle-check',
+      info:    'ti ti-info-circle',
+      warning: 'ti ti-alert-triangle',
+    };
+    return iconMap[this.type];
+  }
+
   ngOnChanges(): void {
     this.alertClasses = {
-      'alert':              true,
+      'alert': true,
       [`alert--${this.type}`]: true,
     };
   }

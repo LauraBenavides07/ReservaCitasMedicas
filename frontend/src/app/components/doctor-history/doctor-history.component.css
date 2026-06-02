@@ -113,7 +113,7 @@
 }
 
 .history-card.status-cancelled {
-    border-left: 6px solid #ff0015 !important;
+    border-left: 6px solid #cd0f1f !important;
 }
 
 .history-card.status-noshow {
@@ -158,7 +158,7 @@
 }
 
 .apt-status.status-cancelled {
-    background-color: #ff0015;
+    background-color: #cd0f1f;
 }
 
 .apt-status.status-noshow {
@@ -321,7 +321,7 @@
 }
 
 .date-badge.status-completed { background-color: #10b981; color: white; }
-.date-badge.status-cancelled { background-color: #ff0015; color: white; }
+.date-badge.status-cancelled { background-color: #cd0f1f; color: white; }
 .date-badge.status-noshow { background-color: #5d6d7e; color: white; }
 .date-badge.status-pending { background-color: #1e6bf0; color: white; }
 

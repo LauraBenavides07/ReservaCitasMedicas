@@ -212,21 +212,35 @@ getResponsibleDisplay(changedBy: string, role: string): string {
     return labels[role] || role;
   }
   // Obtener el ID del responsable
-getResponsibleId(changedBy: string): string {
-    if (!changedBy) return '-';
+  getResponsibleId(entry: any): string {
+    const role = entry.changedByRole;
+    const changedBy = entry.changedBy;
     
-    // Si es un email, tomar la parte antes del @
-    if (changedBy.includes('@')) {
-        return changedBy.split('@')[0];
+    // Para admin y staff con UUID, mostrar "Administrador" o "Staff"
+    if ((role === 'admin' || role === 'staff') && changedBy && changedBy.includes('-')) {
+        return role === 'admin' ? 'Administrador' : 'Staff';
     }
     
-    // Si es un UUID, mostrar los primeros 8 caracteres
-    if (changedBy.includes('-') && changedBy.length === 36) {
-        return changedBy.substring(0, 8);
+    // Para admin/staff con email
+    if (role === 'admin' || role === 'staff') {
+        if (changedBy && changedBy.includes('@')) {
+            return changedBy;
+        }
+        return role === 'admin' ? 'Administrador' : 'Staff';
     }
     
-    return changedBy;
-}
+    // Para paciente
+    if (role === 'patient' && entry.patientDocument) {
+        return entry.patientDocument;
+    }
+    
+    // Para doctor
+    if (role === 'doctor' && entry.doctorDocument) {
+        return entry.doctorDocument;
+    }
+    
+    return changedBy || '-';
+  }
 
 // Obtener el nombre del responsable
 getResponsibleName(entry: any): string {

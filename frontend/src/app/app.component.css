@@ -37,9 +37,12 @@
     box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
     z-index: 10;
     height: 100vh;
+    width: 90%;
     position: sticky;
     top: 0;
     overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .sidebar-brand {
@@ -147,18 +150,21 @@
 
 .sidebar-user {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     padding: 1rem 0.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     margin-top: 1rem;
+    margin-left: -10px;
+    margin-right: 15px;
 }
 
 .user-info-row {
     display: flex;
     align-items: center;
     gap: 0.8rem;
-    width: 100%;
+    flex: 1;
 }
 
 .user-avatar {
@@ -366,4 +372,279 @@
     .dashboard-content {
         padding: 1.25rem 1rem 1.5rem 1rem;
     }
+}
+/* ============================================
+   LOGOUT BUTTON
+   ============================================ */
+
+.logout-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* Botón real del app-button */
+.logout-wrapper ::ng-deep button {
+    width: 32px !important;
+    height: 32px !important;
+
+    min-width: 32px !important;
+    min-height: 32px !important;
+
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 10px !important;
+
+    background: linear-gradient(135deg, #ea2939, #cd0f1f) !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    transition: all 0.25s ease !important;
+
+    box-shadow:
+        0 6px 16px rgba(239, 68, 68, 0.25),
+        0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+/* Hover */
+.logout-wrapper ::ng-deep button:hover {
+    transform: translateY(-2px) scale(1.03);
+
+    box-shadow:
+        0 10px 20px rgba(239, 68, 68, 0.35),
+        0 4px 10px rgba(0, 0, 0, 0.18);
+}
+
+/* Click */
+.logout-wrapper ::ng-deep button:active {
+    transform: scale(0.96);
+}
+
+/* Icono */
+.logout-wrapper ::ng-deep button i {
+    font-size: 1rem !important;
+    color: white !important;
+}
+
+/* Tooltip */
+.tooltip {
+    position: absolute;
+
+    bottom: calc(100% + 10px);
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    background: #111827;
+    color: white;
+
+    padding: 7px 11px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    white-space: nowrap;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: all 0.2s ease;
+
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+
+    z-index: 999;
+}
+
+/* Flecha */
+.tooltip::after {
+    content: '';
+
+    position: absolute;
+
+    top: 100%;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    border-width: 5px;
+    border-style: solid;
+
+    border-color: #111827 transparent transparent transparent;
+}
+
+/* Mostrar tooltip */
+.logout-wrapper:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .tooltip {
+        display: none;
+    }
+}
+
+/* ============================================
+   CHANGE PASSWORD BUTTON - ESTILOS MEJORADOS
+   ============================================ */
+
+
+/* Gap específico entre los wrappers de los botones */
+.change-pwd-wrapper,
+.logout-wrapper {
+    margin-left: 0;
+    margin-right: -10px;
+}
+
+.change-pwd-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.change-pwd-btn {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 10px !important;
+    background: linear-gradient(135deg, #3b82f6, #1e3a6a) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.25s ease !important;
+    cursor: pointer;
+}
+
+.change-pwd-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.35), 0 4px 10px rgba(0, 0, 0, 0.18);
+}
+
+.change-pwd-btn:active {
+    transform: scale(0.96);
+}
+
+.change-pwd-btn i {
+    font-size: 1rem !important;
+    color: white !important;
+}
+
+/* Tooltip para change-password */
+.change-pwd-wrapper .tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111827;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 999;
+}
+
+.change-pwd-wrapper .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #111827 transparent transparent transparent;
+}
+
+.change-pwd-wrapper:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* En móvil, ocultar tooltips */
+@media (max-width: 768px) {
+    .change-pwd-wrapper .tooltip {
+        display: none;
+    }
+}
+
+/* ============================================
+   MODAL OVERLAY
+   ============================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-container {
+    background: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 300px;
+    min-width: 400px;
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.2s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.modal-close:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.modal-close i {
+    font-size: 1rem;
+}
+
+.modal-body {
+    padding: 0;
+    max-height: none;
+    overflow-y: visible;
 }

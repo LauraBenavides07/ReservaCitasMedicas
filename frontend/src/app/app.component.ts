@@ -123,4 +123,17 @@ export class AppComponent implements OnInit {
   toggleMobileMenu(): void {
     this.isMobileMenuOpen.set(!this.isMobileMenuOpen());
   }
+
+  // Agrega esta variable
+showChangePasswordModal = signal(false);
+
+// Agrega estos métodos
+openChangePasswordModal(): void {
+  this.showChangePasswordModal.set(true);
+  this.isMobileMenuOpen.set(false);
+}
+
+closeChangePasswordModal(): void {
+  this.showChangePasswordModal.set(false);
+}
 }
