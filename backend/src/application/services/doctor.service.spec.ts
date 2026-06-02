@@ -103,12 +103,16 @@ describe('DoctorService', () => {
       mockUserRepository.create.mockImplementation((user) => ({
         ...user,
       }));
-      mockUserRepository.save.mockImplementation(async (user) => {
+      mockUserRepository.save.mockImplementation((user) => {
         user.id = 'u-1';
         return user;
       });
       mockDoctorRepository.create.mockImplementation((doctor) => doctor);
-      mockDoctorRepository.save.mockResolvedValue({ id: '2', ...data, userId: 'u-1' });
+      mockDoctorRepository.save.mockResolvedValue({
+        id: '2',
+        ...data,
+        userId: 'u-1',
+      });
 
       const result = await service.create(data);
 
