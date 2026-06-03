@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Doctor } from './doctor.service';
+import { environment } from '../../environments/environment';
 
 export interface Patient {
   id?: string;
@@ -46,7 +47,7 @@ export interface CreateAppointmentDto {
   providedIn: 'root'
 })
 export class AppointmentService {
-  private apiUrl = 'http://localhost:3000/appointments';
+  private apiUrl = `${environment.apiUrl}/appointments`;
 
   constructor(private http: HttpClient) {}
 
@@ -107,7 +108,7 @@ export class AppointmentService {
     return this.http.get<AppointmentHistoryEntry[]>(`${this.apiUrl}/${id}/history`);
   }
 
-  private patientsApiUrl = 'http://localhost:3000/patients';
+  private patientsApiUrl = `${environment.apiUrl}/patients`;
 
   updatePatientMedicalInfo(patientId: string, data: { diagnosis?: string; observations?: string }): Observable<any> {
     return this.http.patch(`${this.patientsApiUrl}/${patientId}/medical-info`, data);
