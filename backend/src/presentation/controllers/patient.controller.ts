@@ -35,6 +35,4 @@ export class PatientController {
   ) {
     return this.patientService.updateMedicalInfo(id, dto);
   }
-
-  
 }

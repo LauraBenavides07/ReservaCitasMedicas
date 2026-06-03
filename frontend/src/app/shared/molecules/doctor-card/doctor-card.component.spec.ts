@@ -15,24 +15,27 @@ describe('DoctorCardComponent', () => {
     component.doctorId = '1';
     component.doctorName = 'Juan Lopez';
     component.specialty = 'Cardiología';
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
   it('should show initials from doctorName', () => {
+    fixture.detectChanges();
     const avatar = fixture.nativeElement.querySelector('.doctor-card__avatar');
     expect(avatar.textContent.trim()).toBe('JU');
   });
 
   it('should show doctor name with prefix', () => {
+    fixture.detectChanges();
     const name = fixture.nativeElement.querySelector('.doctor-card__name');
     expect(name.textContent).toContain('Juan Lopez');
   });
 
   it('should show specialty', () => {
+    fixture.detectChanges();
     const spec = fixture.nativeElement.querySelector('.doctor-card__specialty');
     expect(spec.textContent.trim()).toBe('Cardiología');
   });
@@ -45,6 +48,7 @@ describe('DoctorCardComponent', () => {
   });
 
  it('should emit selectDoctor on click', () => {
+    fixture.detectChanges();
     const emitSpy = vi.spyOn(component.selectDoctor, 'emit');
     const btn = fixture.nativeElement.querySelector('.doctor-card');
     btn.click();

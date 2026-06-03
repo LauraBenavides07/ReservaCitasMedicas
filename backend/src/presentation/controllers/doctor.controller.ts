@@ -77,7 +77,7 @@ export class DoctorController {
   @UseGuards(JwtAuthGuard)
   @Post(':id/reset-password')
   async resetPassword(@Param('id', ParseUUIDPipe) id: string) {
-    return this.doctorService.resetPassword(id);  // ← doctorService, no authService
+    return this.doctorService.resetPassword(id); // ← doctorService, no authService
   }
 
   @UseGuards(JwtAuthGuard)

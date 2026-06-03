@@ -22,14 +22,14 @@ export class DoctorService {
   private readonly logger = new Logger(DoctorService.name);
 
   constructor(
-  @Inject(IDoctorRepository)
-  private readonly doctorRepository: IDoctorRepository,
-  @Inject(IAppointmentRepository)
-  private readonly appointmentRepository: IAppointmentRepository,
-  @InjectRepository(User)
-  private readonly userRepository: Repository<User>,
-  private readonly keycloakService: KeycloakService,
-) {}
+    @Inject(IDoctorRepository)
+    private readonly doctorRepository: IDoctorRepository,
+    @Inject(IAppointmentRepository)
+    private readonly appointmentRepository: IAppointmentRepository,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private readonly keycloakService: KeycloakService,
+  ) {}
 
   async findAll(): Promise<Doctor[]> {
     return this.doctorRepository.find();
@@ -44,88 +44,101 @@ export class DoctorService {
   }
 
   async create(data: CreateDoctorDto): Promise<Doctor> {
-  if (!data.document) {
-    throw new BadRequestException('La cédula del médico es obligatoria');
-  }
+    if (!data.document) {
+      throw new BadRequestException('La cédula del médico es obligatoria');
+    }
 
-  const existsInDoctors = await this.doctorRepository.existsByDocument(data.document);
-  if (existsInDoctors) {
-    throw new ConflictException('Ya existe un médico con esta cédula');
-  }
+    const existsInDoctors = await this.doctorRepository.existsByDocument(
+      data.document,
+    );
+    if (existsInDoctors) {
+      throw new ConflictException('Ya existe un médico con esta cédula');
+    }
 
-  const existsInPatients = await this.doctorRepository.existsInPatients(data.document);
-  if (existsInPatients) {
-    throw new ConflictException('Esta cédula ya está registrada como paciente.');
-  }
+    const existsInPatients = await this.doctorRepository.existsInPatients(
+      data.document,
+    );
+    if (existsInPatients) {
+      throw new ConflictException(
+        'Esta cédula ya está registrada como paciente.',
+      );
+    }
 
-  const existingUser = await this.userRepository.findOne({ where: { email: data.email } });
-  if (existingUser) {
-    throw new ConflictException('Este correo electrónico ya está registrado');
-  }
+    const existingUser = await this.userRepository.findOne({
+      where: { email: data.email },
+    });
+    if (existingUser) {
+      throw new ConflictException('Este correo electrónico ya está registrado');
+    }
 
-  const defaultPassword = '12345678';
-  const hashedPassword = await bcrypt.hash(defaultPassword, 10);
-  const normalizedEmail = data.email.toLowerCase().trim();
+    const defaultPassword = '12345678';
+    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+    const normalizedEmail = data.email.toLowerCase().trim();
 
-  const user = this.userRepository.create({
-    email: normalizedEmail,
-    password: hashedPassword,
-    firstName: data.name.split(' ')[0],
-    lastName: data.name.split(' ').slice(1).join(' ') || '',
-    role: UserRole.DOCTOR,
-    mustChangePassword: true,
-  });
-
-  await this.userRepository.save(user);
-
-  // Crear en Keycloak con email como username
-  try {
-    await this.keycloakService.createUser({
-      username: normalizedEmail,
+    const user = this.userRepository.create({
+      email: normalizedEmail,
+      password: hashedPassword,
       firstName: data.name.split(' ')[0],
       lastName: data.name.split(' ').slice(1).join(' ') || '',
-      email: normalizedEmail,
-      password: defaultPassword,
+      role: UserRole.DOCTOR,
+      mustChangePassword: true,
     });
-    this.logger.log(`Doctor ${normalizedEmail} creado en Keycloak`);
-  } catch (kcError) {
-    this.logger.warn(
-      `No se pudo crear el doctor en Keycloak: ${kcError instanceof Error ? kcError.message : String(kcError)}`
-    );
+
+    await this.userRepository.save(user);
+
+    // Crear en Keycloak con email como username
+    try {
+      await this.keycloakService.createUser({
+        username: normalizedEmail,
+        firstName: data.name.split(' ')[0],
+        lastName: data.name.split(' ').slice(1).join(' ') || '',
+        email: normalizedEmail,
+        password: defaultPassword,
+      });
+      this.logger.log(`Doctor ${normalizedEmail} creado en Keycloak`);
+    } catch (kcError) {
+      this.logger.warn(
+        `No se pudo crear el doctor en Keycloak: ${kcError instanceof Error ? kcError.message : String(kcError)}`,
+      );
+    }
+
+    const doctor = this.doctorRepository.create({
+      ...data,
+      email: normalizedEmail,
+      userId: user.id,
+    });
+
+    return this.doctorRepository.save(doctor);
   }
 
-  const doctor = this.doctorRepository.create({
-    ...data,
-    email: normalizedEmail,
-    userId: user.id,
-  });
-
-  return this.doctorRepository.save(doctor);
-}
-
-
-async update(id: string, data: UpdateDoctorDto): Promise<Doctor> {
+  async update(id: string, data: UpdateDoctorDto): Promise<Doctor> {
     const doctor = await this.doctorRepository.findOneBy({ id });
     if (!doctor) {
-        throw new NotFoundException('Doctor no encontrado');
+      throw new NotFoundException('Doctor no encontrado');
     }
     if (data.document && data.document !== doctor.document) {
-        // Validar en médicos
-        const existsInDoctors = await this.doctorRepository.existsByDocument(data.document);
-        if (existsInDoctors) {
-            throw new ConflictException('Ya existe otro médico con esta cédula');
-        }
-        
-        const existsInPatients = await this.doctorRepository.existsInPatients(data.document);
-        if (existsInPatients) {
-            throw new ConflictException('Esta cédula ya está registrada como paciente. No puede asignarla a un médico.');
-        }
+      // Validar en médicos
+      const existsInDoctors = await this.doctorRepository.existsByDocument(
+        data.document,
+      );
+      if (existsInDoctors) {
+        throw new ConflictException('Ya existe otro médico con esta cédula');
       }
-    
+
+      const existsInPatients = await this.doctorRepository.existsInPatients(
+        data.document,
+      );
+      if (existsInPatients) {
+        throw new ConflictException(
+          'Esta cédula ya está registrada como paciente. No puede asignarla a un médico.',
+        );
+      }
+    }
+
     await this.doctorRepository.update(id, data);
     const updated = await this.doctorRepository.findOneBy({ id });
     if (!updated) {
-        throw new NotFoundException('Doctor no encontrado después de actualizar');
+      throw new NotFoundException('Doctor no encontrado después de actualizar');
     }
     return updated;
   }

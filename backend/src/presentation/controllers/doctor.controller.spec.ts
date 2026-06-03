@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DoctorController } from './doctor.controller';
 import { DoctorService } from '../../application/services/doctor.service';
 import { DoctorExceptionService } from '../../application/services/doctor-exception.service';
+import { AuthService } from '../../application/services/auth.service';
 
 describe('DoctorController', () => {
   let controller: DoctorController;
@@ -21,6 +22,7 @@ describe('DoctorController', () => {
     findByDoctor: jest.fn(),
     remove: jest.fn(),
   };
+  const mockAuthService = {};
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -28,6 +30,7 @@ describe('DoctorController', () => {
       providers: [
         { provide: DoctorService, useValue: mockDoctorService },
         { provide: DoctorExceptionService, useValue: mockExceptionService },
+        { provide: AuthService, useValue: mockAuthService },
       ],
     }).compile();
 

@@ -6,11 +6,30 @@ import { DoctorService } from '../../services/doctor.service';
 import { AppointmentService } from '../../services/appointment.service';
 import { ConfigService } from '../../services/config.service';
 import { of } from 'rxjs';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import Swal from 'sweetalert2';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 describe('AdminConfigComponent', () => {
   let component: AdminConfigComponent;
   let fixture: ComponentFixture<AdminConfigComponent>;
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: vi.fn().mockImplementation((query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
+
+    vi.spyOn(Swal, 'fire').mockResolvedValue({ isConfirmed: true } as any);
+  });
 
   const mockDoctorService = {
     getDoctors: vi.fn(),

@@ -12,7 +12,6 @@ describe('BadgeComponent', () => {
 
     fixture = TestBed.createComponent(BadgeComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {

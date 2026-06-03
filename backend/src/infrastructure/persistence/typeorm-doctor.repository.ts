@@ -6,14 +6,12 @@ import { IDoctorRepository } from '../../application/ports/doctor.repository';
 import { Patient } from '../../domain/entities/patient.entity';
 
 @Injectable()
-
 export class TypeOrmDoctorRepository extends IDoctorRepository {
   constructor(
     @InjectRepository(Doctor)
     private readonly repo: Repository<Doctor>,
-    @InjectRepository(Patient)  
+    @InjectRepository(Patient)
     private readonly patientRepo: Repository<Patient>,
-  
   ) {
     super();
   }
@@ -24,8 +22,8 @@ export class TypeOrmDoctorRepository extends IDoctorRepository {
   }
 
   async existsInPatients(document: string): Promise<boolean> {
-        const count = await this.patientRepo.count({ where: { document } });
-        return count > 0;
+    const count = await this.patientRepo.count({ where: { document } });
+    return count > 0;
   }
 
   async find(options?: FindManyOptions<Doctor>): Promise<Doctor[]> {
