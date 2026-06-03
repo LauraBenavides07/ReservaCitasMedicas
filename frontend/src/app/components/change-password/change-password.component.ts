@@ -9,6 +9,7 @@ import { AlertComponent } from '../../shared/atoms/alert/alert.component';
 import { CardComponent } from '../../shared/atoms/card/card.component';
 import Swal from 'sweetalert2';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-change-password',
@@ -118,7 +119,7 @@ export class ChangePasswordComponent implements OnInit {
             'Authorization': `Bearer ${token}`
         });
 
-        this.http.post('http://localhost:3000/auth/change-password', {
+        this.http.post(`${environment.apiUrl}/auth/change-password`, {
             currentPassword: this.passwordForm.value.currentPassword,
             newPassword: this.passwordForm.value.newPassword
         }, { headers }).subscribe({
