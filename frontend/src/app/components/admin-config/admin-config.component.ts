@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { ButtonComponent } from '../../shared/atoms/button/button.component';
 import { CardComponent } from '../../shared/atoms/card/card.component';
 import { RegisterComponent } from '../register/register.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-admin-config',
@@ -434,7 +435,7 @@ export class AdminConfigComponent implements OnInit {
       return;
     }
 
-    this.http.get<any[]>('http://localhost:3000/patients').subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/patients`).subscribe({
       next: (data) => {
         this.patients.set(data);
       },

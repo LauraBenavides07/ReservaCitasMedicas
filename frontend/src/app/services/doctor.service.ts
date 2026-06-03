@@ -56,7 +56,7 @@ export class DoctorService {
 
   resetPassword(doctorId: string): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(
-      `http://localhost:3000/doctors/${doctorId}/reset-password`,
+      `${environment.apiUrl}/doctors/${doctorId}/reset-password`,
       {}
     );
   }
