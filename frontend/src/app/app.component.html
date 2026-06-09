@@ -24,7 +24,7 @@
   <div class="dashboard-layout">
 
     <!-- BARRA LATERAL (SIDEBAR) -->
-    <aside class="sidebar">
+    <aside class="sidebar" [class.mobile-open]="isMobileMenuOpen()">
       <!-- Logo y nombre del centro médico -->
       <div class="sidebar-brand">
         <div style="display: flex; align-items: center; gap: 1rem;">
@@ -34,6 +34,17 @@
             <span class="brand-sub">CENTRO MÉDICO</span>
           </div>
         </div>
+        <button class="mobile-menu-btn" (click)="toggleMobileMenu()" aria-label="Abrir menú">
+          <svg *ngIf="!isMobileMenuOpen()" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <svg *ngIf="isMobileMenuOpen()" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
 
       <!-- Título de la sección de navegación -->
@@ -201,21 +212,6 @@
 
       <!-- PERFIL DE USUARIO Y MENÚ MÓVIL -->
       <div class="sidebar-user" *ngIf="auth.isLoggedIn()">
-        <!-- Botón menú hamburguesa -->
-        <button class="mobile-menu-btn" (click)="toggleMobileMenu()" aria-label="Abrir menú">
-          <svg *ngIf="!isMobileMenuOpen()" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-          <svg *ngIf="isMobileMenuOpen()" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-
         <div class="user-info-row">
           <!-- Avatar con inicial del nombre -->
           <div class="user-avatar">{{ auth.user()?.firstName?.[0] || 'U' }}</div>
@@ -243,6 +239,9 @@
         </div>
       </div>
     </aside>
+
+    <!-- Overlay para cerrar el menú -->
+    <div class="sidebar-overlay" [class.active]="isMobileMenuOpen()" (click)="toggleMobileMenu()"></div>
 
     <!-- CONTENIDO PRINCIPAL DEL DASHBOARD -->
     <main class="dashboard-main">

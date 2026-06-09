@@ -422,7 +422,7 @@ button .ti {
 dialog.modal {
     background: white;
     width: 100%;
-    max-width: 500px;
+    max-width: 570px;
     max-height: 85vh;
     border-radius: 20px;
     padding: 1.5rem;
@@ -1057,4 +1057,314 @@ dialog::backdrop {
         margin-bottom: 1rem;
         padding-bottom: 0.75rem;
     }
+}
+/* ============================================
+   MEJORA RESPONSIVE PARA ESTADÍSTICAS
+   ============================================ */
+
+/* Móvil (≤ 480px) - mantener horizontal pero más compacto */
+@media (max-width: 480px) {
+    .stats-grid {
+        gap: 0.5rem;
+    }
+    
+    .stat-card {
+        padding: 0.65rem 0.75rem;
+        gap: 0.5rem;
+    }
+    
+    .stat-icon {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .stat-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .stat-value {
+        font-size: 1.2rem;
+    }
+    
+    .stat-label {
+        font-size: 0.6rem;
+    }
+}
+
+/* Tablet (768px - 1024px) - 4 columnas centradas */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .stats-grid {
+        gap: 0.875rem;
+    }
+    
+    .stat-card {
+        padding: 1rem 0.5rem;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+}
+/* ============================================
+   MODALES RESPONSIVOS - VERSIÓN ULTRA COMPACTA
+   ============================================ */
+
+/* Móvil (≤ 480px) */
+@media (max-width: 480px) {
+    dialog.modal {
+        width: 98%;
+        padding: 0.875rem;
+        max-height: 92vh;
+        border-radius: 16px;
+    }
+    
+    .modal-title {
+        font-size: 1rem;
+        margin-bottom: 0.875rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    .form-grid {
+        gap: 0.625rem;
+    }
+    
+    .form-row-responsive {
+        gap: 0.5rem;
+    }
+    
+    .modal-actions {
+        gap: 0.5rem;
+        margin-top: 0.875rem;
+        flex-direction: column;
+    }
+    
+    .modal-actions app-button {
+        width: 100%;
+    }
+    
+    /* Excepciones */
+    .exceptions-list {
+        max-height: 180px;
+        margin-bottom: 1rem;
+    }
+    
+    .exception-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 0.625rem;
+    }
+    
+    .exception-item strong {
+        font-size: 0.75rem;
+    }
+    
+    .exception-item span {
+        font-size: 0.7rem;
+        word-break: break-all;
+    }
+    
+    .btn-icon {
+        align-self: flex-end;
+        padding: 0.25rem;
+    }
+    
+    /* Días checklist */
+    .day-checklist {
+        gap: 0.35rem;
+    }
+    
+    .day-chip {
+        min-width: 38px;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.65rem;
+        border-radius: 8px;
+    }
+    
+    /* Inputs y selects */
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+        padding: 0.5rem 0.65rem;
+        font-size: 0.8rem;
+        min-height: 38px;
+    }
+    
+    .form-field label {
+        font-size: 0.65rem;
+    }
+    
+    .field-error,
+    .field-hint {
+        font-size: 0.65rem;
+    }
+}
+
+/* Móvil extra pequeño (≤ 380px) */
+@media (max-width: 380px) {
+    dialog.modal {
+        width: 98%;
+        padding: 0.75rem;
+    }
+    
+    .modal-title {
+        font-size: 0.95rem;
+    }
+    
+    .day-chip {
+        min-width: 34px;
+        padding: 0.3rem 0.4rem;
+        font-size: 0.6rem;
+    }
+    
+    .exception-item strong {
+        font-size: 0.7rem;
+    }
+    
+    .exception-item span {
+        font-size: 0.65rem;
+    }
+    
+    .form-field input,
+    .form-field select {
+        padding: 0.45rem 0.55rem;
+        font-size: 0.75rem;
+        min-height: 36px;
+    }
+}
+
+/* Móvil extremo (≤ 340px) */
+@media (max-width: 340px) {
+    dialog.modal {
+        width: 100%;
+        padding: 0.625rem;
+        border-radius: 12px;
+    }
+    
+    .modal-title {
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .form-grid {
+        gap: 0.5rem;
+    }
+    
+    /* Días checklist - 7 items en grid */
+    .day-checklist {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.3rem;
+    }
+    
+    .day-chip {
+        min-width: auto;
+        padding: 0.3rem 0.25rem;
+        font-size: 0.55rem;
+    }
+    
+    /* Excepciones */
+    .exceptions-list {
+        max-height: 150px;
+    }
+    
+    .exception-item {
+        padding: 0.5rem;
+    }
+    
+    .btn-icon i {
+        font-size: 0.9rem;
+    }
+    
+    /* Botones del modal */
+    .modal-actions app-button {
+        min-height: 36px;
+    }
+    
+    .modal-actions app-button button {
+        font-size: 0.75rem !important;
+        padding: 0.4rem 0.75rem !important;
+    }
+}
+
+/* Móvil mínimo (≤ 320px) */
+@media (max-width: 320px) {
+    dialog.modal {
+        padding: 0.5rem;
+    }
+    
+    .modal-title {
+        font-size: 0.85rem;
+        margin-bottom: 0.625rem;
+    }
+    
+    .form-row-responsive {
+        gap: 0.4rem;
+    }
+    
+    /* Días checklist - 4 columnas */
+    .day-checklist {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.25rem;
+    }
+    
+    .day-chip {
+        padding: 0.25rem 0.2rem;
+        font-size: 0.5rem;
+    }
+    
+    .form-field label {
+        font-size: 0.6rem;
+    }
+    
+    .form-field input,
+    .form-field select {
+        padding: 0.4rem 0.5rem;
+        font-size: 0.7rem;
+        min-height: 34px;
+    }
+    
+    .exception-item strong {
+        font-size: 0.65rem;
+    }
+    
+    .exception-item span {
+        font-size: 0.6rem;
+    }
+}
+
+/* ============================================
+   MEJORAS ADICIONALES PARA EVITAR OVERFLOW
+   ============================================ */
+
+/* Prevenir overflow horizontal en todos los modales */
+dialog.modal,
+.modal-content,
+.modal-body {
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* Forzar word break en textos largos */
+.exception-item span,
+.modal-title,
+.field-error {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Scroll suave dentro del modal */
+dialog.modal::-webkit-scrollbar {
+    width: 3px;
+}
+
+dialog.modal::-webkit-scrollbar-track {
+    background: #e2e8f0;
+    border-radius: 3px;
+}
+
+dialog.modal::-webkit-scrollbar-thumb {
+    background: #1e3a6a;
+    border-radius: 3px;
 }
